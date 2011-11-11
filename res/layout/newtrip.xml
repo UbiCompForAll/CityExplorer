@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="#EBF2FA">
+
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+		<TextView android:id="@+id/editheader" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/activity_plan_menu_newTrip"
+			android:textStyle="bold" android:textSize="20dip" android:background="#4556A6"
+			android:textColor="#EBF2FA" android:paddingLeft="5dip"
+			android:paddingTop="2dip" android:paddingBottom="2dip" />
+
+		<TableLayout android:layout_width="fill_parent"
+			android:id="@+id/table" android:layout_height="fill_parent"
+			android:layout_below="@+id/editheader" xmlns:android="http://schemas.android.com/apk/res/android">
+
+			<TableRow>
+				<TextView android:id="@+id/editnameLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/editnameLabel" android:textColor="#000000"
+					android:paddingLeft="2dip" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:textStyle="bold" android:width="140dp" />
+
+				<EditText android:id="@+id/editname" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
+					android:layout_toRightOf="@id/editnameLabel" android:textColor="#000000"
+					android:paddingRight="2dip" android:paddingTop="2dip"
+					android:paddingBottom="2dip" android:width="140dp"
+					android:maxWidth="140dp" />
+			</TableRow><!--
+
+			<TableRow>
+				<TextView android:id="@+id/editdescriptionLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/descriptionLabel" android:layout_below="@id/editnameLabel"
+					android:textColor="#000000" android:paddingLeft="2dip"
+					android:paddingRight="2dip" android:paddingTop="2dip"
+					android:paddingBottom="2dip" android:textStyle="bold" />
+
+				<EditText android:id="@+id/editdescription"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:background="@android:drawable/editbox_background"
+					android:layout_toRightOf="@id/editdescriptionLabel"
+					android:textColor="#000000" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip" />
+			</TableRow>
+
+			--><RadioGroup android:layout_width="fill_parent" android:id="@+id/tripRadioGroup"
+				android:layout_height="wrap_content" android:orientation="vertical"
+				android:layout_below="@id/editdescription">
+				<RadioButton android:id="@+id/fixedTrip"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/fixedTrip" android:textColor="#000000" />
+				<RadioButton android:id="@+id/freeTrip"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/freeTrip" android:textColor="#000000" />
+			</RadioGroup>
+
+		</TableLayout>
+		
+		<TextView android:id="@+id/newTripBottomInfo"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_below="@id/table" android:text="@string/requiredFields"
+			android:textSize="14dip" android:textColor="#000000" />
+		
+		<TextView android:id="@+id/editfromexistingLabel"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="@string/fromexistingLabel" android:layout_below="@id/newTripBottomInfo"
+			android:textColor="#000000" android:paddingLeft="2dip"
+			android:paddingRight="2dip" android:paddingTop="2dip"
+			android:paddingBottom="2dip" android:textStyle="bold" />
+
+		<Button android:text="@string/chooseTrip" android:id="@+id/editfromexisting"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_below="@id/editfromexistingLabel"></Button>
+
+		<Button android:text="@string/saveTrip" android:id="@+id/saveTrip"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_below="@id/editfromexisting"></Button>
+
+		
+
+	</RelativeLayout>
+</ScrollView>

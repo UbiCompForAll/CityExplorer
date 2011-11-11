@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:id="@+id/widget27" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="#EBF2FA">
+
+	<RelativeLayout android:id="@+id/details_root"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+		<TextView android:id="@+id/label" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="label n/a"
+			android:textStyle="bold" android:textSize="20dip" android:background="#4556A6"
+			android:textColor="#EBF2FA" android:paddingLeft="5dip"
+			android:paddingTop="2dip" android:paddingBottom="2dip"/>
+
+		<ImageButton android:id="@+id/previousPoiButton"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:src="@drawable/previous_arrow_selector" android:layout_below="@id/label"
+			android:layout_alignLeft="@id/widget27" android:visibility="gone"
+			android:background="@null"></ImageButton>
+
+		<ImageButton android:id="@+id/nextPoiButton"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:src="@drawable/next_arrow_selector" android:layout_below="@id/label"
+			android:layout_alignParentRight="true" android:visibility="gone"
+			android:background="@null"></ImageButton>
+
+		<TextView android:id="@+id/description" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/previousPoiButton" android:textColor="#000000"
+			android:paddingLeft="5dip" android:paddingRight="5dip"
+			android:paddingTop="2dip" android:paddingBottom="10dip" />
+
+		<TableLayout android:id="@+id/detailsTable"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:layout_below="@+id/description" xmlns:android="http://schemas.android.com/apk/res/android">
+
+			<TableRow>
+				<TextView android:id="@+id/categoryLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/categoryLabel" android:layout_below="@id/description"
+					android:textColor="#000000" android:paddingLeft="2dip"
+					android:paddingRight="2dip" android:paddingTop="2dip"
+					android:paddingBottom="2dip" android:textStyle="bold" />
+
+				<TextView android:id="@+id/category" android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_below="@id/description" android:layout_toRightOf="@id/categoryLabel"
+					android:textColor="#000000" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip" />
+			</TableRow>
+
+			<TableRow>
+				<TextView android:id="@+id/addressLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/addressLabel" android:layout_below="@id/categoryLabel"
+					android:textColor="#000000" android:paddingLeft="2dip"
+					android:paddingRight="2dip" android:paddingTop="2dip"
+					android:paddingBottom="2dip" android:textStyle="bold" />
+
+				<TextView android:id="@+id/address" android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#000000" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:autoLink="map" />
+			</TableRow>
+
+			<TableRow>
+				<TextView android:id="@+id/telephoneLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/telephoneLabel" android:textColor="#000000"
+					android:paddingLeft="2dip" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:textStyle="bold"/>
+
+				<TextView android:id="@+id/telephone" android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#000000" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:autoLink="phone" />
+			</TableRow>
+
+			<TableRow>
+				<TextView android:id="@+id/openingHoursLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/openingHoursLabel" android:textColor="#000000"
+					android:paddingRight="2dip" android:paddingLeft="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:textStyle="bold" />
+
+				<TextView android:id="@+id/openingHours"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textColor="#000000" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip" />
+			</TableRow>
+
+			<TableRow>
+				<TextView android:id="@+id/webPageLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/webPageLabel" android:textColor="#000000"
+					android:paddingRight="2dip" android:paddingLeft="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:textStyle="bold" />
+
+				<TextView android:id="@+id/webPage" android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#000000" android:paddingRight="2dip"
+					android:paddingTop="2dip" android:paddingBottom="2dip"
+					android:autoLink="web" />
+			</TableRow>
+
+			<!--<TableRow> <TextView android:id="@+id/beerPriceLabel" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:text="@string/beerPriceLabel" 
+				android:textColor="#000000" android:paddingRight="2dip" android:paddingLeft="2dip" 
+				android:paddingTop="2dip" android:paddingBottom="2dip" android:textStyle="bold" 
+				/> <TextView android:id="@+id/beerPrice" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:text="@string/beerPrice" android:textColor="#000000" 
+				android:paddingRight="2dip" android:paddingTop="2dip" android:paddingBottom="2dip" 
+				/> </TableRow> -->
+		</TableLayout>
+
+
+		<ImageView android:id="@+id/imageContainer"
+			android:layout_below="@id/detailsTable" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" />
+
+
+
+	</RelativeLayout>
+</ScrollView>

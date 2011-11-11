@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="@drawable/background">
+
+	<Button android:id="@+id/startButtonPlan" android:layout_width="250px"
+		android:layout_height="62px" android:layout_centerHorizontal="true"
+		android:layout_marginTop="195dp" android:background="@drawable/planbutton">
+	</Button>
+	<Button android:layout_width="250px" android:layout_height="62px"
+		android:id="@+id/startButtonExplore" android:layout_below="@id/startButtonPlan"
+		android:layout_centerHorizontal="true" android:background="@drawable/explorebutton"
+		android:layout_marginTop="20px">
+	</Button>
+
+</RelativeLayout>

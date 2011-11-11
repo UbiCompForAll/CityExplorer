@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<group android:id="@+id/planMenuGroupPoi">
+
+		<item android:id="@+id/planMenuNewPoi" android:icon="@android:drawable/ic_menu_edit"
+			android:title="@string/activity_plan_menu_newPoi" />
+
+		<item android:id="@+id/planMenuSharePois" android:icon="@android:drawable/ic_menu_share"
+			android:title="@string/activity_plan_menu_sharePois" />
+
+		<item android:id="@+id/planMenuFilter" android:icon="@android:drawable/ic_menu_agenda"
+			android:title="@string/activity_plan_menu_filter" />
+
+		<item android:id="@+id/planMenuUpdatePois" android:icon="@android:drawable/ic_menu_rotate"
+			android:title="@string/activity_plan_menu_updatepois" />
+			
+			<item android:id="@+id/planMenuAddPois" android:icon="@android:drawable/ic_menu_add"
+			android:title="@string/activity_plan_menu_addpois" />
+
+	</group>
+
+	<group android:id="@+id/planMenuGroupTrip">
+		<item android:id="@+id/planMenuNewTrip" android:icon="@android:drawable/ic_menu_edit"
+			android:title="@string/activity_plan_menu_newTrip" />
+
+		<item android:id="@+id/planMenuUpdateTrips" android:icon="@android:drawable/ic_menu_rotate"
+			android:title="@string/activity_plan_menu_updatetrips" />
+	</group>
+
+</menu>

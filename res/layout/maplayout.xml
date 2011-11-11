@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/MainLayout" xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_height="fill_parent"
+ android:layout_width="fill_parent">
+
+ 	 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:id="@+id/MapLayout"
+     android:orientation="vertical"
+     android:layout_width="fill_parent"
+     android:layout_height="fill_parent">
+
+    <com.google.android.maps.MapView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/mapview"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:clickable="true"
+	android:apiKey="0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA"
+	/>
+ 
+	</LinearLayout>
+
+ 	<LinearLayout android:id="@+id/ButtonLayout"
+		 android:layout_centerHorizontal="true"
+		 android:layout_alignParentTop="true"
+		 android:layout_width="wrap_content"
+		 android:layout_height="fill_parent" android:layout_marginTop="5px">
+			 
+			 <Button android:id="@+id/MapPrevButton"
+			 android:layout_width="wrap_content" android:drawableLeft="@android:drawable/ic_media_rew" 
+			 android:layout_height="wrap_content"></Button>
+
+			 <!--Button android:layout_width="wrap_content"
+			 android:layout_height="wrap_content" android:id="@+id/MapDetailsButton" 
+			 android:layout_weight="1.0" android:text="b"></Button-->
+ 
+			 <Button android:id="@+id/MapNextButton"
+			 android:layout_width="wrap_content" android:drawableRight="@android:drawable/ic_media_ff" 
+			 android:layout_height="wrap_content"></Button>
+
+ 	</LinearLayout>
+</RelativeLayout>

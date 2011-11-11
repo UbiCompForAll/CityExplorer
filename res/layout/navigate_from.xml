@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="#EBF2FA">
+
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+		<TextView android:id="@+id/editheader" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/navigateFrom"
+			android:textStyle="bold" android:textSize="20dip" android:background="#4556A6"
+			android:textColor="#EBF2FA" android:paddingLeft="5dip"
+			android:paddingTop="2dip" android:paddingBottom="2dip" />
+
+		<RadioGroup android:layout_width="fill_parent" android:id="@+id/navigateRadioGroup"
+			android:layout_height="wrap_content" android:orientation="vertical"
+			android:layout_below="@id/editheader">
+			<RadioButton android:id="@+id/navigateFromCurrentPos"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:text="@string/navigateFromCurrentPos" android:textColor="#000000" />
+			<RadioButton android:id="@+id/navigateFromPoi"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:text="@string/navigateFromPoi" android:textColor="#000000" />
+		</RadioGroup>
+
+		<TextView android:id="@+id/choosePoi" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/choosePoi"
+			android:layout_below="@id/navigateRadioGroup" android:textColor="#000000"
+			android:paddingLeft="2dip" android:paddingRight="2dip"
+			android:paddingTop="2dip" android:paddingBottom="2dip"
+			android:textStyle="bold" />
+
+		<Spinner android:id="@+id/spinnerPoi" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_below="@id/choosePoi" />
+
+		<Button android:text="@string/navigateButton" android:id="@+id/navigateButton"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_below="@id/spinnerPoi" android:layout_centerHorizontal="true"></Button>
+
+
+	</RelativeLayout>
+</ScrollView>

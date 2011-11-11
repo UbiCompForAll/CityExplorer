@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	android:versionCode="1"
+	android:versionName="1.0" android:installLocation="preferExternal" package="org.ubicompforall.CityExplorer">
+
+	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8"
+		android:maxSdkVersion="8" />
+
+
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+
+
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:debuggable="true">
+
+		<activity android:name=".gui.StartActivity"
+			android:launchMode="singleTask" android:theme="@android:style/Theme.NoTitleBar"
+			android:screenOrientation="portrait">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<activity android:launchMode="standard" android:name=".gui.PlanActivity"
+			android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
+			<intent-filter>
+				<action android:name="project.CityExplorer.gui.ActivityPlan" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".gui.CalendarActivity"
+			android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="project.CityExplorer.gui.CalendarActivity" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".gui.PoiDetailsActivity"
+
+			android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="project.CityExplorer.gui.PoiDetailsActivity" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.cityexplorer.cursor.item/vnd.cityexplorer.poi" />
+			</intent-filter>
+
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.cityexplorer.cursor.item/vnd.cityexplorer.poi" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".map.MapsActivity"
+			android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="project.CityExplorer.map.MapsActivity" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<uses-library android:name="com.google.android.maps" />
+
+
+		<activity android:name=".gui.PlanTabPoi" android:theme="@android:style/Theme.NoTitleBar">
+		</activity>
+		<activity android:name=".gui.PlanTabTrip" android:theme="@android:style/Theme.NoTitleBar">
+		</activity>
+
+		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/plain" />
+			</intent-filter>
+		</activity>
+
+
+
+		<activity android:name=".gui.PlanTabActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".gui.NewTripActivity"></activity>
+		<activity android:name=".gui.NewPoiActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+	</application>
+
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+</manifest> 
