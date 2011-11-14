@@ -12,7 +12,7 @@
 	<ListView android:id="@android:id/list" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:cacheColorHint="#00000000"
 		android:background="#EBF2FA" android:layout_below="@id/triplabel"/>
-	<TextView android:id="@id/android:empty" android:layout_width="match_parent"
-		android:layout_height="match_parent" android:background="#EBF2FA"
+	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:background="#EBF2FA"
 		android:text="No data" />
 </RelativeLayout>
