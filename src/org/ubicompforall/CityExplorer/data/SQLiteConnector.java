@@ -26,7 +26,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	private static final boolean DEBUG = false;
 
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
-	private static final String	DB_PATH = "/data/data/project.CityExplorer/databases/";
+	//private static final String	DB_PATH = "/data//data/org.ubicompforall.CityExplorer/";
+	private String DB_PATH="";
 	
 	/** The Constant DB_NAME, which is our database name. */
 	private static final String	DB_NAME = "CityExplorer.db";
@@ -71,7 +72,10 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		super(context, DB_NAME, null, 2);
 		this.myContext = context;
 
-		myPath = DB_PATH + DB_NAME;
+		File dbName = context.getDatabasePath(DB_NAME);
+		this.DB_PATH = dbName.getParent();
+		myPath = dbName.toString();
+		Log.d("CityExplorer", myPath+" starting up");
 	}	
 
 	@Override
@@ -95,21 +99,32 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		byte[] 			buffer 		= new byte[1024 * 64];
 		int 			bytesRead;
 
+		if (myDataBase != null){
+			myDataBase.close();
+			Log.d("CityExplorer", "myDataBase.closed()");
+		}
 		try {
 			SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 			myDataBase = this.getReadableDatabase();
-			Log.d("CityExplorer","CityExplorer.db discovered");
+			Log.d("CityExplorer",DB_NAME+" discovered");
 		} catch (SQLiteException couldNotOpen) {
-			Log.d("CityExplorer","CityExplorer.db not found, making a copy");
+			Log.d("CityExplorer",DB_NAME+" not found, making a copy");
 			try {
 				if (!catalog.isDirectory()){
+					Log.d("CityExplorer","Catalog is "+catalog);
 					catalog.mkdir();
 				}
 
-				osDbPath = new FileOutputStream(DB_PATH+DB_NAME);
+				osDbPath = new FileOutputStream(myPath);
+				Log.d("CityExplorer","made folder: "+myPath);				
 
 				while ((bytesRead = isAssetDb.read(buffer))>0){
-					osDbPath.write(buffer, 0, bytesRead);
+					try {
+						osDbPath.write(buffer, 0, bytesRead);
+					} catch (IOException io) {
+						Log.d("CityExplorer","Failed to write to " + DB_PATH);
+						io.printStackTrace();
+					}
 					Log.d("CityExplorer","copyDataBase(): wrote " + bytesRead + " bytes");
 				}
 
@@ -117,17 +132,17 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				osDbPath.close();
 				buffer = null;
 
-				Log.d("CityExplorer","CityExplorer.db successufully copied");
+				Log.d("CityExplorer",DB_NAME+" successufully copied");
 
 				myDataBase = this.getReadableDatabase();
 
 			} catch (IOException io) {
-				Log.d("CityExplorer","Failed to copy CityExplorer.db to " + DB_PATH);
+				Log.d("CityExplorer","Failed to copy "+DB_NAME+" to " + DB_PATH);
 				io.printStackTrace();
-			}
+			}//try catch (making copy)
 			return;
-		}
-	}
+		}//try-catch (make copy)
+	}//createDataBase
 
 	@Override
 	public ArrayList<Poi> getAllPois() {
@@ -208,7 +223,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return pois;
-	}
+	}//getPoisFromCursor
 
 	@Override
 	public ArrayList<Trip> getAllEmptyTrips()
@@ -260,8 +275,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return trips;
-
-	}
+	}//getAllEmptyTrips
 
 	@Override
 	public ArrayList<Trip> getAllTrips(Boolean free)
@@ -342,7 +356,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return trips;
-	}
+	}//getAllTrips(free)
 
 	@Override
 	public ArrayList<Trip> getAllTrips()
@@ -422,7 +436,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return trips;
-	}
+	}//getAllTrips()
 
 	@Override
 	public Trip getTrip(int privateId)
@@ -532,24 +546,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		c.close();
 		if(trips.size() == 0) return null;
 		return trips.get(0);
-	}
+	}//getTrip
 
 	@Override
-	public boolean open()
-	{
-		try
-		{
+	public boolean open(){
+		Log.d("CityExplorer", DB_NAME+" creation");
+		try{
 			this.createDataBase();
-		} 
-		catch (IOException e)
-		{
+		}catch (IOException e){
 			e.printStackTrace();
 			return false;
 		}
 		myDataBase = this.openDataBase();
 
 		return (myDataBase == null) ? false : true;
-	}
+	}//open
 
 	@Override
 	public ArrayList<String> getCategoryNames() {
@@ -564,7 +575,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return categories;
-	}
+	}//getCategoryNames
 
 	@Override
 	public ArrayList<String> getUniqueCategoryNames() {
@@ -579,7 +590,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return categories;
-	}
+	}//getUniqueCategoryNames
 
 	@Override
 	public HashMap<String, Bitmap> getUniqueCategoryNamesAndIcons() {
@@ -596,7 +607,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return categories;
-	}
+	}//getUniqueCategoryNamesAndIcons
 
 	@Override
 	public int getCategoryId(String title) {
@@ -610,7 +621,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return -1;
-	}
+	}//getCategoryId
 
 	@Override
 	public void deleteFromTrip(Trip trip, Poi poi){
@@ -660,7 +671,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is not found", Toast.LENGTH_LONG).show();
 			return false;
 		}
-	}
+	}//deletePoi
 
 	@Override
 	public int newPoi(Poi poi) {
@@ -737,7 +748,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		c.close();
 		return 1;
-	}
+	}//newPoi
 
 	@Override
 	public void newTrip(Trip t) {
@@ -777,7 +788,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return -1;
-	}
+	}//getPoiPrivateIdFromGlobalId
 
 	/**
 	 * Get the trip's private id from global id.
@@ -801,7 +812,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return -1;
-	}
+	}//getTripPrivateIdFromGlobalId
 
 	/**
 	 * Method for editing an already existing PoI.
@@ -880,8 +891,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		poiValues.put("category_id", categoryId);
 		
 		c.close();
-
-	}
+	}//editPoi
 
 	@Override
 	public boolean addPoiToTrip(Trip t, Poi poi) {
@@ -947,7 +957,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			myDataBase.close();
 		}
 		super.close();
-	}
+	}//close
 
 	/**
 	 * Opens the database.

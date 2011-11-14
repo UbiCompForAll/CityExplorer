@@ -16,17 +16,15 @@
 
     <Button
         android:id="@+id/startButtonExplore"
-        style="@android:style/MediaButton"
         android:layout_width="250px"
         android:layout_height="62px"
         android:layout_alignLeft="@+id/startButtonPlan"
         android:layout_below="@+id/startButtonPlan"
         android:background="@drawable/explorebutton"
 		android:textColor="@android:color/white"
-        android:text="EXPLORE the City" />
+        android:text="@string/cityName" />
     <Button
         android:id="@+id/startButtonImport"
-        style="@android:style/MediaButton"
         android:layout_width="250px"
         android:layout_height="62px"
         android:layout_alignLeft="@+id/startButtonExplore"

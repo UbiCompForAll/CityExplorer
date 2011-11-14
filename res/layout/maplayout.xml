@@ -15,9 +15,12 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:clickable="true"
-	android:apiKey="0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA"
+	android:apiKey="05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g"
 	/>
- 
+<!--
+ Student's Key: 	android:apiKey="0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA"
+ Rune's Bærbar Key:	android:apiKey="05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g"
+--> 
 	</LinearLayout>
 
  	<LinearLayout android:id="@+id/ButtonLayout"

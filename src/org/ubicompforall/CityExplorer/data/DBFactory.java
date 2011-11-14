@@ -42,5 +42,5 @@ public class DBFactory
 		}
 		dbConnectorInstance.setContext(context);
 		return dbConnectorInstance;
-	}
-}
+	}//getInstance
+}//class DBFactory

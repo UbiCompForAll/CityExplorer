@@ -36,7 +36,7 @@ any static strings associated with maps -->
 <string name="addressLabel">Address:</string>
 <string name="categoryLabel">Category:</string>
 <string name="zipLabel">Zip:</string>
-<string name="cityLabel">City:</string>
+<string name="cityLabel">City:</string><string name="cityName">EXPLORE TRONDHEIM</string>
 <string name="editnameLabel">* Name:</string>
 <string name="editdescriptionLabel">Description:</string>
 <string name="editaddressLabel">* Address:</string>
