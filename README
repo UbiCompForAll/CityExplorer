@@ -1,9 +1,16 @@
+@AUTHOR	Rune Sætre
+@DATE	2011.11.15
+@FILE	CityExplorer/README.txt
+
 Steps for importing into Eclipse:
 ---------------------------------
-cd CityExplorer
-mkdir gen
-touch project.properties
-project->Clean
+make directory CityExplorer/gen (to hold the automatically generated files)
+edit project.properties -> Android -> "project build target" -> Choose level >= 7
+# Project target.
+target=Google Inc.:Google APIs:7
+
+project -> Clean (or restart Eclipse if necessary, to automatically rebuild)
+
 
 Steps for compiling the Android app in your debug environment:
 --------------------------------------------------------------
