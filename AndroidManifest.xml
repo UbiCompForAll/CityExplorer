@@ -28,7 +28,7 @@
 		<activity android:launchMode="standard" android:name=".gui.PlanActivity"
 			android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
 				<intent-filter>
-					<action android:name="project.CityExplorer.gui.ActivityPlan" />
+					<action android:name=".gui.ActivityPlan" />
 					<category android:name="android.intent.category.DEFAULT" />
 				</intent-filter>
 			</activity>
@@ -36,7 +36,7 @@
 			<activity android:name=".gui.CalendarActivity"
 				android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 				<intent-filter>
-					<action android:name="project.CityExplorer.gui.CalendarActivity" />
+					<action android:name=".gui.CalendarActivity" />
 					<category android:name="android.intent.category.DEFAULT" />
 				</intent-filter>
 			</activity>
@@ -44,7 +44,7 @@
 	
 				android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 				<intent-filter>
-					<action android:name="project.CityExplorer.gui.PoiDetailsActivity" />
+					<action android:name=".gui.PoiDetailsActivity" />
 					<category android:name="android.intent.category.DEFAULT" />
 					<data android:mimeType="vnd.cityexplorer.cursor.item/vnd.cityexplorer.poi" />
 				</intent-filter>
@@ -59,7 +59,7 @@
 			<activity android:name=".map.MapsActivity"
 				android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 				<intent-filter>
-					<action android:name="project.CityExplorer.map.MapsActivity" />
+					<action android:name=".map.MapsActivity" />
 					<category android:name="android.intent.category.DEFAULT" />
 				</intent-filter>
 			</activity>
