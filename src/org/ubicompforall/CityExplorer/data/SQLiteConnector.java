@@ -30,7 +30,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	private String DB_PATH="";
 	
 	/** The Constant DB_NAME, which is our database name. */
-	private static final String	DB_NAME = "CityExplorer.db";
+	private static final String	DB_NAME = "CityExplorer.sqlite";
 
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase		myDataBase; 
