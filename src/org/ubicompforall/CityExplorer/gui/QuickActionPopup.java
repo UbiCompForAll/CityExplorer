@@ -245,7 +245,7 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 
 		final int index = mTrack.getChildCount() - 1;
 		mTrack.addView(view, index);
-	}
+	}//addItem
 
 	/**
 	 * Adds an item to the quick action popup.
