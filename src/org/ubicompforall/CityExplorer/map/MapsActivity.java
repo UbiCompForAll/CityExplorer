@@ -249,7 +249,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		final MapIconOverlay icon = i;
 		
 		//Toast.makeText(context, "Press incoming..."+poi.getLabel(), Toast.LENGTH_SHORT).show();
-		//System.out.println("POI CLICKED!!!!");
+		System.out.println("POI CLICKED!!!!");
 		int[] xy 	= new int[]{icon.getScreenPts().x,icon.getScreenPts().y+icon.getImage().getHeight()};
 
 		Rect rect 	= new Rect(xy[0],xy[1],xy[0],xy[1]);
@@ -328,7 +328,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		if(v.getId() == nextButton.getId())
 		{
-			//System.out.println("Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
+			System.out.println("Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
 			if(tripOverlay.getPois().size()-1 >= tripOverlay.getCurrentPoiIndex()+1)
 			{
 				prevButton.setEnabled(true);
@@ -342,7 +342,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		}
 		else if(v.getId() == prevButton.getId())
 		{
-			//System.out.println("Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
+			System.out.println("Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
 			if(tripOverlay.getCurrentPoiIndex() > 0)
 			{
 				nextButton.setEnabled(true);

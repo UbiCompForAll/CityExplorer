@@ -30,12 +30,9 @@ public class DBFactory
 	 * @param context The context
 	 * @return Single instance of DBFactory
 	 */
-	public static DatabaseInterface getInstance(Context context)
-	{
-		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false)
-		{
-			if(databaseType == DBType.SQLITE)
-			{
+	public static DatabaseInterface getInstance(Context context){
+		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
+			if(databaseType == DBType.SQLITE){
 				dbConnectorInstance = new SQLiteConnector(context);
 			}
 			dbConnectorInstance.open();

@@ -48,11 +48,11 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	 *
 	 * @param c the c
 	 * @param Icon the icon
-	 * @param possition the possition
+	 * @param position the position
 	 */
-	public MapIconOverlay(Context c, int Icon, GeoPoint possition) 
+	public MapIconOverlay(Context c, int Icon, GeoPoint position) 
 	{
-		this.p = possition;
+		this.p = position;
 		bmp = BitmapFactory.decodeResource(c.getResources(), Icon);
 		context = (MapsActivity) c;
 	}
@@ -103,12 +103,10 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	 */
 	@Override
 	public boolean onTap(GeoPoint p, MapView mapView){
-	
 		mapView.getProjection().toPixels(p,clickPoint);
 	
 		//Evaluate if the clicked point is inside the icon (+a given tolerance frame outside)
 		if( this.evaluateClick(clickPoint.x, clickPoint.y) ){
-	
 			if(poi != null){ //this is a poi icon
 				context.onPress(this);
 				return true;
@@ -174,7 +172,7 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	 */
 	public boolean evaluateClick(int x, int y){
 		if (bmp==null || clickPoint==null || screenPts==null){
-			Log.d("CityExplorer", "OOOps!");
+			Log.d("CityExplorer", "OOOps: bmp is "+bmp);
 		}else{
 			if(		clickPoint.x > screenPts.x-clickTolerance-bmp.getWidth()/2 &&
 					clickPoint.x < screenPts.x+clickTolerance+bmp.getWidth()/2 &&

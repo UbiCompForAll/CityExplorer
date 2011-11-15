@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.ubicompforall.CityExplorer.R;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -597,13 +600,18 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
 
-		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
+		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
 
 		byte[] imgData;
 		while (c.moveToNext()) {
 			imgData = c.getBlob(1);
-			categories.put(c.getString(0), BitmapFactory.decodeByteArray(imgData, 0, imgData.length));
-		}
+			Bitmap bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+			if (bmp==null){
+				Log.d("CityExplorer", "imgData.length is "+imgData.length);
+				bmp = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
+			}
+			categories.put(c.getString(0), bmp);
+		}//while more categories
 
 		c.close();
 		return categories;
@@ -943,13 +951,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
 
 	@Override
-	public boolean isOpen()
-	{
+	public boolean isOpen(){
 		if (myDataBase == null) {
 			return false;
 		}
 		return myDataBase.isOpen();
-	}
+	}//isOpen
 
 	@Override
 	public synchronized void close() {
