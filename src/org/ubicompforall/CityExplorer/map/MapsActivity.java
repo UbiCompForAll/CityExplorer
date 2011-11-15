@@ -111,7 +111,6 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * Draw overlays.
 	 */
 	private void drawOverlays(){
-		
 		HashMap<String, Bitmap> categoryIcons = DBFactory.getInstance(this).getUniqueCategoryNamesAndIcons();
 		
 		if( getIntent().hasExtra(IntentPassable.TRIP)){ //Draw a Trip if present
