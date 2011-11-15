@@ -34,6 +34,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	private String DB_PATH="";
 	
 	/** The Constant DB_NAME, which is our database name. */
+	//private static final String	DB_NAME = "CityExplorer.backup.db";
 	private static final String	DB_NAME = "CityExplorer.sqlite";
 
 	/** The SQLiteDatabase object we are using. */
@@ -104,8 +105,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		byte[] 			buffer 		= new byte[1024 * 64];
 		int 			bytesRead;
 
-		//myDataBase = getReadableDatabase();
-		Log.d("CityExplorer",DB_NAME+" was enpty, make a copy");
+		Log.d("CityExplorer", "Make copy of default "+DB_NAME+" to "+myPath);
 		try {
 			osDbPath = new FileOutputStream(myPath);
 
@@ -496,9 +496,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public boolean open(){
 		//Log.d("CityExplorer", "Opening SQLite connector to "+DB_NAME);
 		myDataBase = openDataBase();
-		long poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
+		long poiCount = 0;
+		try{
+			poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
+		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
+		}
 		Log.d("CityExplorer", "poi-count is "+poiCount );
-		if ( poiCount ==0 ){
+		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
 			Log.d("CityExplorer", "close myDataBase, before re-open");
 			myDataBase.close();
 			try{
@@ -540,16 +544,18 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
 		byte[] imgData;
+		Bitmap defaultBmp = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
 		while (c.moveToNext()) {
 			imgData = c.getBlob(1);
-			Bitmap bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-			if (bmp==null){
+			Bitmap bmp = defaultBmp;
+			if (imgData.length>20){
 				Log.d("CityExplorer", "imgData.length is "+imgData.length);
-				bmp = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
+				bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+			}else{
+				bmp = defaultBmp;
 			}
 			categories.put(c.getString(0), bmp);
 		}//while more categories
-
 		c.close();
 		return categories;
 	}//getUniqueCategoryNamesAndIcons
@@ -811,8 +817,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			categoryId = getCategoryId(poi.getCategory());
 		}
 
-		if(categoryId == -1)
+		if(categoryId == -1){
 			System.out.println("Error getting the category_id");
+		}
 
 		int poiID = poi.getIdPrivate();
 		if(poi.getIdGlobal() != -1) poiValues.put("global_id", poi.getIdGlobal());

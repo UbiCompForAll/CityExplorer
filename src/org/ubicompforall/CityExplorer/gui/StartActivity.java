@@ -76,7 +76,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 						poiListNearBy.add(p);
 					}
 				}
-				//db.close();
+
 				if(poiListNearBy.size()>0){
 					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
 					startActivity(showInMap); 
