@@ -21,13 +21,13 @@
 <!-- im not sure whether we should invent new names or used standard ones.
 Using standard ones is likely to save us a lot of trouble, but I cant find 
 any static strings associated with maps -->
-<string name="action_mapview_poi">project.CityExplorer.map.PoiMapAcitivity</string>
+<string name="action_mapview_poi">.map.PoiMapAcitivity</string>
 
 <!-- constants -->
-<string name="constant_provider_authority">project.cityexplorer.provider.database</string>
+<string name="constant_provider_authority">.provider.database</string>
 
 <!-- can be used to initiate Intent, but not in the manifest (why?)-->
-<string name="action_plan">project.CityExplorer.gui.ActivityPlan</string>
+<string name="action_plan">.gui.ActivityPlan</string>
 <string name="map_gps_disabled_toast">GPS is currently disabled, please enable it in the phone settings menu.</string>
 
 <string name="no_notes">No data here.</string>
@@ -36,7 +36,7 @@ any static strings associated with maps -->
 <string name="addressLabel">Address:</string>
 <string name="categoryLabel">Category:</string>
 <string name="zipLabel">Zip:</string>
-<string name="cityLabel">City:</string>
+<string name="cityLabel">City:</string><string name="cityName">EXPLORE TRONDHEIM</string>
 <string name="editnameLabel">* Name:</string>
 <string name="editdescriptionLabel">Description:</string>
 <string name="editaddressLabel">* Address:</string>

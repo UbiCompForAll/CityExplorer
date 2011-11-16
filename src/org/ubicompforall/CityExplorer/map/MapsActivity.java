@@ -30,6 +30,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -38,8 +39,7 @@ import android.widget.Toast;
 /**
  * The Class MapsActivity.
  */
-public class MapsActivity extends MapActivity implements LocationListener, OnClickListener
-{
+public class MapsActivity extends MapActivity implements LocationListener, OnClickListener{
 	
 	/** The map view. */
 	private MapView mapView;
@@ -79,8 +79,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 *
 	 * @param savedInstanceState the saved instance state
 	 */
-	public void onCreate(Bundle savedInstanceState) 
-	{
+	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.maplayout);
 
@@ -104,31 +103,24 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		overlays.add(locationIcon);
 		drawOverlays();
 		
-		
-
 		initGPS();
-	}
+	}//onCreate
 
 
 	/**
 	 * Draw overlays.
 	 */
-	private void drawOverlays()
-	{
-		
+	private void drawOverlays(){
 		HashMap<String, Bitmap> categoryIcons = DBFactory.getInstance(this).getUniqueCategoryNamesAndIcons();
 		
-		if(getIntent().hasExtra(IntentPassable.TRIP))//Draw a Trip if present
-		{
+		if( getIntent().hasExtra(IntentPassable.TRIP)){ //Draw a Trip if present
 			Trip trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);
 			System.out.println("GOT TRIP ="+trip.getLabel()+" poi count:"+trip.getPois().size());
 
 			tripOverlay = new MapTripOverlay(trip);
 			overlays.add(tripOverlay);
 
-			
-			for (Poi poi : trip.getPois())
-			{	
+			for (Poi poi : trip.getPois()){
 				MapIconOverlay poiOverlay = new MapIconOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
 				poiOverlay.setPoi(poi);
 				poiOverlay.setImage(categoryIcons.get(poi.getCategory()));
@@ -136,24 +128,21 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);
 			}
-			
 			if(trip.getPois().size() > 0)
 				mapController.animateTo(trip.getPoiAt(0).getGeoPoint());//go to first poi
 			
 			nextButton.setVisibility(Button.VISIBLE);
 			prevButton.setVisibility(Button.VISIBLE);
 			
-			if(trip.getPois().size() > 1)
-			{
+			if(trip.getPois().size() > 1){
 				prevButton.setEnabled(false);
 			}
-		}
-		if(getIntent().hasExtra(IntentPassable.POILIST)) //Draw a list of POI if pressent
-		{
+		}//if (intent.hasExtra)
+		
+		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if pressent
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
-			//System.out.println(pois);
-			for (Parcelable parcelable : pois)
-			{
+			System.out.println(pois);
+			for (Parcelable parcelable : pois){
 				Poi poi = (Poi) parcelable;
 
 				MapIconOverlay poiOverlay = new MapIconOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
@@ -163,9 +152,13 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);
 			}
-			mapController.animateTo(poiOverlays.get(0).getGeoPoint());//go to first poi
-		}
-	}
+			if ( poiOverlays.get(0).getGeoPoint() != null){
+				mapController.animateTo(poiOverlays.get(0).getGeoPoint());//go to first poi
+			}else{
+				Log.d("CityExplorer", "poiOverlays is "+poiOverlays);
+			}
+		}//if (Intent.hasExtra(POILIST)
+	}//drawOverlays
 
 
 	/**
@@ -214,8 +207,9 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
 	 */
 	@Override
-	public void onProviderDisabled(String provider) 
-	{ Toast.makeText(this, R.string.map_gps_disabled_toast, 10); }
+	public void onProviderDisabled(String provider){
+		Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+	}
 
 
 	/* (non-Javadoc)
@@ -254,7 +248,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		final MapIconOverlay icon = i;
 		
 		//Toast.makeText(context, "Press incoming..."+poi.getLabel(), Toast.LENGTH_SHORT).show();
-		//System.out.println("POI CLICKED!!!!");
+		System.out.println("POI CLICKED!!!!");
 		int[] xy 	= new int[]{icon.getScreenPts().x,icon.getScreenPts().y+icon.getImage().getHeight()};
 
 		Rect rect 	= new Rect(xy[0],xy[1],xy[0],xy[1]);
@@ -333,7 +327,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		if(v.getId() == nextButton.getId())
 		{
-			//System.out.println("Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
+			System.out.println("Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
 			if(tripOverlay.getPois().size()-1 >= tripOverlay.getCurrentPoiIndex()+1)
 			{
 				prevButton.setEnabled(true);
@@ -347,7 +341,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		}
 		else if(v.getId() == prevButton.getId())
 		{
-			//System.out.println("Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
+			System.out.println("Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
 			if(tripOverlay.getCurrentPoiIndex() > 0)
 			{
 				nextButton.setEnabled(true);

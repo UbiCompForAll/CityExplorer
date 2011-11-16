@@ -22,7 +22,7 @@ public class PlanActivity extends TabActivity {
 		setContentView(R.layout.planlayout);
 
 		initTabs();
-	}
+	}//onCreate
 
 	/**
 	 * Initializes the tabs used in this activity.

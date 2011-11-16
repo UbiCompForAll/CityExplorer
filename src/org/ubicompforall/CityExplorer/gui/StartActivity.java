@@ -12,6 +12,8 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.widget.Button;
+import android.widget.Toast;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
@@ -26,7 +28,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	/**
 	 * The buttons in this activity.
 	 */
-	private Button buttonPlan, buttonExplore;
+	private Button buttonPlan, buttonExplore, buttonImport;
 	
 	/**
 	 * The user's current location.
@@ -42,47 +44,54 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		buttonPlan.setOnClickListener(this);
 		buttonExplore = (Button) findViewById(R.id.startButtonExplore);
 		buttonExplore.setOnClickListener(this);
+		buttonImport = (Button) findViewById(R.id.startButtonImport);
+		buttonImport.setOnClickListener(this);
 		
 		initGPS();
-	}
+		//startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
+	}//onCreate
 
 	@Override
 	public void onClick(View v) {
 		if (v == buttonPlan){ 
 			startActivity(new Intent(StartActivity.this, PlanActivity.class)); 
-		}
-		if (v == buttonExplore){
-			
-			Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
-			
-			DatabaseInterface db = DBFactory.getInstance(this);
-			
-			ArrayList<Poi> poiList = db.getAllPois();
-			ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
-			
-//			ExportImport.send(this, poiList);
-//			startActivity(new Intent(StartActivity.this, ExportImport.class));
-			
-			for (Poi p : poiList) {
-				double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
-				double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
-				
-				Location dest = new Location("dest");
-				dest.setLatitude(dlat);
-				dest.setLongitude(dlon);
-				
-				if(userLocation.distanceTo(dest) <= 5000){
-					poiListNearBy.add(p);
-				}
-			}
-			if(poiListNearBy.size()>0){
-				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
-			}
-			
-			startActivity(showInMap); 
-			
-		}
-	}
+
+		}else if (v == buttonImport){ 
+			startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
+
+		}else if (v == buttonExplore){
+			if(userLocation != null){
+				Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
+
+				DatabaseInterface db = DBFactory.getInstance(this);
+				ArrayList<Poi> poiList = db.getAllPois();
+				ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
+
+	//			ExportImport.send(this, poiList);
+	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
+				for (Poi p : poiList) {
+					double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
+					double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
+					
+					Location dest = new Location("dest");
+					dest.setLatitude(dlat);
+					dest.setLongitude(dlon);
+					
+					if ( userLocation.distanceTo(dest) <= 5000 ){
+						poiListNearBy.add(p);
+					}
+				}//for POIs
+				if(poiListNearBy.size()>0){
+					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
+					startActivity(showInMap); 
+				}//if POIsNearBy
+			}else{
+				Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+				Log.d("CityExplorer", " did you forget to activate GPS??! ");
+			}//if userLocation, else improvise!
+
+		}//if v== button-Plan|Explore|Import 
+	}//onClick
 
 	/**
 	 * Initializes the GPS on the device.
