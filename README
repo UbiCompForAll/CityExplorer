@@ -11,3 +11,13 @@ Replace the key in following line from CityExplorer/res/layout/maplayout.xml
 android:apiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 with the key for the machine you compile on
 
+BUGS in Android Development Toolkit (ADT)
+-----------------------------------------
+When "Graphical Layout" tab is "suddenly" replaced by "Design" (several times per day)
+ it always helps deleting the project from the Workspace, and re-importing it from Git
+(Don't forget to "commit" and "push" first!)
+
+This then "always" leads to: org.xmlpull.v1.XmlPullParserException: Binary XML file line #5:
+ <item> tag requires a 'drawable' attribute or child tag defining a drawable
+which can be solved by restarting eclipse
+
