@@ -48,7 +48,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		buttonImport.setOnClickListener(this);
 		
 		initGPS();
-		startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
+		//startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
 	}//onCreate
 
 	@Override
