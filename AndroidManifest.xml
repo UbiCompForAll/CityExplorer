@@ -18,7 +18,7 @@
 	
 		<activity android:name=".gui.StartActivity"
 			android:launchMode="singleTask" android:theme="@android:style/Theme.NoTitleBar"
-			android:screenOrientation="portrait">
+			android:screenOrientation="unspecified">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

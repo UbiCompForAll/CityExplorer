@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@drawable/background" >
+	<Button android:id="@+id/startButtonPlan" android:layout_width="250px" android:layout_height="62px"
+	   android:layout_alignParentLeft="true" android:layout_centerVertical="true" android:layout_marginLeft="50dp"
+	   android:background="@drawable/button_interactive" android:text="PLAN a TOUR" android:textColor="@android:color/white"/>
+	<Button android:id="@+id/startButtonExplore" android:layout_width="250px" android:layout_height="62px"
+	   android:layout_alignLeft="@+id/startButtonPlan" android:layout_below="@+id/startButtonPlan" android:layout_marginTop="20dp" 
+	   android:background="@drawable/button_interactive" android:text="@string/cityName" android:textColor="@android:color/white"/>
+	<Button android:id="@+id/startButtonImport" android:layout_width="250px" android:layout_height="62px"
+	     android:layout_alignParentRight="true" android:layout_centerVertical="true" android:layout_marginRight="50dp"
+	     android:background="@drawable/button_interactive" android:text="IMPORT DATA" android:textColor="@android:color/white"/>
+	</RelativeLayout>
