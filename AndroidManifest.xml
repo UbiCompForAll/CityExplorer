@@ -23,11 +23,17 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-		</activity>
+		</activity><activity android:name=".gui.ImportActivity"></activity>
 	
 		<activity android:launchMode="standard" android:name=".gui.PlanActivity"
 			android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
+				<activity android:launchMode="standard" android:name=".gui.PlanActivity"
+			android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
 				<intent-filter>
+					<action android:name=".gui.ActivityPlan" />
+					<category android:name="android.intent.category.DEFAULT" />
+				</intent-filter>
+			</activity><intent-filter>
 					<action android:name=".gui.ActivityPlan" />
 					<category android:name="android.intent.category.DEFAULT" />
 				</intent-filter>
@@ -88,6 +94,7 @@
 		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		
 	</application>
 	
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
