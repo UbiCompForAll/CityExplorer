@@ -24,4 +24,5 @@ which can be solved by restarting eclipse
 BUGS in EGit
 ============
 Resource is out of sync with the file system: '/CityExplorer/.git/refs/remotes/origin/master'.
+-Fixed by making a small change, "commit" and "push"
 
