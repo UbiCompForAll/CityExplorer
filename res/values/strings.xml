@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!-- GUI resources -->
-<string name="app_name">City Explorer</string>
+<string name="addressLabel">Address:</string>
 
 <string name="activity_plan_menu_newPoi">New Location</string>
 <string name="activity_plan_menu_sharePois">Share</string>
@@ -24,16 +24,16 @@ any static strings associated with maps -->
 <string name="action_mapview_poi">.map.PoiMapAcitivity</string>
 
 <!-- constants -->
-<string name="constant_provider_authority">.provider.database</string>
+<string name="app_name">City Explorer</string><string name="constant_provider_authority">.provider.database</string>
 
 <!-- can be used to initiate Intent, but not in the manifest (why?)-->
 <string name="action_plan">.gui.ActivityPlan</string>
-<string name="map_gps_disabled_toast">GPS is currently disabled, please enable it in the phone settings menu.</string>
+<string name="descriptionLabel">Description:</string><string name="map_gps_disabled_toast">GPS not able to get position... enable it in phone settings menu and go outside please</string>
 
 <string name="no_notes">No data here.</string>
 <string name="nameLabel">Name:</string>
-<string name="descriptionLabel">Description:</string>
-<string name="addressLabel">Address:</string>
+
+
 <string name="categoryLabel">Category:</string>
 <string name="zipLabel">Zip:</string>
 <string name="cityLabel">City:</string><string name="cityName">EXPLORE TRONDHEIM</string>
