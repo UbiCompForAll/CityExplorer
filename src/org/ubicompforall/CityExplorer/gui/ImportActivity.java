@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 /**
  * This class tracks existing DBs.
- * @author Rune Sætre
+ * @author Rune SÃ¦tre
  */
 public class ImportActivity extends Activity {
 

@@ -32,13 +32,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
 	//private static final String	DB_PATH = "/data//data/org.ubicompforall.CityExplorer/";
 	private String DB_PATH="";
-	
+
 	/** The Constant DB_NAME, which is our database name. */
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
 	private static final String	DB_NAME = "CityExplorer.sqlite";
 
 	/** The SQLiteDatabase object we are using. */
-	private SQLiteDatabase		myDataBase; 
+	private SQLiteDatabase		myDataBase;
 
 	/** The context. */
 	private Context				myContext;
@@ -50,8 +50,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	//private static final String COUNT_ALL_POIS = "SELECT Count(*) FROM "+POI_TABLE;
 
 	/** The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all POIs. */
-	private static final String SELECT_ALL_POIS= 
-		"SELECT " +				
+	private static final String SELECT_ALL_POIS=
+		"SELECT " +
 		"POI._id," +
 		"POI.title," +
 		"POI.description," +
@@ -94,8 +94,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	/**
 	 * Creates an empty database on the data/data/project-folder and rewrites it with your own database.
-	 * 
-	 * @throws IOException when the asset database file can not be read, 
+	 *
+	 * @throws IOException when the asset database file can not be read,
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
 	 * */
@@ -139,8 +139,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	@Override
 	public ArrayList<Poi> getAllPois(String category) {
 		return getPoisFromCursor(
-				myDataBase.rawQuery( 
-						SELECT_ALL_POIS + " AND CAT.title = ?", 
+				myDataBase.rawQuery(
+						SELECT_ALL_POIS + " AND CAT.title = ?",
 						new String[]{category}					// replaces ?s
 				)
 		);
@@ -150,7 +150,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public ArrayList<Poi> getAllPois(Boolean favorite){
 		return 	getPoisFromCursor(
 				myDataBase.rawQuery(
-						SELECT_ALL_POIS + " AND POI.favorite = ?", 
+						SELECT_ALL_POIS + " AND POI.favorite = ?",
 						new String[]{"" + (favorite? 1 : 0)}	// replaces ?s
 				)
 		);
@@ -160,7 +160,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public Poi getPoi(int privateId){
 		return 	getPoisFromCursor(
 				myDataBase.rawQuery(
-						SELECT_ALL_POIS + " AND POI._id = ?", 
+						SELECT_ALL_POIS + " AND POI._id = ?",
 						new String[]{""+privateId}	// replaces ?s
 				)
 		).get(0);
@@ -183,7 +183,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					).zipCode(c.getInt(4)) 	// ADDR.zipcode
 					.street(c.getString(3)) 	// ADDR.street_name
 					.longitude(c.getDouble(7))	// ADDR.lon
-					.latitude(c.getDouble(6))	// ADDR.lat 
+					.latitude(c.getDouble(6))	// ADDR.lat
 					.build()
 				).description(c.getString(2))		// POI.description
 				.category(c.getString(8))			// CAT.title
@@ -367,8 +367,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				currentTripId = trip.getIdPrivate();
 			}//if not current trip - Make new
 			Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
-					(c.getString(8/*"ADDR.city"*/)) 
-			.zipCode(c.getInt(7/*"ADDR.zipcode"*/)) 
+					(c.getString(8/*"ADDR.city"*/))
+			.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 			.street(c.getString(6/*"ADDR.street_name"*/))
 			.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 			.build()
@@ -383,7 +383,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			trip.addPoi(poi);
 			trip.setTime(poi, new Time(c.getInt(16), c.getInt(17)));
 		}//while more trips
-		if(currentTripId != -1)//next trip on the list 
+		if(currentTripId != -1)//next trip on the list
 		{
 			trips.add(trip);
 		}
@@ -466,8 +466,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					currentTripId = trip.getIdPrivate();
 				}
 				Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
-						(c.getString(8/*"ADDR.city"*/)) 
-				.zipCode(c.getInt(7/*"ADDR.zipcode"*/)) 
+						(c.getString(8/*"ADDR.city"*/))
+				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 				.street(c.getString(6/*"ADDR.street_name"*/))
 				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 				.build()
@@ -482,7 +482,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				trip.addPoi(poi);
 				trip.setTime(poi, new Time(c.getInt(16), c.getInt(17)));
 			}//while more trips
-			if(currentTripId != -1)//next trip on the list 
+			if(currentTripId != -1)//next trip on the list
 			{
 				trips.add(trip);
 			}
@@ -494,8 +494,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	@Override
 	public boolean open(){
-		//Log.d("CityExplorer", "Opening SQLite connector to "+DB_NAME);
-		myDataBase = openDataBase();
+		try{
+			myDataBase = openDataBase();
+		}catch (SQLException e){
+			Log.d("CityExplorer", "SQLiteConnector~500: FAILED Opening SQLite connector to "+myPath);
+			myDataBase=null;
+		}
 		long poiCount = 0;
 		try{
 			poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
@@ -529,7 +533,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	@Override
 	public ArrayList<String> getUniqueCategoryNames() {
-		
+
 		ArrayList<String> categories = new ArrayList<String>();
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
 		while (c.moveToNext()) {
@@ -589,7 +593,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public boolean deletePoi(Poi poi){
 		//Check if the poi is in a trip first.
 		Cursor c = myDataBase.query("trip_poi", new String[]{"trip_id"}, "poi_id = ?", new String[]{""+poi.getIdPrivate()}, null, null, null);
-		
+
 		if(c.getCount() > 0)
 		{
 			//the poi is in a trip. abort!
@@ -600,7 +604,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					trips.append(", ");
 				trips.append(this.getTrip(c.getInt(0)).getLabel());
 			}
-			
+
 			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is in "+c.getCount()+" tour"+((c.getCount() > 1) ? "s":"")+" ("+trips.toString()+")", Toast.LENGTH_LONG).show();
 			c.close();
 			return false;
@@ -637,7 +641,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		int AddressId = -1;
 		//does the address exist?
-		Cursor c = myDataBase.query("address", new String[]{"_id"}, 
+		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
 				"zipcode = ? AND " +
 				"city = ? AND " +
@@ -658,7 +662,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			myDataBase.insertOrThrow("address", null, values2);
 
 			//get the id
-			c = myDataBase.query("address", new String[]{"_id"}, 
+			c = myDataBase.query("address", new String[]{"_id"},
 					"street_name = ? AND " +
 					"zipcode = ? AND " +
 					"city = ? AND " +
@@ -762,7 +766,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	/**
 	 * Method for editing an already existing PoI.
-	 * 
+	 *
 	 * @param poi The modified poi, that is going to be saved in the database
 	 */
 	@Override
@@ -770,7 +774,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		ContentValues poiValues = new ContentValues();
 
 		int addressId = -1;
-		Cursor c = myDataBase.query("address", new String[]{"_id"}, 
+		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
 				"zipcode = ? AND " +
 				"city = ? AND " +
@@ -779,7 +783,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 				null, null, null);
 		if(c.moveToFirst()){
-			addressId = c.getInt(0);			
+			addressId = c.getInt(0);
 		}
 		else{//add the address
 			ContentValues addrValues = new ContentValues();
@@ -791,7 +795,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			myDataBase.insertOrThrow("address", null, addrValues);
 
 			//get the id
-			c = myDataBase.query("address", new String[]{"_id"}, 
+			c = myDataBase.query("address", new String[]{"_id"},
 					"street_name = ? AND " +
 					"zipcode = ? AND " +
 					"city = ? AND " +
@@ -800,7 +804,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 					null, null, null);
 			if(c.moveToFirst()){
-				addressId = c.getInt(0);				
+				addressId = c.getInt(0);
 			}
 		}
 
@@ -836,7 +840,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		poiValues.put("address_id", addressId);
 		poiValues.put("category_id", categoryId);
-		
+
 		c.close();
 	}//editPoi
 
@@ -908,17 +912,18 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @return The SQLite database that has been opened.
 	 */
 	public SQLiteDatabase openDataBase() throws SQLException {
-		Log.d("CityExplorer", "opening db: "+myPath);
-		myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE+SQLiteDatabase.CREATE_IF_NECESSARY);
-
-		/* Should not be necessary after CREATE_IF_NECESSARY above
-		if (!catalog.isDirectory()){
+		// (Re-) create DB folder in case it has been removed by the system, or for first time runs
+		File catalog = new File (DB_PATH);
+		if ( !catalog.isDirectory() ){
 			Log.d("CityExplorer","Making Catalog is "+catalog);
 			catalog.mkdir();
 			Log.d("CityExplorer","made folder for: "+myPath);
-		}
-		*/
+		}//if folder missing
+
+		Log.d("CityExplorer", "opening db: "+myPath);
+		myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE+SQLiteDatabase.CREATE_IF_NECESSARY);
+
 		return myDataBase;
 	}//openDataBase
-	
+
 }//class
