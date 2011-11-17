@@ -15,12 +15,15 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:clickable="true"
-	android:apiKey="05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g"
+	android:apiKey="05MLhk0p9hp3ISqul1fOOQfXG53U8Cv7J-I_FfA"
 	/>
-<!--
- Student's Key: 	android:apiKey="0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA"
- Rune's Bærbar Key:	android:apiKey="05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g"
---> 
+<!-- Obtain Your Own Debug Google Map API key from here:
+http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html
+ android:apiKey="
+ Student's Key: 	0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA
+ Rune's Bærbar Key:	05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g
+ Rune's MAC Key:	05MLhk0p9hp3ISqul1fOOQfXG53U8Cv7J-I_FfA
+-->
 	</LinearLayout>
 
  	<LinearLayout android:id="@+id/ButtonLayout"
@@ -28,17 +31,17 @@
 		 android:layout_alignParentTop="true"
 		 android:layout_width="wrap_content"
 		 android:layout_height="fill_parent" android:layout_marginTop="5px">
-			 
+
 			 <Button android:id="@+id/MapPrevButton"
-			 android:layout_width="wrap_content" android:drawableLeft="@android:drawable/ic_media_rew" 
+			 android:layout_width="wrap_content" android:drawableLeft="@android:drawable/ic_media_rew"
 			 android:layout_height="wrap_content"></Button>
 
 			 <!--Button android:layout_width="wrap_content"
-			 android:layout_height="wrap_content" android:id="@+id/MapDetailsButton" 
+			 android:layout_height="wrap_content" android:id="@+id/MapDetailsButton"
 			 android:layout_weight="1.0" android:text="b"></Button-->
- 
+
 			 <Button android:id="@+id/MapNextButton"
-			 android:layout_width="wrap_content" android:drawableRight="@android:drawable/ic_media_ff" 
+			 android:layout_width="wrap_content" android:drawableRight="@android:drawable/ic_media_ff"
 			 android:layout_height="wrap_content"></Button>
 
  	</LinearLayout>
