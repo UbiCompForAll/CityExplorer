@@ -198,7 +198,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 		lv.setAdapter(adapter);
 
 		initGPS();
-	}
+	}//init()
 
 	@Override
 	protected void onResume() {

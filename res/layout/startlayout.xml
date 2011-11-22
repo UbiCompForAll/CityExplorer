@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/startView"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="@drawable/background" >
 	<Button android:id="@+id/startButtonPlan" android:layout_width="250px" android:layout_height="62px"
 	    android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:layout_marginTop="200dp"
-	    android:background="@drawable/button_interactive" android:text="PLAN a TOUR" android:textColor="@android:color/white"/>
+	    android:background="@drawable/button_interactive" android:text="@string/plan" android:textColor="@android:color/white"/>
 	<Button android:id="@+id/startButtonExplore" android:layout_width="250px" android:layout_height="62px"
 	    android:layout_centerHorizontal="true" android:layout_below="@+id/startButtonPlan" android:layout_marginTop="14dp"
 	    android:background="@drawable/button_interactive" android:text="@string/cityName" android:textColor="@android:color/white"/>
-	<Button android:id="@+id/startButtonImport" android:layout_width="250px" android:layout_height="62px"
-	    android:layout_centerHorizontal="true" android:layout_below="@+id/startButtonExplore" android:layout_marginTop="14dp" android:background="@drawable/button_interactive" android:text="IMPORT DATA" android:textColor="@android:color/white"/>
+	<Button android:id="@+id/buttonSettings" android:layout_width="250px" android:layout_height="62px"
+	    android:layout_centerHorizontal="true" android:layout_below="@+id/startButtonExplore" android:layout_marginTop="14dp" 
+	    android:background="@drawable/button_interactive" android:text="@string/settings" android:textColor="@android:color/white"/>
 </RelativeLayout>

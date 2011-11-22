@@ -14,67 +14,55 @@
 
 <!-- manifest resources-->
 
-
-
-
 <!-- names of actions -->
 <!-- im not sure whether we should invent new names or used standard ones.
 Using standard ones is likely to save us a lot of trouble, but I cant find 
 any static strings associated with maps -->
-<string name="action_mapview_poi">.map.PoiMapAcitivity</string>
-
+<string name="activity_triplist_menu_delete">Delete</string><string name="action_mapview_poi">.map.PoiMapAcitivity</string>
+<string name="activity_triplist_menu_showOnMap">Show on Map</string><string name="activity_triplist_menu_addPoi">Add Location</string><string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string><string name="editfromexistingPoiLabel">Choose location entry to make new from</string>
+<string name="activity_triplist_menu_calendar">Time Table for Tour</string><string name="activity_plan_menu_addpois">Add Locations</string><string name="activity_plan_menu_updatepois">Update Locations</string><string name="activity_plan_menu_updatetrips">Update Tours</string>
+    
 <!-- constants -->
-<string name="app_name">City Explorer</string><string name="constant_provider_authority">.provider.database</string>
+<string name="app_name">City Explorer</string><string name="action_plan">.gui.ActivityPlan</string><string name="constant_provider_authority">.provider.database</string>
 
 <!-- can be used to initiate Intent, but not in the manifest (why?)-->
-<string name="action_plan">.gui.ActivityPlan</string>
-<string name="descriptionLabel">Description:</string><string name="map_gps_disabled_toast">GPS not able to get position... enable it in phone settings menu and go outside please</string>
 
+<string name="categoryLabel">Category:</string><string name="cityLabel">City:</string><string name="cityName">EXPLORE CITY</string>
+<string name="descriptionLabel">Description:</string><string name="map_gps_disabled_toast">GPS not able to get position... enable it in phone settings menu and go outside please</string>
+<string name="clearCalendar">Clear Times</string>
+<string name="chooseTrip">Choose Tour</string><string name="choosePoi">Choose Location</string><string name="default_values">Default Values</string><string name="fixedTrip">Fixed Tour</string><string name="freeTrip">Free Tour</string><string name="fromexistingLabel">Create new tour from:</string><string name="imageLabel">Image URL:</string><string name="navigateFromCurrentPos">Navigate from current position</string>
+  
 <string name="no_notes">No data here.</string>
+<string name="editcityLabel">* City:</string>
+<string name="editzipLabel">Zip:</string>
+<string name="editcategoryLabel">* Category:</string>
+<string name="editaddressLabel">* Address:</string>
+<string name="editdescriptionLabel">Description:</string>
+<string name="editnameLabel">* Name:</string>
+<string name="importdata">IMPORT DATA</string>
 <string name="nameLabel">Name:</string>
 
-
-<string name="categoryLabel">Category:</string>
-<string name="zipLabel">Zip:</string>
-<string name="cityLabel">City:</string><string name="cityName">EXPLORE TRONDHEIM</string>
-<string name="editnameLabel">* Name:</string>
-<string name="editdescriptionLabel">Description:</string>
-<string name="editaddressLabel">* Address:</string>
-<string name="editcategoryLabel">* Category:</string>
-<string name="editzipLabel">Zip:</string>
-<string name="editcityLabel">* City:</string>
-<string name="telephoneLabel">Telephone:</string>
 <string name="openingHoursLabel">Opening\nHours:</string>
-<string name="webPageLabel">Web page:</string>
-<string name="poi_details_favorite">Favourite</string>
+
+<string name="navigateFromPoi">Navigate from another location</string><string name="navigateFrom">Get Directions</string><string name="navigateButton">Navigate</string><string name="plan">PLAN TOUR</string><string name="poi_details_favorite">Favourite</string>
 <string name="poi_details_showOnMap">Show on Map</string>
 <string name="poi_details_getDirections">Get Directions</string>
-<string name="poiMenuFavorite">Favourite</string>
-<string name="poiMenuDirections">Get Directions</string>
+<string name="poiMenuFavorite">Favourite</string><string name="poiMenuDirections">Get Directions</string>
 <string name="poiMenuMap">Show on Map</string>
-<string name="saveTrip">Save Tour</string>
+<string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
 <string name="savePoi">Save Location</string>
 <string name="saveCalendar">Save Times</string>
-<string name="clearCalendar">Clear Times</string>
-<string name="navigateFromCurrentPos">Navigate from current position</string>
-<string name="navigateFromPoi">Navigate from another location</string>
-<string name="navigateFrom">Get Directions</string>
-<string name="choosePoi">Choose Location</string>
-<string name="chooseTrip">Choose Tour</string>
-<string name="navigateButton">Navigate</string>
-<string name="fixedTrip">Fixed Tour</string>
-<string name="freeTrip">Free Tour</string>
-<string name="fromexistingLabel">Create new tour from:</string>
-<string name="editfromexistingPoiLabel">Choose location entry to make new from</string>
-<string name="activity_newpoi_spinner_prompt">Choose Category</string>
-<string name="activity_newpoi_button_add">Save Location</string>
-<string name="activity_triplist_menu_addPoi">Add Location</string>
-<string name="activity_triplist_menu_showOnMap">Show on Map</string>
-<string name="activity_triplist_menu_delete">Delete</string>
-<string name="imageLabel">Image URL:</string>
-<string name="requiredFields">* required fields</string>
-<string name="activity_triplist_menu_calendar">Time Table for Tour</string>
-<string name="activity_plan_menu_updatepois">Update Locations</string>
-<string name="activity_plan_menu_updatetrips">Update Tours</string>
-<string name="activity_plan_menu_addpois">Add Locations</string>
+
+<string name="settings">SETTINGS</string><string name="summary">SUMMARY</string><string name="telephoneLabel">Telephone:</string><string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
+
+<string name="zipLabel">Zip:</string>
+
+
+
+
+
+
+
+
+
 </resources>

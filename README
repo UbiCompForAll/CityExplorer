@@ -21,6 +21,9 @@ This then "always" leads to: org.xmlpull.v1.XmlPullParserException: Binary XML f
  <item> tag requires a 'drawable' attribute or child tag defining a drawable
 which can be solved by restarting eclipse
 
+When R.java gets completely out of sync, just run Project -> Clean... every time you think
+ you have fixed the problematic res/*.xml files...
+
 BUGS in EGit
 ============
 Resource is out of sync with the file system: '/CityExplorer/.git/refs/remotes/origin/master'.
