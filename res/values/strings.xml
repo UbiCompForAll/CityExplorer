@@ -57,6 +57,10 @@ any static strings associated with maps -->
 
 <string name="zipLabel">Zip:</string>
 
+<string name="opensqlite">City Explorer</string>
+
+<string name="sqlitemimetype">application/octet-stream</string>
+
 
 
 

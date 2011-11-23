@@ -3,7 +3,7 @@
 	android:versionCode="1"
 	android:versionName="1.0" package="org.ubicompforall.CityExplorer">
 <!-- android:installLocation="preferExternal" -->
-	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="10"
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10"
 		android:maxSdkVersion="14" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -94,6 +94,13 @@
 		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".data.Sharing" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter android:label="@string/opensqlite" android:icon="@drawable/icon">
+				<action android:name="android.intent.action.VIEW"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<data android:mimeType="@string/sqlitemimetype"/>
+			</intent-filter>
+		</activity>
 		
 	</application>
 	
