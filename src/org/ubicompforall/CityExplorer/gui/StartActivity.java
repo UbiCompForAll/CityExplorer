@@ -13,7 +13,6 @@ import org.ubicompforall.CityExplorer.R;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 import android.view.View;
