@@ -147,7 +147,7 @@ public class DatabaseUpdater
 	{
 		int[] res = new int[]{0,0};
 		
-		String[] poidata = new String[13];
+		String[] poidata = new String[/*13*/ 12]; // ZIP code removed => 12
 
 		String[] lines = filetext.split("\n");
 
@@ -158,7 +158,7 @@ public class DatabaseUpdater
 			line.replace("%EOL", "\n");
 			line = line+"%EOL";//hack to make the split behave correctly
 			poidata = line.split(";");
-			poidata[12] = poidata[12].replace("%EOL", "");
+			poidata[/*12*/ 11] = poidata[/*12*/ 11].replace("%EOL", "");
 			res[handlePoiData(poidata)]++;
 		}
 
@@ -173,31 +173,31 @@ public class DatabaseUpdater
 		 * 2  description;
 		 * 3  street_name;
 // ZIP code removed
-//		 * 4  zipcode;
-		 * 5  city;
-		 * 6  lat;
-		 * 7  lon;
+//		 * x4  zipcode;
+		 * 4  city;
+		 * 5  lat;
+		 * 6  lon;
 		 * 
-		 * 8  category_title;
-		 * 9 web_page;
-		 * 10 openingHours;
-		 * 11 telephone;
-		 * 12 image_url
+		 * 7  category_title;
+		 * 8 web_page;
+		 * 9 openingHours;
+		 * 10 telephone;
+		 * 11 image_url
 		*/
 		
 		int privateId = DBFactory.getInstance(context).getPoiPrivateIdFromGlobalId(Integer.parseInt(poidata[0]));
 		
-		Poi poi = new Poi.Builder(poidata[1],new PoiAddress.Builder(poidata[5]) 
+		Poi poi = new Poi.Builder(poidata[1],new PoiAddress.Builder(poidata[/*5*/ 4]) 
 // ZIP code removed
 //		.zipCode(Integer.parseInt(poidata[4])) 
 		.street(poidata[3])
-		.longitude(Double.parseDouble(poidata[7])).latitude(Double.parseDouble(poidata[6]))
+		.longitude(Double.parseDouble(poidata[/*7*/ 6])).latitude(Double.parseDouble(poidata[/*6*/ 5]))
 		.build()
 		).description(poidata[2])
-		.category(poidata[8])
+		.category(poidata[/*8*/ 7])
 		.favourite(false)
-		.telephone(poidata[11])
-		.imageURL(poidata[12])
+		.telephone(poidata[/*11*/ 10])
+		.imageURL(poidata[/*12*/ 11])
 		.idPrivate(privateId)
 		.idGlobal(Integer.parseInt(poidata[0])).build();
 		

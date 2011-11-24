@@ -128,16 +128,16 @@ public class ExportImport extends Activity
 				 * 2  description;
 				 * 3  street_name;
 // ZIP code removed
-//				 * 4  zipcode;
-				 * 5  city;
-				 * 6  lat;
-				 * 7  lon;
+//				 * x4  zipcode;
+				 * 4  city;
+				 * 5  lat;
+				 * 6  lon;
 				 * 
-				 * 8  category_title;
-				 * 9 web_page;
-				 * 10 openingHours;
-				 * 11 telephone;
-				 * 12 image_url
+				 * 7  category_title;
+				 * 8 web_page;
+				 * 9 openingHours;
+				 * 10 telephone;
+				 * 11 image_url
 				*/
 				osw.write(
 						poi.getIdGlobal()	+";"+

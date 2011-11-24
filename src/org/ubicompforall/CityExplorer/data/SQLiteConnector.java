@@ -61,12 +61,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	private static final boolean DEBUG = false;
 
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
-	//private static final String	DB_PATH = "/data//data/org.ubicompforall.CityExplorer/";
-	private String DB_PATH="";
+
+	//private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
+	private String DB_PATH ="";
 
 	/** The Constant DB_NAME, which is our database name. */
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
-	private static final String	DB_NAME = "CityExplorer.sqlite";
+	private static String	DB_NAME = "CityExplorer.sqlite";
 
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase		myDataBase;
@@ -113,9 +114,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		super(context, DB_NAME, null, 2);
 		this.myContext = context;
 
+// code from students 
+//		myPath = DB_PATH + DB_NAME;
+		
+/**  Code added by Rune - Does not work? */
 		File dbName = context.getDatabasePath(DB_NAME);
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
+
 		//Log.d("CityExplorer", myPath+" starting up");
 	}//SQLiteConnector CONSTRUCTOR
 
@@ -131,7 +137,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
 	 * */
-	public void createDataBase() throws IOException {
+ 
+ 	public void createDataBase() throws IOException {
+ 
 		OutputStream 	osDbPath;
 		InputStream 	isAssetDb 	= myContext.getAssets().open(DB_NAME);
 		byte[] 			buffer 		= new byte[1024 * 64];
@@ -163,6 +171,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return;
 	}//createDataBase
 
+	
 	@Override
 	public ArrayList<Poi> getAllPois() {
 		return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
@@ -204,6 +213,25 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @param c The cursor to fetch pois from.
 	 * @return The pois from the cursor.
 	 */
+	
+	/*
+	 * 0  global_id;
+	 * 1  title;
+	 * 2  description;
+	 * 3  street_name;
+//ZIP code removed
+//	 * x4  zipcode;
+	 * 4  city;
+	 * 5  lat;
+	 * 6  lon;
+	 * 
+	 * 7  category_title;
+	 * 8 web_page;
+	 * 9 openingHours;
+	 * 10 telephone;
+	 * 11 image_url
+	*/
+	
 	private ArrayList<Poi> getPoisFromCursor(Cursor c){
 		ArrayList<Poi> pois = new ArrayList<Poi>();
 		while(c.moveToNext()){
@@ -211,23 +239,23 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				new Poi.Builder(
 					c.getString(1),				// POI.title
 					new PoiAddress.Builder(
-						c.getString(5)		// ADDR.city
+						c.getString(/*5*/ 4)		// ADDR.city
 					)
 // ZIP code removed
 //					.zipCode(c.getInt(4)) 	// ADDR.zipcode
 					.street(c.getString(3)) 	// ADDR.street_name
-					.longitude(c.getDouble(7))	// ADDR.lon
-					.latitude(c.getDouble(6))	// ADDR.lat
+					.longitude(c.getDouble(/*7*/ 6))	// ADDR.lon
+					.latitude(c.getDouble(/*6*/ 5))	// ADDR.lat
 					.build()
 				).description(c.getString(2))		// POI.description
-				.category(c.getString(8))			// CAT.title
-				.favourite((1==c.getInt(9)))		// POI.favorite
-				.openingHours(c.getString(10))		// POI.openingHours
-				.webPage(c.getString(11))			// POI.web_page
-				.telephone(c.getString(12))			// POI.telephone
+				.category(c.getString(/*8*/ 7))			// CAT.title
+				.favourite((1==c.getInt(/*9*/ 8)))		// POI.favorite
+				.openingHours(c.getString(/*10*/ 9))		// POI.openingHours
+				.webPage(c.getString(/*11*/ 10))			// POI.web_page
+				.telephone(c.getString(/*12*/ 11))			// POI.telephone
 				.idPrivate(c.getInt(0))
-				.imageURL(c.getString(13))
-				.idGlobal(c.isNull(14) ? -1:c.getInt(14))
+				.imageURL(c.getString(/*13*/ 12))
+				.idGlobal(c.isNull(/*14*/ 13) ? -1:c.getInt(/*14*/ 13))
 				.build()
 			);
 		}//while more pois

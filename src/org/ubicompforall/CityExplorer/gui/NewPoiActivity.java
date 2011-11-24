@@ -372,7 +372,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			descriptionView.setText(description);
 			addrView.setText(street);
 // ZIP code removed
-			zipView.setText(""+zip);
+//			zipView.setText(""+zip);
 			cityView.setText(city);
 			telView.setText(tel);
 			openingHoursView.setText(openingHours);
