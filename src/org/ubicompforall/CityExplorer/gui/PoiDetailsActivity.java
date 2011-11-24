@@ -202,7 +202,9 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	private void showPoiDetails(Poi poi) {
 		title.setText(		poi.getLabel());
 		description.setText(poi.getDescription());
-		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getZipCode() + "\n" + poi.getAddress().getCity());
+// ZIP code removed
+//		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getZipCode() + "\n" + poi.getAddress().getCity());
+		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getCity());
 		category.setText(poi.getCategory());
 		telephone.setText(poi.getTelephone());
 		openingHours.setText(poi.getOpeningHours());

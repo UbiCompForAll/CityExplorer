@@ -516,7 +516,8 @@ final public class Poi extends IntentPassable {
 		description	= in.readString();
 		address		= new PoiAddress.Builder(in.readString())
 		.street(in.readString())
-		.zipCode(in.readInt())
+// ZIP code removed
+//		.zipCode(in.readInt())
 		.latitude(in.readDouble())
 		.longitude(in.readDouble())
 		.build();
@@ -538,7 +539,8 @@ final public class Poi extends IntentPassable {
 		out.writeString(description);
 		out.writeString(address.getCity()); 
 		out.writeString(address.getStreet());
-		out.writeInt(	address.getZipCode());
+// ZIP code removed
+//		out.writeInt(	address.getZipCode());
 		out.writeDouble(address.getLatitude());
 		out.writeDouble(address.getLongitude());
 		out.writeInt(favourite? 1 : 0);

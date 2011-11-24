@@ -172,7 +172,8 @@ public class DatabaseUpdater
 		 * 1  title;
 		 * 2  description;
 		 * 3  street_name;
-		 * 4  zipcode;
+// ZIP code removed
+//		 * 4  zipcode;
 		 * 5  city;
 		 * 6  lat;
 		 * 7  lon;
@@ -187,7 +188,8 @@ public class DatabaseUpdater
 		int privateId = DBFactory.getInstance(context).getPoiPrivateIdFromGlobalId(Integer.parseInt(poidata[0]));
 		
 		Poi poi = new Poi.Builder(poidata[1],new PoiAddress.Builder(poidata[5]) 
-		.zipCode(Integer.parseInt(poidata[4])) 
+// ZIP code removed
+//		.zipCode(Integer.parseInt(poidata[4])) 
 		.street(poidata[3])
 		.longitude(Double.parseDouble(poidata[7])).latitude(Double.parseDouble(poidata[6]))
 		.build()

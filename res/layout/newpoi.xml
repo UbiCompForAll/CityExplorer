@@ -77,20 +77,20 @@
 					android:paddingBottom="2dip" android:hint="Address" />
 			</TableRow>
 
-			<TableRow>
-				<TextView android:id="@+id/editzipLabel"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/editzipLabel" android:layout_below="@id/editaddressLabel"
-					android:textColor="#000000" android:paddingLeft="2dip"
-					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:textStyle="bold" />
-
-				<EditText android:id="@+id/editzip" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
-					android:layout_toRightOf="@id/editzipLabel" android:textColor="#000000"
-					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:hint="Zip code" />
-			</TableRow>
+//			<TableRow>
+//				<TextView android:id="@+id/editzipLabel"
+//					android:layout_width="wrap_content" android:layout_height="wrap_content"
+//					android:text="@string/editzipLabel" android:layout_below="@id/editaddressLabel"
+//					android:textColor="#000000" android:paddingLeft="2dip"
+//					android:paddingRight="2dip" android:paddingTop="2dip"
+//					android:paddingBottom="2dip" android:textStyle="bold" />
+//
+//				<EditText android:id="@+id/editzip" android:layout_width="fill_parent"
+//					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
+//					android:layout_toRightOf="@id/editzipLabel" android:textColor="#000000"
+//					android:paddingRight="2dip" android:paddingTop="2dip"
+//					android:paddingBottom="2dip" android:hint="Zip code" />
+//			</TableRow>
 
 			<TableRow>
 				<TextView android:id="@+id/editcityLabel"

@@ -127,7 +127,8 @@ public class ExportImport extends Activity
 				 * 1  title;
 				 * 2  description;
 				 * 3  street_name;
-				 * 4  zipcode;
+// ZIP code removed
+//				 * 4  zipcode;
 				 * 5  city;
 				 * 6  lat;
 				 * 7  lon;
@@ -143,7 +144,8 @@ public class ExportImport extends Activity
 						poi.getLabel()		+";"+
 						poi.getDescription().replaceAll("\n", "%EOL")+";"+
 						poi.getAddress().getStreet()+";"+
-						poi.getAddress().getZipCode()+";"+
+// ZIP code removed
+//						poi.getAddress().getZipCode()+";"+
 						poi.getAddress().getCity()+";"+
 						poi.getAddress().getLatitude()+";"+
 						poi.getAddress().getLongitude()+";"+

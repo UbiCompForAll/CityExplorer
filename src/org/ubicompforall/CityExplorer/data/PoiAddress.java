@@ -40,7 +40,8 @@ final public class PoiAddress {
 	/**
 	 * Field for containing the zip code.
 	 */
-	private final int		zipCode;
+// ZIP code removed
+//	private final int		zipCode;
 	/**
 	 * Field for containing the name of the city.
 	 */
@@ -72,7 +73,8 @@ final public class PoiAddress {
 		private String	street		= "";
 
 		/** The zip code of an address. */
-		private int		zipCode		= 0;
+// ZIP code removed
+//		private int		zipCode		= 0;
 
 		/** The latitude of an address. */
 		private double	latitude	= 0d;
@@ -128,10 +130,11 @@ final public class PoiAddress {
 		 * @param zip The zip code.
 		 * @return The builder.
 		 */
-		public Builder zipCode(int  zip){
-			this.zipCode = zip;
-			return this;
-		}
+// ZIP code removed
+//		public Builder zipCode(int  zip){
+//			this.zipCode = zip;
+//			return this;
+//		}
 
 		/**
 		 * Builds the address. Call this method after adding elements to the builder. 
@@ -151,7 +154,8 @@ final public class PoiAddress {
 	public PoiAddress(Builder b){
 		this.street		= b.street;
 		this.place		= b.place;
-		this.zipCode	= b.zipCode;
+// ZIP code removed
+//		this.zipCode	= b.zipCode;
 		this.latitude	= b.latitude;
 		this.longitude	= b.longitude;
 	}
@@ -164,7 +168,8 @@ final public class PoiAddress {
 
 		Builder temp = new Builder(this.getCity());
 		temp.street(this.getStreet());
-		temp.zipCode(this.getZipCode());
+// ZIP code removed
+//		temp.zipCode(this.getZipCode());
 		temp.latitude(this.getLatitude());
 		temp.longitude(this.getLongitude());
 		return temp;
@@ -190,9 +195,10 @@ final public class PoiAddress {
 	 * Method for getting the zip code of the address.
 	 * @return The zip code.
 	 */
-	public int getZipCode(){
-		return zipCode;
-	}
+// ZIP code removed
+//	public int getZipCode(){
+//		return zipCode;
+//	}
 
 	/**
 	 * Method for getting the longitude of the address.
@@ -227,7 +233,8 @@ final public class PoiAddress {
 		boolean same = 
 			place.		equals(cmprnd.getCity())	&&
 			street.		equals(cmprnd.getStreet())	&&
-			zipCode		== cmprnd.getZipCode()	&&
+// ZIP code removed
+//			zipCode		== cmprnd.getZipCode()	&&
 			latitude	== cmprnd.getLatitude()	&& 
 			longitude	== cmprnd.getLongitude();
 		return same;
@@ -244,7 +251,8 @@ final public class PoiAddress {
 			result = 17;
 			result = 31 * result + place.hashCode();
 			result = 31 * result + street.hashCode();
-			result = 31 * result + zipCode;
+// ZIP code removed
+//			result = 31 * result + zipCode;
 			result = 31 * result + (int) (llat^(llat>>>32));
 			result = 31 * result + (int) (llon^(llon>>>32));
 			hashCode = result;
@@ -257,7 +265,8 @@ final public class PoiAddress {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("place("		+place+		")");
-		sb.append("zipCode("	+zipCode+	")");
+// ZIP code removed
+//		sb.append("zipCode("	+zipCode+	")");
 		sb.append("street("		+street+	")");
 		sb.append("longitude("	+longitude+	")");
 		sb.append("latitude("	+latitude+	")");

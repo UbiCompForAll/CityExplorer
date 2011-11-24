@@ -87,7 +87,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +
 		"POI.description," +
 		"ADDR.street_name," +
-		"ADDR.zipcode," +
+// ZIP code removed
+//		"ADDR.zipcode," +
 		"ADDR.city," +
 		"ADDR.lat," +
 		"ADDR.lon," +
@@ -211,7 +212,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					c.getString(1),				// POI.title
 					new PoiAddress.Builder(
 						c.getString(5)		// ADDR.city
-					).zipCode(c.getInt(4)) 	// ADDR.zipcode
+					)
+// ZIP code removed
+//					.zipCode(c.getInt(4)) 	// ADDR.zipcode
 					.street(c.getString(3)) 	// ADDR.street_name
 					.longitude(c.getDouble(7))	// ADDR.lon
 					.latitude(c.getDouble(6))	// ADDR.lat
@@ -287,7 +290,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +			//4
 		"POI.description," +	//5
 		"ADDR.street_name," +	//6
-		"ADDR.zipcode," +		//7
+// ZIP code removed		
+//		"ADDR.zipcode," +		//7
 		"ADDR.city," +			//8
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
@@ -325,7 +329,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}
 			Poi poi = new Poi.Builder( c.getString(4/*"POI.title"*/),
 				new PoiAddress.Builder( c.getString(8/*"ADDR.city"*/)
-				).zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+				)
+// ZIP code removed		
+//				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 				.street(c.getString(6/*"ADDR.street_name"*/))
 				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 				.build()
@@ -359,7 +365,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +			//4
 		"POI.description," +	//5
 		"ADDR.street_name," +	//6
-		"ADDR.zipcode," +		//7
+// ZIP code removed		
+//		"ADDR.zipcode," +		//7
 		"ADDR.city," +			//8
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
@@ -399,7 +406,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}//if not current trip - Make new
 			Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
 					(c.getString(8/*"ADDR.city"*/))
-			.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+// ZIP code removed		
+//			.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 			.street(c.getString(6/*"ADDR.street_name"*/))
 			.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 			.build()
@@ -435,7 +443,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +			//4
 		"POI.description," +	//5
 		"ADDR.street_name," +	//6
-		"ADDR.zipcode," +		//7
+// ZIP code removed		
+//		"ADDR.zipcode," +		//7
 		"ADDR.city," +			//8
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
@@ -498,7 +507,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				}
 				Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
 						(c.getString(8/*"ADDR.city"*/))
-				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+// ZIP code removed		
+//				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 				.street(c.getString(6/*"ADDR.street_name"*/))
 				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 				.build()
@@ -674,11 +684,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		//does the address exist?
 		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
-				"zipcode = ? AND " +
+// ZIP code removed		
+//				"zipcode = ? AND " +
 				"city = ? AND " +
 				"lat = ? AND " +
 				"lon = ?",
-				new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+				new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 				null, null, null);
 		if(c.moveToFirst())
 			AddressId = c.getInt(0);
@@ -686,7 +698,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		{//add the address
 			ContentValues values2 = new ContentValues();
 			values2.put("street_name", poi.getAddress().getStreet());
-			values2.put("zipcode", poi.getAddress().getZipCode());
+// ZIP code removed		
+//			values2.put("zipcode", poi.getAddress().getZipCode());
 			values2.put("city", poi.getAddress().getCity());
 			values2.put("lat", poi.getAddress().getLatitude());
 			values2.put("lon", poi.getAddress().getLongitude());
@@ -695,11 +708,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			//get the id
 			c = myDataBase.query("address", new String[]{"_id"},
 					"street_name = ? AND " +
-					"zipcode = ? AND " +
+// ZIP code removed		
+//					"zipcode = ? AND " +
 					"city = ? AND " +
 					"lat = ? AND " +
 					"lon = ?",
-					new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed		
+					new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 					null, null, null);
 			if(c.moveToFirst())
 				AddressId = c.getInt(0);
@@ -807,11 +822,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		int addressId = -1;
 		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
-				"zipcode = ? AND " +
+// ZIP code removed
+//				"zipcode = ? AND " +
 				"city = ? AND " +
 				"lat = ? AND " +
 				"lon = ?",
-				new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+				new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 				null, null, null);
 		if(c.moveToFirst()){
 			addressId = c.getInt(0);
@@ -819,7 +836,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		else{//add the address
 			ContentValues addrValues = new ContentValues();
 			addrValues.put("street_name", poi.getAddress().getStreet());
-			addrValues.put("zipcode", poi.getAddress().getZipCode());
+// ZIP code removed
+//			addrValues.put("zipcode", poi.getAddress().getZipCode());
 			addrValues.put("city", poi.getAddress().getCity());
 			addrValues.put("lat", poi.getAddress().getLatitude());
 			addrValues.put("lon", poi.getAddress().getLongitude());
@@ -828,11 +846,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			//get the id
 			c = myDataBase.query("address", new String[]{"_id"},
 					"street_name = ? AND " +
-					"zipcode = ? AND " +
+// ZIP code removed
+//					"zipcode = ? AND " +
 					"city = ? AND " +
 					"lat = ? AND " +
 					"lon = ?",
-					new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+					new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 					null, null, null);
 			if(c.moveToFirst()){
 				addressId = c.getInt(0);
