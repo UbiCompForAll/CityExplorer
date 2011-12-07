@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Rune S¾tre (NTNU)
+ * @contributor(s): Rune SÃ¦tre (NTNU)
  * @version: 		0.1
  * @date:			22 November 2011
  * @revised:
@@ -85,7 +85,7 @@ public class CityExplorer extends Application implements LocationListener{
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
-		
+		System.getProperty("java.version");
 	}
 
 	@Override

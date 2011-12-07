@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune S¾tre (NTNU)
+ * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sï¿½tre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
  * @revised:
@@ -203,6 +203,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	 * @param text The input text, containing only numbers.
 	 * @return An int that is converted successfully from a String.
 	 */
+	@SuppressWarnings("unused")
 	private int stringToInt(String text){
 		int n=-1;
 		try {

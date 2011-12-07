@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Jacqueline Floch (SINTEF), Rune S¾tre (NTNU)
+ * @contributor(s): Jacqueline Floch (SINTEF), Rune SÃ¦tre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
  * @revised:
@@ -61,8 +61,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-public class CalendarActivity extends Activity 
-{
+public class CalendarActivity extends Activity {
 
 	Paint mpt = new Paint();
 	int iTextHeight = ViewDayHourItem.GetTextHeight(mpt);
@@ -438,13 +437,14 @@ public class CalendarActivity extends Activity
 	public OnClickListener ocl = new OnClickListener() {
 		
 		@Override
-		public void onClick(View v) 
-		{
-			if(v instanceof poiTextView)
-			{
+		public void onClick(View v){
+			//super.onClick(v); This doesn't work, tells me "OnClickListener" is actually "Object" ?!
+			/*The problem was actually that Project -> Settings -> Java -> Compiler was set to 1.7 (too high for android!)
+			and the project-specific -> Configure -> was set to 1.5 (too LOW to Override Interfaces (only classes)!
+			*/ 
+			if(v instanceof poiTextView){
 				poiTextView tv = (poiTextView)v;
-				if(tv.isWalkingEntry())// walking directions
-				{
+				if( tv.isWalkingEntry() )	{ // walking directions
 					Poi prevPoi = trip.getPois().get(trip.getPois().indexOf(tv.getPoi())-1); 
 					
 					Uri uri = Uri.parse("http://maps.google.com/maps?f=d&source=s_d&saddr="+
@@ -452,7 +452,7 @@ public class CalendarActivity extends Activity
 					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 					startActivity(intent);
 					return;
-				}
+				}//if walking
 				
 				System.out.println("Clicked: "+tv.getPoi().getLabel());
 				Intent details = new Intent(CalendarActivity.this, PoiDetailsActivity.class);
@@ -461,7 +461,7 @@ public class CalendarActivity extends Activity
 				details.putExtra("poiNumber", trip.getPois().indexOf(tv.getPoi()));
 
 				startActivityForResult(details, PoiDetailsActivity.POI_TRIP_POS);
-			}
-		}
+			}//if poiTV
+		}//onclick
 	};
 }
