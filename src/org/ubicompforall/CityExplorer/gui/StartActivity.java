@@ -20,12 +20,12 @@
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
- * 
+ *
  */
 
 /**
  * @description:
- * 
+ *
  */
 
 package org.ubicompforall.CityExplorer.gui;
@@ -58,7 +58,7 @@ public class StartActivity extends Activity implements OnClickListener{
 	 * The buttons in this activity.
 	 */
 	private Button buttonPlan, buttonExplore, buttonImport;
-	
+
 	/**
 	 * The user's current location.
 	 */
@@ -68,22 +68,35 @@ public class StartActivity extends Activity implements OnClickListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
+		Log.d("CityExplorer", "StartActivity~72");
 
 		buttonPlan	 = (Button) findViewById(R.id.startButtonPlan);
-		buttonPlan.setOnClickListener(this);
+		if (buttonPlan != null){
+			buttonPlan.setOnClickListener(this);
+		}else{
+			Log.d("CityExplorer", "Plan-button was NULL ~77");
+		}
 		buttonExplore = (Button) findViewById(R.id.startButtonExplore);
-		buttonExplore.setOnClickListener(this);
+		if (buttonExplore != null){
+			buttonExplore.setOnClickListener(this);
+		}else{
+			Log.d("CityExplorer", "Explorer-button was NULL ~83");
+		}
 		buttonImport = (Button) findViewById(R.id.buttonSettings);
-		buttonImport.setOnClickListener(this);
-		
+		if (buttonImport != null){
+			buttonImport.setOnClickListener(this);
+		}else{
+			Log.d("CityExplorer", "Import-button was NULL ~90");
+		}
+
 		//initGPS(); //RS-111122 Moved to CityExplorer.java Application (Common for all activites)
-		//startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
+		//startActivity(new Intent(StartActivity.this, ImportActivity.class));
 	}//onCreate
 
 	@Override
 	public void onClick(View v) {
-		if (v == buttonPlan){ 
-			startActivity(new Intent(StartActivity.this, PlanActivity.class)); 
+		if (v == buttonPlan){
+			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
 		}else if (v == buttonImport){
 			startActivity(new Intent(StartActivity.this, ImportActivity.class));
@@ -105,18 +118,18 @@ public class StartActivity extends Activity implements OnClickListener{
 				for (Poi p : poiList) {
 					double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
 					double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
-					
+
 					Location dest = new Location("dest");
 					dest.setLatitude(dlat);
 					dest.setLongitude(dlon);
-					
+
 					if ( userLocation.distanceTo(dest) <= 5000 ){
 						poiListNearBy.add(p);
 					}
 				}//for POIs
 				if(poiListNearBy.size()>0){
 					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
-					startActivity(showInMap); 
+					startActivity(showInMap);
 				}//if POIsNearBy
 			}else{ //userLocation == null, Check out GPS setting in CityExplorer.java
 				Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
@@ -124,10 +137,10 @@ public class StartActivity extends Activity implements OnClickListener{
 				Log.d("CityExplorer", " TODO: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
 			}//if userLocation, else improvise!
 
-		}//if v== button-Plan|Explore|Import 
+		}//if v== button-Plan|Explore|Import
 	}//onClick
 
-	
+
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
 	 * Initializes the GPS on the device.
