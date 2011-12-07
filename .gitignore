@@ -1,5 +1,6 @@
-/bin
+bin
 gen/org/ubicompforall/CityExplorer/R.java
+.settings
 .DS_Store
 */.DS_Store
 */*/.DS_Store

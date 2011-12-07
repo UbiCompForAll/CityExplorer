@@ -1,3 +1,34 @@
+/**
+ * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @version: 		0.1
+ * @date:			23 May 2011
+ * @revised:
+ *
+ * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * for the UbiCompForAll project
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ *
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ * 
+ */
+
+/**
+ * @description:
+ * This class handles everything that concerns adding new locations.
+ * 
+ */
+
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -30,13 +61,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-/**
- * 
- * This class handles everything that concerns adding new locations.
- * 
- * @author Kristian Greve Hagen
- *
- */
 public class NewPoiActivity extends Activity implements OnClickListener{
 
 	/** The Constant CHOOSE_POI. */
@@ -52,7 +76,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	private EditText addrView;
 	
 	/** The zip view. */
-	private EditText zipView; 
+// ZIP code removed
+//	private EditText zipView; 
 	
 	/** The city view. */
 	private EditText cityView;
@@ -97,7 +122,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	private String imageUrl;
 	
 	/** The zip code of the new poi. */
-	private int zip;
+//	ZIP code removed 
+//	private int zip;
 	
 	/** The save poi button. */
 	private Button savePoiButton;
@@ -132,7 +158,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		descriptionView = (EditText)findViewById(R.id.editdescription);
 		catView = (Spinner)findViewById(R.id.editcategory);
 		addrView = (EditText)findViewById(R.id.editaddress);
-		zipView = (EditText)findViewById(R.id.editzip);
+//	ZIP code removed
+//		zipView = (EditText)findViewById(R.id.editzip);
 		cityView = (EditText)findViewById(R.id.editcity);
 		telView = (EditText)findViewById(R.id.edittelephone);
 		openingHoursView = (EditText)findViewById(R.id.editopeningHours);
@@ -176,6 +203,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	 * @param text The input text, containing only numbers.
 	 * @return An int that is converted successfully from a String.
 	 */
+	@SuppressWarnings("unused")
 	private int stringToInt(String text){
 		int n=-1;
 		try {
@@ -200,7 +228,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		description = descriptionView.getText().toString();
 		cat = (String) catView.getSelectedItem();
 		street = addrView.getText().toString();
-		zip = stringToInt(zipView.getText().toString());
+// ZIP code removed
+//		zip = stringToInt(zipView.getText().toString());
 		city = cityView.getText().toString();
 		tel = telView.getText().toString();
 		openingHours = openingHoursView.getText().toString();
@@ -230,8 +259,9 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			StringBuilder searchString = new StringBuilder(street);
 			if( !city.trim().equals(""))
 				searchString.append(", "+city);
-			if(zip > 0)
-				searchString.append(", "+zip);
+// ZIP code removed 
+//			if(zip > 0)
+//				searchString.append(", "+zip);
 			List<Address> foundAdresses = coder.getFromLocationName(searchString.toString(), 1); //Search addresses
 
 			Address x = foundAdresses.get(0);
@@ -252,9 +282,10 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		.street(street)
 		.longitude(lon).latitude(lat);
 
-		if (zip != -1) {
-			ab.zipCode(zip);
-		}
+// ZIP code removed
+//		if (zip != -1) {
+//			ab.zipCode(zip);
+//		}
 
 		Poi p = new Poi.Builder(name, ab.build())
 		.description(description)
@@ -326,7 +357,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			String openingHours = p.getOpeningHours(); 
 			String webPage = p.getWebPage();
 			String imageUrl = p.getImageURL();
-			int zip = p.getAddress().getZipCode();
+// ZIP code removed
+//			int zip = p.getAddress().getZipCode();
 
 			int pos = 0;
 			for (String c : category) {
@@ -340,7 +372,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			nameView.setText(name);
 			descriptionView.setText(description);
 			addrView.setText(street);
-			zipView.setText(""+zip);
+// ZIP code removed
+//			zipView.setText(""+zip);
 			cityView.setText(city);
 			telView.setText(tel);
 			openingHoursView.setText(openingHours);

@@ -1,3 +1,34 @@
+/**
+ * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @version: 		0.1
+ * @date:			23 May 2011
+ * @revised:
+ *
+ * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * for the UbiCompForAll project
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ *
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ * 
+ */
+
+/**
+ * @description:
+ *
+ * 
+ */
+
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.BufferedReader;
@@ -16,10 +47,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
-/**
- * The Class ExportImport.
- * @author Christian Skjetne
- */
 public class ExportImport extends Activity
 {
 
@@ -100,23 +127,25 @@ public class ExportImport extends Activity
 				 * 1  title;
 				 * 2  description;
 				 * 3  street_name;
-				 * 4  zipcode;
-				 * 5  city;
-				 * 6  lat;
-				 * 7  lon;
+// ZIP code removed
+//				 * x4  zipcode;
+				 * 4  city;
+				 * 5  lat;
+				 * 6  lon;
 				 * 
-				 * 8  category_title;
-				 * 9 web_page;
-				 * 10 openingHours;
-				 * 11 telephone;
-				 * 12 image_url
+				 * 7  category_title;
+				 * 8 web_page;
+				 * 9 openingHours;
+				 * 10 telephone;
+				 * 11 image_url
 				*/
 				osw.write(
 						poi.getIdGlobal()	+";"+
 						poi.getLabel()		+";"+
 						poi.getDescription().replaceAll("\n", "%EOL")+";"+
 						poi.getAddress().getStreet()+";"+
-						poi.getAddress().getZipCode()+";"+
+// ZIP code removed
+//						poi.getAddress().getZipCode()+";"+
 						poi.getAddress().getCity()+";"+
 						poi.getAddress().getLatitude()+";"+
 						poi.getAddress().getLongitude()+";"+

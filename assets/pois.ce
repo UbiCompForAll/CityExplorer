@@ -1,8 +1,3 @@
-global_id;title;description;street_name;zipcode;city;lat;lon;category_title;web_page;openingHours;telephone;image_url
-1;Christian;Her bor Christian;Nedre Møllenberg gt. 63a;7014;Trondheim;63.43315;10.41564;Church;;;99253668;http://profile.ak.fbcdn.net/hprofile-ak-snc4/173903_734005110_1399312_n.jpg
-2;Kristian;Her bor Kristian;Klæbuveien 50;7030;Trondheim;63.41660;10.39838;Church;;;99493040;http://profile.ak.fbcdn.net/hprofile-ak-snc4/161190_673293926_2192295_n.jpg
-3;John Arne;Her bor John Arne;Holbergs gate 14a;7015;Trondheim;63.42728;10.41997;Church;;;48211554;http://profile.ak.fbcdn.net/hprofile-ak-snc4/174361_691235464_118748_n.jpg
-4;Tanta t beate;Butikk med klær;Nedrebakklandet 22;7014;Trondheim;63.42932;10.40373;Shopping;http://www.tantatebeate.no/;;73514609;http://www.nettkatalogen.no/logoer/listing/18397654352081.jpg
-5;Gamle Bybro;Old town bridge;Gamle bybro;7014;Trondheim;63.42826;10.40119;View;;;;http://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Oldbridgetrondheim.jpg/400px-Oldbridgetrondheim.jpg
-6;NTNU;Gløshaugen;NTNU;7491;Trondheim;63.41942;10.40199;School;;;73595000;http://www.tu.no/multimedia/archive/00027/NTNU_Gl_shaugen_hove_27700d.jpg
-7;Bare blåbær;Bær og bar;Innherredsveien 16;7014;Trondheim;63.43390;10.41244;Pub;;;;http://cache.virtualtourist.com/1/1463219-Bare_Blabaer-Trondheim.jpg
+global_id;title;description;street_name;city;lat;lon;category_title;web_page;openingHours;telephone;image_url
+1;Gamle Bybro;Old town bridge;Gamle bybro;Trondheim;63.42826;10.40119;View;;;;http://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Oldbridgetrondheim.jpg/400px-Oldbridgetrondheim.jpg
+2;NTNU GlÃ¸shaugen Campus;The Norwegian University of Science and Technology is the second largest of the eight universities in Norway.;NTNU;Trondheim;63.41942;10.40199;School;http://www.ntnu.edu/;;+4773595000;http://www.tu.no/multimedia/archive/00027/NTNU_Gl_shaugen_hove_27700d.jpg

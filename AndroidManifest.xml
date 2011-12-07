@@ -14,7 +14,7 @@
 	
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:debuggable="true">
+		android:debuggable="true" android:allowTaskReparenting="false" android:name="CityExplorer">
 	
 		<activity android:name=".gui.StartActivity"
 			android:launchMode="singleTask" android:theme="@android:style/Theme.NoTitleBar"
@@ -94,6 +94,13 @@
 		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".data.Sharing" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter android:label="@string/opensqlite" android:icon="@drawable/icon">
+				<action android:name="android.intent.action.VIEW"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<data android:mimeType="@string/sqlitemimetype"/>
+			</intent-filter>
+		</activity>
 		
 	</application>
 	

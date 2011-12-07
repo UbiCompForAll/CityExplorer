@@ -1,3 +1,33 @@
+/**
+ * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @version: 		0.1
+ * @date:			23 May 2011
+ * @revised:
+ *
+ * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * for the UbiCompForAll project
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ *
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ * 
+ */
+
+/**
+ * @description:
+ * 
+ */
+
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -12,18 +42,17 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 
-public class StartActivity extends Activity implements OnClickListener, LocationListener{
+public class StartActivity extends Activity implements OnClickListener{
+	//RS-111122, "implements LocationListener{" moved to CityExplorer.java
 
 	/**
 	 * The buttons in this activity.
@@ -44,10 +73,10 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		buttonPlan.setOnClickListener(this);
 		buttonExplore = (Button) findViewById(R.id.startButtonExplore);
 		buttonExplore.setOnClickListener(this);
-		buttonImport = (Button) findViewById(R.id.startButtonImport);
+		buttonImport = (Button) findViewById(R.id.buttonSettings);
 		buttonImport.setOnClickListener(this);
 		
-		initGPS();
+		//initGPS(); //RS-111122 Moved to CityExplorer.java Application (Common for all activites)
 		//startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
 	}//onCreate
 
@@ -56,8 +85,12 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		if (v == buttonPlan){ 
 			startActivity(new Intent(StartActivity.this, PlanActivity.class)); 
 
-		}else if (v == buttonImport){ 
-			startActivity(new Intent(StartActivity.this, ImportActivity.class)); 
+		}else if (v == buttonImport){
+			startActivity(new Intent(StartActivity.this, ImportActivity.class));
+			//DEBUG: Remove importbutton from startlayoutview
+			RelativeLayout sv = (RelativeLayout) findViewById(R.id.startView);
+			sv.removeView(v);
+
 
 		}else if (v == buttonExplore){
 			if(userLocation != null){
@@ -85,17 +118,19 @@ public class StartActivity extends Activity implements OnClickListener, Location
 					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
 					startActivity(showInMap); 
 				}//if POIsNearBy
-			}else{
+			}else{ //userLocation == null, Check out GPS setting in CityExplorer.java
 				Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 				Log.d("CityExplorer", " did you forget to activate GPS??! ");
+				Log.d("CityExplorer", " TODO: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
 			}//if userLocation, else improvise!
 
 		}//if v== button-Plan|Explore|Import 
 	}//onClick
 
+	
+	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
 	 * Initializes the GPS on the device.
-	 */
 	void initGPS()
 	{
 		// Acquire a reference to the system Location Manager
@@ -107,7 +142,8 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
-	
+
+	 Moved to CityExplorer.java common Application settings
 	@Override
 	public void onLocationChanged(Location location) {
 		this.userLocation = location;
@@ -127,4 +163,6 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
 	}
-}
+	*/
+}//class
+

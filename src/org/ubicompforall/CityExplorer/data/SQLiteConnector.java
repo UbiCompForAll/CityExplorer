@@ -1,3 +1,34 @@
+/**
+ * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @version: 		0.1
+ * @date:			23 May 2011
+ * @revised:		08 December 2011
+ *
+ * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * for the UbiCompForAll project
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ *
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ *
+ */
+
+/**
+ * @description:
+ *
+ *
+ */
+
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.File;
@@ -30,12 +61,48 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	private static final boolean DEBUG = false;
 
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
-	//private static final String	DB_PATH = "/data//data/org.ubicompforall.CityExplorer/";
-	private String DB_PATH="";
+
+	//private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
+	private String DB_PATH ="";
 
 	/** The Constant DB_NAME, which is our database name. */
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
-	private static final String	DB_NAME = "CityExplorer.sqlite";
+	private static String	DB_NAME = "CityExplorer.sqlite";
+
+	/** The Constant POI indexes */
+	private static final int	POI_global_id = 0;
+	private static final int	POI_title = 1;
+	private static final int	POI_description = 2;
+	private static final int	POI_street_name = 3;
+//	private static final int	POI_zipcode = 4;	remove
+	private static final int	POI_city = 4;
+	private static final int	POI_lat = 5;
+	private static final int	POI_lon = 6;
+	private static final int	POI_favourite = 7;
+	private static final int	POI_category = 8;
+	private static final int	POI_web_page = 9;
+	private static final int	POI_openingHours = 10;
+	private static final int	POI_telephone = 11;
+	private static final int	POI_image_url = 12;
+
+	/** The Constant POI string for SQL queries */
+	private static final String	POI_SQL_id = "POI._id";
+	private static final String	POI_SQL_global_id = "POI.global_id";
+	private static final String	POI_SQL_title = "POI.title";
+	private static final String	POI_SQL_description = "POI.description";
+	private static final String	POI_SQL_street_name = "ADDR.street_name";
+//	private static final String	POI_SQL_zipcode = "ADDR.zipcode";	not used
+	private static final String	POI_SQL_city = "ADDR.city";
+	private static final String	POI_SQL_lat = "ADDR.lat";
+	private static final String	POI_SQL_lon = "ADDR.lon";
+	private static final String	POI_SQL_favourite = "POI.favourite";
+	private static final String	POI_SQL_category = "CAT.title";
+	private static final String	POI_SQL_web_page = "POI.web_page";
+	private static final String	POI_SQL_openingHours = "POI.openingHours";
+	private static final String	POI_SQL_telephone = "POI.telephone";
+	private static final String	POI_SQL_image_url = "POI.image_url";
+
+
 
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase		myDataBase;
@@ -52,21 +119,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	/** The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all POIs. */
 	private static final String SELECT_ALL_POIS=
 		"SELECT " +
-		"POI._id," +
-		"POI.title," +
-		"POI.description," +
-		"ADDR.street_name," +
-		"ADDR.zipcode," +
-		"ADDR.city," +
-		"ADDR.lat," +
-		"ADDR.lon," +
-		"CAT.title, " +
-		"POI.favorite, " +
-		"POI.openingHours, " +
-		"POI.web_page, " +
-		"POI.telephone, " +
-		"POI.image_url, " +
-		"POI.global_id " +
+		POI_SQL_id + "," +
+		POI_SQL_global_id + "," +
+		POI_SQL_title + "," + POI_SQL_description + "," +
+		POI_SQL_street_name + "," + /* ZIP code removed + */ POI_SQL_city + "," + POI_SQL_lat + "," + POI_SQL_lon + "," +
+		POI_SQL_favourite + "," + POI_SQL_category + "," + POI_SQL_web_page + "," +
+		POI_SQL_openingHours + "," + POI_SQL_telephone + "," + POI_SQL_image_url + " " +
 		"FROM poi as POI, address as ADDR, category as CAT " +
 		"WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
 
@@ -81,10 +139,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		super(context, DB_NAME, null, 2);
 		this.myContext = context;
 
+// code from students
+//		myPath = DB_PATH + DB_NAME;
+
 		File dbName = context.getDatabasePath(DB_NAME);
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
-		//Log.d("CityExplorer", myPath+" starting up");
+
+		Log.d("CityExplorer", myPath+" starting up");
 	}//SQLiteConnector CONSTRUCTOR
 
 	@Override
@@ -99,7 +161,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
 	 * */
-	public void createDataBase() throws IOException {
+
+ 	public void createDataBase() throws IOException {
+
 		OutputStream 	osDbPath;
 		InputStream 	isAssetDb 	= myContext.getAssets().open(DB_NAME);
 		byte[] 			buffer 		= new byte[1024 * 64];
@@ -125,11 +189,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 			myDataBase = this.getReadableDatabase();
 		} catch (IOException io) {
-			Log.d("CityExplorer","Failed to copy "+DB_NAME+" to " + DB_PATH);
+			Log.d("CityExplorer","Failed to copy "+ DB_NAME + " to " + DB_PATH);
 			io.printStackTrace();
 		}//try catch (making copy)
 		return;
 	}//createDataBase
+
 
 	@Override
 	public ArrayList<Poi> getAllPois() {
@@ -172,28 +237,30 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @param c The cursor to fetch pois from.
 	 * @return The pois from the cursor.
 	 */
+
 	private ArrayList<Poi> getPoisFromCursor(Cursor c){
 		ArrayList<Poi> pois = new ArrayList<Poi>();
 		while(c.moveToNext()){
 			pois.add(
 				new Poi.Builder(
-					c.getString(1),				// POI.title
+					c.getString(POI_title),
 					new PoiAddress.Builder(
-						c.getString(5)		// ADDR.city
-					).zipCode(c.getInt(4)) 	// ADDR.zipcode
-					.street(c.getString(3)) 	// ADDR.street_name
-					.longitude(c.getDouble(7))	// ADDR.lon
-					.latitude(c.getDouble(6))	// ADDR.lat
+						c.getString(POI_city)
+					)
+//					.zipCode(c.getInt(POI_zipcode)) 	// ZIP code removed
+					.street(c.getString(POI_street_name))
+					.longitude(c.getDouble(POI_lon))
+					.latitude(c.getDouble(POI_lat))
 					.build()
-				).description(c.getString(2))		// POI.description
-				.category(c.getString(8))			// CAT.title
-				.favourite((1==c.getInt(9)))		// POI.favorite
-				.openingHours(c.getString(10))		// POI.openingHours
-				.webPage(c.getString(11))			// POI.web_page
-				.telephone(c.getString(12))			// POI.telephone
+				).description(c.getString(POI_description))
+				.category(c.getString(POI_category))
+				.favourite((1==c.getInt(POI_favourite)))
+				.openingHours(c.getString(POI_openingHours))
+				.webPage(c.getString(POI_web_page))
+				.telephone(c.getString(POI_telephone))
 				.idPrivate(c.getInt(0))
-				.imageURL(c.getString(13))
-				.idGlobal(c.isNull(14) ? -1:c.getInt(14))
+				.imageURL(c.getString(POI_image_url))
+				.idGlobal(c.isNull(POI_global_id) ? -1:c.getInt(POI_global_id))
 				.build()
 			);
 		}//while more pois
@@ -256,7 +323,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +			//4
 		"POI.description," +	//5
 		"ADDR.street_name," +	//6
-		"ADDR.zipcode," +		//7
+// ZIP code removed
+//		"ADDR.zipcode," +		//7
 		"ADDR.city," +			//8
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
@@ -292,9 +360,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				.build();
 				currentTripId = trip.getIdPrivate();
 			}
+
 			Poi poi = new Poi.Builder( c.getString(4/*"POI.title"*/),
 				new PoiAddress.Builder( c.getString(8/*"ADDR.city"*/)
-				).zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+				)
+// ZIP code removed
+//				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 				.street(c.getString(6/*"ADDR.street_name"*/))
 				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 				.build()
@@ -328,7 +399,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +			//4
 		"POI.description," +	//5
 		"ADDR.street_name," +	//6
-		"ADDR.zipcode," +		//7
+// ZIP code removed
+//		"ADDR.zipcode," +		//7
 		"ADDR.city," +			//8
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
@@ -368,7 +440,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}//if not current trip - Make new
 			Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
 					(c.getString(8/*"ADDR.city"*/))
-			.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+// ZIP code removed
+//			.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 			.street(c.getString(6/*"ADDR.street_name"*/))
 			.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 			.build()
@@ -404,7 +477,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"POI.title," +			//4
 		"POI.description," +	//5
 		"ADDR.street_name," +	//6
-		"ADDR.zipcode," +		//7
+// ZIP code removed
+//		"ADDR.zipcode," +		//7
 		"ADDR.city," +			//8
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
@@ -467,7 +541,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				}
 				Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
 						(c.getString(8/*"ADDR.city"*/))
-				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+// ZIP code removed
+//				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
 				.street(c.getString(6/*"ADDR.street_name"*/))
 				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
 				.build()
@@ -506,7 +581,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
 		}
 		Log.d("CityExplorer", "poi-count is "+poiCount );
-		//if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
+		//JF: ZIP code removed
+		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
 			Log.d("CityExplorer", "close myDataBase, before re-open");
 			myDataBase.close();
 			try{
@@ -516,7 +592,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				e.printStackTrace();
 				return false;
 			}
-		//}
+		}
 		return (myDataBase == null) ? false : true;
 	}//open
 
@@ -643,11 +719,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		//does the address exist?
 		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
-				"zipcode = ? AND " +
+// ZIP code removed
+//				"zipcode = ? AND " +
 				"city = ? AND " +
 				"lat = ? AND " +
 				"lon = ?",
-				new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+				new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 				null, null, null);
 		if(c.moveToFirst())
 			AddressId = c.getInt(0);
@@ -655,7 +733,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		{//add the address
 			ContentValues values2 = new ContentValues();
 			values2.put("street_name", poi.getAddress().getStreet());
-			values2.put("zipcode", poi.getAddress().getZipCode());
+// ZIP code removed
+//			values2.put("zipcode", poi.getAddress().getZipCode());
 			values2.put("city", poi.getAddress().getCity());
 			values2.put("lat", poi.getAddress().getLatitude());
 			values2.put("lon", poi.getAddress().getLongitude());
@@ -664,11 +743,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			//get the id
 			c = myDataBase.query("address", new String[]{"_id"},
 					"street_name = ? AND " +
-					"zipcode = ? AND " +
+// ZIP code removed
+//					"zipcode = ? AND " +
 					"city = ? AND " +
 					"lat = ? AND " +
 					"lon = ?",
-					new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+					new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 					null, null, null);
 			if(c.moveToFirst())
 				AddressId = c.getInt(0);
@@ -776,11 +857,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		int addressId = -1;
 		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
-				"zipcode = ? AND " +
+// ZIP code removed
+//				"zipcode = ? AND " +
 				"city = ? AND " +
 				"lat = ? AND " +
 				"lon = ?",
-				new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+				new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 				null, null, null);
 		if(c.moveToFirst()){
 			addressId = c.getInt(0);
@@ -788,7 +871,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		else{//add the address
 			ContentValues addrValues = new ContentValues();
 			addrValues.put("street_name", poi.getAddress().getStreet());
-			addrValues.put("zipcode", poi.getAddress().getZipCode());
+// ZIP code removed
+//			addrValues.put("zipcode", poi.getAddress().getZipCode());
 			addrValues.put("city", poi.getAddress().getCity());
 			addrValues.put("lat", poi.getAddress().getLatitude());
 			addrValues.put("lon", poi.getAddress().getLongitude());
@@ -797,11 +881,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			//get the id
 			c = myDataBase.query("address", new String[]{"_id"},
 					"street_name = ? AND " +
-					"zipcode = ? AND " +
+// ZIP code removed
+//					"zipcode = ? AND " +
 					"city = ? AND " +
 					"lat = ? AND " +
 					"lon = ?",
-					new String[]{poi.getAddress().getStreet(),""+poi.getAddress().getZipCode(),poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+// ZIP code removed
+					new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
 					null, null, null);
 			if(c.moveToFirst()){
 				addressId = c.getInt(0);

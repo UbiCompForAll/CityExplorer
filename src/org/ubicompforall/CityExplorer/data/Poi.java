@@ -1,14 +1,40 @@
+/**
+ * @contributor(s): Jaroslav Rakhmatoullin (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @version: 		0.1
+ * @date:			23 May 2011
+ * @revised:
+ *
+ * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * for the UbiCompForAll project
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ *
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ * 
+ */
+
+/**
+ * @description:
+ *
+ * 
+ */
+
 package org.ubicompforall.CityExplorer.data;
-//Runes commentar
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.android.maps.GeoPoint;
 
-/**
- * An object to represent a single poi.
- * @author Jaroslav Rakhmatoullin
- */
 final public class Poi extends IntentPassable {
 
 	/**
@@ -490,7 +516,8 @@ final public class Poi extends IntentPassable {
 		description	= in.readString();
 		address		= new PoiAddress.Builder(in.readString())
 		.street(in.readString())
-		.zipCode(in.readInt())
+// ZIP code removed
+//		.zipCode(in.readInt())
 		.latitude(in.readDouble())
 		.longitude(in.readDouble())
 		.build();
@@ -512,7 +539,8 @@ final public class Poi extends IntentPassable {
 		out.writeString(description);
 		out.writeString(address.getCity()); 
 		out.writeString(address.getStreet());
-		out.writeInt(	address.getZipCode());
+// ZIP code removed
+//		out.writeInt(	address.getZipCode());
 		out.writeDouble(address.getLatitude());
 		out.writeDouble(address.getLongitude());
 		out.writeInt(favourite? 1 : 0);
