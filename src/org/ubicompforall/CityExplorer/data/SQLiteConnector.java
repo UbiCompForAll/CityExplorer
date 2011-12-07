@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune S¾tre (NTNU)
+ * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sï¿½tre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
  * @revised:
@@ -117,12 +117,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 // code from students 
 //		myPath = DB_PATH + DB_NAME;
 		
-/**  Code added by Rune - Does not work? */
 		File dbName = context.getDatabasePath(DB_NAME);
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
 
-		//Log.d("CityExplorer", myPath+" starting up");
+		Log.d("CityExplorer", myPath+" starting up");
 	}//SQLiteConnector CONSTRUCTOR
 
 	@Override
@@ -575,7 +574,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
 		}
 		Log.d("CityExplorer", "poi-count is "+poiCount );
-		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
+// JF: ZIP code removed
+//		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
 			Log.d("CityExplorer", "close myDataBase, before re-open");
 			myDataBase.close();
 			try{
@@ -585,7 +585,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				e.printStackTrace();
 				return false;
 			}
-		}
+//		}
 		return (myDataBase == null) ? false : true;
 	}//open
 
