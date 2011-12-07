@@ -506,7 +506,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
 		}
 		Log.d("CityExplorer", "poi-count is "+poiCount );
-		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
+		//if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
 			Log.d("CityExplorer", "close myDataBase, before re-open");
 			myDataBase.close();
 			try{
@@ -516,7 +516,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				e.printStackTrace();
 				return false;
 			}
-		}
+		//}
 		return (myDataBase == null) ? false : true;
 	}//open
 
