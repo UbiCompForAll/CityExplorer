@@ -1,3 +1,3 @@
 global_id;title;description;free_trip;	poi_global_id;hour;minute;		poi_global_id;hour;minute;	.......
-1;Gruppeturen;en tur innom noen gruppemedlemmer;0;1;12;00;2;13;15;3;14;30
-2;(ch/k)ristianturen;Den kuleste turen;0;1;12;00;2;13;15
+1;Going up;first test;0;1;12;00;2;13;15;
+2;Going down;second test;0;2;12;00;1;13;15
