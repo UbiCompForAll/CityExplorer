@@ -43,6 +43,7 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
@@ -102,6 +103,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					"POI.global_id " +
 					"FROM poi as POI, address as ADDR, category as CAT " +
 					"WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
+
+	private static final String C = "CityExplorer";
 
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
@@ -366,7 +369,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			.category(c.getString(11/*"CAT.title"*/))
 			.favourite((1==c.getInt(12/*"POI.favourite"*/)))
 			.imageURL(c.getString(15))
-			.telephone(Integer.toString(c.getInt(20)))
+			.telephone(Integer.toString(c.getInt(19)))
 			.idPrivate(c.getInt(3))
 			.idGlobal(c.getInt(19)).build();
 			trip.addPoi(poi);
@@ -442,7 +445,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			.category(c.getString(11/*"CAT.title"*/))
 			.favourite((1==c.getInt(12/*"POI.favourite"*/)))
 			.imageURL(c.getString(15))
-			.telephone(Integer.toString(c.getInt(20)))
+			.telephone(Integer.toString(c.getInt(19)))	// RS-111208, Changed 20->19
 			.idPrivate(c.getInt(3))
 			.idGlobal(c.getInt(19))
 			.build();
@@ -543,7 +546,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				.category(c.getString(11/*"CAT.title"*/))
 				.favourite((1==c.getInt(12/*"POI.favourite"*/)))
 				.imageURL(c.getString(15))
-				.telephone(Integer.toString(c.getInt(20)))
+				.telephone(Integer.toString(c.getInt(19))) // RS-111208, Changed 20->19
 				.idPrivate(c.getInt(3))
 				.idGlobal(c.getInt(19))
 				.build();
@@ -615,23 +618,37 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	@Override
 	public HashMap<String, Bitmap> getUniqueCategoryNamesAndIcons() {
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
-		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
-		byte[] imgData;
-		Bitmap defaultBmp = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
+		//Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
+		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
+		Bitmap bmp = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
 		while (c.moveToNext()) {
-			imgData = c.getBlob(1);
-			Bitmap bmp = defaultBmp;
-			if (imgData.length>20){
-				Log.d("CityExplorer", "imgData.length is "+imgData.length);
-				bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-			}else{
-				bmp = defaultBmp;
+			String filename = "icons/"+c.getInt(1)+"_"+c.getString(0)+".bmp";
+			//myContext.getAssets().open(fileName);
+			Log.d(C, "Getting png for category: "+filename );
+			try{
+				InputStream isAssetPNG	= myContext.getAssets().open(filename);
+				bmp = BitmapFactory.decodeStream( isAssetPNG);
+			}catch (IOException e){
+				Log.d(C, "No picture in assets, for category "+filename+". Error: "+e);
+				categories.put(c.getString(0), bmp);
 			}
-			categories.put(c.getString(0), bmp);
 		}//while more categories
 		c.close();
 		return categories;
 	}//getUniqueCategoryNamesAndIcons
+	
+	/* RS-111208
+	 * Old code using blobs, Should be re-used for maintainability
+	 *  (tight connection in DB is much BETTER than loose connection to filename!)
+	 * byte[] imgData = c.getBlob(1);
+	Bitmap bmp = defaultBmp;
+	if (imgData.length>20){
+		Log.d("CityExplorer", "imgData.length is "+imgData.length);
+		bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+	}else{
+		bmp = defaultBmp;
+	}
+	*/
 
 	@Override
 	public int getCategoryId(String title) {

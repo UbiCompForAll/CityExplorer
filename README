@@ -1,4 +1,4 @@
-@AUTHOR	Rune Sætre
+@AUTHOR	Rune Sï¿½tre
 @DATE	2011.11.15
 @FILE	CityExplorer/README.txt
 
@@ -28,4 +28,9 @@ BUGS in EGit
 ============
 Resource is out of sync with the file system: '/CityExplorer/.git/refs/remotes/origin/master'.
 -Fixed by making a small change, "commit" and "push"
+
+When conflicts are reported, but merge tool unavailable:
+See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=354099
+Use Shell to:
+  git merge origin/master
 
