@@ -69,40 +69,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
 	private static String	DB_NAME = "CityExplorer.sqlite";
 
-	/** The Constant POI indexes */
-	private static final int	POI_global_id = 0;
-	private static final int	POI_title = 1;
-	private static final int	POI_description = 2;
-	private static final int	POI_street_name = 3;
-//	private static final int	POI_zipcode = 4;	remove
-	private static final int	POI_city = 4;
-	private static final int	POI_lat = 5;
-	private static final int	POI_lon = 6;
-	private static final int	POI_favourite = 7;
-	private static final int	POI_category = 8;
-	private static final int	POI_web_page = 9;
-	private static final int	POI_openingHours = 10;
-	private static final int	POI_telephone = 11;
-	private static final int	POI_image_url = 12;
-
-	/** The Constant POI string for SQL queries */
-	private static final String	POI_SQL_id = "POI._id";
-	private static final String	POI_SQL_global_id = "POI.global_id";
-	private static final String	POI_SQL_title = "POI.title";
-	private static final String	POI_SQL_description = "POI.description";
-	private static final String	POI_SQL_street_name = "ADDR.street_name";
-//	private static final String	POI_SQL_zipcode = "ADDR.zipcode";	not used
-	private static final String	POI_SQL_city = "ADDR.city";
-	private static final String	POI_SQL_lat = "ADDR.lat";
-	private static final String	POI_SQL_lon = "ADDR.lon";
-	private static final String	POI_SQL_favourite = "POI.favourite";
-	private static final String	POI_SQL_category = "CAT.title";
-	private static final String	POI_SQL_web_page = "POI.web_page";
-	private static final String	POI_SQL_openingHours = "POI.openingHours";
-	private static final String	POI_SQL_telephone = "POI.telephone";
-	private static final String	POI_SQL_image_url = "POI.image_url";
-
-
 
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase		myDataBase;
@@ -118,16 +84,24 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	/** The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all POIs. */
 	private static final String SELECT_ALL_POIS=
-		"SELECT " +
-		POI_SQL_id + "," +
-		POI_SQL_global_id + "," +
-		POI_SQL_title + "," + POI_SQL_description + "," +
-		POI_SQL_street_name + "," + /* ZIP code removed + */ POI_SQL_city + "," + POI_SQL_lat + "," + POI_SQL_lon + "," +
-		POI_SQL_favourite + "," + POI_SQL_category + "," + POI_SQL_web_page + "," +
-		POI_SQL_openingHours + "," + POI_SQL_telephone + "," + POI_SQL_image_url + " " +
-		"FROM poi as POI, address as ADDR, category as CAT " +
-		"WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
-
+			"SELECT " +
+					"POI._id," +
+					"POI.title," +
+					"POI.description," +
+					"ADDR.street_name," +
+// ZIP code removed "ADDR.zipcode," +
+					"ADDR.city," +
+					"ADDR.lat," +
+					"ADDR.lon," +
+					"CAT.title, " +
+					"POI.favourite, " +
+					"POI.openingHours, " +
+					"POI.web_page, " +
+					"POI.telephone, " +
+					"POI.image_url, " +
+					"POI.global_id " +
+					"FROM poi as POI, address as ADDR, category as CAT " +
+					"WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
 
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
@@ -234,33 +208,52 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	/**
 	 * Gets the pois from the cursor.
 	 *
-	 * @param c The cursor to fetch pois from.
+	 * @param c The cursor to fetch pois from the database using the query based on SELECT_ALL_POIS.
 	 * @return The pois from the cursor.
-	 */
+	 * 
+	 * The order of attributes depends of the formulation of the query SELECT_ALL_POIS
+	 *
+	 * 0  _id; 
+	 * 1  title;
+	 * 2  description;
+	 * 3  street_name;
+     * x  ZIP code removed  - 4  zipcode;
+	 * 4  city;
+	 * 5  lat;
+	 * 6  lon;
+	 * 7  category_title;
+	 * 8  favourite
+	 * 9  openingHours;
+	 * 10  web_page;
+	 * 11 telephone;
+	 * 12 image_url
+	 * 13 global_id
+	*/
 
 	private ArrayList<Poi> getPoisFromCursor(Cursor c){
 		ArrayList<Poi> pois = new ArrayList<Poi>();
 		while(c.moveToNext()){
 			pois.add(
 				new Poi.Builder(
-					c.getString(POI_title),
+					c.getString(1),								// POI.title
 					new PoiAddress.Builder(
-						c.getString(POI_city)
+						c.getString(4)							// ADDR.city
 					)
-//					.zipCode(c.getInt(POI_zipcode)) 	// ZIP code removed
-					.street(c.getString(POI_street_name))
-					.longitude(c.getDouble(POI_lon))
-					.latitude(c.getDouble(POI_lat))
+					// ZIP code removed
+//					.zipCode(c.getInt(-1))						// ADDR.zipcode
+					.street(c.getString(3))						// ADDR.street_name
+					.longitude(c.getDouble(6))					// ADDR.lon
+					.latitude(c.getDouble(5))					// ADDR.lat
 					.build()
-				).description(c.getString(POI_description))
-				.category(c.getString(POI_category))
-				.favourite((1==c.getInt(POI_favourite)))
-				.openingHours(c.getString(POI_openingHours))
-				.webPage(c.getString(POI_web_page))
-				.telephone(c.getString(POI_telephone))
-				.idPrivate(c.getInt(0))
-				.imageURL(c.getString(POI_image_url))
-				.idGlobal(c.isNull(POI_global_id) ? -1:c.getInt(POI_global_id))
+				).description(c.getString(2))					// POI.description
+				.category(c.getString(7))						// CAT.title
+				.favourite((1==c.getInt(8)))					// POI.favourite
+				.openingHours(c.getString(9))					// POI.openingHours
+				.webPage(c.getString(10))						// POI.web_page
+				.telephone(c.getString(11))						// POI.telephone
+				.idPrivate(c.getInt(0))							//POI.id (private)
+				.imageURL(c.getString(12))						//POI.image_url
+				.idGlobal(c.isNull(13) ? -1:c.getInt(13))
 				.build()
 			);
 		}//while more pois
