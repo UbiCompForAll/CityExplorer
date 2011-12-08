@@ -620,18 +620,27 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
 		//Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
-		Bitmap bmp = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
 		while (c.moveToNext()) {
+			Bitmap bmp = null;//BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
 			String filename = "icons/"+c.getInt(1)+"_"+c.getString(0)+".bmp";
-			//myContext.getAssets().open(fileName);
-			Log.d(C, "Getting png for category: "+filename );
+			filename = filename.replace(' ', '_');
+			Log.d(C, "Getting bmp for category: "+filename );
 			try{
 				InputStream isAssetPNG	= myContext.getAssets().open(filename);
 				bmp = BitmapFactory.decodeStream( isAssetPNG);
 			}catch (IOException e){
-				Log.d(C, "No picture in assets, for category "+filename+". Error: "+e);
+				Log.d(C, "No bmp in assets, for category "+filename+". Error: "+e);
+				filename = filename.replace(".bmp", ".png");
+				try{
+					InputStream isAssetPNG	= myContext.getAssets().open(filename);
+					bmp = BitmapFactory.decodeStream( isAssetPNG);
+				}catch (IOException e2){
+					Log.d(C, "No png in assets, for category "+filename+". Error: "+e2);
+					categories.put(c.getString(0), bmp);
+				}
 				categories.put(c.getString(0), bmp);
 			}
+			categories.put(c.getString(0), bmp);
 		}//while more categories
 		c.close();
 		return categories;

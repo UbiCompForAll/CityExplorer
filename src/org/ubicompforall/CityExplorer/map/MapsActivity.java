@@ -172,13 +172,15 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if pressent
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
-			System.out.println(pois);
+			//System.out.println(pois);
 			for (Parcelable parcelable : pois){
 				Poi poi = (Poi) parcelable;
 
 				MapIconOverlay poiOverlay = new MapIconOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
 				poiOverlay.setPoi(poi);
 				poiOverlay.setImage(categoryIcons.get(poi.getCategory()));
+				/*Log.d("CityExplorer", "adding image for category poi.getCagegory="+poi.getCategory()
+						+", val="+categoryIcons.get(poi.getCategory()) ); */
 
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);

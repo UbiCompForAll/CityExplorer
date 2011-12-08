@@ -340,7 +340,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	@Override
 	public void onLocationChanged(Location location) {
 		userLocation = location;
-		System.out.println("Inside onLocationChanged in PoiDetailsActivity");
+		//System.out.println("Inside onLocationChanged in PoiDetailsActivity");
 
 	}
 
