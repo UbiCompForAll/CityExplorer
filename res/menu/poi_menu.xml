@@ -5,6 +5,6 @@
 			android:title="@string/poiMenuMap" />
 		<item android:id="@+id/poiMenuDirections" android:icon="@android:drawable/ic_menu_directions"
 			android:title="@string/poiMenuDirections" />
-		<item android:id="@+id/poiMenuFavorite" android:icon="@drawable/favstar_on"
+		<item android:id="@+id/poiMenufavourite" android:icon="@drawable/favstar_on"
 			/>
 </menu>

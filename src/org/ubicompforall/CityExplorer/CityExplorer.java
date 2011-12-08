@@ -20,13 +20,13 @@
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
- * 
+ *
  */
 
 /**
  * @description:
  *
- * 
+ *
  */
 
 
@@ -50,7 +50,7 @@ import android.util.Log;
  * See samples/UbiTerms/tests/src/org.ubicompforall.ubiterms/ApiDemosApplicationTests for an example
  * of how to perform unit tests on an Application object.
  */
-public class CityExplorer extends Application implements LocationListener{
+public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
     @Override
     public void onCreate() {
@@ -59,7 +59,7 @@ public class CityExplorer extends Application implements LocationListener{
          * {@link DefaultValues} for more details.
          */
         PreferenceManager.setDefaultValues(this, R.xml.default_values, false);
-		initGPS(); //RS-111122 Moved to CityExplorer.java Application (Common for all activites)
+		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ?
     }//onCreate
 
     @Override
@@ -68,20 +68,7 @@ public class CityExplorer extends Application implements LocationListener{
     	Log.d("CityExplorer", "Save the preferences now?");
     }//onTerminate
 
-	/**
-	 * Initializes the GPS on the device.
-	 */
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//TODO: change to gps
-		onLocationChanged(lastKnownLocation); //RS-111122 Make sure the last known location is stored in global preferences
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}//initGPS
-
+    /*
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
@@ -91,21 +78,22 @@ public class CityExplorer extends Application implements LocationListener{
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+*/
+
 }//CityExplorer
 
 /*

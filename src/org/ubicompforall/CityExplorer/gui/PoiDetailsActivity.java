@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune S¾tre (NTNU)
+ * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune SÃ¦tre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
  * @revised:
@@ -267,9 +267,9 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.poi_menu, menu);
 		if(poi.isFavourite()){
-			menu.findItem(R.id.poiMenuFavorite).setIcon(R.drawable.favstar_on);
+			menu.findItem(R.id.poiMenufavourite).setIcon(R.drawable.favstar_on);
 		}else{
-			menu.findItem(R.id.poiMenuFavorite).setIcon(R.drawable.favstar_off);
+			menu.findItem(R.id.poiMenufavourite).setIcon(R.drawable.favstar_off);
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -277,7 +277,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemID = item.getItemId();
-		int favID = R.id.poiMenuFavorite;
+		int favID = R.id.poiMenufavourite;
 		int dirID = R.id.poiMenuDirections;
 		int mapID = R.id.poiMenuMap;
 		if(itemID==favID){

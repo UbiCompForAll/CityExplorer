@@ -44,10 +44,10 @@ any static strings associated with maps -->
 
 <string name="openingHoursLabel">Opening\nHours:</string>
 
-<string name="navigateFromPoi">Navigate from another location</string><string name="navigateFrom">Get Directions</string><string name="navigateButton">Navigate</string><string name="plan">PLAN TOUR</string><string name="poi_details_favorite">Favourite</string>
+<string name="navigateFromPoi">Navigate from another location</string><string name="navigateFrom">Get Directions</string><string name="navigateButton">Navigate</string><string name="plan">PLAN TOUR</string><string name="poi_details_favourite">Favourite</string>
 <string name="poi_details_showOnMap">Show on Map</string>
 <string name="poi_details_getDirections">Get Directions</string>
-<string name="poiMenuFavorite">Favourite</string><string name="poiMenuDirections">Get Directions</string>
+<string name="poiMenufavourite">Favourite</string><string name="poiMenuDirections">Get Directions</string>
 <string name="poiMenuMap">Show on Map</string>
 <string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
 <string name="savePoi">Save Location</string>
