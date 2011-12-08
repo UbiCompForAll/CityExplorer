@@ -79,9 +79,9 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 	private static String CATEGORY_SETTINGS = "catset";
 
 	/**
-	 * Field containing the list of all favorite pois.
+	 * Field containing the list of all favourite pois.
 	 */
-	private ArrayList<Poi> favoriteList = new ArrayList<Poi>();
+	private ArrayList<Poi> favouriteList = new ArrayList<Poi>();
 
 	/**
 	 * Field containing all pois.
@@ -89,9 +89,9 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 	private ArrayList<Poi> allPois = new ArrayList<Poi>();
 
 	/**
-	 * Field containing the adapter for favorite pois.
+	 * Field containing the adapter for favourite pois.
 	 */
-	private PoiAdapter favoriteAdapter;
+	private PoiAdapter favouriteAdapter;
 
 	/**
 	 * Field containing this activity's resources.
@@ -240,16 +240,16 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 	 */
 	private void makeSections()
 	{
-		favoriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favoriteList);
+		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
 		if(requestCode != DOWNLOAD_POI){			
-			adapter.addSection("Favourites", favoriteAdapter);
+			adapter.addSection("Favourites", favouriteAdapter);
 		}
 		for (Poi poi : allPois)
 		{
-			if(poi.isFavourite())//add to favorite section
+			if(poi.isFavourite())//add to favourite section
 			{
-				favoriteList.add(poi);
-				favoriteAdapter.notifyDataSetChanged();
+				favouriteList.add(poi);
+				favouriteAdapter.notifyDataSetChanged();
 			}
 			if( !adapter.getSectionNames().contains(poi.getCategory()))//category does not exist, create it.
 			{
@@ -567,14 +567,14 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 
 
 			// Declare quick actions 
-			if(p.isFavourite())// this POI is a favorite, add an option to not make it a favorite
+			if(p.isFavourite())// this POI is a favourite, add an option to not make it a favourite
 			{
 				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_on);
 				qa.addItem(favIcon,	"",	new OnClickListener(){
 
 					public void onClick(View view)
 					{
-						//set favorite off
+						//set favourite off
 						Poi poi = p;
 
 						poi = poi.modify().favourite(false).build();
@@ -586,14 +586,14 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 					}
 				});
 			}
-			else// this POI is not a favorite, add an option to make it a favorite
+			else// this POI is not a favourite, add an option to make it a favourite
 			{
 				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
 				qa.addItem(favIcon,	"",	new OnClickListener(){
 
 					public void onClick(View view)
 					{
-						//set as favorite
+						//set as favourite
 						Poi poi = p;
 
 						poi = poi.modify().favourite(true).build();
@@ -783,7 +783,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 
 				for (Poi poi : allPois)
 				{
-					if(title.equals("Favourites") && poi.isFavourite())//add to favorite section
+					if(title.equals("Favourites") && poi.isFavourite())//add to favourite section
 					{
 						list.add(poi);
 					}
@@ -796,7 +796,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				adapter.addSection(title, testAdapter);
 
 				if(title.equals("Favourites"))
-					favoriteList = list;
+					favouriteList = list;
 			}
 		}
 

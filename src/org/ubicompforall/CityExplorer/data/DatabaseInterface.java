@@ -75,11 +75,11 @@ public interface DatabaseInterface
 	public ArrayList<Poi> getAllPois(String category); 
 	
 	/**
-	 * Interface method for fetching favorite PoI's from the database.
-	 * @param favorite Status for PoIs to be fetched.
+	 * Interface method for fetching favourite PoI's from the database.
+	 * @param favourite Status for PoIs to be fetched.
 	 * @return Arraylist containing PoIs from database.
 	 */
-	public ArrayList<Poi> getAllPois(Boolean favorite);
+	public ArrayList<Poi> getAllPois(Boolean favourite);
 	
 	/**
 	 * Interface method for fetching all trips from the database.

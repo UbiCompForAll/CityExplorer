@@ -109,9 +109,10 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			startActivity(new Intent(StartActivity.this, ImportActivity.class));
 			//DEBUG: Remove importbutton from startlayoutview
 			RelativeLayout sv = (RelativeLayout) findViewById(R.id.startView);
-			sv.removeView(v);
+			//sv.removeView(v);
 
 		}else if (v.getId() == R.id.startButtonExplore){
+			Log.d(C, "Clicked: ExploreButton...");
 			if(userLocation != null){
 				Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
 

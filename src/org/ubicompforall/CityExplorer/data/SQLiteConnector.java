@@ -212,14 +212,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	}//getAllPois(category)
 
 	@Override
-	public ArrayList<Poi> getAllPois(Boolean favorite){
+	public ArrayList<Poi> getAllPois(Boolean favourite){
 		return 	getPoisFromCursor(
 				myDataBase.rawQuery(
-						SELECT_ALL_POIS + " AND POI.favorite = ?",
-						new String[]{"" + (favorite? 1 : 0)}	// replaces ?s
+						SELECT_ALL_POIS + " AND POI.favourite = ?",
+						new String[]{"" + (favourite? 1 : 0)}	// replaces ?s
 				)
 		);
-	}//getAllPois(favorite)
+	}//getAllPois(favourite)
 
 	@Override
 	public Poi getPoi(int privateId){
@@ -329,7 +329,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
 		"CAT.title," +			//11
-		"POI.favorite," +		//12
+		"POI.favourite," +		//12
 		"TP.poi_number," +		//13
 		"Trip.free_trip, " +	//14
 		"Poi.image_url, " +		//15
@@ -371,7 +371,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				.build()
 			).description(c.getString(5/*"POI.description"*/))
 			.category(c.getString(11/*"CAT.title"*/))
-			.favourite((1==c.getInt(12/*"POI.favorite"*/)))
+			.favourite((1==c.getInt(12/*"POI.favourite"*/)))
 			.imageURL(c.getString(15))
 			.telephone(Integer.toString(c.getInt(20)))
 			.idPrivate(c.getInt(3))
@@ -405,7 +405,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
 		"CAT.title," +			//11
-		"POI.favorite," +		//12
+		"POI.favourite," +		//12
 		"TP.poi_number," +		//13
 		"Trip.free_trip, " +	//14
 		"Poi.image_url, " +		//15
@@ -447,7 +447,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			.build()
 			).description(c.getString(5/*"POI.description"*/))
 			.category(c.getString(11/*"CAT.title"*/))
-			.favourite((1==c.getInt(12/*"POI.favorite"*/)))
+			.favourite((1==c.getInt(12/*"POI.favourite"*/)))
 			.imageURL(c.getString(15))
 			.telephone(Integer.toString(c.getInt(20)))
 			.idPrivate(c.getInt(3))
@@ -483,7 +483,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		"ADDR.lat," +			//9
 		"ADDR.lon," +			//10
 		"CAT.title," +			//11
-		"POI.favorite," +		//12
+		"POI.favourite," +		//12
 		"TP.poi_number," +		//13
 		"Trip.free_trip, " +	//14
 		"Poi.image_url, " +		//15
@@ -548,7 +548,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				.build()
 				).description(c.getString(5/*"POI.description"*/))
 				.category(c.getString(11/*"CAT.title"*/))
-				.favourite((1==c.getInt(12/*"POI.favorite"*/)))
+				.favourite((1==c.getInt(12/*"POI.favourite"*/)))
 				.imageURL(c.getString(15))
 				.telephone(Integer.toString(c.getInt(20)))
 				.idPrivate(c.getInt(3))
@@ -592,7 +592,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				e.printStackTrace();
 				return false;
 			}
-		}
+		}// if empty database, copy from assets
 		return (myDataBase == null) ? false : true;
 	}//open
 
@@ -764,7 +764,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		values3.put("title", poi.getLabel());
 		values3.put("description", poi.getDescription());
 		values3.put("category_id", categoryId);
-		values3.put("favorite", poi.isFavourite());
+		values3.put("favourite", poi.isFavourite());
 		values3.put("address_id", AddressId);
 		values3.put("web_page", poi.getWebPage());
 		values3.put("openingHours", poi.getOpeningHours());
@@ -913,7 +913,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		int poiID = poi.getIdPrivate();
 		if(poi.getIdGlobal() != -1) poiValues.put("global_id", poi.getIdGlobal());
-		poiValues.put("favorite", poi.isFavourite());
+		poiValues.put("favourite", poi.isFavourite());
 		poiValues.put("description", poi.getDescription());
 		poiValues.put("title", poi.getLabel());
 		poiValues.put("telephone", poi.getTelephone());

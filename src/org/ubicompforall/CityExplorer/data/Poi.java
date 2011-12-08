@@ -120,7 +120,7 @@ final public class Poi extends IntentPassable {
 		/** The description of a poi. */
 		private String	description	= "";
 
-		/** A boolean describing if this poi is a favorite or not. */
+		/** A boolean describing if this poi is a favourite or not. */
 		private boolean	favourite	= false;
 
 		/** The category the poi is assigned. */
@@ -187,8 +187,8 @@ final public class Poi extends IntentPassable {
 		}
 
 		/**
-		 * Method for populating the favorite field.
-		 * @param fav A PoI's favorite status
+		 * Method for populating the favourite field.
+		 * @param fav A PoI's favourite status
 		 * @return The instance of the calling Builder class (returns itself)
 		 */
 		public Builder favourite(boolean fav){
