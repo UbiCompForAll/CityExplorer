@@ -270,8 +270,12 @@ final public class Trip extends IntentPassable {
 	 * @return The poi at the specified index.
 	 */
 	public Poi getPoiAt(int idx){
-		return pois.get(idx);
-	}
+		if (pois.size()>0){
+			return pois.get(idx);
+		}else{
+			return null;
+		}//if idx is valid (e.g. 0>0?)
+	}//getPoiAt(idx)
 
 	/**
 	 * Adds a poi to the trip. Remember to add it to the database.

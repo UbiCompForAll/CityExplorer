@@ -114,13 +114,14 @@ public class MapTripOverlay extends Overlay
 		for (PoiToPoi ptp : roadSegments){
 			ptp.drawRoadSegment(mapView,canvas,pencil);
 		}
-		mapView.getProjection().toPixels(trip.getPoiAt(currentPoiIndex).getGeoPoint(), currentPoiPoint);
-		Paint p = new Paint();
-		p.setColor(Color.GREEN);
-		canvas.drawCircle(currentPoiPoint.x, currentPoiPoint.y, 8, p);
-		//drawRoute(canvas, mapView, pencil);
-
-	}
+		if ( trip.getPoiAt(currentPoiIndex) != null){
+			mapView.getProjection().toPixels(trip.getPoiAt(currentPoiIndex).getGeoPoint(), currentPoiPoint);
+			Paint p = new Paint();
+			p.setColor(Color.GREEN);
+			canvas.drawCircle(currentPoiPoint.x, currentPoiPoint.y, 8, p);
+			//drawRoute(canvas, mapView, pencil);
+		}// if a POI is at the currentPoiIndex in the tour
+	}//draw current POI
 	
 	/**
 	 * Sets the current poi index.
