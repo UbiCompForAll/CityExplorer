@@ -15,7 +15,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:clickable="true"
-	android:apiKey="0M2hg6uGeHHzrQnmjPNweTu_kS8WdQtilGOSOaw"
+	android:apiKey="05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g"
 	/>
 <!-- Obtain Your Own Debug Google Map API key from here:
 http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html
@@ -23,7 +23,7 @@ http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html
  Student's Key: 	0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA
  Rune's Bærbar Key:	05MLhk0p9hp0ohMfJC89aOl6ikmUvhvaSXwoD9g
  Rune's MAC Key:	05MLhk0p9hp3ISqul1fOOQfXG53U8Cv7J-I_FfA
- Jacqueline's key: 0M2hg6uGeHHzrQnmjPNweTu_kS8WdQtilGOSOaw
+ Jacqueline's key:	0M2hg6uGeHHzrQnmjPNweTu_kS8WdQtilGOSOaw
 -->
 	</LinearLayout>
 
