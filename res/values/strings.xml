@@ -63,6 +63,7 @@ any static strings associated with maps -->
 
 
 <string name="sqlitemimetype">application/octet-stream</string>
+<string name="setlocation">SET LOCATION</string>
 
 
 

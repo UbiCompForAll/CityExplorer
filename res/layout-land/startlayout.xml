@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/startView"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="@drawable/background" >
 	<Button android:id="@+id/startButton1" android:layout_width="250px" android:layout_height="62px"
 	   android:layout_alignParentLeft="true" android:layout_centerVertical="true" android:layout_marginLeft="50dp"
 	   android:background="@drawable/button_interactive" android:text="@string/plan" android:textColor="@android:color/white"/>
-	<Button android:id="@+id/startButton2" android:layout_width="250px" android:layout_height="62px" android:layout_alignLeft="@+id/startButtonPlan" 
-	    android:layout_alignParentBottom="true" android:layout_marginBottom="41dp" android:background="@drawable/button_interactive"
-	    android:text="@string/exploreCity"  android:textColor="@android:color/white"/>
+	<Button
+	    android:id="@+id/startButton2"
+	    android:layout_width="250px"
+	    android:layout_height="62px"
+	    android:layout_alignLeft="@+id/startButton1"
+	    android:layout_alignParentBottom="true"
+	    android:layout_marginBottom="40dp"
+	    android:background="@drawable/button_interactive"
+	    android:text="@string/exploreCity"
+	    android:textColor="@android:color/white" />
 	<Button android:id="@+id/startButton3" android:layout_width="250px" android:layout_height="62px"
 	     android:layout_alignParentRight="true" android:layout_centerVertical="true" android:layout_marginRight="50dp"
 	     android:background="@drawable/button_interactive"

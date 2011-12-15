@@ -2,7 +2,7 @@
  * @contributor(s): Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			22 November 2011
- * @revised:
+ * @revised:		15 December 2011
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -26,26 +26,60 @@
 /**
  * @description: 
  * This class tracks existing DBs.
- * 
+ * This class keeps hold of the tabs used in import mode.
  */
 
 package org.ubicompforall.CityExplorer.gui;
 
 import org.ubicompforall.CityExplorer.R;
 
-import android.app.Activity;
+import android.app.TabActivity;
+import android.content.*;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.*;
-import android.widget.TextView;
+import android.widget.*;
 
-public class ImportActivity extends Activity {
+public class ImportActivity extends TabActivity {
 
+//	OLD IDEA
+//	public void onCreate(Bundle savedInstanceState){
+//		super.onCreate(savedInstanceState);
+//
+//		setContentView(R.layout.importview);
+//		TextView tv = (TextView) findViewById(R.id.importTV);
+//		tv.setText("WHOOPIE!");
+//	}//onCreate
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.tablayout);
 
-		setContentView(R.layout.importview);
-		TextView tv = (TextView) findViewById(R.id.importTV);
-		tv.setText("WHOOPIE!");
+		initTabs();
 	}//onCreate
+
+	/**
+	 * Initializes the tabs used in this activity.
+	 */
+	private void initTabs() {
+		Resources res = getResources(); // Resource object to get Drawables
+		TabHost tabHost = getTabHost();  // The activity TabHost
+		TabHost.TabSpec spec;  // Reusable TabSpec for each tab
+		Intent intent;  // Reusable Intent for each tab
+
+		intent = new Intent().setClass(this, ImportTabLocal.class);
+		spec = tabHost.newTabSpec("local").setIndicator("LOCAL", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
+		tabHost.addTab(spec);
+		
+		intent = new Intent().setClass(this, PlanTabTrip.class);
+		spec = tabHost.newTabSpec("web").setIndicator("WEB", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
+		tabHost.addTab(spec);
+
+		tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#000000"));
+		tabHost.getTabWidget().getChildAt(1).setBackgroundColor(Color.parseColor("#000000"));
+
+		tabHost.setCurrentTab(0);
+	}//initTabs
 
 }//class

@@ -42,7 +42,6 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.util.Log;
 import android.view.View;
@@ -82,7 +81,11 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
-		//startActivity(new Intent(StartActivity.this, ImportActivity.class));
+
+		
+		//startActivity(new Intent(this, ImportActivity.class));
+		
+		
 	}//onCreate
 
 	@Override
@@ -93,12 +96,12 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 	public void setButtonListeners(Button[] buttons, int[] buttonIds) {
 		if (buttons.length == buttonIds.length){
-			for(int b=0; b<buttonIds.length; b++){
+			for(Integer b=0; b<buttonIds.length; b++){
 				buttons[b] = (Button) findViewById(buttonIds[b]);
 				if (buttons[b] != null){
 					buttons[b].setOnClickListener(this);
 				}else{
-					Log.d("CityExplorer", "~92: BUTTON["+b+"] was NULL for "+buttons);
+					Log.d("CityExplorer", "StartActivity~100: BUTTON["+b+"] was NULL for "+buttons);
 				}//if button not found
 			}//for each startButton
 		}else{
@@ -147,9 +150,6 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 		}else if (v.getId() == R.id.startButton3){
 			startActivity(new Intent(StartActivity.this, SettingsActivity.class));
-			//DEBUG: Remove importbutton from startlayoutview
-			RelativeLayout sv = (RelativeLayout) findViewById(R.id.startView);
-			//sv.removeView(v);
 
 		}else{
 			Log.d(C, "Unknown button clicked: "+v);

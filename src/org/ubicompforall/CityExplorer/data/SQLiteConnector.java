@@ -43,7 +43,7 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
+//import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;

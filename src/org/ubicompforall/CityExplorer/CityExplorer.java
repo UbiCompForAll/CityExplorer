@@ -55,7 +55,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
          * {@link DefaultValues} for more details.
          */
         PreferenceManager.setDefaultValues(this, R.xml.default_values, false);
-    	Log.d("CityExplorer", "Start CityExplorer.java");
+    	Log.d("CityExplorer", "58~Start CityExplorer.java");
 		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ?
     }//onCreate
 

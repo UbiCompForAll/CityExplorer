@@ -45,7 +45,7 @@ public class PlanActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.planlayout);
+		setContentView(R.layout.tablayout);
 
 		initTabs();
 	}//onCreate
@@ -60,11 +60,11 @@ public class PlanActivity extends TabActivity {
 		Intent intent;  // Reusable Intent for each tab
 
 		intent = new Intent().setClass(this, PlanTabPoi.class);
-		spec = tabHost.newTabSpec("poi").setIndicator("", res.getDrawable(R.drawable.plan_tab_poi_selector)).setContent(intent);
+		spec = tabHost.newTabSpec("poi").setIndicator("LOCATIONS", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 		
 		intent = new Intent().setClass(this, PlanTabTrip.class);
-		spec = tabHost.newTabSpec("trip").setIndicator("", res.getDrawable(R.drawable.plan_tab_trip_selector)).setContent(intent);
+		spec = tabHost.newTabSpec("trip").setIndicator("TOURS", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 
 		tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#000000"));
