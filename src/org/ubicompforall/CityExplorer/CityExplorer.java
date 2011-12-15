@@ -52,7 +52,9 @@ import android.util.Log;
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
-    @Override
+    public static final String C = "CityExplorer";
+
+	@Override
     public void onCreate() {
         /*
          * This populates the default values from the preferences XML file. See

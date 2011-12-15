@@ -71,5 +71,5 @@ public class PlanActivity extends TabActivity {
 		tabHost.getTabWidget().getChildAt(1).setBackgroundColor(Color.parseColor("#000000"));
 
 		tabHost.setCurrentTab(0);
-	}  
-}
+	}//initTabs
+}//PlanActivity

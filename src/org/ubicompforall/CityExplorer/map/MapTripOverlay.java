@@ -33,6 +33,7 @@ package org.ubicompforall.CityExplorer.map;
 
 import java.util.ArrayList;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.map.route.GoogleKML;
@@ -42,6 +43,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
@@ -52,6 +54,8 @@ import com.google.android.maps.Overlay;
  */
 public class MapTripOverlay extends Overlay
 {
+
+	private static final String C = CityExplorer.C;
 
 	/** The pencil. */
 	Paint pencil;
@@ -115,6 +119,7 @@ public class MapTripOverlay extends Overlay
 			ptp.drawRoadSegment(mapView,canvas,pencil);
 		}
 		if ( trip.getPoiAt(currentPoiIndex) != null){
+			Log.d(C, "getPoiAt(currentPoiIndex).getGeoPoint() is "+trip.getPoiAt(currentPoiIndex).getGeoPoint() );
 			mapView.getProjection().toPixels(trip.getPoiAt(currentPoiIndex).getGeoPoint(), currentPoiPoint);
 			Paint p = new Paint();
 			p.setColor(Color.GREEN);

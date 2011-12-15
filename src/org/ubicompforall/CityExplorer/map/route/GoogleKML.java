@@ -65,16 +65,13 @@ final public class GoogleKML {
 		sb.append("&dirflg=w"); 					// walking
 		sb.append("&ie=UTF8&0&om=0&output=kml");
 
-
 		try {
 			SAXParser 		parser	= SAXParserFactory.newInstance().newSAXParser();
 			URLConnection 	conn	= new URL(sb.toString()).openConnection();
 							is		= conn.getInputStream();
 
-
 			parser.parse(is , ha);
 			is.close();
-
 		} catch (ParserConfigurationException e) { e.printStackTrace();
 		} catch (SAXException e) { e.printStackTrace();
 		} catch (MalformedURLException e) { e.printStackTrace();
@@ -82,7 +79,7 @@ final public class GoogleKML {
 		}
 
 		return ha.road;
-	}
+	}//getRoad
 
 
 private final static class KMLHandler extends DefaultHandler {

@@ -31,8 +31,11 @@
 
 package org.ubicompforall.CityExplorer.data;
 
+import android.util.Log;
+
 final public class PoiAddress {
 
+	private static final String C = "CityExplorer";
 	/**
 	 * Field for containing the street name.
 	 */
@@ -64,6 +67,8 @@ final public class PoiAddress {
 	 * A Builder for the Address class. 
 	 */
 	public static class Builder {
+		private static final String C = "CityExplorer";
+
 		// Required parameters
 		/** The name of a place. */
 		private final String	place;
@@ -109,6 +114,7 @@ final public class PoiAddress {
 		 * @return The builder.
 		 */
 		public Builder latitude(double la){
+			//Log.d(C, "PoiAddress.latitude~112 is "+la);
 			this.latitude = la;
 			return this;
 		}
@@ -143,8 +149,8 @@ final public class PoiAddress {
 		 */
 		public PoiAddress build() {
 			return new PoiAddress(this); 
-		}
-	}
+		}//build
+	}//PoiAddress:Builder
 
 	/**
 	 * Constructor that builds and address object.
@@ -152,6 +158,10 @@ final public class PoiAddress {
 	 * @param b The builder.
 	 */
 	public PoiAddress(Builder b){
+//		if (b.street == null){
+//			Log.d(C, "Why was builder b.stree==null?!");
+//			this.street="";
+//		}else{
 		this.street		= b.street;
 		this.place		= b.place;
 // ZIP code removed
@@ -243,10 +253,8 @@ final public class PoiAddress {
 	@Override
 	public int hashCode() {
 		int result = hashCode;
-
 		long llat = Double.doubleToLongBits(latitude);
 		long llon = Double.doubleToLongBits(longitude);
-
 		if (result == 0){
 			result = 17;
 			result = 31 * result + place.hashCode();
@@ -262,7 +270,6 @@ final public class PoiAddress {
 
 	@Override
 	public String toString(){
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("place("		+place+		")");
 // ZIP code removed
@@ -271,5 +278,5 @@ final public class PoiAddress {
 		sb.append("longitude("	+longitude+	")");
 		sb.append("latitude("	+latitude+	")");
 		return sb.toString();
-	}
-}
+	}//toString
+}//PoiAddress

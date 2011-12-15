@@ -33,10 +33,16 @@ package org.ubicompforall.CityExplorer.data;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+
+import org.ubicompforall.CityExplorer.CityExplorer;
+
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 final public class Trip extends IntentPassable {
+
+	private static final String C = CityExplorer.C;
 
 	/** The id of a public trip. */
 	private final int idGlobal;
@@ -324,8 +330,18 @@ final public class Trip extends IntentPassable {
 	 * @param time The time you want to add to the poi.
 	 */
 	public void setTime(Poi poi, Time time){
-		fixedTimes.put(poi, time);
-	}
+		if (fixedTimes == null){
+			Log.d(C, "Why was fixedTimes in Trip not initialized?");
+			fixedTimes = new HashMap<Poi,Time>();
+		}
+		if (poi==null){
+			Log.d(C, "Why is poi null?!");
+		}else if (time==null){
+			Log.d(C, "Why is time null?!");			
+		}else{
+			fixedTimes.put(poi, time);
+		}//If no null-pointer problems...
+	}//setTime
 
 	/**
 	 * Clear times previously created.
@@ -412,7 +428,6 @@ final public class Trip extends IntentPassable {
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-
 		out.writeInt(idGlobal);
 		out.writeInt(idPrivate);
 		out.writeString(label);
@@ -431,7 +446,7 @@ final public class Trip extends IntentPassable {
 		{
 			poi.writeToParcel(out, flags);
 		}
-	}
+	}//writeToParcel
 
 	/*
 	 * Parcelable.Creator Interface

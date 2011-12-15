@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -84,6 +85,8 @@ public class SeparatedListAdapter extends BaseAdapter {
      * Constant field describing a list of downloaded pois.
      */
 	public static final int INTERNET_TRIPS = 4;
+
+	private static final String C = "CityExplorer";
 	
     /**
      * Field containing the type of list.
@@ -314,8 +317,7 @@ public class SeparatedListAdapter extends BaseAdapter {
     
     @Override
     public void notifyDataSetChanged() {
-    	if(listType == POI_LIST)
-    	{
+    	if(listType == POI_LIST){
     		DatabaseInterface db = DBFactory.getInstance(ctx);
     		for (Section s : sections) 
         	{
@@ -329,19 +331,15 @@ public class SeparatedListAdapter extends BaseAdapter {
         			((PoiAdapter)s.getAdapter()).replaceAll(db.getAllPois(s.getCaption()));
     			}
     		}
-    	}
-    	else if(listType == TRIP_LIST)
-    	{
+    	}else if(listType == TRIP_LIST){
     		DatabaseInterface db = DBFactory.getInstance(ctx);
     		sections.clear();
     		sectionNames.clear();
-    			
-    		
+    	
     		ArrayList<Trip> freeList = db.getAllTrips(true);
     		ArrayList<Trip> fixedList = db.getAllTrips(false);
     		ArrayList<Trip> emptyTripList = db.getAllEmptyTrips();
     		
-
     		TripAdapter freeAdapter, fixedAdapter, emptyTripAdapter;
     		if(freeList.size() > 0){					
     			freeAdapter = new TripAdapter(ctx, R.layout.plan_listitem, freeList);
@@ -349,13 +347,11 @@ public class SeparatedListAdapter extends BaseAdapter {
     			freeAdapter.notifyDataSetChanged();
     		}
 
-
     		if(fixedList.size() > 0){					
     			fixedAdapter = new TripAdapter(ctx, R.layout.plan_listitem, fixedList);
     			addSection("Fixed Tours", fixedAdapter);
     			fixedAdapter.notifyDataSetChanged();
     		}
-
 
     		//Make the empty trip list
     		if(emptyTripList.size() > 0){			
@@ -363,14 +359,11 @@ public class SeparatedListAdapter extends BaseAdapter {
     			addSection("Empty Tours", emptyTripAdapter);
     			emptyTripAdapter.notifyDataSetChanged();
     		}
-    		
-    	}
-    	else if(listType == INTERNET_POIS){
-			
-		}
-    	else if(listType == INTERNET_TRIPS){
-			
+    	}else if(listType == INTERNET_POIS){
+    		Log.d(C, "Missing!");
+		}else if(listType == INTERNET_TRIPS){
+    		Log.d(C, "Missing!");
 		}
     	super.notifyDataSetChanged();
-    }    
-}  
+    }//notifyDataSetChanged
+}//SeparatedListAdapter

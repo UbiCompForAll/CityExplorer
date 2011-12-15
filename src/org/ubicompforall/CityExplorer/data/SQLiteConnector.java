@@ -37,7 +37,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.ubicompforall.CityExplorer.R;
 
@@ -51,6 +55,7 @@ import android.database.sqlite.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.util.Pair;
 import android.widget.Toast;
 
 /**
@@ -307,74 +312,91 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return trips;
 	}//getAllEmptyTrips()
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Trip> getAllTrips(Boolean free){
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
-		String sqlstr = "SELECT " +
-		"TRIP._id," +			//0
-		"TRIP.title," +			//1
-		"TRIP.description," +	//2
-		"POI._id," +			//3
-		"POI.title," +			//4
-		"POI.description," +	//5
-		"ADDR.street_name," +	//6
-// ZIP code removed
-//		"ADDR.zipcode," +		//7
-		"ADDR.city," +			//8
-		"ADDR.lat," +			//9
-		"ADDR.lon," +			//10
-		"CAT.title," +			//11
-		"POI.favourite," +		//12
-		"TP.poi_number," +		//13
-		"Trip.free_trip, " +	//14
-		"Poi.image_url, " +		//15
-		"TP.hour, "+			//16
-		"TP.minute, "+			//17
-		"TRIP.global_id, "+
-		"POI.global_id, "+
-		"POI.telephone "+
-		"FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP.free_trip = ? " +
-		"ORDER BY TRIP._id, TP.poi_number";
+		final TreeMap<String,Integer> key = new TreeMap<String,Integer>(){
+			private static final long serialVersionUID = 1234567890;
+			{
+				put("TRIP._id",			0);
+				put("TRIP.title",		1);
+				put("TRIP.description",	2);
+				put("POI._id",			3);
+				put("POI.title",		4);
+				put("POI.description",	5);
+				put("ADDR.street_name",	6);
+				// ZIP code removed
+				//	put("ADDR.zipcode"),7);
+				put("ADDR.city",		7);
+				put("ADDR.lat",			8);
+				put("ADDR.lon",			9);
+				put("CAT.title",		10);
+				put("POI.favourite",	11);
+				put("TP.poi_number",	12);
+				put("TRIP.free_trip",	13);
+				put("POI.image_url",	14);
+				put("TP.hour",			15);
+				put("TP.minute",		16);
+				put("TRIP.global_id",	17);
+				put("POI.global_id",	18);
+				put("POI.telephone",	19);
+			}// instance initializer
+		};//CONSTANT key-index mappings
+
+		ValueComparator order =  new ValueComparator(key);
+		TreeMap<String,Integer> sorted = new TreeMap(order);
+		sorted.putAll(key);
+
+		String sqlstr = "SELECT ";
+		String prefix="";
+		for(Entry<String, Integer> p: sorted.entrySet()){
+			sqlstr += prefix + p.getKey();
+			prefix=",";
+		}
+		//Log.d(C, "sqlstr is "+sqlstr);
+		sqlstr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
+		" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP.free_trip = ? " +
+		" ORDER BY TRIP._id, TP.poi_number";
 		Cursor c = myDataBase.rawQuery(sqlstr, new String[]{"" + (free? 1 : 0)});
 
 		if(DEBUG) System.out.println("TRIPS: " + c.getCount());
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
 		while(c.moveToNext()){
-			if(c.getInt(0/*"TRIP.id"*/) != currentTripId) { //make new trip
-				if(DEBUG) System.out.println("Got trip: "+c.getString(1/*"TRIP.title"*/));
+			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
+				if(DEBUG) System.out.println("Got trip: "+c.getString( key.get("TRIP.title") ) );
 				if(currentTripId != -1) { //next trip on the list
 					trips.add(trip);
 				}
-				trip = new Trip.Builder(c.getString(1/*"TRIP.title"*/))
-				.idPrivate(c.getInt(0/*"TRIP.id"*/))
-				.description(c.getString(2/*"TRIP.description"*/))
-				.freeTrip(1==c.getInt(14))
-				.idGlobal(c.getInt(18))
+				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
+				.idPrivate(c.getInt( key.get("TRIP._id") ))
+				.description(c.getString( key.get("TRIP.description") ))
+				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
+				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
 				.build();
 				currentTripId = trip.getIdPrivate();
 			}
 
-			Poi poi = new Poi.Builder( c.getString(4/*"POI.title"*/),
-				new PoiAddress.Builder( c.getString(8/*"ADDR.city"*/)
+			Poi poi = new Poi.Builder( c.getString( key.get("POI.title") ),
+				new PoiAddress.Builder( c.getString( key.get("ADDR.city") )
 				)
 // ZIP code removed
-//				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
-				.street(c.getString(6/*"ADDR.street_name"*/))
-				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
+//				.zipCode(c.getInt( key.get("ADDR.zipcode") ))
+				.street(c.getString( key.get("ADDR.street_name") ))
+				.longitude(c.getDouble( key.get("ADDR.lon") )).latitude(c.getDouble( key.get("ADDR.lat") ))
 				.build()
-			).description(c.getString(5/*"POI.description"*/))
-			.category(c.getString(11/*"CAT.title"*/))
-			.favourite((1==c.getInt(12/*"POI.favourite"*/)))
-			.imageURL(c.getString(15))
-			.telephone(Integer.toString(c.getInt(19)))
-			.idPrivate(c.getInt(3))
-			.idGlobal(c.getInt(19)).build();
+			).description(c.getString( key.get("POI.description") ))
+			.category(c.getString( key.get("CAT.title") ))
+			.favourite((1==c.getInt( key.get("POI.favourite") )))
+			.imageURL(c.getString( key.get("POI.image_url") ))
+			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
+			.idPrivate(c.getInt( key.get("POI._id") ))
+			.idGlobal(c.getInt( key.get("POI.global_id") )).build();
 			trip.addPoi(poi);
-			if(c.getInt(16) != -1 && c.getInt(17) != -1)//add time if it is not -1
-				trip.setTime(poi, new Time(c.getInt(16), c.getInt(17)));
+			if(c.getInt( key.get("TP.hour") ) != -1 && c.getInt( key.get("TP.minute") ) != -1)//add time if it is not -1
+				trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
 		}//while more trips
 		if(currentTripId != -1) { //next trip on the list
 			trips.add(trip);
@@ -1032,3 +1054,20 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	}//openDataBase
 
 }//class
+
+class ValueComparator implements Comparator<String> {
+	  Map<String,Integer> base;
+	  public ValueComparator(Map<String,Integer> base) {
+	      this.base = base;
+	  }
+	  public int compare(String a, String b) {
+	    if(base.get(a) < base.get(b)) {
+	      return -1;
+	    } else if(base.get(a) == base.get(b)) {
+	      return 0;
+	    } else {
+	      return 1;
+	    }
+	  }//compare
+}//ValueComparator Class
+

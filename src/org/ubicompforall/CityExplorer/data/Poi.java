@@ -31,11 +31,17 @@
 
 package org.ubicompforall.CityExplorer.data;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
+
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
 import com.google.android.maps.GeoPoint;
 
 final public class Poi extends IntentPassable {
+
+	private static final String C = CityExplorer.C;
 
 	/**
 	 * Field containing a PoI's global ID.
@@ -182,7 +188,11 @@ final public class Poi extends IntentPassable {
 		 * @return The instance of the calling Builder class (returns itself).
 		 */
 		public Builder category(String cat){
-			this.category = cat;
+			if (cat!=null){
+				this.category = cat;
+			}else{
+				Log.d(C, "cat was null!!");
+			}
 			return this;
 		}
 
@@ -293,7 +303,12 @@ final public class Poi extends IntentPassable {
 		this.description	= b.description;
 		this.label			= b.label;
 		this.favourite		= b.favourite;
-		this.category		= b.category;
+		if(b.category!=null){
+			this.category		= b.category;
+		}else{
+			Log.d(C, "this.category from builder was null!!");
+			this.category="";
+		}
 		this.openingHours	= b.openingHours;
 		this.webPage		= b.webPage;
 		this.telephone		= b.telephone;
@@ -521,8 +536,10 @@ final public class Poi extends IntentPassable {
 		.latitude(in.readDouble())
 		.longitude(in.readDouble())
 		.build();
+		//Log.d(C, "longitude set to: "+address.getLongitude()+", lat is "+address.getLatitude());
 		favourite	= (1==in.readInt());
-		category	= in.readString();
+		String cat	= in.readString();
+		if (cat==null){ category="Missing!"; }else{ category=cat; }
 		openingHours= in.readString();
 		webPage		= in.readString();
 		telephone	= in.readString();

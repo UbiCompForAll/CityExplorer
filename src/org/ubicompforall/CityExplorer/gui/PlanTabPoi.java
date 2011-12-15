@@ -289,19 +289,18 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				list.add(poi);
 				PoiAdapter testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(poi.getCategory(), testAdapter);
-			}
-		}
+			}//if contains category
+		}//for POIs
 		ArrayList<String> ListSections = (ArrayList<String>) adapter.getSectionNames().clone();
-		for(String sec : ListSections)
-		{
+		for(String sec : ListSections){
 			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites"))
 			{
 				adapter.removeSection(sec);	
 
 			}
-		}
+		}//for sections
 		lv.setAdapter(adapter);
-	}
+	}//updateSections
 
 	/**
 	 * Builds the filter list.
