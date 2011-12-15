@@ -33,6 +33,7 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
 
+import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
@@ -41,8 +42,6 @@ import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.gui.ViewDayHourItem.poiTextView;
 import org.ubicompforall.CityExplorer.map.route.GoogleKML;
 import org.ubicompforall.CityExplorer.map.route.Road;
-
-import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

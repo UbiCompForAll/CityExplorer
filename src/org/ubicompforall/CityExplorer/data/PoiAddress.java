@@ -31,11 +31,8 @@
 
 package org.ubicompforall.CityExplorer.data;
 
-import android.util.Log;
-
 final public class PoiAddress {
 
-	private static final String C = "CityExplorer";
 	/**
 	 * Field for containing the street name.
 	 */
@@ -67,7 +64,7 @@ final public class PoiAddress {
 	 * A Builder for the Address class. 
 	 */
 	public static class Builder {
-		private static final String C = "CityExplorer";
+		//private static final String C = "CityExplorer";
 
 		// Required parameters
 		/** The name of a place. */

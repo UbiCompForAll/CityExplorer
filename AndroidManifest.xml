@@ -23,7 +23,7 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-		</activity><activity android:name=".gui.ImportActivity"></activity>
+		</activity><activity android:name=".gui.SettingsActivity" android:theme="@android:style/Theme.Black.NoTitleBar"></activity><activity android:name=".gui.ImportActivity"></activity>
 	
 		<activity android:launchMode="standard" android:name=".gui.PlanActivity"
 			android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
@@ -62,15 +62,9 @@
 				</intent-filter>
 			</activity>
 	
-			<activity android:name=".map.MapsActivity"
-				android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
-				<intent-filter>
-					<action android:name=".map.MapsActivity" />
-					<category android:name="android.intent.category.DEFAULT" />
-				</intent-filter>
-			</activity>
+			
 	
-			<uses-library android:name="com.google.android.maps" />
+			
 	
 	
 			<activity android:name=".gui.PlanTabPoi" android:theme="@android:style/Theme.NoTitleBar">
@@ -80,27 +74,33 @@
 	
 	<!-- android:tabStripEnabled="false"  -->
 	
-		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="text/plain" />
-			</intent-filter>
-		</activity>
+		
 	
 		<activity android:name=".gui.PlanTabActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".gui.NewTripActivity"></activity>
 		<activity android:name=".gui.NewPoiActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
-		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/plain" />
+			</intent-filter>
+		</activity>
 		<activity android:name=".data.Sharing" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter android:label="@string/opensqlite" android:icon="@drawable/icon">
 				<action android:name="android.intent.action.VIEW"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 				<data android:mimeType="@string/sqlitemimetype"/>
 			</intent-filter>
-		</activity>
+		</activity><activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+				<intent-filter>
+					<action android:name=".map.MapsActivity" />
+					<category android:name="android.intent.category.DEFAULT" />
+				</intent-filter>
+			</activity><uses-library android:name="com.google.android.maps" />
+		
 		
 	</application>
 	

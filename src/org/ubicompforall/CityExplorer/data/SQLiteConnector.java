@@ -40,10 +40,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.ubicompforall.CityExplorer.R;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -55,7 +51,6 @@ import android.database.sqlite.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.util.Pair;
 import android.widget.Toast;
 
 /**
@@ -310,7 +305,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return trips;
 	}//getAllEmptyTrips()
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Trip> getAllTrips(Boolean free){
 		ArrayList<Trip> trips = new ArrayList<Trip>();

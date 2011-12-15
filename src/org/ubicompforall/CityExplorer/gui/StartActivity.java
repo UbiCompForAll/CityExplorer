@@ -62,14 +62,16 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	/**
 	 * The buttons in this activity.
 	 */
-	private int[] STARTBUTTONIDS = new int[]{R.id.startButtonPlan, R.id.startButtonExplore, R.id.startButtonSettings};
-	private String[] STARTBUTTONNAMES = new String[]{"R.id.startButtonPlan", "R.id.startButtonExplore", "R.id.startButtonSettings"};
-	private Button[] STARTBUTTONS = new Button[3];
+	protected static final Button[] STARTBUTTONS = new Button[3];
+	protected static final int[] 	STARTBUTTON_IDS = new int[]{R.id.startButton1, R.id.startButton2, R.id.startButton3};
+	
+	//private static final Button[] SETTINGBUTTONS = new Button[1];
+	//private static final int[] 	SETTINGBUTTON_IDS = new int[]{R.id.startButton3};
 
 	/**
 	 * The user's current location.
 	 */
-	private Location userLocation;
+	protected Location userLocation; // Inherited by SettingsActivity
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -77,41 +79,40 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		setContentView(R.layout.startlayout);
 		Log.d("CityExplorer", "StartActivity~72");
 
-		setStartButtons();
+		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 
-		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activites)
+		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		//startActivity(new Intent(StartActivity.this, ImportActivity.class));
 	}//onCreate
 
-	public void setStartButtons() {
-		for(int b=0; b<STARTBUTTONS.length; b++){
-			//Log.d(C, "b is "+b);
-			STARTBUTTONS[b] = (Button) findViewById(STARTBUTTONIDS[b]);
-			if (STARTBUTTONS[b] != null){
-				STARTBUTTONS[b].setOnClickListener(this);
-			}else{
-				Log.d("CityExplorer", STARTBUTTONNAMES[b]+" - button was NULL ~92");
-			}//if button not found
-		}//for each startButton
-	}//setStartButtons
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
+	}//onResume
 
-	public int[] getStartButtons() {
-		return STARTBUTTONIDS;
-	}
+	public void setButtonListeners(Button[] buttons, int[] buttonIds) {
+		if (buttons.length == buttonIds.length){
+			for(int b=0; b<buttonIds.length; b++){
+				buttons[b] = (Button) findViewById(buttonIds[b]);
+				if (buttons[b] != null){
+					buttons[b].setOnClickListener(this);
+				}else{
+					Log.d("CityExplorer", "~92: BUTTON["+b+"] was NULL for "+buttons);
+				}//if button not found
+			}//for each startButton
+		}else{
+			Log.d(C, "StartActivity.java: Mismatch between buttons[] and buttonsIds[]");
+		}
+	}//setStartButtons
 
 	@Override
 	public void onClick(View v) {
 		Log.d(C, "Clicked: "+v);
-		if (v.getId() == R.id.startButtonPlan){
+		if (v.getId() == R.id.startButton1){
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
-		}else if (v.getId() == R.id.startButtonSettings){
-			startActivity(new Intent(StartActivity.this, ImportActivity.class));
-			//DEBUG: Remove importbutton from startlayoutview
-			RelativeLayout sv = (RelativeLayout) findViewById(R.id.startView);
-			//sv.removeView(v);
-
-		}else if (v.getId() == R.id.startButtonExplore){
+		}else if (v.getId() == R.id.startButton2){
 			Log.d(C, "Clicked: ExploreButton...");
 			if(userLocation != null){
 				Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
@@ -143,6 +144,13 @@ public class StartActivity extends Activity implements OnClickListener, Location
 				Log.d("CityExplorer", " did you forget to activate GPS??! ");
 				Log.d("CityExplorer", " TODO: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
 			}//if userLocation, else improvise!
+
+		}else if (v.getId() == R.id.startButton3){
+			startActivity(new Intent(StartActivity.this, SettingsActivity.class));
+			//DEBUG: Remove importbutton from startlayoutview
+			RelativeLayout sv = (RelativeLayout) findViewById(R.id.startView);
+			//sv.removeView(v);
+
 		}else{
 			Log.d(C, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import

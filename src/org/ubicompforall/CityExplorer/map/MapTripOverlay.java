@@ -33,7 +33,6 @@ package org.ubicompforall.CityExplorer.map;
 
 import java.util.ArrayList;
 
-import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.map.route.GoogleKML;
@@ -43,8 +42,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -52,10 +49,7 @@ import com.google.android.maps.Overlay;
 /**
  * The Class MapTripOverlay.
  */
-public class MapTripOverlay extends Overlay
-{
-
-	private static final String C = CityExplorer.C;
+public class MapTripOverlay extends Overlay{
 
 	/** The pencil. */
 	Paint pencil;
