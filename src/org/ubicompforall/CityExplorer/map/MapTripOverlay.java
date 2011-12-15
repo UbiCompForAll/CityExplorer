@@ -119,7 +119,7 @@ public class MapTripOverlay extends Overlay
 			ptp.drawRoadSegment(mapView,canvas,pencil);
 		}
 		if ( trip.getPoiAt(currentPoiIndex) != null){
-			Log.d(C, "getPoiAt(currentPoiIndex).getGeoPoint() is "+trip.getPoiAt(currentPoiIndex).getGeoPoint() );
+			//Log.d(C, "getPoiAt(currentPoiIndex).getGeoPoint() is "+trip.getPoiAt(currentPoiIndex).getGeoPoint() );
 			mapView.getProjection().toPixels(trip.getPoiAt(currentPoiIndex).getGeoPoint(), currentPoiPoint);
 			Paint p = new Paint();
 			p.setColor(Color.GREEN);

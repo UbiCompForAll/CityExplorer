@@ -121,9 +121,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		super(context, DB_NAME, null, 2);
 		this.myContext = context;
 
-// code from students
-//		myPath = DB_PATH + DB_NAME;
-
+		//code from students: myPath = DB_PATH + DB_NAME;
 		File dbName = context.getDatabasePath(DB_NAME);
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
@@ -232,7 +230,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * 7  category_title;
 	 * 8  favourite
 	 * 9  openingHours;
-	 * 10  web_page;
+	 * 10 web_page;
 	 * 11 telephone;
 	 * 12 image_url
 	 * 13 global_id
@@ -276,7 +274,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		String sqlstr = "SELECT " +
 		"TRIP._id," +
 		"TRIP.title," +
-		"Trip.free_trip," +
+		"TRIP.free_trip," +
 		"TRIP.description, " +
 		"TRIP.global_id "+
 		"FROM trip as TRIP " +
@@ -317,43 +315,23 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public ArrayList<Trip> getAllTrips(Boolean free){
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
-		final TreeMap<String,Integer> key = new TreeMap<String,Integer>(){
-			private static final long serialVersionUID = 1234567890;
-			{
-				put("TRIP._id",			0);
-				put("TRIP.title",		1);
-				put("TRIP.description",	2);
-				put("POI._id",			3);
-				put("POI.title",		4);
-				put("POI.description",	5);
-				put("ADDR.street_name",	6);
-				// ZIP code removed
-				//	put("ADDR.zipcode"),7);
-				put("ADDR.city",		7);
-				put("ADDR.lat",			8);
-				put("ADDR.lon",			9);
-				put("CAT.title",		10);
-				put("POI.favourite",	11);
-				put("TP.poi_number",	12);
-				put("TRIP.free_trip",	13);
-				put("POI.image_url",	14);
-				put("TP.hour",			15);
-				put("TP.minute",		16);
-				put("TRIP.global_id",	17);
-				put("POI.global_id",	18);
-				put("POI.telephone",	19);
-			}// instance initializer
-		};//CONSTANT key-index mappings
-
-		ValueComparator order =  new ValueComparator(key);
-		TreeMap<String,Integer> sorted = new TreeMap(order);
-		sorted.putAll(key);
-
-		String sqlstr = "SELECT ";
+		//CONSTANT key-index mappings
+		final Map<String,Integer> key = new HashMap<String,Integer>();
+		String[] columns = {
+				"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
+				"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
+				"POI.global_id",	"POI.telephone",
+				"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
+				"ADDR.city",		"ADDR.lat",		"ADDR.lon",
+				"CAT.title",
+				"TP.poi_number",	"TP.hour",		"TP.minute"
+		};
 		String prefix="";
-		for(Entry<String, Integer> p: sorted.entrySet()){
-			sqlstr += prefix + p.getKey();
+		String sqlstr = "SELECT ";
+		for(int i=0; i<columns.length; i++){
+			sqlstr += prefix + columns[i];
 			prefix=",";
+			key.put(columns[i], i);
 		}
 		//Log.d(C, "sqlstr is "+sqlstr);
 		sqlstr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
