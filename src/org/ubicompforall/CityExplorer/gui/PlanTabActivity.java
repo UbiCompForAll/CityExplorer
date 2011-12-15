@@ -35,6 +35,7 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -43,6 +44,7 @@ public class PlanTabActivity extends ListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("CityExplorer", "PlanTabActivity~47 create");
 		setContentView(R.layout.trippoi);
 	}
 	

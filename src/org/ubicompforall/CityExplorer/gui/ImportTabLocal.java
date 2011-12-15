@@ -32,36 +32,34 @@
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
-import org.ubicompforall.CityExplorer.data.DBFactory;
-import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
+import org.ubicompforall.CityExplorer.data.FileSystemConnector;
+//import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
+import org.ubicompforall.CityExplorer.data.DB;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
-import org.ubicompforall.CityExplorer.data.Poi;
-import org.ubicompforall.CityExplorer.data.PoiAdapter;
+import org.ubicompforall.CityExplorer.data.DBAdapter;
 import org.ubicompforall.CityExplorer.data.SeparatedListAdapter;
-import org.ubicompforall.CityExplorer.data.Sharing;
-import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,116 +69,52 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ImportTabLocal extends PlanTabActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
+public class ImportTabLocal extends ListActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
-	/**
-	 * Field containing the String of the category settings, used in shared preferences.
-	 */
+	private static final String C = CityExplorer.C;
+
+	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
 
-	/**
-	 * Field containing the list of all favorite pois.
-	 */
-	private ArrayList<Poi> favouriteList = new ArrayList<Poi>();
+	/*** Field containing all DBs.*/
+	//private ArrayList<Poi> allPois = new ArrayList<Poi>();
+	private ArrayList<DB> allDBs = new ArrayList<DB>();
 
-	/**
-	 * Field containing all pois.
-	 */
-	private ArrayList<Poi> allPois = new ArrayList<Poi>();
-
-	/**
-	 * Field containing the adapter for favorite pois.
-	 */
-	private PoiAdapter favouriteAdapter;
-
-	/**
-	 * Field containing this activity's resources.
-	 */
+	/*** Field containing this activity's resources.*/
 	private Resources res;
 
-	/**
-	 * Field containing the {@link SeparatedListAdapter} that holds all the other adapters.
-	 */
+	/*** Field containing the {@link SeparatedListAdapter} that holds all the other adapters.*/
 	private SeparatedListAdapter adapter;
 
-	/**
-	 * Field containing this activity's {@link ListView}.
-	 */
+	/*** Field containing this activity's {@link ListView}.*/
 	private ListView lv;
 
-	/**
-	 * Field containing the users current location.
-	 */
+	/*** Field containing the users current location.*/
 	private Location userLocation;
 
-	/**
-	 * Field containing an {@link ArrayList} of the categories.
-	 */
+	/*** Field containing an {@link ArrayList} of the categories.*/
 	private ArrayList<String> categories;
 
-	/**
-	 * Field containing this activity's context.
-	 */
-	private Context context;
+	/*** Field containing this activity's context.*/
+	private Context context;  // This could be the pwd? What context? For drawing output?
 
-	/**
-	 * Field containing a {@link HashMap} for the checked categories in the filter.
-	 */
+	/*** Field containing a {@link HashMap} for the checked categories in the filter.*/
 	private HashMap<String, Boolean> CheckedCategories = new HashMap<String, Boolean>();
 
-	/**
-	 * Field containing the request code from other activities.
-	 */
+	/*** Field containing the request code from other activities.*/
 	private int requestCode;
 
-	/**
-	 * Field containing the request code for add to trip.
-	 */
-	protected static final int ADD_TO_TRIP = 1;
+	/*** Field containing a single DB.*/
+	//private POI poi;
+	//private DB db;
 
-	/**
-	 * Field containing the request code for sharing a poi.
-	 */
-	private static final int SHARE_POI = 5;
-
-	/**
-	 * Field containing the request code for downloading pois.
-	 */
-	private static final int DOWNLOAD_POI = 6;
-
-	/**
-	 * Field containing a single poi.
-	 */
-	private Poi poi;
-
-	/**
-	 * Field containing pois you want to share.
-	 */
-	private ArrayList<Poi> sharePois;
-
-	/**
-	 * Field containing pois you want to download.
-	 */
-	private ArrayList<Poi> downloadedPois;
-
-	/**
-	 * Field giving access to databaseUpdater methods.
-	 */
-	private DatabaseUpdater du;
-
-	/**
-	 * Field containing pois you have selected for adding to trip.
-	 */
-	private ArrayList<Poi> selectedPois;
-
-	/**
-	 * Field containing a single trip.
-	 */
-	private Trip trip;
+	/*** Field giving access to databaseUpdater methods.*/
+	//private DatabaseUpdater du;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
+		Log.d("CityExplorer", "ImportTabLocal~118 create");
 		init();		
 	}
 
@@ -188,33 +122,18 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 	 * Initializes the activity.
 	 */
 	private void init() {
-		context = this;
+		setContext(this);
 		requestCode = getIntent().getIntExtra("requestCode",0);
 		lv = getListView();
-		if (requestCode == NewPoiActivity.CHOOSE_POI || 
-				requestCode == PlanTabTrip.ADD_TO_TRIP || 
-				requestCode == TripListActivity.ADD_TO_TRIP ||
-				requestCode == SHARE_POI ||
-				requestCode == DOWNLOAD_POI)
-		{
-			lv.setOnItemLongClickListener(null);
-		}else {			
-			lv.setOnItemLongClickListener(new DrawPopup());
-		}
-		if(requestCode == DOWNLOAD_POI){			
-			du = new DatabaseUpdater(this);
-			allPois = du.getInternetPois();
-			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.INTERNET_POIS);
-		}else {			
-			allPois = DBFactory.getInstance(this).getAllPois();
-			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.POI_LIST);
-		}
-		if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){		
-			trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);		
-		}
+		lv.setOnItemLongClickListener(new DrawPopup());
+
+		//allPois = FileSystemConnector.getInstance(this).getAllPois();
+		allDBs = getAllDBs();
+		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
+
 		res = getResources();
 		lv.setAdapter(adapter);
-		//categories = DBFactory.getInstance(this).getUniqueCategoryNames();
+		//categories = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
 		//Collections.sort(categories);
 		categories = new ArrayList<String>();
 		categories.add("/data/data");
@@ -226,41 +145,30 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 		//initGPS(); //For maps?
 	}//init
 
+	private ArrayList<DB> getAllDBs() {
+		allDBs.add( new DB("Rune") );
+		return allDBs;
+	}//getAllDBs
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(requestCode != DOWNLOAD_POI){			
-			updateSections();
-			adapter.notifyDataSetChanged();
-		}
 	}
 
 	/**
 	 * Makes the category sections that is shown in the list. 
 	 */
-	private void makeSections()
-	{
-		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
-		if(requestCode != DOWNLOAD_POI){			
-			adapter.addSection("Favourites", favouriteAdapter);
-		}
-		for (Poi poi : allPois)
-		{
-			if(poi.isFavourite())//add to favourite section
-			{
-				favouriteList.add(poi);
-				favouriteAdapter.notifyDataSetChanged();
-			}
-			if( !adapter.getSectionNames().contains(poi.getCategory()))//category does not exist, create it.
-			{
-				ArrayList<Poi> list = new ArrayList<Poi>();
+	private void makeSections(){
+		for (DB db : allDBs){
+			if( !adapter.getSectionNames().contains(db.getCategory())){ //category does not exist, create it.
+				ArrayList<DB> list = new ArrayList<DB>();
 
-				PoiAdapter testAdapter;
-				testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
-				adapter.addSection(poi.getCategory(), testAdapter);
+				DBAdapter testAdapter;
+				testAdapter = new DBAdapter(this, R.layout.plan_listitem, list);
+				adapter.addSection(db.getCategory(), testAdapter);
 			}
-			((PoiAdapter)adapter.getAdapter(poi.getCategory())).add(poi);//add to the correct section
-			((PoiAdapter)adapter.getAdapter(poi.getCategory())).notifyDataSetChanged();
+			((DBAdapter)adapter.getAdapter(db.getCategory())).add(db);//add to the correct section
+			((DBAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
 		}
 	}
 
@@ -270,33 +178,27 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 	@SuppressWarnings("unchecked")
 	private void updateSections()
 	{
-		allPois = DBFactory.getInstance(this).getAllPois();
+		allDBs = new FileSystemConnector().getAllDBs();
 		ArrayList<String> sectionsInUse = new ArrayList<String>(); 
-		for (Poi poi : allPois)
-		{
+		for (DB db : allDBs){
 			//ignore sections that are turned off:
-			if(CheckedCategories.keySet().contains(poi.getCategory()))
-			{
-				if( !CheckedCategories.get(poi.getCategory()))//this section is turned off:
-				{
+			if(CheckedCategories.keySet().contains(db.getCategory())){
+				if( !CheckedCategories.get(db.getCategory())){ //this section is turned off:
 					continue;
 				}
 			}
-			sectionsInUse.add(poi.getCategory());
-			if(!adapter.getSectionNames().contains(poi.getCategory()))
-			{
-				ArrayList<Poi> list = new ArrayList<Poi>();
-				list.add(poi);
-				PoiAdapter testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
-				adapter.addSection(poi.getCategory(), testAdapter);
+			sectionsInUse.add(db.getCategory());
+			if(!adapter.getSectionNames().contains(db.getCategory())){
+				ArrayList<DB> list = new ArrayList<DB>();
+				list.add(db);
+				DBAdapter testAdapter = new DBAdapter(this, R.layout.plan_listitem, list);
+				adapter.addSection(db.getCategory(), testAdapter);
 			}//if contains category
-		}//for POIs
+		}//for DBs
 		ArrayList<String> ListSections = (ArrayList<String>) adapter.getSectionNames().clone();
 		for(String sec : ListSections){
-			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites"))
-			{
-				adapter.removeSection(sec);	
-
+			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites")){	
+				adapter.removeSection(sec);
 			}
 		}//for sections
 		lv.setAdapter(adapter);
@@ -305,11 +207,9 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 	/**
 	 * Builds the filter list.
 	 */
-	private void buildFilter()
-	{
+	private void buildFilter(){
 		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
-		for (String cat : categories)
-		{
+		for (String cat : categories){
 			boolean checked = settings.getBoolean(cat, true);
 			CheckedCategories.put(cat, checked);
 		}
@@ -318,34 +218,34 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (requestCode == NewPoiActivity.CHOOSE_POI)
-		{	
+		if (requestCode == 2){
+			Log.d(C, "Code Two!");
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			menu.removeItem(R.id.planMenuUpdatePois);
 			menu.removeItem(R.id.planMenuAddPois);
 		}
-		else if (requestCode == SHARE_POI)
-		{	
-			menu.removeItem(R.id.planMenuAddPois);
-			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuUpdatePois);
-		}
-		else if(requestCode == DOWNLOAD_POI){
-			menu.removeItem(R.id.planMenuAddPois);
-			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
-			menu.removeItem(R.id.planMenuFilter);
-		}
-		else if(requestCode == PlanTabTrip.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
-			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
-			menu.removeItem(R.id.planMenuUpdatePois);
-		}
-		else
-		{
-			menu.removeItem(R.id.planMenuAddPois);
-		}
+//		else if (requestCode == SHARE_DB)
+//		{	
+//			menu.removeItem(R.id.planMenuAddDBs);
+//			menu.removeItem(R.id.planMenuNewDB);
+//			menu.removeItem(R.id.planMenuUpdateDBs);
+//		}
+//		else if(requestCode == DOWNLOAD_DB){
+//			menu.removeItem(R.id.planMenuAddDBs);
+//			menu.removeItem(R.id.planMenuNewDB);
+//			menu.removeItem(R.id.planMenuShareDBs);
+//			menu.removeItem(R.id.planMenuFilter);
+//		}
+//		else if(requestCode == PlanTabTrip.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
+//			menu.removeItem(R.id.planMenuNewDB);
+//			menu.removeItem(R.id.planMenuShareDBs);
+//			menu.removeItem(R.id.planMenuUpdateDBs);
+//		}
+//		else
+//		{
+//			menu.removeItem(R.id.planMenuAddDBs);
+//		}
 
 		return true;
 	}
@@ -357,169 +257,126 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		if(item.getItemId() == R.id.planMenuNewPoi){
-			Intent newPoi = new Intent(ImportTabLocal.this, NewPoiActivity.class);
-			startActivity(newPoi);
-		}
-
-		if(item.getItemId() == R.id.planMenuFilter)
-		{
-			categories = DBFactory.getInstance(this).getUniqueCategoryNames();
-			Collections.sort(categories);
-
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setTitle("Filter");
-			ArrayList<String> cat = (ArrayList<String>) categories.clone();
-			cat.add(0, "Favourites");
-
-
-			boolean[] CheckedCat = new boolean[cat.size()];
-			for (String c : cat)
-			{
-				if(CheckedCategories.get(c) == null)
-				{
-					CheckedCategories.put(c, true);
-				}
-				CheckedCat[cat.indexOf(c)] = CheckedCategories.get(c);
-			}
-
-			String[] array = new String[cat.size()];
-			cat.toArray(array);
-			alert.setMultiChoiceItems(array, CheckedCat, this);
-			alert.setPositiveButton("OK", this);
-			alert.create();
-			alert.show();
-		}
-
-		if(item.getItemId() == R.id.planMenuUpdatePois)
-		{
-			if(requestCode == DOWNLOAD_POI){
-				if (downloadedPois==null){
-					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					int[] res = du.storePois(downloadedPois);
-					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-				}
-				finish();
-			}else {				
-				Intent downloadPoi= new Intent(ImportTabLocal.this, ImportTabLocal.class);
-				downloadPoi.putExtra("requestCode", DOWNLOAD_POI);
-				startActivityForResult(downloadPoi, DOWNLOAD_POI);
-			}
-		}
-
-		if(item.getItemId() == R.id.planMenuSharePois)
-		{
-			if(requestCode == SHARE_POI){
-				if (sharePois==null){
-					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					Sharing.send(this, sharePois);
-					sharePois = null;
-				}
-				finish();
-			}else {
-				Intent sharePoi= new Intent(ImportTabLocal.this, ImportTabLocal.class);
-				sharePoi.putExtra("requestCode", SHARE_POI);
-				startActivityForResult(sharePoi, SHARE_POI);
-			}
-		}
-
-		if(item.getItemId() == R.id.planMenuAddPois)
-		{
-			if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
-				if (selectedPois==null){
-					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					for (Poi p : selectedPois) {
-						trip.addPoi(p);
-						DBFactory.getInstance(this).addPoiToTrip(trip, p);						
-					}
-					Toast.makeText(this, selectedPois.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
-					selectedPois = null;
-				}
-				Intent resultIntent = new Intent();
-				resultIntent.putExtra(IntentPassable.TRIP, trip);
-				setResult( Activity.RESULT_OK, resultIntent );
-				finish();
-			}
-		}
+//		if(item.getItemId() == R.id.planMenuNewDB){
+//			Intent newDB = new Intent(ImportTabLocal.this, NewDBActivity.class);
+//			startActivity(newDB);
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuFilter)
+//		{
+//			categories = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
+//			Collections.sort(categories);
+//
+//			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//			alert.setTitle("Filter");
+//			ArrayList<String> cat = (ArrayList<String>) categories.clone();
+//			cat.add(0, "Favourites");
+//
+//
+//			boolean[] CheckedCat = new boolean[cat.size()];
+//			for (String c : cat)
+//			{
+//				if(CheckedCategories.get(c) == null)
+//				{
+//					CheckedCategories.put(c, true);
+//				}
+//				CheckedCat[cat.indexOf(c)] = CheckedCategories.get(c);
+//			}
+//
+//			String[] array = new String[cat.size()];
+//			cat.toArray(array);
+//			alert.setMultiChoiceItems(array, CheckedCat, this);
+//			alert.setPositiveButton("OK", this);
+//			alert.create();
+//			alert.show();
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuUpdateDBs)
+//		{
+//			if(requestCode == DOWNLOAD_DB){
+//				if (downloadedDBs==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					int[] res = du.storeDBs(downloadedDBs);
+//					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
+//				}
+//				finish();
+//			}else {				
+//				Intent downloadDB= new Intent(ImportTabLocal.this, ImportTabLocal.class);
+//				downloadDB.putExtra("requestCode", DOWNLOAD_DB);
+//				startActivityForResult(downloadDB, DOWNLOAD_DB);
+//			}
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuShareDBs)
+//		{
+//			if(requestCode == SHARE_DB){
+//				if (shareDBs==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					Sharing.send(this, shareDBs);
+//					shareDBs = null;
+//				}
+//				finish();
+//			}else {
+//				Intent shareDB= new Intent(ImportTabLocal.this, ImportTabLocal.class);
+//				shareDB.putExtra("requestCode", SHARE_DB);
+//				startActivityForResult(shareDB, SHARE_DB);
+//			}
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuAddDBs)
+//		{
+//			if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
+//				if (selectedDBs==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					for (DB p : selectedDBs) {
+//						trip.addDB(p);
+//						FileSystemConnector.getInstance(this).addDBToTrip(trip, p);						
+//					}
+//					Toast.makeText(this, selectedDBs.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
+//					selectedDBs = null;
+//				}
+//				Intent resultIntent = new Intent();
+//				resultIntent.putExtra(IntentPassable.TRIP, trip);
+//				setResult( Activity.RESULT_OK, resultIntent );
+//				finish();
+//			}
+//		}
 
 		return true;
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
-		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
-		{
-			//Pressing a header			
+		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
+			//Pressing a header
+			Log.d(C, "Pressed a header... Dummy!");
 			return;
 		}
-		Poi p = (Poi) l.getAdapter().getItem(pos);
+		DB d = (DB) l.getAdapter().getItem(pos);
 
-		if (requestCode == NewPoiActivity.CHOOSE_POI){
+		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
 			Intent resultIntent = new Intent();
-			resultIntent.putExtra(IntentPassable.POI, p);
+			//resultIntent.putExtra(IntentPassable.DB, p);
+			Log.d(C, "I just found DB "+d);
 			setResult( Activity.RESULT_OK, resultIntent );
 			finish();
 			return;
 		}
 
-		if (requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
 
-			if(selectedPois == null){				
-				selectedPois = new ArrayList<Poi>();
-			}
-			if(!selectedPois.contains(p)){
-				v.setBackgroundColor(0xff9ba7d5);
-				selectedPois.add(p);
-			}else {
-				v.setBackgroundColor(Color.TRANSPARENT);
-				selectedPois.remove(p);
-			}
-			return;
-		}
-
-
-		if (requestCode == SHARE_POI){
-			if(sharePois == null){				
-				sharePois = new ArrayList<Poi>();
-			}
-			if(!sharePois.contains(p)){
-				v.setBackgroundColor(0xff9ba7d5);
-				sharePois.add(p);
-			}else {
-				v.setBackgroundColor(Color.TRANSPARENT);
-				sharePois.remove(p);
-			}
-			return;
-		}
-
-		if (requestCode == DOWNLOAD_POI){
-
-			if(downloadedPois == null){				
-				downloadedPois = new ArrayList<Poi>();
-			}
-			if(!downloadedPois.contains(p)){
-				v.setBackgroundColor(0xff9ba7d5);
-				downloadedPois.add(p);
-			}else {
-				v.setBackgroundColor(Color.TRANSPARENT);
-				downloadedPois.remove(p);
-			}
-			return;
-		}
-
-		Intent details = new Intent(ImportTabLocal.this, PoiDetailsActivity.class);
-		details.putExtra(IntentPassable.POI, p);
+//		Intent details = new Intent(ImportTabLocal.this, DBDetailsActivity.class);
+		Intent details = new Intent(ImportTabLocal.this, StartActivity.class);
+		details.putExtra(IntentPassable.POI, true);
 
 		startActivity(details);
 	}
@@ -534,179 +391,101 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 			{
 				Intent showInMap = new Intent(ImportTabLocal.this, MapsActivity.class);
 				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
-				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
+				ArrayList<DB> selectedDBs = new ArrayList<DB>();
 				for (int i = 0; i < sectionAd.getCount(); i++)
 				{
-					selectedPois.add((Poi) sectionAd.getItem(i));
+					selectedDBs.add((DB) sectionAd.getItem(i));
 				}
-				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
-
+				//showInMap.putParcelableArrayListExtra(IntentPassable.DBLIST, selectedDBs);
 				startActivity(showInMap);
-
 				return true;
 			}
 
-			final Poi	p 			= (Poi) parent.getAdapter().getItem(pos);
+			final DB	d 			= (DB) parent.getAdapter().getItem(pos);
 			final AdapterView<?> par = parent;
-
 			final int[] xy 			= new int[2]; v.getLocationInWindow(xy);
-
 			final Rect rect 		= new Rect(	xy[0], 
 					xy[1], 
 					xy[0]+v.getWidth(), 
-					xy[1]+v.getHeight());
+					xy[1]+v.getHeight()
+				);
 
 			final QuickActionPopup qa = new QuickActionPopup(ImportTabLocal.this, v, rect);
-
-			Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
-			Drawable mapviewIcon		= res.getDrawable(android.R.drawable.ic_menu_mapmode);
+			//Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
+			Drawable mapviewIcon	= res.getDrawable(android.R.drawable.ic_menu_mapmode);
 			Drawable directIcon		= res.getDrawable(android.R.drawable.ic_menu_directions);
-			Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
+			//Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
 			Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
 
-
 			// Declare quick actions 
-			if(p.isFavourite())// this POI is a favourite, add an option to not make it a favourite
-			{
-				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_on);
-				qa.addItem(favIcon,	"",	new OnClickListener(){
-
-					public void onClick(View view)
-					{
-						//set favourite off
-						Poi poi = p;
-
-						poi = poi.modify().favourite(false).build();
-						DBFactory.getInstance(ImportTabLocal.this).editPoi(poi);//update poi;
-
-						adapter.notifyDataSetChanged();//update list
-						Toast.makeText(ImportTabLocal.this, poi.getLabel() + " removed from favourites.", Toast.LENGTH_LONG).show();
-						qa.dismiss();
-					}
-				});
-			}
-			else// this POI is not a favourite, add an option to make it a favourite
-			{
-				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
-				qa.addItem(favIcon,	"",	new OnClickListener(){
-
-					public void onClick(View view)
-					{
-						//set as favourite
-						Poi poi = p;
-
-						poi = poi.modify().favourite(true).build();
-						DBFactory.getInstance(ImportTabLocal.this).editPoi(poi);//update poi;
-
-						allPois.remove(p);
-						allPois.add(poi);
-						Toast.makeText(ImportTabLocal.this, poi.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
-						adapter.notifyDataSetChanged();//update list
-						qa.dismiss();
-					}
-				});
-			}
-
-			qa.addItem(addToTripIcon, "Add to tour", new OnClickListener(){
-
+			Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
+			qa.addItem(favIcon,	"",	new OnClickListener(){
 				public void onClick(View view){
-					poi = p;
-					Intent selectTrip = new Intent(ImportTabLocal.this, PlanTabTrip.class);
-					selectTrip.putExtra("requestCode", ADD_TO_TRIP);
-					startActivityForResult(selectTrip, ADD_TO_TRIP);
+					//set as favourite
+					DB db = d;
+//					db = db.modify().favourite(true).build();
+//					FileSystemConnector.getInstance(ImportTabLocal.this).editdb(db);//update db;
+//					alldbs.remove(d);
+//					alldbs.add(db);
+					Toast.makeText(ImportTabLocal.this, db.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+					adapter.notifyDataSetChanged();//update list
 					qa.dismiss();
 				}
 			});
 
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
-
 				public void onClick(View view){
 					Intent showInMap = new Intent(ImportTabLocal.this, MapsActivity.class);
-					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
-					selectedPois.add(p);
-					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
+					ArrayList<DB> selectedDBs = new ArrayList<DB>();
+					selectedDBs.add(d);
+//					showInMap.putParcelableArrayListExtra(IntentPassable.DBLIST, selectedDBs);
 					startActivity(showInMap);
 					qa.dismiss();
 				}
 			});
 
 			qa.addItem(directIcon, "Get directions", new OnClickListener(){
-
 				public void onClick(View view){
-
 					//Latitude and longitude for current position
 					double slon = userLocation.getLongitude();
 					double slat = userLocation.getLatitude();
-					//Latitude and longitude for selected poi
-					double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
-					double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
+					//Latitude and longitude for selected DB
+//					double dlon = d.getGeoDBnt().getLongitudeE6()/1E6;
+//					double dlat = d.getGeoDBnt().getLatitudeE6()/1E6;
 
 					Intent navigate = new Intent(ImportTabLocal.this, NavigateFrom.class);
 					navigate.putExtra("slon", slon);
 					navigate.putExtra("slat", slat);
-					navigate.putExtra("dlon", dlon);
-					navigate.putExtra("dlat", dlat);
+//					navigate.putExtra("dlon", dlon);
+//					navigate.putExtra("dlat", dlat);
 					startActivity(navigate);
 
 					qa.dismiss();
 				}
 			});
 
-
-			qa.addItem(shareIcon, "Share", new OnClickListener(){
-
-				public void onClick(View view){
-					ArrayList<Poi> sharePoi = new ArrayList<Poi>();
-					sharePoi.add(p);
-					Sharing.send(ImportTabLocal.this, sharePoi);
-					qa.dismiss();
-				}
-			});
-
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
-
 				public void onClick(View view){
-
-					DBFactory.getInstance(context).deletePoi(p);											
+					new FileSystemConnector().deleteDB(d);
 					updateSections();
 					((SeparatedListAdapter)par.getAdapter()).notifyDataSetChanged();
-
 					qa.dismiss();
 				}
 			});
-
 			qa.show();
 			return true;
-		}
-	}
+		}//onItemLongClick
+	}//DrawPopup
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if(resultCode==Activity.RESULT_CANCELED){
 			return;
 		}
-		switch (requestCode){
-		case ADD_TO_TRIP:
-			Trip trip = (Trip) data.getParcelableExtra(IntentPassable.TRIP);
-			if (trip==null){ 
-				break;
-			}
+	}//onActivityResult
 
-			trip.addPoi(poi);
-			DBFactory.getInstance(this).addPoiToTrip(trip, poi);
-			Toast.makeText(this, poi.getLabel() + " added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
-			break;
-		default:
-			break;
-		}
-
-	}
-
-	/**
-	 * Initializes the GPS of the phone.
-	 */
-	void initGPS()
-	{
+	/*** Initializes the GPS of the phone.*/
+	void initGPS(){
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -715,7 +494,7 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
+	}//initGPS, why here??
 
 	@Override
 	public void onLocationChanged(Location location) {
@@ -740,10 +519,9 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 	/**
 	 * Handles click events in the filter dialog.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked)
-	{
+	public void onClick(DialogInterface dialog, int which, boolean isChecked){
+		@SuppressWarnings("unchecked")
 		ArrayList<String> cat = (ArrayList<String>) categories.clone();
 		cat.add(0, "Favourites");
 
@@ -756,8 +534,7 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(DialogInterface dialog, int which)
-	{
+	public void onClick(DialogInterface dialog, int which){
 		//add selection to settings:
 		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
 		SharedPreferences.Editor editor = settings.edit();
@@ -766,8 +543,7 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 		ArrayList<String> cat = (ArrayList<String>) categories.clone();
 		cat.add(0, "Favourites");
 
-		for (String title : cat)
-		{
+		for (String title : cat){
 			boolean isChecked = CheckedCategories.get(title);
 
 			//preferences:
@@ -776,32 +552,32 @@ public class ImportTabLocal extends PlanTabActivity implements LocationListener,
 			if( !isChecked){
 				if(adapter.getSectionNames().contains(title))
 					adapter.removeSection(title);
-			}
-			else {
-				ArrayList<Poi> list = new ArrayList<Poi>();
+			}else{
+				ArrayList<DB> list = new ArrayList<DB>();
 
-				for (Poi poi : allPois)
-				{
-					if(title.equals("Favourites") && poi.isFavourite())//add to favourite section
-					{
-						list.add(poi);
+				for (DB db : allDBs){
+					if (title.equals("Favourites") ){ //add to favorite section
+						list.add(db);
+					}else if(db.getCategory().equals(title)){
+						list.add(db);
 					}
-					else if(poi.getCategory().equals(title))
-					{
-						list.add(poi);
-					}
-				}
-				PoiAdapter testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
+				}//for DBs
+				DBAdapter testAdapter = new DBAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(title, testAdapter);
-
-				if(title.equals("Favourites"))
-					favouriteList = list;
-			}
-		}
+			}//if checked
+		}//for categories
 
 		// Commit the edits!
 		editor.commit();
 
 		lv.setAdapter(adapter);
+	}//onClick
+
+	public Context getContext() {
+		return context;
 	}
-}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+}//ImportTabLocal

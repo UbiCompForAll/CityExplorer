@@ -31,22 +31,26 @@ package org.ubicompforall.CityExplorer.data;
 
 import java.util.ArrayList;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.R;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import org.ubicompforall.CityExplorer.R;
-
 /**
- * This class handles the poi adapters.
+ * This class handles the DB adapters.
  */
-public class PoiAdapter extends ArrayAdapter<Poi> {
+public class DBAdapter extends ArrayAdapter<DB> {
 
-	/** The items in the poi adapter. */
-	private ArrayList<Poi> items;
+	private static final String C = CityExplorer.C;
+
+	/** The items in the DB adapter. */
+	private ArrayList<DB> items;
 
 	/** The context. */
 	private Context context;
@@ -55,13 +59,13 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 	int textViewResourceId;
 
 	/**
-	 * Instantiates a new poi adapter.
+	 * Instantiates a new DB adapter.
 	 *
 	 * @param context The context.
 	 * @param textViewResourceId The text view resource id.
 	 * @param items The items to add to the adapter.
 	 */
-	public PoiAdapter(Context context, int textViewResourceId, ArrayList<Poi> items) {
+	public DBAdapter(Context context, int textViewResourceId, ArrayList<DB> items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
 		this.context = context;
@@ -69,14 +73,19 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 	}
 
 	/**
-	 * Replace all pois in the list of pois.
+	 * Replace all DBs in the list of DBs.
 	 *
-	 * @param pois The pois.
+	 * @param dbs The DBs.
 	 */
-	public void replaceAll(ArrayList<Poi> pois)
-	{
+	public void replaceAll(ArrayList<DB> dbs){
 		items.clear();
-		items.addAll(pois);
+		if (items == null){
+			Log.d(C, "DBAdapter~81: OOooppss!!... items==null");
+		}else if(dbs == null){
+			Log.d(C, "DBAdapter~81: OOooppss!!... dbs==null");
+		}else{
+			items.addAll(dbs);
+		}
 		this.notifyDataSetChanged();
 	}
 
@@ -85,7 +94,7 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 		View v = convertView;
 		LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		Poi p = items.get(pos);
+		DB p = items.get(pos);
 
 		if (v == null) {
 			v = vi.inflate(textViewResourceId, null);
@@ -99,5 +108,5 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 			if (descr != null) { descr.setText(p.getDescription()); }
 		}
 		return v;
-	}
-}
+	}//getView
+}//DBAdapter

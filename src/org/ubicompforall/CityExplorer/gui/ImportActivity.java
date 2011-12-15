@@ -38,23 +38,20 @@ import android.content.*;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.*;
+import android.util.Log;
 import android.widget.*;
 
 public class ImportActivity extends TabActivity {
 
-//	OLD IDEA
-//	public void onCreate(Bundle savedInstanceState){
-//		super.onCreate(savedInstanceState);
-//
+//	OLD IDEA: RS-111130
 //		setContentView(R.layout.importview);
-//		TextView tv = (TextView) findViewById(R.id.importTV);
-//		tv.setText("WHOOPIE!");
-//	}//onCreate
+//		TextView tv = (TextView) findViewById(R.id.importTV);		tv.setText("WHOOPIE!");
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tablayout);
+		Log.d("CityExplorer", "ImportActivity~59 create");
 
 		initTabs();
 	}//onCreate

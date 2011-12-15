@@ -2,7 +2,7 @@
  * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
- * @revised:
+ * @revised:		15 Dec 2011
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -20,12 +20,6 @@
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
- * 
- */
-
-/**
- * @description:
- *
  * 
  */
 
@@ -47,6 +41,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
+/**
+ * @description: Class to handle import/export of POIs/Trips
+ */
 public class ExportImport extends Activity
 {
 
@@ -54,8 +51,7 @@ public class ExportImport extends Activity
 	Context context;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		
 		Uri uri = getIntent().getData();
@@ -120,8 +116,7 @@ public class ExportImport extends Activity
 					MODE_WORLD_READABLE);
 			osw = new OutputStreamWriter(fOut); 
 			// Write the string to the file
-			for (Poi poi : pois)
-			{
+			for (Poi poi : pois){
 				/*
 				 * 0  global_id;
 				 * 1  title;
@@ -162,8 +157,7 @@ public class ExportImport extends Activity
 			osw.flush();
 			osw.close();
 		} 
-		catch (IOException e)
-		{
+		catch (IOException e){
 			System.out.println("IO error: "+e.getMessage());
 		}
 		
@@ -177,18 +171,16 @@ public class ExportImport extends Activity
 		sharingIntent.putExtra(Intent.EXTRA_STREAM, U);
 		//sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "This is a test");
 		c.startActivity(Intent.createChooser(sharingIntent,"Share ce file using"));
-	}
+	}//send
 	
-	public static int countOccurrences(String haystack, char needle)
-	{
+	public static int countOccurrences(String haystack, char needle){
 	    int count = 0;
-	    for (int i=0; i < haystack.length(); i++)
-	    {
-	        if (haystack.charAt(i) == needle)
-	        {
+	    for (int i=0; i < haystack.length(); i++){
+	        if (haystack.charAt(i) == needle){
 	             count++;
 	        }
 	    }
 	    return count;
-	}
-}
+	}//countOccurrences
+
+}//ExportImport extends Activity

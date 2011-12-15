@@ -2,7 +2,7 @@
  * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
- * @revised:
+ * @revised:		15 Dec 2011, Rune
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -62,6 +62,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,115 +74,74 @@ import android.widget.Toast;
 
 public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
-	/**
-	 * Field containing the String of the category settings, used in shared preferences.
-	 */
+	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
 
-	/**
-	 * Field containing the list of all favourite pois.
-	 */
+	/*** Field containing the list of all favorite pois. */
 	private ArrayList<Poi> favouriteList = new ArrayList<Poi>();
 
-	/**
-	 * Field containing all pois.
-	 */
+	/*** Field containing all pois.*/
 	private ArrayList<Poi> allPois = new ArrayList<Poi>();
 
-	/**
-	 * Field containing the adapter for favourite pois.
-	 */
+	/*** Field containing the adapter for favorite pois.*/
 	private PoiAdapter favouriteAdapter;
 
-	/**
-	 * Field containing this activity's resources.
-	 */
+	/*** Field containing this activity's resources.*/
 	private Resources res;
 
-	/**
-	 * Field containing the {@link SeparatedListAdapter} that holds all the other adapters.
-	 */
+	/*** Field containing the {@link SeparatedListAdapter} that holds all the other adapters.*/
 	private SeparatedListAdapter adapter;
 
-	/**
-	 * Field containing this activity's {@link ListView}.
-	 */
+	/*** Field containing this activity's {@link ListView}.*/
 	private ListView lv;
 
-	/**
-	 * Field containing the users current location.
-	 */
+	/*** Field containing the users current location.*/
 	private Location userLocation;
 
-	/**
-	 * Field containing an {@link ArrayList} of the categories.
-	 */
+	/*** Field containing an {@link ArrayList} of the categories.*/
 	private ArrayList<String> categories;
 
-	/**
-	 * Field containing this activity's context.
-	 */
+	/*** Field containing this activity's context.*/
 	private Context context;
 
-	/**
-	 * Field containing a {@link HashMap} for the checked categories in the filter.
-	 */
+	/*** Field containing a {@link HashMap} for the checked categories in the filter.*/
 	private HashMap<String, Boolean> CheckedCategories = new HashMap<String, Boolean>();
 
-	/**
-	 * Field containing the request code from other activities.
-	 */
+	/*** Field containing the request code from other activities.*/
 	private int requestCode;
 
-	/**
-	 * Field containing the request code for add to trip.
-	 */
+	/*** Field containing the request code for add to trip.*/
 	protected static final int ADD_TO_TRIP = 1;
 
-	/**
-	 * Field containing the request code for sharing a poi.
-	 */
+	/*** Field containing the request code for sharing a poi.*/
 	private static final int SHARE_POI = 5;
 
-	/**
-	 * Field containing the request code for downloading pois.
-	 */
+	/*** Field containing the request code for downloading pois.*/
 	private static final int DOWNLOAD_POI = 6;
 
-	/**
-	 * Field containing a single poi.
-	 */
+	/*** Field containing a single poi.*/
 	private Poi poi;
 
-	/**
-	 * Field containing pois you want to share.
-	 */
+	/*** Field containing pois you want to share.*/
 	private ArrayList<Poi> sharePois;
 
-	/**
-	 * Field containing pois you want to download.
-	 */
+	/*** Field containing pois you want to download.*/
 	private ArrayList<Poi> downloadedPois;
 
-	/**
-	 * Field giving access to databaseupdater methods.
-	 */
+	/*** Field giving access to databaseUpdater methods.*/
 	private DatabaseUpdater du;
 
-	/**
-	 * Field containing pois you have selected for adding to trip.
-	 */
+	/*** Field containing pois you have selected for adding to trip.*/
 	private ArrayList<Poi> selectedPois;
 
-	/**
-	 * Field containing a single trip.
-	 */
+	/*** Field containing a single trip.*/
 	private Trip trip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
-		init();		
+		Log.d("CityExplorer", "PlanTabPoi~118 create");
+		init();
 	}
 
 	/**

@@ -2,7 +2,7 @@
  * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
- * @revised:
+ * @revised:		15 Dec 2011, Rune
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -25,8 +25,6 @@
 
 /**
  * @description:
- *
- * 
  */
 
 package org.ubicompforall.CityExplorer.data;
@@ -46,56 +44,35 @@ import org.ubicompforall.CityExplorer.R;
 
 public class SeparatedListAdapter extends BaseAdapter {  
 
-	/**
-	 * Field containing all the sections.
-	 */
+	/*** Field containing all the sections.*/
     private ArrayList<Section> sections = new ArrayList<Section>();
     
-    /**
-     * Field containing all the section names.
-     */
+    /*** Field containing all the section names.*/
     private ArrayList<String> sectionNames = new ArrayList<String>();
     
-    /**
-     * Field containing the favourite section. 
-     */
+    /*** Field containing the favorite section.*/
     public Section favouriteSection;
     
-    /**
-     * Constant field describing a section header.
-     */
+    /*** Constant field describing a section header.*/
     public final static int TYPE_SECTION_HEADER = 0;
     
-    /**
-     * Constant field describing a list of PoIs.
-     */
+    /*** Constant field describing a list of PoIs.*/
     public final static int POI_LIST = 1;
-    
-    /**
-     * Constant field describing a list of trips.
-     */
+    /*** Constant field describing a list of trips.*/
     public final static int TRIP_LIST = 2;
-
-    /**
-     * Constant field describing a list of downloaded pois.
-     */
+    /*** Constant field describing a list of downloaded pois.*/
 	public static final int INTERNET_POIS = 3;
-
-    /**
-     * Constant field describing a list of downloaded pois.
-     */
+    /*** Constant field describing a list of downloaded pois.*/
 	public static final int INTERNET_TRIPS = 4;
+    /*** Constant field describing a list of downloaded pois.*/
+	public static final int LOCAL_DBS = 5;
 
 	private static final String C = "CityExplorer";
 	
-    /**
-     * Field containing the type of list.
-     */
+    /*** Field containing the type of list. */
     private int listType;
     
-    /**
-     * Field containing the context of an Activity.
-     */
+    /*** Field containing the context of an Activity.*/
     private Activity ctx;
   
     /**
@@ -106,6 +83,7 @@ public class SeparatedListAdapter extends BaseAdapter {
     public SeparatedListAdapter(Activity context, int listType) {  
         ctx = context;
         this.listType = listType;
+        Log.d(C, "SeparatedListAdapter~86: I'm listType: "+listType);
     }  
   
     /**
@@ -188,29 +166,23 @@ public class SeparatedListAdapter extends BaseAdapter {
      * @param section The name of the section you want to get.
      * @return The Adapter with the specified name.
      */
-    public Adapter getAdapter(String section)
-    {
-    	if(section.equalsIgnoreCase("Favourites"))
-    	{
+    public Adapter getAdapter(String section){
+    	if(section.equalsIgnoreCase("Favourites")){
     		return favouriteSection.getAdapter();
-    	}
-    	else
-    	{
-    		for (Section sec : sections)
-			{
+    	}else{
+    		for (Section sec : sections){
 				if(sec.getCaption().equalsIgnoreCase(section))
 					return sec.getAdapter();
-			}
-    	}
+			}//for sections
+    	}//if favorite else proper cat
     	return null;
-    }
+    }//get adapter for a category
     
     /**
      * Get the names of the section. 
      * @return Arraylist containing the section names.
      */
-    public ArrayList<String> getSectionNames()
-    {
+    public ArrayList<String> getSectionNames(){
     	return sectionNames;
     }
   
@@ -299,9 +271,7 @@ public class SeparatedListAdapter extends BaseAdapter {
      * @param parent The parent ViewGroup
      * @return A View of the header.
      */
-    private View getHeaderView(String caption, int index,
-    		View convertView,
-    		ViewGroup parent) {
+    private View getHeaderView(String caption, int index, View convertView,	ViewGroup parent) {
     		TextView result=(TextView)convertView;
 
     		if (convertView==null) {
@@ -319,15 +289,11 @@ public class SeparatedListAdapter extends BaseAdapter {
     public void notifyDataSetChanged() {
     	if(listType == POI_LIST){
     		DatabaseInterface db = DBFactory.getInstance(ctx);
-    		for (Section s : sections) 
-        	{
-        		if(s.getCaption().equalsIgnoreCase("Favourites"))
-        		{
+    		for (Section s : sections){
+        		if(s.getCaption().equalsIgnoreCase("Favourites")){
         			((PoiAdapter)favouriteSection.getAdapter()).replaceAll(db.getAllPois(true));
         			s = favouriteSection;
-        		}
-        		else
-    			{
+        		}else{
         			((PoiAdapter)s.getAdapter()).replaceAll(db.getAllPois(s.getCaption()));
     			}
     		}
@@ -360,10 +326,17 @@ public class SeparatedListAdapter extends BaseAdapter {
     			emptyTripAdapter.notifyDataSetChanged();
     		}
     	}else if(listType == INTERNET_POIS){
-    		Log.d(C, "Missing!");
+    		Log.d(C, "Missing INTERNET_POIS Adapter?");
 		}else if(listType == INTERNET_TRIPS){
-    		Log.d(C, "Missing!");
-		}
+    		Log.d(C, "Missing INTERNET_TRIPS Adaptar?");
+		}else if(listType == LOCAL_DBS){
+    		//DatabaseInterface db = DBFactory.getInstance(ctx);
+			FileSystemInterface fs = new FileSystemConnector();
+    		for (Section s : sections){
+       			((DBAdapter)s.getAdapter()).replaceAll(fs.getAllDBs(s.getCaption()));
+    		}//for sections
+		}//switch on listType
+
     	super.notifyDataSetChanged();
     }//notifyDataSetChanged
 }//SeparatedListAdapter

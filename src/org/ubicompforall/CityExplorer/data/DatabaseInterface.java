@@ -2,7 +2,7 @@
  * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
- * @revised:
+ * @revised:		15 Dec 2011, Rune
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -25,8 +25,6 @@
 
 /**
  * @description:
- *
- * 
  */
 
 package org.ubicompforall.CityExplorer.data;
@@ -38,21 +36,16 @@ import android.graphics.Bitmap;
 
 /**
  * The interface for abstracting the connection to the database.
- * 
  * @author Christian Skjetne
- *
  */
-public interface DatabaseInterface
-{
+public interface DatabaseInterface{
 	/**
 	 * Interface method for opening the database connection.
 	 * @return Boolean for successful opening or not
 	 */
 	public boolean	open();
 	
-	/**
-	 * Interface method for closing the database connection.
-	 */
+	/*** Interface method for closing the database connection.*/
 	public void 	close();
 	
 	/**
@@ -63,34 +56,34 @@ public interface DatabaseInterface
 
 	/**
 	 * Interface method for fetching all PoIs from the database.
-	 * @return Arraylist containing all PoIs from the database.
+	 * @return ArrayList containing all PoIs from the database.
 	 */
 	public ArrayList<Poi> getAllPois();
 	
 	/**
 	 * Interface method for fetching all PoI's in a category.
 	 * @param category To correspond with the fetched PoIs.
-	 * @return Arraylist containing PoIs from database.
+	 * @return ArrayList containing PoIs from database.
 	 */
 	public ArrayList<Poi> getAllPois(String category); 
 	
 	/**
 	 * Interface method for fetching favourite PoI's from the database.
 	 * @param favourite Status for PoIs to be fetched.
-	 * @return Arraylist containing PoIs from database.
+	 * @return ArrayList containing PoIs from database.
 	 */
 	public ArrayList<Poi> getAllPois(Boolean favourite);
 	
 	/**
 	 * Interface method for fetching all trips from the database.
-	 * @return Arraylist containing all trips in the database.
+	 * @return ArrayList containing all trips in the database.
 	 */
 	public ArrayList<Trip> getAllTrips();
 	
 	/**
 	 * Interface method for fetching free/fixed trips from the database.
 	 * @param free The boolean for which type of trips to fetch
-	 * @return Arraylist containing Trips from database.
+	 * @return ArrayList containing Trips from database.
 	 */
 	public ArrayList<Trip> getAllTrips(Boolean free);
 	
@@ -126,7 +119,7 @@ public interface DatabaseInterface
 	
 	/**
 	 * Interface method for fetching the names of all the categories in the database.
-	 * @return Arraylist containing the names of all categories.
+	 * @return ArrayList containing the names of all categories.
 	 */
 	public ArrayList<String> getCategoryNames();
 	
@@ -138,7 +131,7 @@ public interface DatabaseInterface
 	
 	/**
 	 * Interface method for fetching all empty trips from the database.
-	 * @return Arraylist ontaining Trips.
+	 * @return ArrayList ontaining Trips.
 	 */
 	ArrayList<Trip> getAllEmptyTrips();
 	
@@ -164,7 +157,7 @@ public interface DatabaseInterface
 	
 	/**
 	 * Interface method for fetching the unique names of all Categories in the database.
-	 * @return Arraylist containing all the names of categories.
+	 * @return ArrayList containing all the names of categories.
 	 */
 	ArrayList<String> getUniqueCategoryNames();
 	
@@ -213,4 +206,4 @@ public interface DatabaseInterface
 	 * @return The Trip from the database.
 	 */
 	Trip getTrip(int privateId);	
-}
+}//DatabaseInterface

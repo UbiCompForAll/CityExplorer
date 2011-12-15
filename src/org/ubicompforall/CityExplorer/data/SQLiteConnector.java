@@ -56,8 +56,7 @@ import android.widget.Toast;
 /**
  * The Class SQLiteConnector.
  */
-public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface
-{
+public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
 	/** The Constant DEBUG. */
 	private static final boolean DEBUG = false;
 

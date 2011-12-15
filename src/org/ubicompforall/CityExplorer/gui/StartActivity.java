@@ -83,6 +83,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 
 		
+		//FOR DEBUGGING
 		//startActivity(new Intent(this, ImportActivity.class));
 		
 		
@@ -101,7 +102,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 				if (buttons[b] != null){
 					buttons[b].setOnClickListener(this);
 				}else{
-					Log.d("CityExplorer", "StartActivity~100: BUTTON["+b+"] was NULL for "+buttons);
+					Log.d("CityExplorer", "StartActivity~100: BUTTON["+b+1+"] was NULL for "+buttons);
 				}//if button not found
 			}//for each startButton
 		}else{

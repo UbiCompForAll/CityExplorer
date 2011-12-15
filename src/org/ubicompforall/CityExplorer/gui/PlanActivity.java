@@ -38,6 +38,7 @@ import android.content.*;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.*;
+import android.util.Log;
 import android.widget.*;
 
 public class PlanActivity extends TabActivity {
@@ -45,6 +46,7 @@ public class PlanActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		Log.d("CityExplorer", "PlanActivity~49 create");
 		setContentView(R.layout.tablayout);
 
 		initTabs();
