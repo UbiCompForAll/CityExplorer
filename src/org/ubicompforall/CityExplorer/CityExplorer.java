@@ -32,8 +32,15 @@
 
 package org.ubicompforall.CityExplorer;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 /**
@@ -47,6 +54,14 @@ import android.util.Log;
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
     public static final String C = "CityExplorer";
+	public static final String GENERAL_PREFERENCES = "SETTINGS";
+
+	// DEFAULT GEO-POINT for first map view
+	public static final String LAT = "Lat";
+	public static final String LNG = "Long";
+	public static final int TRONDHEIM_LAT = 63424000;  //63°25′36″N ;
+	public static final int TRONDHEIM_LNG =  9054600;	//10°23′48″E -1 ;
+
 
 	@Override
     public void onCreate() {
@@ -64,6 +79,53 @@ public class CityExplorer extends Application{ // implements LocationListener //
     	//TODO: save preferences now???
     	Log.d("CityExplorer", "Save the preferences now?");
     }//onTerminate
+
+    public static boolean isConnected( Context context ) {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+            context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+        if (connectivityManager != null) {
+            networkInfo = connectivityManager.getActiveNetworkInfo();
+        }
+        if ( networkInfo == null ){
+			//Toast.makeText( context, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+        	return false; //Network is not enabled
+        }else{
+        	return networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
+        }
+    } // isConnected
+    
+    /**
+     * Display a dialog that user has no internet connection
+     * @param ctx1
+     *
+     * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
+     */
+    public static void showNoConnectionDialog(Context context) {
+        final Context ctx = context;	// Protect original context!
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setCancelable(true);
+        builder.setMessage( R.string.no_connection );
+        builder.setTitle( R.string.no_connection_title );
+        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ctx.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                return;
+            }
+        });
+
+        builder.show();
+    } // showNoConnectionDialog
+
 
     /*
 	@Override

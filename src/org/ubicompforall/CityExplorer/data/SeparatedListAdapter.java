@@ -2,7 +2,7 @@
  * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
- * @revised:		15 Dec 2011, Rune
+ * @revised:		16 Dec 2011, Rune
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -25,6 +25,8 @@
 
 /**
  * @description:
+ * 
+ * Common Adapter for all list-types, e.g. POIs, Trips, and DBFiles, Both Local and Online/Internet/Web
  */
 
 package org.ubicompforall.CityExplorer.data;
@@ -275,9 +277,7 @@ public class SeparatedListAdapter extends BaseAdapter {
     		TextView result=(TextView)convertView;
 
     		if (convertView==null) {
-    		result=(TextView)ctx.getLayoutInflater()
-    		.inflate(R.layout.header,
-    		null);
+    			result=(TextView)ctx.getLayoutInflater().inflate(R.layout.header,null);
     		}
 
     		result.setText(caption);
@@ -333,7 +333,7 @@ public class SeparatedListAdapter extends BaseAdapter {
     		//DatabaseInterface db = DBFactory.getInstance(ctx);
 			FileSystemInterface fs = new FileSystemConnector();
     		for (Section s : sections){
-       			((DBAdapter)s.getAdapter()).replaceAll(fs.getAllDBs(s.getCaption()));
+       			((DBFileAdapter)s.getAdapter()).replaceAll(fs.getAllDBs(s.getCaption()));
     		}//for sections
 		}//switch on listType
 

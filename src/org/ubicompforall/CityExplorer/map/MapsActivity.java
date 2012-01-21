@@ -43,6 +43,7 @@ import org.ubicompforall.CityExplorer.gui.NavigateFrom;
 import org.ubicompforall.CityExplorer.gui.PoiDetailsActivity;
 import org.ubicompforall.CityExplorer.gui.QuickActionPopup;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import com.google.android.maps.GeoPoint;
@@ -53,6 +54,7 @@ import com.google.android.maps.Overlay;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -72,6 +74,14 @@ import android.widget.Toast;
  */
 public class MapsActivity extends MapActivity implements LocationListener, OnClickListener{
 	
+	private static final String GENERAL_PREFERENCES = CityExplorer.GENERAL_PREFERENCES;
+
+	// DEFAULT GEO-POINT for first map view
+	private static final String LAT = CityExplorer.LAT;
+	private static final String LNG = CityExplorer.LNG;
+	private static final int TRONDHEIM_LAT = CityExplorer.TRONDHEIM_LAT;	//63°25′36″N ;
+	private static final int TRONDHEIM_LNG = CityExplorer.TRONDHEIM_LNG;	//10°23′48″E ;
+
 	/** The map view. */
 	private MapView mapView;
 	
@@ -132,9 +142,10 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		locationIcon 	= new MapIconOverlay(this, R.drawable.map_marker, new GeoPoint(0, 0));
 		overlays 		= mapView.getOverlays();
 		overlays.add(locationIcon);
-		drawOverlays();
 		
+		initWifi();
 		initGPS();
+		drawOverlays();
 	}//onCreate
 
 
@@ -142,8 +153,9 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * Draw overlays.
 	 */
 	private void drawOverlays(){
-		HashMap<String, Bitmap> categoryIcons = DBFactory.getInstance(this).getUniqueCategoryNamesAndIcons();
-		
+		HashMap<String, Bitmap> categoryIcons
+		 = DBFactory.getInstance(this).getUniqueCategoryNamesAndIcons();	//Time-consuming?
+
 		if( getIntent().hasExtra(IntentPassable.TRIP)){ //Draw a Trip if present
 			Trip trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);
 			System.out.println("GOT TRIP ="+trip.getLabel()+" poi count:"+trip.getPois().size());
@@ -185,11 +197,12 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);
 			}
-			if ( poiOverlays.get(0).getGeoPoint() != null){
-				mapController.animateTo(poiOverlays.get(0).getGeoPoint());//go to first poi
-			}else{
-				Log.d("CityExplorer", "poiOverlays is "+poiOverlays);
-			}
+			//if ( poiOverlays.get(0).getGeoPoint() != null){
+			Log.d("CityExplorer", "poiOverlays is "+poiOverlays);
+			SharedPreferences settings = getSharedPreferences( GENERAL_PREFERENCES, 0);
+			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
+			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
+			mapController.animateTo( new GeoPoint( lat, lng ));//go to current location
 		}//if (Intent.hasExtra(POILIST)
 	}//drawOverlays
 
@@ -208,6 +221,17 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
+	
+	/***
+	 * Make sure Wifi or Data connection is enabled
+	 */
+	void initWifi(){
+		boolean connected = CityExplorer.isConnected(this);
+		if ( ! connected ){
+			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+			CityExplorer.showNoConnectionDialog( this );
+		}
+	} //initWifi
 
 
 	/* (non-Javadoc)
@@ -236,13 +260,14 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	}
 
 
-	/* (non-Javadoc)
+	/***
+	 * Make sure GPS is enabled
 	 * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
 	 */
 	@Override
 	public void onProviderDisabled(String provider){
 		Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-	}
+	} // onProviderDisabled
 
 
 	/* (non-Javadoc)

@@ -556,6 +556,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return trips.get(0);
 	}//getTrip
 
+	/***
+	 * Open the Database
+	 * This is quite time-consuming, and should be done in a background process,
+	 * so the map can show immediaetely!
+	 */
 	@Override
 	public boolean open(){
 		try{
@@ -608,8 +613,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return categories;
 	}//getUniqueCategoryNames
 
+	/***
+	 * Reading category names from the DB,
+	 * and images from the Assets folder.
+	 */
 	@Override
-	public HashMap<String, Bitmap> getUniqueCategoryNamesAndIcons() {
+	public HashMap<String, Bitmap>
+	 getUniqueCategoryNamesAndIcons() {
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
 		//Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);

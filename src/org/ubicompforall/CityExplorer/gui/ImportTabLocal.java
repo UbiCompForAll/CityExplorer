@@ -38,7 +38,7 @@ import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 //import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
 import org.ubicompforall.CityExplorer.data.DB;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
-import org.ubicompforall.CityExplorer.data.DBAdapter;
+import org.ubicompforall.CityExplorer.data.DBFileAdapter;
 import org.ubicompforall.CityExplorer.data.SeparatedListAdapter;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
@@ -163,12 +163,12 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 			if( !adapter.getSectionNames().contains(db.getCategory())){ //category does not exist, create it.
 				ArrayList<DB> list = new ArrayList<DB>();
 
-				DBAdapter testAdapter;
-				testAdapter = new DBAdapter(this, R.layout.plan_listitem, list);
+				DBFileAdapter testAdapter;
+				testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(db.getCategory(), testAdapter);
 			}
-			((DBAdapter)adapter.getAdapter(db.getCategory())).add(db);//add to the correct section
-			((DBAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
+			((DBFileAdapter)adapter.getAdapter(db.getCategory())).add(db);//add to the correct section
+			((DBFileAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
 		}
 	}
 
@@ -191,7 +191,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 			if(!adapter.getSectionNames().contains(db.getCategory())){
 				ArrayList<DB> list = new ArrayList<DB>();
 				list.add(db);
-				DBAdapter testAdapter = new DBAdapter(this, R.layout.plan_listitem, list);
+				DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(db.getCategory(), testAdapter);
 			}//if contains category
 		}//for DBs
@@ -562,7 +562,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 						list.add(db);
 					}
 				}//for DBs
-				DBAdapter testAdapter = new DBAdapter(this, R.layout.plan_listitem, list);
+				DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(title, testAdapter);
 			}//if checked
 		}//for categories

@@ -2,6 +2,11 @@
 @DATE	2011.11.15
 @FILE	CityExplorer/README.txt
 
+Permissions Needed:
+-------------------
+
+
+
 Steps for compiling the Android app in your debug environment:
 --------------------------------------------------------------
 Follow the instructions here to make your own debug key:

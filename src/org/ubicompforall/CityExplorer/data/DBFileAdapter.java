@@ -25,6 +25,7 @@
 
 /**
  * @description:
+ * Adapter used by the ImportTabLocal-list to show sections and (corresponding) DBFile-names 
  */
 
 package org.ubicompforall.CityExplorer.data;
@@ -45,7 +46,7 @@ import android.widget.TextView;
 /**
  * This class handles the DB adapters.
  */
-public class DBAdapter extends ArrayAdapter<DB> {
+public class DBFileAdapter extends ArrayAdapter<DB> {
 
 	private static final String C = CityExplorer.C;
 
@@ -65,7 +66,7 @@ public class DBAdapter extends ArrayAdapter<DB> {
 	 * @param textViewResourceId The text view resource id.
 	 * @param items The items to add to the adapter.
 	 */
-	public DBAdapter(Context context, int textViewResourceId, ArrayList<DB> items) {
+	public DBFileAdapter(Context context, int textViewResourceId, ArrayList<DB> items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
 		this.context = context;
@@ -80,9 +81,9 @@ public class DBAdapter extends ArrayAdapter<DB> {
 	public void replaceAll(ArrayList<DB> dbs){
 		items.clear();
 		if (items == null){
-			Log.d(C, "DBAdapter~81: OOooppss!!... items==null");
+			Log.d(C, "DBFileAdapter~81: OOooppss!!... items==null");
 		}else if(dbs == null){
-			Log.d(C, "DBAdapter~81: OOooppss!!... dbs==null");
+			Log.d(C, "DBFileAdapter~81: OOooppss!!... dbs==null");
 		}else{
 			items.addAll(dbs);
 		}
@@ -109,4 +110,4 @@ public class DBAdapter extends ArrayAdapter<DB> {
 		}
 		return v;
 	}//getView
-}//DBAdapter
+}//DBFileAdapter

@@ -81,9 +81,12 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 		//startActivity(new Intent(StartActivity.this, ImportActivity.class));
 	}//onCreate
 
+	/***
+	 * Settings Menu Buttons: 1) Import, 2) Set Location 3) ?
+	 */
 	@Override
 	public void onClick(View v) {
-		Log.d(C, "Clicked: "+v);
+		//Log.d(C, "Clicked: "+v);
 		if (v.getId() == R.id.startButton1){
 			startActivity(new Intent(SettingsActivity.this, ImportActivity.class));
 
@@ -91,7 +94,7 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 			Log.d(C, "Clicked: Button2... Empty");
 
 		}else if (v.getId() == R.id.startButton3){
-			Log.d(C, "Clicked: Button2... Empty");
+			Log.d(C, "Clicked: Button3... Empty");
 
 		}else{
 			Log.d(C, "Unknown button clicked: "+v);

@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @contributor(s): Jacqueline Floch (SINTEF), Rune S�tre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
  * @revised:
@@ -38,6 +38,7 @@ import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
@@ -48,6 +49,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -63,9 +65,15 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	 */
 	protected static final Button[] STARTBUTTONS = new Button[3];
 	protected static final int[] 	STARTBUTTON_IDS = new int[]{R.id.startButton1, R.id.startButton2, R.id.startButton3};
-	
-	//private static final Button[] SETTINGBUTTONS = new Button[1];
-	//private static final int[] 	SETTINGBUTTON_IDS = new int[]{R.id.startButton3};
+
+	private static final String GENERAL_PREFERENCES = CityExplorer.GENERAL_PREFERENCES;
+
+	// DEFAULT GEO-POINT for first map view
+	private static final String LAT = CityExplorer.LAT;
+	private static final String LNG = CityExplorer.LNG;
+	private static final int TRONDHEIM_LAT = CityExplorer.TRONDHEIM_LAT;	//63°25′36″N ;
+	private static final int TRONDHEIM_LNG = CityExplorer.TRONDHEIM_LNG;	//10°23′48″E ;
+
 
 	/**
 	 * The user's current location.
@@ -81,12 +89,11 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
-
+		//Init userLocation
+		userLocation = new Location("");
 		
 		//FOR DEBUGGING
 		//startActivity(new Intent(this, ImportActivity.class));
-		
-		
 	}//onCreate
 
 	@Override
@@ -102,7 +109,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 				if (buttons[b] != null){
 					buttons[b].setOnClickListener(this);
 				}else{
-					Log.d("CityExplorer", "StartActivity~100: BUTTON["+b+1+"] was NULL for "+buttons);
+					Log.d("CityExplorer", "StartActivity~105: BUTTON["+b+1+"] was NULL for "+buttons);
 				}//if button not found
 			}//for each startButton
 		}else{
@@ -117,37 +124,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){
-			Log.d(C, "Clicked: ExploreButton...");
-			if(userLocation != null){
-				Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
-
-				DatabaseInterface db = DBFactory.getInstance(this);
-				ArrayList<Poi> poiList = db.getAllPois();
-				ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
-
-	//			ExportImport.send(this, poiList);
-	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
-				for (Poi p : poiList) {
-					double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
-					double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
-
-					Location dest = new Location("dest");
-					dest.setLatitude(dlat);
-					dest.setLongitude(dlon);
-
-					if ( userLocation.distanceTo(dest) <= 5000 ){
-						poiListNearBy.add(p);
-					}
-				}//for POIs
-				if(poiListNearBy.size()>0){
-					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
-					startActivity(showInMap);
-				}//if POIsNearBy
-			}else{ //userLocation == null, Check out GPS setting in CityExplorer.java
-				Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-				Log.d("CityExplorer", " did you forget to activate GPS??! ");
-				Log.d("CityExplorer", " TODO: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
-			}//if userLocation, else improvise!
+			exploreCiry();
 
 		}else if (v.getId() == R.id.startButton3){
 			startActivity(new Intent(StartActivity.this, SettingsActivity.class));
@@ -156,7 +133,48 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			Log.d(C, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import
 	}//onClick
+	// FOR DEBUGGING
+	//			ExportImport.send(this, poiList);
+	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
 
+
+	/***
+	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
+	 */
+	private void exploreCiry() {
+		Log.d(C, "Clicked: ExploreButton...");
+		if( userLocation == null){
+			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+			Log.d("CityExplorer", "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
+			SharedPreferences settings = getSharedPreferences( GENERAL_PREFERENCES, 0 );
+			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
+			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
+			userLocation.setLatitude(lat);
+			userLocation.setLongitude(lng);	//go to current location
+		}//userLocation == null, Check out GPS setting in CityExplorer.java
+
+		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
+
+		DatabaseInterface db = DBFactory.getInstance(this);
+		ArrayList<Poi> poiList = db.getAllPois();
+		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
+
+		for (Poi p : poiList) {
+			double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
+			double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
+
+			Location dest = new Location("dest");
+			dest.setLatitude(dlat);
+			dest.setLongitude(dlon);
+
+			if ( userLocation != null  &&  userLocation.distanceTo(dest) <= 5000 ){
+				poiListNearBy.add(p);
+			} // if POIsNearBy
+		}//for POIs
+		
+		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
+		startActivity(showInMap);
+	} // expolorCity
 
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
