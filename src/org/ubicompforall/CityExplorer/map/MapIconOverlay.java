@@ -31,6 +31,7 @@
 
 package org.ubicompforall.CityExplorer.map;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.data.Poi;
 
 import com.google.android.maps.GeoPoint;
@@ -42,7 +43,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 
 /**
  * The Class MapIconOverlay.
@@ -80,16 +80,21 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	 * @param Icon the icon
 	 * @param position the position
 	 */
-	public MapIconOverlay(Context c, int Icon, GeoPoint position) 
-	{
+	public MapIconOverlay(Context c, int Icon, GeoPoint position) {
 		this.p = position;
 		bmp = BitmapFactory.decodeResource(c.getResources(), Icon);
 		context = (MapsActivity) c;
 	}
 	
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
+
 	/**
 	 * Sets the poi.
-	 *
 	 * @param poi the new poi
 	 */
 	public void setPoi(Poi poi)
@@ -99,7 +104,6 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	
 	/**
 	 * Update pos.
-	 *
 	 * @param p the p
 	 */
 	public void updatePos(GeoPoint p) {
@@ -123,12 +127,38 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	    if (bmp != null){
 	    	canvas.drawBitmap(bmp, screenPts.x-bmp.getWidth()/2, screenPts.y-bmp.getHeight()/*/2*/, null);
 	    }else{
-			//Log.d("CityExplorer", "No bmp...");
+			debug(0, "No bmp for "+this.getGeoPoint() );
 	    }
 	    return true;
 	}//draw
 	
+	
+	/**
+	 * Evaluate click.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @return true, if successful
+	 */
+	public boolean evaluateClick(int x, int y){
+		if (bmp==null || clickPoint==null || screenPts==null){
+			debug(0, "OOOps: bmp is "+bmp);
+		}else{
+			if(		clickPoint.x > screenPts.x-clickTolerance-bmp.getWidth()/2 &&
+					clickPoint.x < screenPts.x+clickTolerance+bmp.getWidth()/2 &&
+					clickPoint.y > screenPts.y-clickTolerance-bmp.getHeight()/2 &&
+					clickPoint.y < screenPts.y+clickTolerance+bmp.getHeight()/2)
+			{
+				return true;
+			}
+		}
+		return false;
+	}//evaluateClick
+	
+	
+
 	/* (non-Javadoc)
+	 * 
 	 * @see com.google.android.maps.Overlay#onTap(com.google.android.maps.GeoPoint, com.google.android.maps.MapView)
 	 */
 	@Override
@@ -193,27 +223,6 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 		return p;
 	}
 	
-	/**
-	 * Evaluate click.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return true, if successful
-	 */
-	public boolean evaluateClick(int x, int y){
-		if (bmp==null || clickPoint==null || screenPts==null){
-			Log.d("CityExplorer", "OOOps: bmp is "+bmp);
-		}else{
-			if(		clickPoint.x > screenPts.x-clickTolerance-bmp.getWidth()/2 &&
-					clickPoint.x < screenPts.x+clickTolerance+bmp.getWidth()/2 &&
-					clickPoint.y > screenPts.y-clickTolerance-bmp.getHeight()/2 &&
-					clickPoint.y < screenPts.y+clickTolerance+bmp.getHeight()/2)
-			{
-				return true;
-			}
-		}
-		return false;
-	}//evaluateClick
 
 }//MapIconOverlay
 

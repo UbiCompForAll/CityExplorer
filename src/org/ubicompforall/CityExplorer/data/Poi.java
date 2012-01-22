@@ -35,13 +35,9 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
 import com.google.android.maps.GeoPoint;
 
 final public class Poi extends IntentPassable {
-
-	private static final String C = CityExplorer.C;
 
 	/**
 	 * Field containing a PoI's global ID.
@@ -154,6 +150,13 @@ final public class Poi extends IntentPassable {
 			this.address = address;
 		}
 
+		
+		private void debug( int level, String message ) {
+			CityExplorer.debug( level, message );		
+		} //debug
+
+
+
 		/**
 		 * Method for populating the description field.
 		 *
@@ -191,7 +194,7 @@ final public class Poi extends IntentPassable {
 			if (cat!=null){
 				this.category = cat;
 			}else{
-				Log.d(C, "cat was null!!");
+				debug(0, "cat was null!!");
 			}
 			return this;
 		}
@@ -306,7 +309,7 @@ final public class Poi extends IntentPassable {
 		if(b.category!=null){
 			this.category		= b.category;
 		}else{
-			Log.d(C, "this.category from builder was null!!");
+			debug(0, "this.category from builder was null!!");
 			this.category="";
 		}
 		this.openingHours	= b.openingHours;
@@ -314,6 +317,12 @@ final public class Poi extends IntentPassable {
 		this.telephone		= b.telephone;
 		this.imageURL		= b.imageURL;
 	}
+
+	
+	private void debug( int level, String message ) {
+		debug( level, message );		
+	} //debug
+
 
 	/**
 	 * Method making it possible to modify a PoI.
@@ -536,7 +545,7 @@ final public class Poi extends IntentPassable {
 		.latitude(in.readDouble())
 		.longitude(in.readDouble())
 		.build();
-		//Log.d(C, "longitude set to: "+address.getLongitude()+", lat is "+address.getLatitude());
+		//debug(0, "longitude set to: "+address.getLongitude()+", lat is "+address.getLatitude());
 		favourite	= (1==in.readInt());
 		String cat	= in.readString();
 		if (cat==null){ category="Missing!"; }else{ category=cat; }

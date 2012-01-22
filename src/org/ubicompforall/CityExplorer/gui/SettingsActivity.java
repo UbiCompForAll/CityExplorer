@@ -30,11 +30,12 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
+import org.ubicompforall.CityExplorer.map.LocationActivity;
 
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
@@ -45,7 +46,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 public class SettingsActivity extends StartActivity implements OnClickListener, LocationListener{
-	private static final String C = "CityExplorer";
+	
 
 	//RS-111122, "implements LocationListener{" moved to CityExplorer.java
 
@@ -63,7 +64,6 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
-		Log.d("CityExplorer", "77~SettingsActivity");
 
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 		//DEBUG: Remove startButton2 & 3 from startLayoutview
@@ -75,29 +75,36 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 			Button b2 = (Button) findViewById(R.id.startButton2);
 			b2.setText( getResources().getString(R.string.setlocation));
 		}else{
-			Log.d(C, "Couldn't find the startview in SettingsActivity~75");
+			debug(0, "Couldn't find the startview in SettingsActivity~75");
 		}
 		//initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		//startActivity(new Intent(StartActivity.this, ImportActivity.class));
 	}//onCreate
+
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/***
 	 * Settings Menu Buttons: 1) Import, 2) Set Location 3) ?
 	 */
 	@Override
 	public void onClick(View v) {
-		//Log.d(C, "Clicked: "+v);
+		//debug(0, "Clicked: "+v);
 		if (v.getId() == R.id.startButton1){
-			startActivity(new Intent(SettingsActivity.this, ImportActivity.class));
+			startActivity( new Intent( SettingsActivity.this, ImportActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){
-			Log.d(C, "Clicked: Button2... Empty");
+			startActivity( new Intent( SettingsActivity.this, LocationActivity.class));
 
 		}else if (v.getId() == R.id.startButton3){
-			Log.d(C, "Clicked: Button3... Empty");
+			debug(0, "Clicked: Button3... Empty");
 
 		}else{
-			Log.d(C, "Unknown button clicked: "+v);
+			debug(0, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import
 	}//onClick
 
@@ -147,18 +154,18 @@ buttonPlan	 = (Button) findViewById(R.id.startButtonPlan);
 if (buttonPlan != null){
 	buttonPlan.setOnClickListener(this);
 }else{
-	Log.d("CityExplorer", "Plan-button was NULL ~77");
+	debug(0, "Plan-button was NULL ~77");
 }
 buttonExplore = (Button) findViewById(R.id.startButtonExplore);
 if (buttonExplore != null){
 	buttonExplore.setOnClickListener(this);
 }else{
-	Log.d("CityExplorer", "Explorer-button was NULL ~83");
+	debug(0, "Explorer-button was NULL ~83");
 }
 buttonSettings = (Button) findViewById(R.id.startButtonSettings);
 if (buttonSettings != null){
 	buttonSettings.setOnClickListener(this);
 }else{
-	Log.d("CityExplorer", "Import-button was NULL ~90");
+	debug(0, "Import-button was NULL ~90");
 }
 */

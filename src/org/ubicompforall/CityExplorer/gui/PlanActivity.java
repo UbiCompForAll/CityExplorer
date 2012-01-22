@@ -31,6 +31,7 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.TabActivity;
@@ -38,7 +39,6 @@ import android.content.*;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.*;
-import android.util.Log;
 import android.widget.*;
 
 public class PlanActivity extends TabActivity {
@@ -46,11 +46,18 @@ public class PlanActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		Log.d("CityExplorer", "PlanActivity~49 create");
+		debug(0, "PlanActivity~49 create");
 		setContentView(R.layout.tablayout);
 
 		initTabs();
 	}//onCreate
+
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/**
 	 * Initializes the tabs used in this activity.

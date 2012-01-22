@@ -111,7 +111,7 @@ final public class PoiAddress {
 		 * @return The builder.
 		 */
 		public Builder latitude(double la){
-			//Log.d(C, "PoiAddress.latitude~112 is "+la);
+			//debug(0, "PoiAddress.latitude~112 is "+la);
 			this.latitude = la;
 			return this;
 		}
@@ -156,7 +156,7 @@ final public class PoiAddress {
 	 */
 	public PoiAddress(Builder b){
 //		if (b.street == null){
-//			Log.d(C, "Why was builder b.stree==null?!");
+//			debug(0, "Why was builder b.stree==null?!");
 //			this.street="";
 //		}else{
 		this.street		= b.street;

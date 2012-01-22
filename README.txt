@@ -1,10 +1,14 @@
-@AUTHOR	Rune S�tre
+@AUTHOR	Rune Sætre
 @DATE	2011.11.15
 @FILE	CityExplorer/README.txt
 
 Permissions Needed:
 -------------------
+android.permission.INTERNET: To download the Google Maps
+android.permission.ACCESS_NETWORK_STATE: To check if wifi is available for showing the Google Maps
+android.permission.ACCESS_COARSE(FINE)_LOCATION: To show right area of the map
 
+http://stackoverflow.com/questions/4907769/locationmanager-is-the-network-provider-always-enabled
 
 
 Steps for compiling the Android app in your debug environment:

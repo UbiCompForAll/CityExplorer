@@ -42,6 +42,7 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * This is an example of a {@link android.app.Application} class.  Ordinarily you would use
@@ -53,14 +54,15 @@ import android.util.Log;
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
+	public static final int DEBUG = 1;
     public static final String C = "CityExplorer";
-	public static final String GENERAL_PREFERENCES = "SETTINGS";
+	public static final String GENERAL_SETTINGS = "SETTINGS";
 
 	// DEFAULT GEO-POINT for first map view
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
 	public static final int TRONDHEIM_LAT = 63424000;  //63°25′36″N ;
-	public static final int TRONDHEIM_LNG =  9054600;	//10°23′48″E -1 ;
+	public static final int TRONDHEIM_LNG =  9554600;	//10°23′48″E -1 ;
 
 
 	@Override
@@ -70,16 +72,27 @@ public class CityExplorer extends Application{ // implements LocationListener //
          * {@link DefaultValues} for more details.
          */
         PreferenceManager.setDefaultValues(this, R.xml.default_values, false);
-    	Log.d("CityExplorer", "58~Start CityExplorer.java");
-		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ?
+
+        //Local debug (stacktrace level = 3)
+        StackTraceElement st = Thread.currentThread().getStackTrace()[2];
+		Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Start CityExplorer.java" );
+
+		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ? When?
+		// And what about DB-loading?  Here? ...
+		
     }//onCreate
 
     @Override
     public void onTerminate() {
     	//TODO: save preferences now???
-    	Log.d("CityExplorer", "Save the preferences now?");
+
+        //Local debug (stacktrace level = 3)
+        StackTraceElement st = Thread.currentThread().getStackTrace()[2];
+		Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Save the preferences now?");
     }//onTerminate
 
+
+    
     public static boolean isConnected( Context context ) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
             context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -88,15 +101,16 @@ public class CityExplorer extends Application{ // implements LocationListener //
             networkInfo = connectivityManager.getActiveNetworkInfo();
         }
         if ( networkInfo == null ){
-			//Toast.makeText( context, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+			Toast.makeText( context, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
         	return false; //Network is not enabled
         }else{
         	return networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
         }
     } // isConnected
     
+
     /**
-     * Display a dialog that user has no internet connection
+     * Display a dialog that user has no Internet connection
      * @param ctx1
      *
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
@@ -127,7 +141,18 @@ public class CityExplorer extends Application{ // implements LocationListener //
     } // showNoConnectionDialog
 
 
-    /*
+    /***
+	 * Debug method to include the filename, line-number and method of the caller
+	 */
+	public static void debug(int level, String message) {
+		if (DEBUG >= level) {
+			StackTraceElement st = Thread.currentThread().getStackTrace()[4];
+			Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+message );
+		} // if verbosity is high enough
+	} // debug
+
+
+/* Not valid for Application ?!!
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub

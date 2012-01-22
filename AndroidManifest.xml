@@ -7,17 +7,35 @@
 		android:maxSdkVersion="14" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	<uses-permission android:name="android.permission.BLUETOOTH" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<!--uses-permission android:name="android.permission.BLUETOOTH"  Why?! -->
 	
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="true" android:allowTaskReparenting="false" android:name="CityExplorer">
 	
-		<activity android:name=".gui.StartActivity"
+		<uses-library android:name="com.google.android.maps" /><activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/plain" />
+			</intent-filter>
+		</activity><activity android:name=".data.Sharing" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter android:label="@string/opensqlite" android:icon="@drawable/icon">
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="@string/sqlitemimetype" />
+			</intent-filter>
+		</activity><activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:name=".gui.CalendarActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name=".gui.CalendarActivity" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity><activity android:name=".gui.ImportActivity" android:theme="@style/TabTheme"></activity><activity android:name=".gui.ImportTabLocal"></activity><activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:name=".gui.NewPoiActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:theme="@android:style/Theme.NoTitleBar" android:name=".gui.NewTripActivity"></activity><activity android:name=".gui.StartActivity"
 			android:launchMode="singleTask" android:theme="@android:style/Theme.NoTitleBar"
 			android:screenOrientation="unspecified">
 			<intent-filter>
@@ -26,8 +44,8 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".gui.SettingsActivity" android:label="@string/settings"></activity>
-		<activity android:name=".gui.ImportActivity" android:theme="@style/TabTheme"></activity>
-		<activity android:name=".gui.ImportTabLocal"></activity>
+		
+		
 	
 		<activity android:launchMode="standard" android:name=".gui.PlanActivity" android:theme="@style/TabTheme"><!-- singleTop? -->
 			<activity android:launchMode="standard" android:name=".gui.PlanActivity"  android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
@@ -42,12 +60,7 @@
 			</intent-filter>
 		</activity>
 	
-		<activity android:name=".gui.CalendarActivity"  android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
-			<intent-filter>
-				<action android:name=".gui.CalendarActivity" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
+		
 		<activity android:name=".gui.PoiDetailsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name=".gui.PoiDetailsActivity" />
@@ -74,31 +87,24 @@
 		
 	
 		<activity android:name=".gui.PlanTabActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
-		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".gui.NewTripActivity"></activity>
-		<activity android:name=".gui.NewPoiActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
-		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		
+		
+		
 		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
-		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="text/plain" />
-			</intent-filter>
-		</activity>
-		<activity android:name=".data.Sharing" android:theme="@android:style/Theme.NoTitleBar">
-			<intent-filter android:label="@string/opensqlite" android:icon="@drawable/icon">
-				<action android:name="android.intent.action.VIEW"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<data android:mimeType="@string/sqlitemimetype"/>
-			</intent-filter>
-		</activity><activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+		
+		<activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+				<activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 				<intent-filter>
 					<action android:name=".map.MapsActivity" />
 					<category android:name="android.intent.category.DEFAULT" />
 				</intent-filter>
-			</activity><uses-library android:name="com.google.android.maps" />
+			</activity><intent-filter>
+					<action android:name=".map.MapsActivity" />
+					<category android:name="android.intent.category.DEFAULT" />
+				</intent-filter>
+			</activity>
+		<activity android:name=".map.LocationActivity" android:label="@string/default_location"></activity>
 		
 	</application>
 	
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
 </manifest> 

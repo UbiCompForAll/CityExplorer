@@ -41,8 +41,7 @@ import org.apache.http.util.EntityUtils;
 import org.ubicompforall.CityExplorer.data.*;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
-import android.util.Log;
-
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
@@ -138,6 +137,17 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	 */
 	private ArrayList<Poi> pois;
 
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
+///////////////////////////////////////////////////////////////////////////////
+	
+	/***
+	 * onCreate: StartUp Method
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -193,7 +203,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 
 		showPoiDetails(poi);
 		initGPS();
-	}
+	} // onCreate
 
 	/**
 	 * Method fetches information for the current PoI, and shows it in the GUI.
@@ -244,14 +254,14 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 									}
 								});
 							} else {
-								Log.d("CityExplorer","entity == null?");
+								debug(0, "entity == null?");
 							}
 						} else {
-							Log.d("CityExplorer","(httpResponse.getStatusLine().getStatusCode() == not OK ");
+							debug(0, "(httpResponse.getStatusLine().getStatusCode() == not OK ");
 						}
 
 					} catch (Exception e) {
-						Log.d("CityExplorer","Error fetching image");
+						debug(0, "Error fetching image");
 					}
 				}
 			}

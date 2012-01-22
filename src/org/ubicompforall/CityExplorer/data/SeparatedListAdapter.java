@@ -35,13 +35,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 public class SeparatedListAdapter extends BaseAdapter {  
@@ -69,9 +69,7 @@ public class SeparatedListAdapter extends BaseAdapter {
     /*** Constant field describing a list of downloaded pois.*/
 	public static final int LOCAL_DBS = 5;
 
-	private static final String C = "CityExplorer";
-	
-    /*** Field containing the type of list. */
+	/*** Field containing the type of list. */
     private int listType;
     
     /*** Field containing the context of an Activity.*/
@@ -85,8 +83,16 @@ public class SeparatedListAdapter extends BaseAdapter {
     public SeparatedListAdapter(Activity context, int listType) {  
         ctx = context;
         this.listType = listType;
-        Log.d(C, "SeparatedListAdapter~86: I'm listType: "+listType);
-    }  
+        debug(0, "SeparatedListAdapter~86: I'm listType: "+listType);
+    } // CONSTRUCTOR
+    
+    
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
+
   
     /**
      * Adds a section to an adapter.
@@ -326,9 +332,9 @@ public class SeparatedListAdapter extends BaseAdapter {
     			emptyTripAdapter.notifyDataSetChanged();
     		}
     	}else if(listType == INTERNET_POIS){
-    		Log.d(C, "Missing INTERNET_POIS Adapter?");
+    		debug(0, "Missing INTERNET_POIS Adapter?");
 		}else if(listType == INTERNET_TRIPS){
-    		Log.d(C, "Missing INTERNET_TRIPS Adaptar?");
+    		debug(0, "Missing INTERNET_TRIPS Adaptar?");
 		}else if(listType == LOCAL_DBS){
     		//DatabaseInterface db = DBFactory.getInstance(ctx);
 			FileSystemInterface fs = new FileSystemConnector();

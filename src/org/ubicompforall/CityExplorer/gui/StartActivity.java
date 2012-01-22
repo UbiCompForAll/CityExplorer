@@ -44,7 +44,6 @@ import org.ubicompforall.CityExplorer.R;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.Toast;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
@@ -56,7 +55,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 public class StartActivity extends Activity implements OnClickListener, LocationListener{
-	private static final String C = "CityExplorer";
+	
 
 	//RS-111122, "implements LocationListener{" moved to CityExplorer.java
 
@@ -66,7 +65,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	protected static final Button[] STARTBUTTONS = new Button[3];
 	protected static final int[] 	STARTBUTTON_IDS = new int[]{R.id.startButton1, R.id.startButton2, R.id.startButton3};
 
-	private static final String GENERAL_PREFERENCES = CityExplorer.GENERAL_PREFERENCES;
+	private static final String GENERAL_SETTINGS = CityExplorer.GENERAL_SETTINGS;
 
 	// DEFAULT GEO-POINT for first map view
 	private static final String LAT = CityExplorer.LAT;
@@ -84,7 +83,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
-		Log.d("CityExplorer", "StartActivity~72");
+		debug(0, "Start" );
 
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 
@@ -109,17 +108,17 @@ public class StartActivity extends Activity implements OnClickListener, Location
 				if (buttons[b] != null){
 					buttons[b].setOnClickListener(this);
 				}else{
-					Log.d("CityExplorer", "StartActivity~105: BUTTON["+b+1+"] was NULL for "+buttons);
+					debug(0, "StartActivity~105: BUTTON["+b+1+"] was NULL for "+buttons);
 				}//if button not found
 			}//for each startButton
 		}else{
-			Log.d(C, "StartActivity.java: Mismatch between buttons[] and buttonsIds[]");
+			debug(0, "StartActivity.java: Mismatch between buttons[] and buttonsIds[]");
 		}
 	}//setStartButtons
 
 	@Override
 	public void onClick(View v) {
-		Log.d(C, "Clicked: "+v);
+		debug(0, "Clicked: "+v );
 		if (v.getId() == R.id.startButton1){
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
@@ -130,7 +129,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			startActivity(new Intent(StartActivity.this, SettingsActivity.class));
 
 		}else{
-			Log.d(C, "Unknown button clicked: "+v);
+			debug(0, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import
 	}//onClick
 	// FOR DEBUGGING
@@ -138,15 +137,20 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
 
 
+	private void debug(int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 	/***
 	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
 	 */
 	private void exploreCiry() {
-		Log.d(C, "Clicked: ExploreButton...");
+		debug(0, "Clicked: ExploreButton...");
 		if( userLocation == null){
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-			Log.d("CityExplorer", "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
-			SharedPreferences settings = getSharedPreferences( GENERAL_PREFERENCES, 0 );
+			debug(0, "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
+			SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0 );
 			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
 			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
 			userLocation.setLatitude(lat);
@@ -221,18 +225,18 @@ buttonPlan	 = (Button) findViewById(R.id.startButtonPlan);
 if (buttonPlan != null){
 	buttonPlan.setOnClickListener(this);
 }else{
-	Log.d("CityExplorer", "Plan-button was NULL ~77");
+	debug(0, "Plan-button was NULL ~77");
 }
 buttonExplore = (Button) findViewById(R.id.startButtonExplore);
 if (buttonExplore != null){
 	buttonExplore.setOnClickListener(this);
 }else{
-	Log.d("CityExplorer", "Explorer-button was NULL ~83");
+	debug(0, "Explorer-button was NULL ~83");
 }
 buttonSettings = (Button) findViewById(R.id.startButtonSettings);
 if (buttonSettings != null){
 	buttonSettings.setOnClickListener(this);
 }else{
-	Log.d("CityExplorer", "Import-button was NULL ~90");
+	debug(0, "Import-button was NULL ~90");
 }
 */

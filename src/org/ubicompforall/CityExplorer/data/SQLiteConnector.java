@@ -41,6 +41,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
+
 import android.content.ContentValues;
 import android.content.Context;
 //import android.content.res.AssetManager;
@@ -50,7 +52,6 @@ import android.database.SQLException;
 import android.database.sqlite.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -103,8 +104,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					"FROM poi as POI, address as ADDR, category as CAT " +
 					"WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
 
-	private static final String C = "CityExplorer";
-
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
 	 * in order to access the application assets and resources.
@@ -120,8 +119,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
 
-		Log.d("CityExplorer", myPath+" starting up");
+		debug(0, myPath+" starting up");
 	}//SQLiteConnector CONSTRUCTOR
+
+
+	
+	private void debug(int level, String message ){
+		CityExplorer.debug( level, message );
+	} // debug
+
 
 	@Override
 	public void setContext(Context context) {
@@ -143,7 +149,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		byte[] 			buffer 		= new byte[1024 * 64];
 		int 			bytesRead;
 
-		Log.d("CityExplorer", "Make copy of default "+DB_NAME+" to "+myPath);
+		debug(0, "Make copy of default "+DB_NAME+" to "+myPath);
 		try {
 			osDbPath = new FileOutputStream(myPath);
 
@@ -151,19 +157,19 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				try {
 					osDbPath.write(buffer, 0, bytesRead);
 				} catch (IOException io) {
-					Log.d("CityExplorer","Failed to write to " + DB_PATH);
+					debug(0, "Failed to write to " + DB_PATH);
 					io.printStackTrace();
 				}
-				Log.d("CityExplorer","copyDataBase(): wrote " + bytesRead + " bytes");
+				debug(0, "copyDataBase(): wrote " + bytesRead + " bytes");
 			}//while more bytes to copy
 			osDbPath.flush();
 			osDbPath.close();
 			buffer = null;
-			Log.d("CityExplorer",DB_NAME+" successufully copied");
+			debug(0, DB_NAME+" successufully copied");
 
 			myDataBase = this.getReadableDatabase();
 		} catch (IOException io) {
-			Log.d("CityExplorer","Failed to copy "+ DB_NAME + " to " + DB_PATH);
+			debug(0, "Failed to copy "+ DB_NAME + " to " + DB_PATH);
 			io.printStackTrace();
 		}//try catch (making copy)
 		return;
@@ -326,7 +332,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			prefix=",";
 			key.put(columns[i], i);
 		}
-		//Log.d(C, "sqlstr is "+sqlstr);
+		//debug(0, "sqlstr is "+sqlstr);
 		sqlstr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
 		" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP.free_trip = ? " +
 		" ORDER BY TRIP._id, TP.poi_number";
@@ -559,14 +565,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	/***
 	 * Open the Database
 	 * This is quite time-consuming, and should be done in a background process,
-	 * so the map can show immediaetely!
+	 * so the map can show immediately!
 	 */
 	@Override
 	public boolean open(){
 		try{
 			myDataBase = openDataBase();
 		}catch (SQLException e){
-			Log.d("CityExplorer", "SQLiteConnector~500: FAILED Opening SQLite connector to "+myPath);
+			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+myPath);
 			myDataBase=null;
 		}
 		long poiCount = 0;
@@ -574,13 +580,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
 		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
 		}
-		Log.d("CityExplorer", "poi-count is "+poiCount );
+		debug(0, "poi-count is "+poiCount );
 		//JF: ZIP code removed
 		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
-			Log.d("CityExplorer", "close myDataBase, before re-open");
+			debug(0, "close myDataBase, before re-open");
 			myDataBase.close();
 			try{
-				Log.d("CityExplorer",DB_NAME+" was missing... now copying");
+				debug(0, DB_NAME+" was missing... now copying");
 				createDataBase();
 			}catch (IOException e){
 				e.printStackTrace();
@@ -627,18 +633,18 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			Bitmap bmp = null;//BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
 			String filename = "icons/"+c.getInt(1)+"_"+c.getString(0)+".bmp";
 			filename = filename.replace(' ', '_');
-			Log.d(C, "Getting bmp for category: "+filename );
+			debug(0, "Getting bmp for category: "+filename );
 			try{
 				InputStream isAssetPNG	= myContext.getAssets().open(filename);
 				bmp = BitmapFactory.decodeStream( isAssetPNG);
 			}catch (IOException e){
-				Log.d(C, "No bmp in assets, for category "+filename+". Error: "+e);
+				debug(0, "No bmp in assets, for category "+filename+". Error: "+e);
 				filename = filename.replace(".bmp", ".png");
 				try{
 					InputStream isAssetPNG	= myContext.getAssets().open(filename);
 					bmp = BitmapFactory.decodeStream( isAssetPNG);
 				}catch (IOException e2){
-					Log.d(C, "No png in assets, for category "+filename+". Error: "+e2);
+					debug(0, "No png in assets, for category "+filename+". Error: "+e2);
 					categories.put(c.getString(0), bmp);
 				}
 				categories.put(c.getString(0), bmp);
@@ -655,7 +661,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * byte[] imgData = c.getBlob(1);
 	Bitmap bmp = defaultBmp;
 	if (imgData.length>20){
-		Log.d("CityExplorer", "imgData.length is "+imgData.length);
+		debug(0, "imgData.length is "+imgData.length);
 		bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
 	}else{
 		bmp = defaultBmp;
@@ -1023,12 +1029,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		// (Re-) create DB folder in case it has been removed by the system, or for first time runs
 		File catalog = new File (DB_PATH);
 		if ( !catalog.isDirectory() ){
-			Log.d("CityExplorer","Making Catalog is "+catalog);
+			debug(0, "Making Catalog is "+catalog);
 			catalog.mkdir();
-			Log.d("CityExplorer","made folder for: "+myPath);
+			debug(0, "made folder for: "+myPath);
 		}//if folder missing
 
-		Log.d("CityExplorer", "opening db: "+myPath);
+		debug(0, "opening db: "+myPath);
 		myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE+SQLiteDatabase.CREATE_IF_NECESSARY);
 
 		return myDataBase;

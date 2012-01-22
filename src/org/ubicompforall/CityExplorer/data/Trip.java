@@ -38,11 +38,8 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 final public class Trip extends IntentPassable {
-
-	private static final String C = CityExplorer.C;
 
 	/** The id of a public trip. */
 	private final int idGlobal;
@@ -64,6 +61,13 @@ final public class Trip extends IntentPassable {
 
 	/** The fixed times of each poi in a trip. */
 	private HashMap<Poi, Time> fixedTimes;
+
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/**
 	 * A Builder for the Trip class. 
@@ -331,13 +335,13 @@ final public class Trip extends IntentPassable {
 	 */
 	public void setTime(Poi poi, Time time){
 		if (fixedTimes == null){
-			Log.d(C, "Why was fixedTimes in Trip not initialized?");
+			debug(0, "Why was fixedTimes in Trip not initialized?");
 			fixedTimes = new HashMap<Poi,Time>();
 		}
 		if (poi==null){
-			Log.d(C, "Why is poi null?!");
+			debug(0, "Why is poi null?!");
 		}else if (time==null){
-			Log.d(C, "Why is time null?!");			
+			debug(0, "Why is time null?!");			
 		}else{
 			fixedTimes.put(poi, time);
 		}//If no null-pointer problems...

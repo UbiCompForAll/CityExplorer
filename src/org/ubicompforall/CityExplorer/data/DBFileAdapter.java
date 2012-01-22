@@ -36,7 +36,6 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,8 +47,6 @@ import android.widget.TextView;
  */
 public class DBFileAdapter extends ArrayAdapter<DB> {
 
-	private static final String C = CityExplorer.C;
-
 	/** The items in the DB adapter. */
 	private ArrayList<DB> items;
 
@@ -59,9 +56,9 @@ public class DBFileAdapter extends ArrayAdapter<DB> {
 	/** The text view resource id. */
 	int textViewResourceId;
 
+	
 	/**
 	 * Instantiates a new DB adapter.
-	 *
 	 * @param context The context.
 	 * @param textViewResourceId The text view resource id.
 	 * @param items The items to add to the adapter.
@@ -73,17 +70,22 @@ public class DBFileAdapter extends ArrayAdapter<DB> {
 		this.textViewResourceId = textViewResourceId;
 	}
 
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 	/**
 	 * Replace all DBs in the list of DBs.
-	 *
 	 * @param dbs The DBs.
 	 */
 	public void replaceAll(ArrayList<DB> dbs){
 		items.clear();
 		if (items == null){
-			Log.d(C, "DBFileAdapter~81: OOooppss!!... items==null");
+			debug(0, "DBFileAdapter~81: OOooppss!!... items==null");
 		}else if(dbs == null){
-			Log.d(C, "DBFileAdapter~81: OOooppss!!... dbs==null");
+			debug(0, "DBFileAdapter~81: OOooppss!!... dbs==null");
 		}else{
 			items.addAll(dbs);
 		}

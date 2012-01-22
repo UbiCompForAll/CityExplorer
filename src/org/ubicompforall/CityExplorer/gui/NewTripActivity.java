@@ -39,12 +39,12 @@ import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.Trip;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -119,6 +119,13 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		setContentView(R.layout.newtrip);
 		init();
 	}
+
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/**
 	 * Initializes the activity.
@@ -205,10 +212,10 @@ public class NewTripActivity extends Activity implements OnClickListener{
 			setResult( Activity.RESULT_OK, resultIntent );
 			finish();
 		} else {
-			Log.d("CityExplorer", "REQUEST CODE = "+requestCode);
+			debug(0, "REQUEST CODE = "+requestCode);
 		}
 		finish();
-	}
+	} // saveTrip
 
 	@Override
 	public void onClick(View v) {

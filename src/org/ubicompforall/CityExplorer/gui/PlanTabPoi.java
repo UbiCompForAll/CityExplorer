@@ -45,6 +45,7 @@ import org.ubicompforall.CityExplorer.data.Sharing;
 import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
@@ -62,7 +63,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -140,9 +140,16 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
-		Log.d("CityExplorer", "PlanTabPoi~118 create");
+		debug(0, "PlanTabPoi~118 create");
 		init();
 	}
+
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/**
 	 * Initializes the activity.

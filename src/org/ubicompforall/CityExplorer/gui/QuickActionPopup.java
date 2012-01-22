@@ -37,7 +37,6 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
@@ -132,7 +132,7 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 
 		setWidth(mScreenWidth + mShadowHoriz + mShadowHoriz);
 
-		Log.d("CityExplorer", "setWidth("+mScreenWidth +"+"+ mShadowHoriz +"+"+ mShadowHoriz+");");
+		debug(0, "setWidth("+mScreenWidth +"+"+ mShadowHoriz +"+"+ mShadowHoriz+");");
 
 		setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
@@ -146,7 +146,16 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 		setFocusable(true);
 		setTouchable(true);
 		setOutsideTouchable(true);
-	}
+	} // CONSTRUCTOR
+
+	
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
+
 
 	/**
 	 * Sets the current content view.

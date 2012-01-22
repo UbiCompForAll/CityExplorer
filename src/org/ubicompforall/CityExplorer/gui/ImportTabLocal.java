@@ -59,7 +59,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,8 +69,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class ImportTabLocal extends ListActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
-
-	private static final String C = CityExplorer.C;
 
 	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
@@ -114,9 +111,16 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		Log.d("CityExplorer", "ImportTabLocal~118 create");
+		debug(0, "ImportTabLocal~118 create");
 		init();		
 	}
+
+	
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/**
 	 * Initializes the activity.
@@ -219,7 +223,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		if (requestCode == 2){
-			Log.d(C, "Code Two!");
+			debug(0, "Code Two!");
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			menu.removeItem(R.id.planMenuUpdatePois);
@@ -359,7 +363,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	public void onListItemClick(ListView l, View v, int pos, long id) {
 		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 			//Pressing a header
-			Log.d(C, "Pressed a header... Dummy!");
+			debug(0, "Pressed a header... Dummy!");
 			return;
 		}
 		DB d = (DB) l.getAdapter().getItem(pos);
@@ -367,7 +371,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
 			Intent resultIntent = new Intent();
 			//resultIntent.putExtra(IntentPassable.DB, p);
-			Log.d(C, "I just found DB "+d);
+			debug(0, "I just found DB "+d);
 			setResult( Activity.RESULT_OK, resultIntent );
 			finish();
 			return;

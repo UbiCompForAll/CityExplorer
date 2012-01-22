@@ -63,7 +63,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -74,7 +73,7 @@ import android.widget.Toast;
  */
 public class MapsActivity extends MapActivity implements LocationListener, OnClickListener{
 	
-	private static final String GENERAL_PREFERENCES = CityExplorer.GENERAL_PREFERENCES;
+	private static final String GENERAL_SETTINGS = CityExplorer.GENERAL_SETTINGS;
 
 	// DEFAULT GEO-POINT for first map view
 	private static final String LAT = CityExplorer.LAT;
@@ -149,6 +148,11 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	}//onCreate
 
 
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 	/**
 	 * Draw overlays.
 	 */
@@ -191,27 +195,30 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				MapIconOverlay poiOverlay = new MapIconOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
 				poiOverlay.setPoi(poi);
 				poiOverlay.setImage(categoryIcons.get(poi.getCategory()));
-				/*Log.d("CityExplorer", "adding image for category poi.getCagegory="+poi.getCategory()
+				/*debug(0, "adding image for category poi.getCagegory="+poi.getCategory()
 						+", val="+categoryIcons.get(poi.getCategory()) ); */
 
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);
 			}
-			//if ( poiOverlays.get(0).getGeoPoint() != null){
-			Log.d("CityExplorer", "poiOverlays is "+poiOverlays);
-			SharedPreferences settings = getSharedPreferences( GENERAL_PREFERENCES, 0);
-			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
-			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
-			mapController.animateTo( new GeoPoint( lat, lng ));//go to current location
+			if ( poiOverlays.get(0) != null ){
+				debug(0, "poiOverlays is "+poiOverlays );
+				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
+			}else{
+				SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0);
+				int lat = settings.getInt( LAT, TRONDHEIM_LAT );
+				int lng = settings.getInt( LNG, TRONDHEIM_LNG );
+				mapController.animateTo( new GeoPoint( lat, lng ));//go to current location
+			} // valid POIs, get position and pan to it
 		}//if (Intent.hasExtra(POILIST)
 	}//drawOverlays
 
 
 	/**
-	 * Inits the gps.
+	 * Init the GPS.
 	 */
-	void initGPS()
-	{
+	void initGPS(){
+		debug(0, "InitGPS now..." );
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
