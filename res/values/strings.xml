@@ -33,8 +33,14 @@ any static strings associated with maps -->
 <string name="cancel">CANCEL</string><string name="categoryLabel">Category:</string><string name="cityLabel">City:</string>
 
 <string name="clearCalendar">Clear Times</string>
-<string name="chooseTrip">Choose Tour</string><string name="choosePoi">Choose Location</string><string name="default_values">Default Values</string><string name="default_location">SET DEFAULT LOCATION</string><string name="descriptionLabel">Description:</string><string name="editfromexistingPoiLabel">Choose location entry to make new from</string>
-  
+<string name="chooseTrip">Choose Tour</string>
+<string name="choosePoi">Choose Location</string>
+<string name="default_values">Default Values</string>
+<string name="default_location">SET DEFAULT LOCATION</string>
+<string name="descriptionLabel">Description:</string>
+<string name="editfromexistingPoiLabel">Base on existing</string>
+    <!-- as template</string -->
+
 
 <string name="editcityLabel">* City:</string>
 <string name="exploreCity">EXPLORE CITY</string>

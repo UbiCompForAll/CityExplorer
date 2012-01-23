@@ -15,6 +15,30 @@
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
 			android:layout_below="@+id/editheader" xmlns:android="http://schemas.android.com/apk/res/android">
 
+			<TableRow android:layout_span="2">
+				<!-- TextView android:id="@+id/editfromexistingPoi"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/editfromexistingPoiLabel" android:layout_below="@id/newPoiBottomInfo"
+					android:textColor="#000000" android:paddingLeft="2dip"
+					android:paddingRight="2dip" android:paddingTop="2dip"
+					android:paddingBottom="2dip" android:textStyle="bold" />
+				 RS 120123 Redundant
+				 -->
+				<Button android:text="@string/editfromexistingPoiLabel" android:id="@+id/choosePoiButton"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+				/>
+
+				<Button
+				    android:id="@+id/savePoiButton"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:text="@string/savePoi" />
+
+			</TableRow>
+
+			<TableRow>
+			</TableRow>
+
 			<TableRow>
 				<TextView android:id="@+id/editnameLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -190,30 +214,11 @@
 
 		</TableLayout>
 
-<TextView android:id="@+id/newPoiBottomInfo"
+		<TextView android:id="@+id/newPoiBottomInfo"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:layout_below="@id/newPoiTable" android:text="@string/requiredFields"
-			android:textSize="14dip" android:textColor="#000000" />
-
-		<TextView android:id="@+id/editfromexistingPoi"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:text="@string/editfromexistingPoiLabel" android:layout_below="@id/newPoiBottomInfo"
-			android:textColor="#000000" android:paddingLeft="2dip"
-			android:paddingRight="2dip" android:paddingTop="2dip"
-			android:paddingBottom="2dip" android:textStyle="bold" />
-
-		<Button android:text="@string/choosePoi" android:id="@+id/choosePoiButton"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_below="@id/editfromexistingPoi"></Button>
-
-		<Button android:text="@string/savePoi" android:id="@+id/savePoiButton"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_below="@id/choosePoiButton"></Button>
-
-
-		
-
-
+			android:textSize="14dip" android:textColor="#000000"
+		/>
 
 	</RelativeLayout>
 </ScrollView>
