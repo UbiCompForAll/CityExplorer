@@ -113,13 +113,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public SQLiteConnector(Context context) {
 		super(context, DB_NAME, null, 2);
 		this.myContext = context;
+		debug(0, myPath+" starting up");
 
 		//code from students: myPath = DB_PATH + DB_NAME;
 		File dbName = context.getDatabasePath(DB_NAME);
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
-
-		debug(0, myPath+" starting up");
 	}//SQLiteConnector CONSTRUCTOR
 
 

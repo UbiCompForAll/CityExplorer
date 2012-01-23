@@ -201,7 +201,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);
 			}
-			if ( poiOverlays.get(0) != null ){
+			if ( poiOverlays.size() >0 ){
 				debug(0, "poiOverlays is "+poiOverlays );
 				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
 			}else{
@@ -256,15 +256,14 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
 	 */
 	@Override
-	public void onLocationChanged(Location location) //new location received from the GPS
-	{
+	public void onLocationChanged(Location location){ //new location received from the GPS
 		if(location==null){
 			return;
 		}
 		currentGeoPoint = new GeoPoint((int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
 		locationIcon.updatePos(currentGeoPoint);	//update the position of the icon.
 		//mapController.animateTo(currentGeoPoint);	//move map to the new location
-	}
+	} // onLocationChanged
 
 
 	/***
@@ -378,7 +377,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		});
 
 		qa.show();
-	}
+	} // onPress
 
 
 	/* (non-Javadoc)

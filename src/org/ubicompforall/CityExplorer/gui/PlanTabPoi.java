@@ -533,58 +533,8 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 
 
 			// Declare quick actions 
-			if(p.isFavourite())// this POI is a favourite, add an option to not make it a favourite
-			{
-				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_on);
-				qa.addItem(favIcon,	"",	new OnClickListener(){
 
-					public void onClick(View view)
-					{
-						//set favourite off
-						Poi poi = p;
-
-						poi = poi.modify().favourite(false).build();
-						DBFactory.getInstance(PlanTabPoi.this).editPoi(poi);//update poi;
-
-						adapter.notifyDataSetChanged();//update list
-						Toast.makeText(PlanTabPoi.this, poi.getLabel() + " removed from favourites.", Toast.LENGTH_LONG).show();
-						qa.dismiss();
-					}
-				});
-			}
-			else// this POI is not a favourite, add an option to make it a favourite
-			{
-				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
-				qa.addItem(favIcon,	"",	new OnClickListener(){
-
-					public void onClick(View view)
-					{
-						//set as favourite
-						Poi poi = p;
-
-						poi = poi.modify().favourite(true).build();
-						DBFactory.getInstance(PlanTabPoi.this).editPoi(poi);//update poi;
-
-						allPois.remove(p);
-						allPois.add(poi);
-						Toast.makeText(PlanTabPoi.this, poi.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
-						adapter.notifyDataSetChanged();//update list
-						qa.dismiss();
-					}
-				});
-			}
-
-			qa.addItem(addToTripIcon, "Add to tour", new OnClickListener(){
-
-				public void onClick(View view){
-					poi = p;
-					Intent selectTrip = new Intent(PlanTabPoi.this, PlanTabTrip.class);
-					selectTrip.putExtra("requestCode", ADD_TO_TRIP);
-					startActivityForResult(selectTrip, ADD_TO_TRIP);
-					qa.dismiss();
-				}
-			});
-
+			// 1: Show on Map
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
 
 				public void onClick(View view){
@@ -597,6 +547,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				}
 			});
 
+			// 2:
 			qa.addItem(directIcon, "Get directions", new OnClickListener(){
 
 				public void onClick(View view){
@@ -619,7 +570,47 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				}
 			});
 
+			// 3: Favourite
+			if(p.isFavourite()){ // this POI is a favourite, add an option to not make it a favourite
+				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_on);
+				qa.addItem(favIcon,	"",	new OnClickListener(){
 
+					public void onClick(View view)
+					{
+						//set favourite off
+						Poi poi = p;
+
+						poi = poi.modify().favourite(false).build();
+						DBFactory.getInstance(PlanTabPoi.this).editPoi(poi);//update poi;
+
+						adapter.notifyDataSetChanged();//update list
+						Toast.makeText(PlanTabPoi.this, poi.getLabel() + " removed from favourites.", Toast.LENGTH_LONG).show();
+						qa.dismiss();
+					}
+				});
+			}else{ // this POI is not a favourite, add an option to make it a favourite
+				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
+				qa.addItem(favIcon,	"",	new OnClickListener(){
+
+					public void onClick(View view)
+					{
+						//set as favourite
+						Poi poi = p;
+
+						poi = poi.modify().favourite(true).build();
+						DBFactory.getInstance(PlanTabPoi.this).editPoi(poi);//update poi;
+
+						allPois.remove(p);
+						allPois.add(poi);
+						Toast.makeText(PlanTabPoi.this, poi.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+						adapter.notifyDataSetChanged();//update list
+						qa.dismiss();
+					}
+				});
+			}
+
+			// 4: Edit 
+			// 5: 
 			qa.addItem(shareIcon, "Share", new OnClickListener(){
 
 				public void onClick(View view){
@@ -630,6 +621,19 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				}
 			});
 
+			// 6: 
+			qa.addItem(addToTripIcon, "Add to tour", new OnClickListener(){
+
+				public void onClick(View view){
+					poi = p;
+					Intent selectTrip = new Intent(PlanTabPoi.this, PlanTabTrip.class);
+					selectTrip.putExtra("requestCode", ADD_TO_TRIP);
+					startActivityForResult(selectTrip, ADD_TO_TRIP);
+					qa.dismiss();
+				}
+			});
+
+			// 7:
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
 
 				public void onClick(View view){

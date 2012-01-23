@@ -93,6 +93,18 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 
     
+    /***
+	 * Debug method to include the filename, line-number and method of the caller
+	 */
+	public static void debug(int level, String message) {
+		if (DEBUG >= level) {
+			StackTraceElement st = Thread.currentThread().getStackTrace()[4];
+			//Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+message );
+			Log.d(C, st.getMethodName()+'~'+message+" at ("+st.getFileName()+":"+st.getLineNumber()+")" );
+		} // if verbosity is high enough
+	} // debug
+
+
     public static boolean isConnected( Context context ) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
             context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -139,17 +151,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
         builder.show();
     } // showNoConnectionDialog
-
-
-    /***
-	 * Debug method to include the filename, line-number and method of the caller
-	 */
-	public static void debug(int level, String message) {
-		if (DEBUG >= level) {
-			StackTraceElement st = Thread.currentThread().getStackTrace()[4];
-			Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+message );
-		} // if verbosity is high enough
-	} // debug
 
 
 /* Not valid for Application ?!!

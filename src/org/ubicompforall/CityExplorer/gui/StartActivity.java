@@ -108,7 +108,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 				if (buttons[b] != null){
 					buttons[b].setOnClickListener(this);
 				}else{
-					debug(0, "StartActivity~105: BUTTON["+b+1+"] was NULL for "+buttons);
+					debug(0, "BUTTON["+(b+1)+"] was NULL for "+buttons);
 				}//if button not found
 			}//for each startButton
 		}else{
@@ -126,7 +126,9 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			exploreCiry();
 
 		}else if (v.getId() == R.id.startButton3){
-			startActivity(new Intent(StartActivity.this, SettingsActivity.class));
+			Intent locationActivity = new Intent(StartActivity.this, SettingsActivity.class);
+			locationActivity.putParcelableArrayListExtra(IntentPassable.POILIST, new ArrayList<Poi>() );
+			startActivity( locationActivity );
 
 		}else{
 			debug(0, "Unknown button clicked: "+v);
@@ -153,8 +155,8 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0 );
 			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
 			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
-			userLocation.setLatitude(lat);
-			userLocation.setLongitude(lng);	//go to current location
+			userLocation.setLatitude(lat);	// Store current latitude location
+			userLocation.setLongitude(lng);	// Store current longitude location
 		}//userLocation == null, Check out GPS setting in CityExplorer.java
 
 		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);

@@ -47,7 +47,7 @@ import android.graphics.Point;
 /**
  * The Class MapIconOverlay.
  */
-class MapIconOverlay extends com.google.android.maps.Overlay{
+class MapTargetOverlay extends com.google.android.maps.Overlay{
 	
 	/** The poi. */
 	Poi poi = null;
@@ -68,7 +68,7 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	int clickTolerance = 10;
 	
 	/** The context. */
-	MapsActivity context;
+	LocationActivity context;
 	
 	/** The mv. */
 	MapView mv;
@@ -80,11 +80,10 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	 * @param Icon the icon
 	 * @param position the position
 	 */
-	public MapIconOverlay(Context c, int Icon, GeoPoint position) {
+	public MapTargetOverlay(Context c, int Icon, GeoPoint position) {
 		this.p = position;
 		bmp = BitmapFactory.decodeResource(c.getResources(), Icon);
-		//context = (MapsActivity) c;
-		context = (MapsActivity) c;
+		context = (LocationActivity) c;
 	}  // CONSTRUCTOR
 	
 	

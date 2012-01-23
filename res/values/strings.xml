@@ -22,7 +22,8 @@ any static strings associated with maps -->
 <string name="activity_triplist_menu_showOnMap">Show on Map</string><string name="activity_triplist_menu_addPoi">Add Location</string>
 <string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
 <string name="activity_triplist_menu_calendar">Time Table for Tour</string><string name="activity_plan_menu_addpois">Add Locations</string>
-<string name="activity_plan_menu_updatepois">Update Locations</string><string name="activity_plan_menu_updatetrips">Update Tours</string>
+<string name="activity_plan_menu_updatepois">Update Locations</string>
+<string name="activity_plan_menu_updatetrips">Update Tours</string>
     
 <!-- constants -->
 <string name="app_name">City Explorer</string><string name="action_plan">.gui.ActivityPlan</string><string name="constant_provider_authority">.provider.database</string>
@@ -47,10 +48,16 @@ any static strings associated with maps -->
 
 
 
-<string name="navigateFromPoi">Navigate from another location</string><string name="navigateFrom">Get Directions</string><string name="navigateButton">Navigate</string><string name="no_connection">You need a data connection or WiFi to watch the Google Map. Please enable it</string><string name="no_connection_title">Data connection needed!</string><string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string><string name="opensqlite">City Explorer</string><string name="plan">PLAN TOUR</string><string name="poi_details_favourite">Favourite</string>
+<string name="navigateFromPoi">Navigate from another location</string>
+<string name="navigateFrom">Get Directions</string>
+<string name="navigateButton">Navigate</string>
+<string name="no_connection">You need a data connection or WiFi to watch the Google Map. Please enable it</string>
+<string name="no_connection_title">Data connection needed!</string>
+<string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
+<string name="opensqlite">City Explorer</string><string name="plan">PLAN TOUR</string>
+<string name="poi_details_favourite">Favourite</string>
 <string name="poi_details_showOnMap">Show on Map</string>
-<string name="poi_details_getDirections">Get Directions</string>
-<string name="poiMenufavourite">Favourite</string><string name="poiMenuDirections">Get Directions</string>
+<string name="poiMenufavourite">Favourite</string>
 <string name="poiMenuMap">Show on Map</string>
 <string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
 <string name="savePoi">Save Location</string>

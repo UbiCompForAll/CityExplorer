@@ -38,6 +38,9 @@ import java.util.List;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
+import org.ubicompforall.CityExplorer.gui.NavigateFrom;
+import org.ubicompforall.CityExplorer.gui.PoiDetailsActivity;
+import org.ubicompforall.CityExplorer.gui.QuickActionPopup;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
@@ -52,6 +55,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -83,10 +88,10 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 	private MapController mapController;
 	
 	/** The location icon. */
-	private MapIconOverlay locationIcon;
+	private MapTargetOverlay locationIcon;
 	
 	/** The poi overlays. */
-	//private ArrayList<MapIconOverlay> poiOverlays = new ArrayList<MapIconOverlay>();
+	//private ArrayList<MapTargetOverlay> poiOverlays = new ArrayList<MapTargetOverlay>();
 	
 	/** The overlays. */
 	private List<Overlay> overlays; 
@@ -97,6 +102,9 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 	/** The poi clicked. */
 	boolean poiClicked = false;
 
+	/** The qa. */
+	private QuickActionPopup qa;
+	
 
 	
 	/***
@@ -117,19 +125,21 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 	 */
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.maplayout);
+		debug(0, "So far so good ;-)" );
+		setContentView(R.layout.locationlayout);
+		debug(0, "..., but why so slow? ONly ON first invocation, I mean ;-)" );
 
 		poiClicked		= false;
 		mapView 		= (MapView) findViewById(R.id.mapview);
+		mapView.setReticleDrawMode( MapView.ReticleDrawMode.DRAW_RETICLE_OVER );
 		mapController 	= mapView.getController();
 		mapView.setBuiltInZoomControls(true);
 		mapController.setZoom(15);
 
 		//---- Overlays: ----
-		//locationIcon 	= new MapIconOverlay(this, R.drawable.map_marker, new GeoPoint(0, 0));
+		locationIcon 	= new MapTargetOverlay(this, R.drawable.map_marker, new GeoPoint(0, 0));
 		overlays 		= mapView.getOverlays();
-		//overlays.add(locationIcon);
-		debug(0, "So far so good ;-)" );
+		overlays.add(locationIcon);
 
 		if ( ! CityExplorer.isConnected(this) ){
 			CityExplorer.showNoConnectionDialog( this );
@@ -148,13 +158,13 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 
 		//mapController.animateTo(trip.getPoiAt(0).getGeoPoint());//go to first poi
 			
-		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if pressent
+		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if present
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
 			//System.out.println(pois);
 			for (Parcelable parcelable : pois){
 				Poi poi = (Poi) parcelable;
 
-				MapIconOverlay poiOverlay = new MapIconOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
+				MapTargetOverlay poiOverlay = new MapTargetOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
 				poiOverlay.setPoi(poi);
 				poiOverlay.setImage(categoryIcons.get(poi.getCategory()));
 
@@ -169,6 +179,11 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 			mapController.animateTo( new GeoPoint( lat, lng ));//go to current location
 		}else{//if (Intent.hasExtra(POILIST)
 			debug(0, "No Data for Location Intent!!!");
+
+			//---- Overlays: ----
+			locationIcon 	= new MapTargetOverlay(this, R.drawable.map_marker, new GeoPoint(0, 0));
+			overlays 		= mapView.getOverlays();
+			overlays.add(locationIcon);
 		}
 	}//drawOverlays
 
@@ -176,17 +191,16 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 	/**
 	 * Init the GPS
 	 */
-	void initGPS()
-	{
+	void initGPS(){
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		onLocationChanged(lastKnownLocation);
 
-		// Register the listener with the Location Manager to receive location updates
+		//Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
+	} // initGPS
 	
 
 
@@ -194,16 +208,85 @@ public class LocationActivity extends MapActivity implements LocationListener, O
 	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
 	 */
 	@Override
-	public void onLocationChanged(Location location) //new location received from the GPS
-	{
+	public void onLocationChanged(Location location){ //new location received from the GPS
 		if(location==null){
 			return;
 		}
 		currentGeoPoint = new GeoPoint((int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
-		locationIcon.updatePos(currentGeoPoint);	//update the position of the icon.
-		//mapController.animateTo(currentGeoPoint);	//move map to the new location
-	}
+		if (mapController == null){
+			debug(0, "OOps, mapcontroller was NULL!");
+		}else{
+			mapController.animateTo(currentGeoPoint);	//move map to the new location
+		}// if mapController found
 
+		if (locationIcon == null){
+			debug(0, "locationIcon was NOT set!! Remember new ..." );
+		}else{
+			locationIcon.updatePos(currentGeoPoint);	//update the position of the icon.
+		} // if locationIcon found
+	} // onLocationChanged
+
+
+	/**
+	 * called by an icon overlay when it is pressed.
+	 * 
+	 * @param i icon overlay
+	 */
+	public void onPress(MapTargetOverlay i){
+		final MapTargetOverlay icon = i;
+		
+		//Toast.makeText(context, "Press incoming..."+poi.getLabel(), Toast.LENGTH_SHORT).show();
+		System.out.println("POI CLICKED!!!!");
+		int[] xy 	= new int[]{icon.getScreenPts().x,icon.getScreenPts().y+icon.getImage().getHeight()};
+
+		Rect rect 	= new Rect(xy[0],xy[1],xy[0],xy[1]);
+
+		if(qa != null)
+			qa.dismiss();
+
+		qa = new QuickActionPopup(LocationActivity.this, mapView, rect);
+		qa.setTitle(icon.getPoi().getLabel());
+
+		Drawable	favIcon	= LocationActivity.this.getResources().getDrawable(android.R.drawable.ic_menu_info_details);
+
+		qa.addItem(favIcon,	"Details",	new OnClickListener(){
+			public void onClick(View view){
+				Intent details = new Intent(LocationActivity.this, PoiDetailsActivity.class);
+				{	
+					details.putExtra("poi", icon.getPoi());
+					startActivity(details);
+				}
+				qa.dismiss();
+			} //Listener.onClick
+		}); // new OnClickListener() class
+
+		Drawable	directIcon	= LocationActivity.this.getResources().getDrawable(android.R.drawable.ic_menu_directions);
+		qa.addItem(directIcon,	"Get directions",	new OnClickListener(){
+
+			public void onClick(View view){
+
+				//Latitude and longitude for current position
+				double slon = LocationActivity.this.getCurrentLocation().getLongitudeE6()/1E6;
+				double slat = LocationActivity.this.getCurrentLocation().getLatitudeE6()/1E6;
+				//Latitude and longitude for selected poi
+				double dlon = icon.getGeoPoint().getLongitudeE6()/1E6;
+				double dlat = icon.getGeoPoint().getLatitudeE6()/1E6;
+
+				Intent navigate = new Intent(LocationActivity.this, NavigateFrom.class);
+				navigate.putExtra("slon", slon);
+				navigate.putExtra("slat", slat);
+				navigate.putExtra("dlon", dlon);
+				navigate.putExtra("dlat", dlat);
+				LocationActivity.this.startActivity(navigate);
+
+
+				qa.dismiss();
+
+			}
+		});
+
+		qa.show();
+	} // onPress
 
 	/***
 	 * Make sure GPS is enabled, or
