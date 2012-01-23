@@ -58,9 +58,6 @@ import android.widget.Toast;
  * The Class SQLiteConnector.
  */
 public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
-	/** The Constant DEBUG. */
-	private static final boolean DEBUG = false;
-
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
 
 	//private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
@@ -123,15 +120,57 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 
 	
-	private void debug(int level, String message ){
+	private static void debug(int level, String message ){
 		CityExplorer.debug( level, message );
 	} // debug
 
+	
 
 	@Override
-	public void setContext(Context context) {
-		this.myContext = context;
-	}
+	public boolean addPoiToTrip(Trip t, Poi poi) {
+		Trip trip = t;
+
+		ContentValues values = new ContentValues();
+		values.put("trip_id", trip.getIdPrivate());
+		values.put("poi_id", poi.getIdPrivate());
+		values.put("poi_number", trip.getPois().indexOf(poi)+1);
+
+		try	{
+			myDataBase.insertOrThrow("trip_poi", null, values);
+			System.out.println("POI added to DB: "+
+					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
+			return true;
+		} catch (Exception e) {
+			System.out.println("ERROR in SQL: "+e.getMessage()+" SQL values: "+
+					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
+			e.printStackTrace();
+			return false;
+		}
+	}//addPoiToTrip
+
+	@Override
+	public void addTimesToTrip(Trip trip)
+	{
+		ContentValues values = new ContentValues();
+		values.put("trip_id", trip.getIdPrivate());
+
+		for (Poi poi : trip.getFixedTimes().keySet())
+		{
+			values.put("poi_id", poi.getIdPrivate());
+			values.put("poi_number", trip.getPois().indexOf(poi)+1);
+			values.put("hour", trip.getFixedTimes().get(poi).hour);
+			values.put("minute", trip.getFixedTimes().get(poi).minute);
+			myDataBase.update("trip_poi", values, "trip_id = ? and poi_id = ?", new String[]{Integer.toString(trip.getIdPrivate()), Integer.toString(poi.getIdPrivate())});
+		}
+	} //addTimesToTrip
+
+	@Override
+	public synchronized void close() {
+		if (myDataBase != null){
+			myDataBase.close();
+		}
+		super.close();
+	}//close
 
 	/**
 	 * Creates an empty database on the data/data/project-folder and rewrites it with your own database.
@@ -139,8 +178,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @throws IOException when the asset database file can not be read,
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
-	 * */
-
+	 */
  	public void createDataBase() throws IOException {
 
 		OutputStream 	osDbPath;
@@ -198,7 +236,215 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 						new String[]{"" + (favourite? 1 : 0)}	// replaces ?s
 				)
 		);
-	}//getAllPois(favourite)
+	}//getAllPois(favorite)
+
+
+	@Override
+	public ArrayList<Trip> getAllEmptyTrips(){
+		ArrayList<Trip> trips = new ArrayList<Trip>();
+
+		String[] columns = {
+			"TRIP._id",	"TRIP.title", "TRIP.free_trip", "TRIP.description", "TRIP.global_id"
+		};
+		final Map<String,Integer> key = new HashMap<String,Integer>();
+		getKeys( key, columns );
+		String sqlStr = getSelectStr( columns );
+		debug (0, "select string is "+sqlStr );
+
+		sqlStr += " FROM trip as TRIP " +
+		"WHERE TRIP._id NOT IN (" +
+		"SELECT " +
+		"TRIP._id " +
+		"FROM trip as TRIP, poi as POI, trip_poi as TP " +
+		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
+		Cursor c = myDataBase.rawQuery(sqlStr, null);
+
+		int currentTripId = -1;
+		Trip trip = new Trip.Builder("").build();
+		while( c.moveToNext() ){
+			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
+				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
+				if(currentTripId != -1) { //next trip on the list
+					trips.add(trip);
+				}
+				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
+				.idPrivate(c.getInt( key.get("TRIP._id") ))
+				.description(c.getString( key.get("TRIP.description") ))
+				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
+				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
+				.build();
+				debug(2, "Trip is "+trip );
+
+				currentTripId = trip.getIdPrivate();
+			} // while same trip
+		}// while more empty trips
+		if(currentTripId != -1) { //next trip on the list
+			trips.add(trip);
+		}
+		c.close();
+		debug(0, "FOUND size="+trips.size()+" empty trips" );
+		return trips;
+	}//getAllEmptyTrips()
+
+	///////////////////////////////////
+	
+	public static final Map<String,Integer>
+	 getKeys( Map<String, Integer> key, String[] columns ){
+		for(int i=0; i<columns.length; i++){
+			key.put(columns[i], i);
+		} // for each column, store key index
+		return key;
+	} // getKeys
+	
+	public static final String
+	 getSelectStr( String[] columns ){
+		String selectStr =  "SELECT ";
+		String prefix="";
+		for(int i=0; i<columns.length; i++){
+			selectStr += prefix + columns[i];
+			prefix=",";
+		} // for each column, store key index
+		debug(2, "sqlstr is "+selectStr);
+		return selectStr;
+	} // getKeys
+
+	///////////////////////////////////
+	
+	@Override
+	public ArrayList<Trip> getAllTrips(Boolean free){
+		ArrayList<Trip> trips = new ArrayList<Trip>();
+
+		//CONSTANT key-index mappings
+		final String[] columns = {
+				"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
+				"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
+				"POI.global_id",	"POI.telephone",
+				"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
+				"ADDR.city",		"ADDR.lat",		"ADDR.lon",
+				"CAT.title",
+				"TP.poi_number",	"TP.hour",		"TP.minute"
+		};
+		final Map<String,Integer> key = new HashMap<String,Integer>();
+		getKeys( key, columns );
+		String sqlStr = getSelectStr( columns );
+		
+		sqlStr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
+		" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP.free_trip = ? " +
+		" ORDER BY TRIP._id, TP.poi_number";
+		Cursor c = myDataBase.rawQuery(sqlStr, new String[]{"" + (free? 1 : 0)});
+
+		debug(0, "TRIPS: " + c.getCount() );
+		int currentTripId = -1;
+		Trip trip = new Trip.Builder("").build();
+		while(c.moveToNext()){
+			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
+				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
+				if(currentTripId != -1) { //next trip on the list
+					trips.add(trip);
+				}
+				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
+				.idPrivate(c.getInt( key.get("TRIP._id") ))
+				.description(c.getString( key.get("TRIP.description") ))
+				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
+				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
+				.build();
+				currentTripId = trip.getIdPrivate();
+			}//if not current trip - Make new
+
+			Poi poi = new Poi.Builder( c.getString( key.get("POI.title") ),
+				new PoiAddress.Builder( c.getString( key.get("ADDR.city") )
+				)
+//				.zipCode(c.getInt( key.get("ADDR.zipcode") ))	// ZIP code removed, but needed for Google Maps
+				.street(c.getString( key.get("ADDR.street_name") ))
+				.longitude(c.getDouble( key.get("ADDR.lon") )).latitude(c.getDouble( key.get("ADDR.lat") ))
+				.build()
+			).description(c.getString( key.get("POI.description") ))
+			.category(c.getString( key.get("CAT.title") ))
+			.favourite((1==c.getInt( key.get("POI.favourite") )))
+			.imageURL(c.getString( key.get("POI.image_url") ))
+			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
+			.idPrivate(c.getInt( key.get("POI._id") ))
+			.idGlobal(c.getInt( key.get("POI.global_id") )).build();
+			trip.addPoi(poi);
+			if(c.getInt( key.get("TP.hour") ) != -1 && c.getInt( key.get("TP.minute") ) != -1)//add time if it is not -1
+				trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
+		}//while more trips
+		if(currentTripId != -1) { //next trip on the list
+			trips.add(trip);
+		}
+		c.close();
+		
+		//trips.addAll( this.getAllEmptyTrips() );
+		return trips;
+	}//getAllTrips(free)
+
+	@Override
+	public ArrayList<Trip> getAllTrips(){
+		ArrayList<Trip> trips = new ArrayList<Trip>();
+
+		//CONSTANT key-index mappings
+		final String[] columns = {
+				"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
+				"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
+				"POI.global_id",	"POI.telephone",
+				"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
+				"ADDR.city",		"ADDR.lat",		"ADDR.lon",
+				"CAT.title",
+				"TP.poi_number",	"TP.hour",		"TP.minute"
+		};
+		final Map<String,Integer> key = new HashMap<String,Integer>();
+		getKeys( key, columns );
+		String sqlStr = getSelectStr( columns );
+		
+		sqlStr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
+		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id " +
+		"ORDER BY TRIP._id, TP.poi_number";
+		Cursor c = myDataBase.rawQuery(sqlStr, null);
+
+		debug(0, "TRIPS: " + c.getCount() );
+
+		int currentTripId = -1;
+
+		Trip trip = new Trip.Builder("").build();
+		while(c.moveToNext()){
+			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
+				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ));
+				if(currentTripId != -1) { //next trip on the list
+					trips.add(trip);
+				}
+				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
+				.idPrivate(c.getInt( key.get("TRIP._id") ))
+				.description(c.getString( key.get("TRIP.description") ))
+				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
+				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
+				.build();
+				currentTripId = trip.getIdPrivate();
+			}//if not current trip - Make new
+			
+			Poi poi = new Poi.Builder(c.getString( key.get("POI.title") ),new PoiAddress.Builder
+					(c.getString( key.get("ADDR.city") ))
+// ZIP code removed
+//			.zipCode(c.getInt( key.get("ADDR.zipcode") ))
+			.street(c.getString( key.get("ADDR.street_name") ))
+			.longitude(c.getDouble( key.get("ADDR.lon") )).latitude(c.getDouble( key.get("ADDR.lat") ))
+			.build()
+			).description(c.getString( key.get("POI.description") ))
+			.category(c.getString( key.get("CAT.title") ))
+			.favourite((1==c.getInt( key.get("POI.favourite") )))
+			.imageURL(c.getString( key.get("POI.image_url") ))
+			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
+			.idPrivate(c.getInt( key.get("POI._id") ))
+			.idGlobal(c.getInt( key.get("POI.global_id") )).build();
+			trip.addPoi(poi);
+			trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
+		}//while more trips
+		if(currentTripId != -1){ //next trip on the list
+			trips.add(trip);
+		}
+		c.close();
+		return trips;
+	}//getAllTrips()
+
 
 	@Override
 	public Poi getPoi(int privateId){
@@ -233,8 +479,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * 11 telephone;
 	 * 12 image_url
 	 * 13 global_id
-	*/
-
+	 */
 	private ArrayList<Poi> getPoisFromCursor(Cursor c){
 		ArrayList<Poi> pois = new ArrayList<Poi>();
 		while(c.moveToNext()){
@@ -266,199 +511,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return pois;
 	}//getPoisFromCursor
 
-	@Override
-	public ArrayList<Trip> getAllEmptyTrips(){
-		ArrayList<Trip> trips = new ArrayList<Trip>();
-
-		String sqlstr = "SELECT " +
-		"TRIP._id," +
-		"TRIP.title," +
-		"TRIP.free_trip," +
-		"TRIP.description, " +
-		"TRIP.global_id "+
-		"FROM trip as TRIP " +
-		"WHERE TRIP._id NOT IN (" +
-		"SELECT " +
-		"TRIP._id " +
-		"FROM trip as TRIP, poi as POI, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
-
-		Cursor c = myDataBase.rawQuery(sqlstr, null);
-		int currentTripId = -1;
-		Trip trip = new Trip.Builder("").build();
-		while( c.moveToNext() ){
-			if(c.getInt(0) != currentTripId) { //make new trip
-				if(DEBUG) System.out.println("Got trip: "+c.getString(1/*"TRIP.title"*/));
-				if(currentTripId != -1) { //next trip on the list
-					trips.add(trip);
-				}
-				trip = new Trip.Builder(c.getString(1))
-				.idPrivate(c.getInt(0))
-				.description(c.getString(3))
-				.freeTrip(1==c.getInt(2))
-				.idGlobal(c.getInt(4))
-				.build();
-
-				currentTripId = trip.getIdPrivate();
-			}
-		}// while more empty trips
-		if(currentTripId != -1) { //next trip on the list
-			trips.add(trip);
-		}
-		c.close();
-		return trips;
-	}//getAllEmptyTrips()
-
-	@Override
-	public ArrayList<Trip> getAllTrips(Boolean free){
-		ArrayList<Trip> trips = new ArrayList<Trip>();
-
-		//CONSTANT key-index mappings
-		final Map<String,Integer> key = new HashMap<String,Integer>();
-		String[] columns = {
-				"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
-				"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
-				"POI.global_id",	"POI.telephone",
-				"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
-				"ADDR.city",		"ADDR.lat",		"ADDR.lon",
-				"CAT.title",
-				"TP.poi_number",	"TP.hour",		"TP.minute"
-		};
-		String prefix="";
-		String sqlstr = "SELECT ";
-		for(int i=0; i<columns.length; i++){
-			sqlstr += prefix + columns[i];
-			prefix=",";
-			key.put(columns[i], i);
-		}
-		//debug(0, "sqlstr is "+sqlstr);
-		sqlstr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
-		" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP.free_trip = ? " +
-		" ORDER BY TRIP._id, TP.poi_number";
-		Cursor c = myDataBase.rawQuery(sqlstr, new String[]{"" + (free? 1 : 0)});
-
-		if(DEBUG) System.out.println("TRIPS: " + c.getCount());
-		int currentTripId = -1;
-		Trip trip = new Trip.Builder("").build();
-		while(c.moveToNext()){
-			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				if(DEBUG) System.out.println("Got trip: "+c.getString( key.get("TRIP.title") ) );
-				if(currentTripId != -1) { //next trip on the list
-					trips.add(trip);
-				}
-				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
-				.idPrivate(c.getInt( key.get("TRIP._id") ))
-				.description(c.getString( key.get("TRIP.description") ))
-				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
-				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
-				.build();
-				currentTripId = trip.getIdPrivate();
-			}
-
-			Poi poi = new Poi.Builder( c.getString( key.get("POI.title") ),
-				new PoiAddress.Builder( c.getString( key.get("ADDR.city") )
-				)
-// ZIP code removed
-//				.zipCode(c.getInt( key.get("ADDR.zipcode") ))
-				.street(c.getString( key.get("ADDR.street_name") ))
-				.longitude(c.getDouble( key.get("ADDR.lon") )).latitude(c.getDouble( key.get("ADDR.lat") ))
-				.build()
-			).description(c.getString( key.get("POI.description") ))
-			.category(c.getString( key.get("CAT.title") ))
-			.favourite((1==c.getInt( key.get("POI.favourite") )))
-			.imageURL(c.getString( key.get("POI.image_url") ))
-			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
-			.idPrivate(c.getInt( key.get("POI._id") ))
-			.idGlobal(c.getInt( key.get("POI.global_id") )).build();
-			trip.addPoi(poi);
-			if(c.getInt( key.get("TP.hour") ) != -1 && c.getInt( key.get("TP.minute") ) != -1)//add time if it is not -1
-				trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
-		}//while more trips
-		if(currentTripId != -1) { //next trip on the list
-			trips.add(trip);
-		}
-		c.close();
-		return trips;
-	}//getAllTrips(free)
-
-	@Override
-	public ArrayList<Trip> getAllTrips(){
-		ArrayList<Trip> trips = new ArrayList<Trip>();
-
-		String sqlstr = "SELECT " +
-		"TRIP._id," +			//0
-		"TRIP.title," +			//1
-		"TRIP.description," +	//2
-		"POI._id," +			//3
-		"POI.title," +			//4
-		"POI.description," +	//5
-		"ADDR.street_name," +	//6
-// ZIP code removed
-//		"ADDR.zipcode," +		//7
-		"ADDR.city," +			//8
-		"ADDR.lat," +			//9
-		"ADDR.lon," +			//10
-		"CAT.title," +			//11
-		"POI.favourite," +		//12
-		"TP.poi_number," +		//13
-		"Trip.free_trip, " +	//14
-		"Poi.image_url, " +		//15
-		"TP.hour, "+				//16
-		"TP.minute, "+			//17
-		"TRIP.global_id, "+
-		"POI.global_id, "+
-		"POI.telephone "+
-		"FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id " +
-		"ORDER BY TRIP._id, TP.poi_number";
-		Cursor c = myDataBase.rawQuery(sqlstr, null);
-
-		System.out.println("TRIPS: " + c.getCount());
-
-		int currentTripId = -1;
-
-		Trip trip = new Trip.Builder("").build();
-		while(c.moveToNext()){
-			if(c.getInt(0/*"TRIP.id"*/) != currentTripId) { //make new trip
-				if(DEBUG) System.out.println("Got trip: "+c.getString(1/*"TRIP.title"*/));
-				if(currentTripId != -1) { //next trip on the list
-					trips.add(trip);
-				}
-				trip = new Trip.Builder(c.getString(1/*"TRIP.title"*/))
-				.idPrivate(c.getInt(0/*"TRIP.id"*/))
-				.description(c.getString(2/*"TRIP.description"*/))
-				.freeTrip(1==c.getInt(14))
-				.idGlobal(c.getInt(18))
-				.build();
-				currentTripId = trip.getIdPrivate();
-			}//if not current trip - Make new
-			Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
-					(c.getString(8/*"ADDR.city"*/))
-// ZIP code removed
-//			.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
-			.street(c.getString(6/*"ADDR.street_name"*/))
-			.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
-			.build()
-			).description(c.getString(5/*"POI.description"*/))
-			.category(c.getString(11/*"CAT.title"*/))
-			.favourite((1==c.getInt(12/*"POI.favourite"*/)))
-			.imageURL(c.getString(15))
-			.telephone(Integer.toString(c.getInt(19)))	// RS-111208, Changed 20->19
-			.idPrivate(c.getInt(3))
-			.idGlobal(c.getInt(19))
-			.build();
-			trip.addPoi(poi);
-			trip.setTime(poi, new Time(c.getInt(16), c.getInt(17)));
-		}//while more trips
-		if(currentTripId != -1)//next trip on the list
-		{
-			trips.add(trip);
-		}
-
-		c.close();
-		return trips;
-	}//getAllTrips()
-
+	
 	@Override
 	public Trip getTrip(int privateId){
 		ArrayList<Trip> trips = new ArrayList<Trip>();
@@ -521,7 +574,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			Trip trip = new Trip.Builder("").build();
 			while(c.moveToNext()){
 				if(c.getInt(0/*"TRIP.id"*/) != currentTripId) { //make new trip
-					if(DEBUG) System.out.println("Got trip: "+c.getString(1/*"TRIP.title"*/));
+					debug(0, "Got trip: "+c.getString(1/*"TRIP.title"*/));
 					if(currentTripId != -1)	{ //next trip on the list
 						trips.add(trip);
 					}
@@ -560,40 +613,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		if(trips.size() == 0) return null;
 		return trips.get(0);
 	}//getTrip
-
-	/***
-	 * Open the Database
-	 * This is quite time-consuming, and should be done in a background process,
-	 * so the map can show immediately!
-	 */
-	@Override
-	public boolean open(){
-		try{
-			myDataBase = openDataBase();
-		}catch (SQLException e){
-			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+myPath);
-			myDataBase=null;
-		}
-		long poiCount = 0;
-		try{
-			poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
-		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
-		}
-		debug(0, "poi-count is "+poiCount );
-		//JF: ZIP code removed
-		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
-			debug(0, "close myDataBase, before re-open");
-			myDataBase.close();
-			try{
-				debug(0, DB_NAME+" was missing... now copying");
-				createDataBase();
-			}catch (IOException e){
-				e.printStackTrace();
-				return false;
-			}
-		}// if empty database, copy from assets
-		return (myDataBase == null) ? false : true;
-	}//open
 
 	@Override
 	public ArrayList<String> getCategoryNames() {
@@ -838,7 +857,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		Cursor c = myDataBase.query("poi", new String[]{"_id"},
 				"global_id = ?", new String[]{""+global_id}, null, null, null);
 
-		if(DEBUG) System.out.println("ids found: "+c.getCount());
+		debug(0, "ids found: "+c.getCount());
 		while (c.moveToNext()) {
 			int private_id = c.getInt(0);
 
@@ -861,7 +880,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		Cursor c = myDataBase.query("trip", new String[]{"_id"},
 				"global_id = ?", new String[]{""+global_id}, null, null, null);
 
-		if(DEBUG) System.out.println("ids found: "+c.getCount());
+		debug(0, "ids found: "+c.getCount());
 		while (c.moveToNext()) {
 			int private_id = c.getInt(0);
 
@@ -957,44 +976,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		c.close();
 	}//editPoi
 
-	@Override
-	public boolean addPoiToTrip(Trip t, Poi poi) {
-		Trip trip = t;
-
-		ContentValues values = new ContentValues();
-		values.put("trip_id", trip.getIdPrivate());
-		values.put("poi_id", poi.getIdPrivate());
-		values.put("poi_number", trip.getPois().indexOf(poi)+1);
-
-		try	{
-			myDataBase.insertOrThrow("trip_poi", null, values);
-			System.out.println("POI added to DB: "+
-					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
-			return true;
-		} catch (Exception e) {
-			System.out.println("ERROR in SQL: "+e.getMessage()+" SQL values: "+
-					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
-			e.printStackTrace();
-			return false;
-		}
-	}//addPoiToTrip
-
-	@Override
-	public void addTimesToTrip(Trip trip)
-	{
-		ContentValues values = new ContentValues();
-		values.put("trip_id", trip.getIdPrivate());
-
-		for (Poi poi : trip.getFixedTimes().keySet())
-		{
-			values.put("poi_id", poi.getIdPrivate());
-			values.put("poi_number", trip.getPois().indexOf(poi)+1);
-			values.put("hour", trip.getFixedTimes().get(poi).hour);
-			values.put("minute", trip.getFixedTimes().get(poi).minute);
-			myDataBase.update("trip_poi", values, "trip_id = ? and poi_id = ?", new String[]{Integer.toString(trip.getIdPrivate()), Integer.toString(poi.getIdPrivate())});
-		}
-
-	}
+	
 
 	@Override
 	public void onCreate(SQLiteDatabase db) { }
@@ -1010,13 +992,41 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return myDataBase.isOpen();
 	}//isOpen
 
+
+	/***
+	 * Open the Database
+	 * This is quite time-consuming, and should be done in a background process,
+	 * so the map can show immediately!
+	 */
 	@Override
-	public synchronized void close() {
-		if (myDataBase != null){
-			myDataBase.close();
+	public boolean open(){
+		try{
+			myDataBase = openDataBase();
+		}catch (SQLException e){
+			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+myPath);
+			myDataBase=null;
 		}
-		super.close();
-	}//close
+		long poiCount = 0;
+		try{
+			poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
+		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
+		}
+		debug(0, "poi-count is "+poiCount );
+		//JF: ZIP code removed
+		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
+			debug(0, "close myDataBase, before re-open");
+			myDataBase.close();
+			try{
+				debug(0, DB_NAME+" was missing... now copying");
+				createDataBase();
+			}catch (IOException e){
+				e.printStackTrace();
+				return false;
+			}
+		}// if empty database, copy from assets
+		return (myDataBase == null) ? false : true;
+	}//open
+
 
 	/**
 	 * Opens the database.
@@ -1039,11 +1049,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return myDataBase;
 	}//openDataBase
 
-}//class
+	@Override
+	public void setContext(Context context) {
+		this.myContext = context;
+	} // setContext
 
-class ValueComparator implements Comparator<String> {
+	
+}//class SQLiteConnecto
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+class ValueComparator2 implements Comparator<String> {
 	  Map<String,Integer> base;
-	  public ValueComparator(Map<String,Integer> base) {
+	  public ValueComparator2(Map<String,Integer> base) {
 	      this.base = base;
 	  }
 	  public int compare(String a, String b) {
