@@ -76,7 +76,7 @@ public class ImportActivity extends TabActivity {
 		spec = tabHost.newTabSpec("local").setIndicator("LOCAL", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, PlanTabTrip.class);
+		intent = new Intent().setClass(this, ImportTabWeb.class);
 		spec = tabHost.newTabSpec("web").setIndicator("WEB", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 

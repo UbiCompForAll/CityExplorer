@@ -52,7 +52,7 @@ import android.widget.TextView;
 /**
  * The Class MapsActivity.
  */
-public class LocationActivity extends MapActivity {
+public class LocationActivity extends MapActivity{ // implements LocationListener{
 
 	//GLOBAL CONSTANTS
 	//private static final int DEBUG = CityExplorer.DEBUG;
@@ -130,100 +130,6 @@ public class LocationActivity extends MapActivity {
 //	private static final int TRONDHEIM_LAT = CityExplorer.TRONDHEIM_LAT;	//63°25′36″N ;
 //	private static final int TRONDHEIM_LNG = CityExplorer.TRONDHEIM_LNG;	//10°23′48″E ;
 //
-//	/** The map controller. */
-//	private MapController mapController;
-//	
-//	/** The location icon. */
-//	private MapTargetOverlay locationIcon;
-//	
-//	/** The poi overlays. */
-//	//private ArrayList<MapTargetOverlay> poiOverlays = new ArrayList<MapTargetOverlay>();
-//	
-//	/** The overlays. */
-//	private List<Overlay> overlays; 
-//	
-//	/** The current geo point. */
-//	private GeoPoint currentGeoPoint = new GeoPoint(0, 0);
-//	
-//	/** The poi clicked. */
-//	boolean poiClicked = false;
-//
-//	/** The qa. */
-//	private QuickActionPopup qa;
-//	
-//
-//	
-//
-//	
-//	
-//	/**
-//	 * Called when the activity is first created.
-//	 *
-//	 * @param savedInstanceState the saved instance state
-//	 */
-//	public void onCreate(Bundle savedInstanceState){
-//		super.onCreate(savedInstanceState);
-//		debug(0, "So far so good ;-)" );
-//
-//		//mapView.setReticleDrawMode( MapView.ReticleDrawMode.DRAW_RETICLE_OVER );
-//		mapView.setBuiltInZoomControls(true);
-//		mapView.setOnClickListener( this );
-//
-//		mapController 	= mapView.getController();
-//		mapController.setZoom(15);
-//
-//		//---- Overlays: ----
-////		locationIcon 	= new MapTargetOverlay(this, R.drawable.map_marker, new GeoPoint(0, 0));
-////		overlays 		= mapView.getOverlays();
-////		overlays.add(locationIcon);
-//		
-//		if ( ! CityExplorer.isConnected(this) ){
-//			CityExplorer.showNoConnectionDialog( this );
-//		}
-//		drawOverlays();
-//		debug(0, "..., but why so slow? ONly ON first invocation, I mean ;-)" );
-//	}//onCreate
-//
-//
-//	
-//	/**
-//	 * Draw overlays.
-//	 */
-//	private void drawOverlays(){
-////		HashMap<String, Bitmap> categoryIcons
-////		 = DBFactory.getInstance(this).getUniqueCategoryNamesAndIcons();	//Time-consuming?
-////
-////		//mapController.animateTo(trip.getPoiAt(0).getGeoPoint());//go to first poi
-////			
-////		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if present
-////			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
-////			//System.out.println(pois);
-////			for (Parcelable parcelable : pois){
-////				Poi poi = (Poi) parcelable;
-////
-////				MapTargetOverlay poiOverlay = new MapTargetOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
-////				poiOverlay.setPoi(poi);
-////				poiOverlay.setImage(categoryIcons.get(poi.getCategory()));
-////
-////				//poiOverlays.add(poiOverlay);
-////				overlays.add(poiOverlay);
-////			}
-////			SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0);
-////			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
-////			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
-////
-////			debug(0, "overlays is "+overlays);
-////			mapController.animateTo( new GeoPoint( lat, lng ));//go to current location
-////		}else{//if (Intent.hasExtra(POILIST)
-////			debug(0, "No Data for Location Intent!!!");
-////
-////			//---- Overlays: ----
-////			locationIcon 	= new MapTargetOverlay(this, R.drawable.map_marker, new GeoPoint(0, 0));
-////			overlays 		= mapView.getOverlays();
-////			overlays.add(locationIcon);
-////		}
-//	}//drawOverlays
-//
 //
 //	/**
 //	 * Init the GPS
@@ -237,7 +143,8 @@ public class LocationActivity extends MapActivity {
 //
 //		//Register the listener with the Location Manager to receive location updates
 //		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//	} // initGPS
+//	}
+//
 //	
 //
 //
@@ -332,3 +239,4 @@ public class LocationActivity extends MapActivity {
 //		mapController.animateTo( new GeoPoint(63000000, 96000000) );
 //	} //onActivityResults
 //
+

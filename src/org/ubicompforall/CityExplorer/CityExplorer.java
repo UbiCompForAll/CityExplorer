@@ -77,7 +77,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
          * This populates the default values from the preferences XML file. See
          * {@link DefaultValues} for more details.
          */
-        PreferenceManager.setDefaultValues(this, R.xml.default_values, false);
+        PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
 
         //Local debug (stacktrace level = 3)
         StackTraceElement st = Thread.currentThread().getStackTrace()[2];

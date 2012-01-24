@@ -150,7 +150,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	}//init
 
 	private ArrayList<DB> getAllDBs() {
-		allDBs.add( new DB("Rune") );
+		allDBs.add( new DB( "Rune", "Rock'n'Roll" ) );
 		return allDBs;
 	}//getAllDBs
 

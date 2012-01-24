@@ -137,6 +137,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			debug(0, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import
 	}//onClick
+
 	// FOR DEBUGGING
 	//			ExportImport.send(this, poiList);
 	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
