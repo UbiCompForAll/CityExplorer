@@ -66,14 +66,16 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 		setContentView(R.layout.startlayout);
 
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
-		//DEBUG: Remove startButton2 & 3 from startLayoutview
 		RelativeLayout start = (RelativeLayout) findViewById(R.id.startView);
+		//(Re-) Set button functionality
 		if (start != null){
-			start.removeView( findViewById(R.id.startButton3) );
 			Button b1 = (Button) findViewById(R.id.startButton1);
 			b1.setText( getResources().getString(R.string.importdata) );
 			Button b2 = (Button) findViewById(R.id.startButton2);
 			b2.setText( getResources().getString(R.string.setlocation));
+			//start.removeView( findViewById(R.id.startButton3) );
+			Button b3 = (Button) findViewById( R.id.startButton3 );
+			b3.setText( getResources().getString( R.string.preferences ) );
 		}else{
 			debug(0, "Couldn't find the startview in SettingsActivity~75");
 		}
@@ -95,13 +97,13 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 	public void onClick(View v) {
 		//debug(0, "Clicked: "+v);
 		if (v.getId() == R.id.startButton1){
-			startActivity( new Intent( SettingsActivity.this, ImportActivity.class));
+			startActivity( new Intent( this, ImportActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){
-			startActivity( new Intent( SettingsActivity.this, LocationActivity.class));
+			startActivity( new Intent( this, LocationActivity.class));
 
 		}else if (v.getId() == R.id.startButton3){
-			debug(0, "Clicked: Button3... Empty");
+			startActivity( new Intent( this, PreferencesActivity.class));
 
 		}else{
 			debug(0, "Unknown button clicked: "+v);

@@ -64,19 +64,19 @@ any static strings associated with maps -->
 <string name="poi_details_favourite">Favourite</string>
 <string name="poi_details_showOnMap">Show on Map</string>
 <string name="poiMenufavourite">Favourite</string>
-<string name="poiMenuMap">Show on Map</string>
+<string name="poiMenuMap">Show on Map</string><string name="preferences">PREFERENCES</string>
 <string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
 <string name="savePoi">Save Location</string>
 <string name="saveCalendar">Save Times</string>
 
-<string name="settings">SETTINGS</string><string name="summary">SUMMARY</string><string name="telephoneLabel">Telephone:</string><string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
+<string name="setlocation">SET LOCATION</string><string name="settings">SETTINGS</string><string name="summary">SUMMARY</string><string name="sqlitemimetype">application/octet-stream</string><string name="telephoneLabel">Telephone:</string><string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
 
 <string name="zipLabel">Zip:</string>
 
 
 
-<string name="sqlitemimetype">application/octet-stream</string>
-<string name="setlocation">SET LOCATION</string>
+
+
 
 
 

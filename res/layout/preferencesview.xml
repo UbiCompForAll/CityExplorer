@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	>
+
+	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/pref_location"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:stretchColumns="1"
+	    >
+	
+		<TableRow>
+		    <TextView
+				android:text="Default Location"
+				android:padding="3dip"
+				/>
+			<TextView
+				android:id="@+id/pref_loc"
+				android:text="63424000"
+				android:padding="3dip"
+				/>
+			</TableRow>
+		
+		<TableRow>
+			<TextView
+				android:text="Latitude"
+				android:padding="3dip"
+				/>
+			<TextView
+			    android:id="@+id/pref_lat"
+			    android:text="9554600"
+				android:padding="3dip"
+				/>
+		</TableRow>
+		
+		<TableRow>
+			<TextView
+				android:text="Longitude"
+				android:padding="3dip" />	    	    
+			<TextView
+			    android:id="@+id/pref_lng"
+				android:padding="3dip" />	    	    
+		</TableRow>
+		<View
+			android:layout_height="2dip"
+			android:layout_width="fill_parent"
+			android:background="#FF909090" />
+	</TableLayout>
+	
+	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/pref_location"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:stretchColumns="1">
+	
+		<TableRow>
+			<TextView
+				android:text="Default DB URL" />
+		</TableRow>
+		
+		<TableRow>
+			<TextView
+				android:id="@+id/pref_url"
+				android:layout_width="wrap_content"
+				android:layout_span="2"
+				android:text="http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/" />
+		</TableRow>
+		
+		<View
+		    android:layout_height="2dip"
+		    android:background="#FF909090" />
+		
+		<TableRow>
+		</TableRow>
+		    
+		<TableRow>
+		</TableRow>
+	</TableLayout>
+</LinearLayout>
+
+<!--
+<RelativeLayout android:id="@+id/ImportlistTop"
+	android:layout_width="wrap_content" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<TextView android:id="@+id/importTV"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:background="#EBF2FA" android:text="No data" />
+
+</RelativeLayout>
+-->

@@ -215,13 +215,13 @@ public class PlanTabTrip extends PlanTabActivity{
 	 * @param t The trip you want to check.
 	 * @return True if the trip is empty, false otherwise.
 	 */
-	private boolean isEmptyTrip(Trip t) {
-		if(t.getPois().size() > 0){
-			return false;
-		}else {
-			return true;
-		}
-	}
+//	private boolean isEmptyTrip(Trip t) {
+//		if(t.getPois().size() > 0){
+//			return false;
+//		}else {
+//			return true;
+//		}
+//	}
 
 	@Override
 	protected void onResume() {

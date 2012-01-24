@@ -43,3 +43,7 @@ See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=354099
 Use Shell to:
   git merge origin/master
 
+
+Howto debug SQL DB:
+http://developer.android.com/guide/topics/data/data-storage.html#netw
+

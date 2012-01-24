@@ -90,9 +90,12 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		//Init userLocation
 		userLocation = new Location("");
-		
+
+
 		//FOR DEBUGGING
-		//startActivity(new Intent(this, ImportActivity.class));
+		//startActivity(new Intent( this, LocationActivity.class) );
+
+
 	}//onCreate
 
 	@Override
