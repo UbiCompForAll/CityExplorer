@@ -352,8 +352,8 @@ public class PlanTabTrip extends PlanTabActivity{
 
 			qa.show();
 			return true;
-		}
-	}
+		} // onItemLongClick
+	} // DrawPopup
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){

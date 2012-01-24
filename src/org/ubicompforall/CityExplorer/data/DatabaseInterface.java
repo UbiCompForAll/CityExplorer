@@ -39,20 +39,46 @@ import android.graphics.Bitmap;
  * @author Christian Skjetne
  */
 public interface DatabaseInterface{
+
 	/**
-	 * Interface method for opening the database connection.
-	 * @return Boolean for successful opening or not
+	 * Interface method for adding a Poi to a Trip in the database.
+	 * @param trip The Trip to be added to.
+	 * @param poi The PoI to be added.
 	 */
-	public boolean	open();
+	public boolean addPoiToTrip(Trip trip, Poi poi);
+
+	/**
+	 * Interface method for adding visiting times to a Trip in the database.
+	 * @param trip The Trip to be added times to.
+	 */
+	public void addTimesToTrip(Trip trip);
 	
+
 	/*** Interface method for closing the database connection.*/
 	public void 	close();
+
+
+	/**
+	 * Interface method for deleting a Poi from a Trip in the database.
+	 * @param trip The Trip to be deleted from.
+	 * @param poi The PoI to be deleted.
+	 */
+	public void deleteFromTrip(Trip trip, Poi poi);
+	
 	
 	/**
-	 * Interface method for checking if the connection is open.
-	 * @return Boolean as to whether the connection is open or not.
+	 * Interface method for deleting a Trip from the database.
+	 * @param trip The Trip to be deleted.
 	 */
-	public boolean	isOpen();
+	void deleteTrip(Trip trip);
+	
+	/**
+	 * Interface method for deleting a Poi from the database.
+	 * @param poi The Poi to be deleted.
+	 * @return Boolean as to wheter the deletion was successful or not.
+	 */
+	boolean deletePoi(Poi poi);
+	
 
 	/**
 	 * Interface method for fetching all PoIs from the database.
@@ -76,16 +102,19 @@ public interface DatabaseInterface{
 	
 	/**
 	 * Interface method for fetching all trips from the database.
+	 * Interface method for fetching free/fixed trips from the database.
+	 * Return all Trips of the given TYPE (including TYPE_ALL)
+	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
 	 * @return ArrayList containing all trips in the database.
 	 */
-	public ArrayList<Trip> getAllTrips();
-	
+	public ArrayList<Trip> getAllTrips( int type );
+
 	/**
 	 * Interface method for fetching free/fixed trips from the database.
 	 * @param free The boolean for which type of trips to fetch
 	 * @return ArrayList containing Trips from database.
 	 */
-	public ArrayList<Trip> getAllTrips(Boolean free);
+	//public ArrayList<Trip> getAllTrips(Boolean free);
 	
 	/**
 	 * Interface method for creating a new PoI in the database.
@@ -131,30 +160,10 @@ public interface DatabaseInterface{
 	
 	/**
 	 * Interface method for fetching all empty trips from the database.
-	 * @return ArrayList ontaining Trips.
+	 * @return ArrayList containing Trips.
 	 */
-	ArrayList<Trip> getAllEmptyTrips();
-	
-	/**
-	 * Interface method for deleting a Poi from a Trip in the database.
-	 * @param trip The Trip to be deleted from.
-	 * @param poi The PoI to be deleted.
-	 */
-	public void deleteFromTrip(Trip trip, Poi poi);
-	
-	/**
-	 * Interface method for adding a Poi to a Trip in the database.
-	 * @param trip The Trip to be added to.
-	 * @param poi The PoI to be added.
-	 */
-	public boolean addPoiToTrip(Trip trip, Poi poi);
+	ArrayList<Trip> getAllEmptyTrips( int mode );
 
-	/**
-	 * Interface method for adding visiting times to a Trip in the database.
-	 * @param trip The Trip to be added times to.
-	 */
-	public void addTimesToTrip(Trip trip);
-	
 	/**
 	 * Interface method for fetching the unique names of all Categories in the database.
 	 * @return ArrayList containing all the names of categories.
@@ -166,25 +175,6 @@ public interface DatabaseInterface{
 	 * @return HashMap containing the names and icons.
 	 */
 	HashMap<String, Bitmap> getUniqueCategoryNamesAndIcons();
-	
-	/**
-	 * Interface method for deleting a Trip from the database.
-	 * @param trip The Trip to be deleted.
-	 */
-	void deleteTrip(Trip trip);
-	
-	/**
-	 * Interface method for deleting a Poi from the database.
-	 * @param poi The Poi to be deleted.
-	 * @return Boolean as to wheter the deletion was successful or not.
-	 */
-	boolean deletePoi(Poi poi);
-	
-	/**
-	 * Interface method for setting the Context.
-	 * @param context The Context to be set.
-	 */
-	void setContext(Context context);
 	
 	/**
 	 * Interface method for fetching the local ID of a Poi from the corresponding global ID in the database.
@@ -205,5 +195,28 @@ public interface DatabaseInterface{
 	 * @param privateId The local ID of the Trip.
 	 * @return The Trip from the database.
 	 */
-	Trip getTrip(int privateId);	
+	Trip getTrip(int privateId);
+
+
+	/**
+	 * Interface method for checking if the connection is open.
+	 * @return Boolean as to whether the connection is open or not.
+	 */
+	public boolean	isOpen();
+
+	/**
+	 * Interface method for opening the database connection.
+	 * @return Boolean for successful opening or not
+	 */
+	public boolean	open();
+	
+
+	/**
+	 * Interface method for setting the Context.
+	 * @param context The Context to be set.
+	 */
+	void setContext(Context context);
+
+	
+
 }//DatabaseInterface

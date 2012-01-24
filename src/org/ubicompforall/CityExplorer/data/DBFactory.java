@@ -59,6 +59,7 @@ public class DBFactory
 	public static DatabaseInterface getInstance(Context context){
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
+				//dbConnectorInstance = new SQLiteConnector2(context);
 				dbConnectorInstance = new SQLiteConnector(context);
 			}
 			dbConnectorInstance.open();

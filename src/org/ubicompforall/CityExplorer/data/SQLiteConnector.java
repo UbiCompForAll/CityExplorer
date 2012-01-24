@@ -212,6 +212,54 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return;
 	}//createDataBase
 
+	@Override
+	public void deleteFromTrip(Trip trip, Poi poi){
+		myDataBase.delete("trip_poi", "poi_id = ? AND trip_id = ?", new String[]{""+poi.getIdPrivate(), ""+trip.getIdPrivate()});
+		Toast.makeText(myContext, poi.getLabel() + " deleted from tour.", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void deleteTrip(Trip trip){
+		myDataBase.delete("trip_poi", "trip_id = ?", new String[]{""+trip.getIdPrivate()});
+		myDataBase.delete("trip", "_id = ?", new String[]{""+trip.getIdPrivate()});
+		Toast.makeText(myContext, trip.getLabel() + " deleted.", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public boolean deletePoi(Poi poi){
+		//Check if the poi is in a trip first.
+		Cursor c = myDataBase.query("trip_poi", new String[]{"trip_id"}, "poi_id = ?", new String[]{""+poi.getIdPrivate()}, null, null, null);
+
+		if(c.getCount() > 0)
+		{
+			//the poi is in a trip. abort!
+			StringBuilder trips = new StringBuilder();
+			while(c.moveToNext()) //make a list of all the trips this poi is in.
+			{
+				if(trips.length() != 0)
+					trips.append(", ");
+				trips.append(this.getTrip(c.getInt(0)).getLabel());
+			}
+
+			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is in "+c.getCount()+" tour"+((c.getCount() > 1) ? "s":"")+" ("+trips.toString()+")", Toast.LENGTH_LONG).show();
+			c.close();
+			return false;
+		}
+
+		if(myDataBase.delete("poi", "_id = ?", new String[]{""+poi.getIdPrivate()}) > 0)
+		{
+			//poi deleted
+			Toast.makeText(myContext, poi.getLabel() + " deleted", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		else
+		{
+			//the poi is not found
+			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is not found", Toast.LENGTH_LONG).show();
+			return false;
+		}
+	}//deletePoi
+
 
 	@Override
 	public ArrayList<Poi> getAllPois() {
@@ -239,15 +287,20 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	}//getAllPois(favorite)
 
 
+	/***
+	 * Get trips that have no POIs.
+	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
+	 * @return ArrayList of selected Trips
+	 */
 	@Override
-	public ArrayList<Trip> getAllEmptyTrips(){
+	public ArrayList<Trip> getAllEmptyTrips( int mode ){
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
 		String[] columns = {
 			"TRIP._id",	"TRIP.title", "TRIP.free_trip", "TRIP.description", "TRIP.global_id"
 		};
-		final Map<String,Integer> key = new HashMap<String,Integer>();
-		getKeys( key, columns );
+		final Map<String,Integer> key = //new HashMap<String,Integer>();		getKeys( key, columns );
+				getKeys( columns );
 		String sqlStr = getSelectStr( columns );
 		debug (0, "select string is "+sqlStr );
 
@@ -284,12 +337,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		c.close();
 		debug(0, "FOUND size="+trips.size()+" empty trips" );
 		return trips;
-	}//getAllEmptyTrips()
+	}//getAllEmptyTrips
 
 	///////////////////////////////////
 	
 	public static final Map<String,Integer>
-	 getKeys( Map<String, Integer> key, String[] columns ){
+	 getKeys( String[] columns ){
+		Map<String, Integer> key = new HashMap<String, Integer>();
 		for(int i=0; i<columns.length; i++){
 			key.put(columns[i], i);
 		} // for each column, store key index
@@ -310,8 +364,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	///////////////////////////////////
 	
+	/***
+	 * Return all Trips of the given TYPE
+	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
+	 */
 	@Override
-	public ArrayList<Trip> getAllTrips(Boolean free){
+	//public ArrayList<Trip> getAllTrips( Boolean free ){
+	public ArrayList<Trip> getAllTrips( int type ){
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
 		//CONSTANT key-index mappings
@@ -324,15 +383,24 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				"CAT.title",
 				"TP.poi_number",	"TP.hour",		"TP.minute"
 		};
-		final Map<String,Integer> key = new HashMap<String,Integer>();
-		getKeys( key, columns );
-		String sqlStr = getSelectStr( columns );
+		final Map<String,Integer> key = //new HashMap<String,Integer>(); 		getKeys( key, columns );
+				getKeys( columns );
+		String sqlStr, selectStr, fromStr, whereStr, freeStr, orderStr;
+		selectStr = getSelectStr( columns );
+		fromStr =	" FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP ";
+		whereStr =	" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id ";
+		freeStr =	" AND TRIP.free_trip = ? ";
+		orderStr =	" ORDER BY TRIP._id, TP.poi_number";
 		
-		sqlStr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
-		" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP.free_trip = ? " +
-		" ORDER BY TRIP._id, TP.poi_number";
-		Cursor c = myDataBase.rawQuery(sqlStr, new String[]{"" + (free? 1 : 0)});
-
+		Cursor c;
+		if ( type==CityExplorer.TYPE_ALL ){
+			sqlStr = selectStr + fromStr + whereStr + orderStr;
+			c = myDataBase.rawQuery( sqlStr, null );
+		}else{
+			sqlStr = selectStr + fromStr + whereStr + freeStr + orderStr;
+			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
+		}//if ALL
+		
 		debug(0, "TRIPS: " + c.getCount() );
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
@@ -374,76 +442,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		
-		//trips.addAll( this.getAllEmptyTrips() );
+		trips.addAll( this.getAllEmptyTrips( type ) );
 		return trips;
 	}//getAllTrips(free)
-
-	@Override
-	public ArrayList<Trip> getAllTrips(){
-		ArrayList<Trip> trips = new ArrayList<Trip>();
-
-		//CONSTANT key-index mappings
-		final String[] columns = {
-				"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
-				"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
-				"POI.global_id",	"POI.telephone",
-				"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
-				"ADDR.city",		"ADDR.lat",		"ADDR.lon",
-				"CAT.title",
-				"TP.poi_number",	"TP.hour",		"TP.minute"
-		};
-		final Map<String,Integer> key = new HashMap<String,Integer>();
-		getKeys( key, columns );
-		String sqlStr = getSelectStr( columns );
-		
-		sqlStr += " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id " +
-		"ORDER BY TRIP._id, TP.poi_number";
-		Cursor c = myDataBase.rawQuery(sqlStr, null);
-
-		debug(0, "TRIPS: " + c.getCount() );
-
-		int currentTripId = -1;
-
-		Trip trip = new Trip.Builder("").build();
-		while(c.moveToNext()){
-			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ));
-				if(currentTripId != -1) { //next trip on the list
-					trips.add(trip);
-				}
-				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
-				.idPrivate(c.getInt( key.get("TRIP._id") ))
-				.description(c.getString( key.get("TRIP.description") ))
-				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
-				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
-				.build();
-				currentTripId = trip.getIdPrivate();
-			}//if not current trip - Make new
-			
-			Poi poi = new Poi.Builder(c.getString( key.get("POI.title") ),new PoiAddress.Builder
-					(c.getString( key.get("ADDR.city") ))
-// ZIP code removed
-//			.zipCode(c.getInt( key.get("ADDR.zipcode") ))
-			.street(c.getString( key.get("ADDR.street_name") ))
-			.longitude(c.getDouble( key.get("ADDR.lon") )).latitude(c.getDouble( key.get("ADDR.lat") ))
-			.build()
-			).description(c.getString( key.get("POI.description") ))
-			.category(c.getString( key.get("CAT.title") ))
-			.favourite((1==c.getInt( key.get("POI.favourite") )))
-			.imageURL(c.getString( key.get("POI.image_url") ))
-			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
-			.idPrivate(c.getInt( key.get("POI._id") ))
-			.idGlobal(c.getInt( key.get("POI.global_id") )).build();
-			trip.addPoi(poi);
-			trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
-		}//while more trips
-		if(currentTripId != -1){ //next trip on the list
-			trips.add(trip);
-		}
-		c.close();
-		return trips;
-	}//getAllTrips()
 
 
 	@Override
@@ -697,54 +698,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		c.close();
 		return -1;
 	}//getCategoryId
-
-	@Override
-	public void deleteFromTrip(Trip trip, Poi poi){
-		myDataBase.delete("trip_poi", "poi_id = ? AND trip_id = ?", new String[]{""+poi.getIdPrivate(), ""+trip.getIdPrivate()});
-		Toast.makeText(myContext, poi.getLabel() + " deleted from tour.", Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void deleteTrip(Trip trip){
-		myDataBase.delete("trip_poi", "trip_id = ?", new String[]{""+trip.getIdPrivate()});
-		myDataBase.delete("trip", "_id = ?", new String[]{""+trip.getIdPrivate()});
-		Toast.makeText(myContext, trip.getLabel() + " deleted.", Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public boolean deletePoi(Poi poi){
-		//Check if the poi is in a trip first.
-		Cursor c = myDataBase.query("trip_poi", new String[]{"trip_id"}, "poi_id = ?", new String[]{""+poi.getIdPrivate()}, null, null, null);
-
-		if(c.getCount() > 0)
-		{
-			//the poi is in a trip. abort!
-			StringBuilder trips = new StringBuilder();
-			while(c.moveToNext()) //make a list of all the trips this poi is in.
-			{
-				if(trips.length() != 0)
-					trips.append(", ");
-				trips.append(this.getTrip(c.getInt(0)).getLabel());
-			}
-
-			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is in "+c.getCount()+" tour"+((c.getCount() > 1) ? "s":"")+" ("+trips.toString()+")", Toast.LENGTH_LONG).show();
-			c.close();
-			return false;
-		}
-
-		if(myDataBase.delete("poi", "_id = ?", new String[]{""+poi.getIdPrivate()}) > 0)
-		{
-			//poi deleted
-			Toast.makeText(myContext, poi.getLabel() + " deleted", Toast.LENGTH_LONG).show();
-			return true;
-		}
-		else
-		{
-			//the poi is not found
-			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is not found", Toast.LENGTH_LONG).show();
-			return false;
-		}
-	}//deletePoi
 
 	@Override
 	public int newPoi(Poi poi) {

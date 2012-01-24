@@ -118,7 +118,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.newtrip);
 		init();
-	}
+	} // onCreate
 
 	
 	private void debug( int level, String message ) {
@@ -145,14 +145,14 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		saveTripButton = (Button)findViewById(R.id.saveTrip);
 		saveTripButton.setOnClickListener(this);
 		fixedTrip.setChecked(true);
-	}
+	} // init
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.new_trip_menu, menu);
 		return true;
-	}
+	} // onCreateOptionsMenu
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -160,7 +160,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 			saveTrip();
 		}
 		return true;
-	}
+	} // onOptionsItemSelected
 
 	/**
 	 * Checks all the mandatory input fields and saves a trip in the database.
@@ -179,17 +179,15 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		}else {
 			free = false;
 		}
+
+		//Get new biggest ID
 		db = DBFactory.getInstance(this);
-		ArrayList<Trip> allTrips = db.getAllTrips();
-		ArrayList<Trip> allEmptyTrips = db.getAllEmptyTrips();
-
-
+		ArrayList<Trip> allTrips = db.getAllTrips( CityExplorer.TYPE_ALL );
+		ArrayList<Trip> allEmptyTrips = db.getAllEmptyTrips( CityExplorer.TYPE_ALL );
 		int idAllTrips = 0, idAllEmptyTrips = 0, pId;
 		if(allTrips.size() != 0){
 			idAllTrips = allTrips.get(allTrips.size()-1).getIdPrivate();
-
 		}
-
 		if(allEmptyTrips.size() != 0){
 			idAllEmptyTrips = allEmptyTrips.get(allEmptyTrips.size()-1).getIdPrivate();
 		}
@@ -198,7 +196,6 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		}else{
 			pId=idAllTrips+1;
 		}
-
 
 		Trip trip = new Trip.Builder(name).description(description).freeTrip(free).idPrivate(pId).build();
 
@@ -227,7 +224,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		if(v == saveTripButton){
 			saveTrip();
 		}
-	}
+	} // onClick
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -247,6 +244,5 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		default:
 			break;
 		}
-
-	}
-}
+	} // onActivityResult
+} // class NewTripActivity

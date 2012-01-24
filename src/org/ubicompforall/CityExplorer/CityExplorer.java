@@ -64,6 +64,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final int TRONDHEIM_LAT = 63424000;  //63°25′36″N ;
 	public static final int TRONDHEIM_LNG =  9554600;	//10°23′48″E -1 ;
 
+	public static final int TYPE_ALL = 0;
+	public static final int TYPE_FREE = 1;
+	public static final int TYPE_FIXED = 2;
 
 	@Override
     public void onCreate() {
