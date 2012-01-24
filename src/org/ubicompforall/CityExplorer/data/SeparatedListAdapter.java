@@ -308,11 +308,11 @@ public class SeparatedListAdapter extends BaseAdapter {
 			sections.clear();
 			sectionNames.clear();
 		
-			ArrayList<Trip> freeList = db.getAllTrips( CityExplorer.TYPE_FREE );
-			ArrayList<Trip> fixedList = db.getAllTrips( CityExplorer.TYPE_FIXED );
-			ArrayList<Trip> emptyTripList = db.getAllEmptyTrips( CityExplorer.TYPE_ALL );
+			ArrayList<Trip> freeList = db.getTripsWithPOIs( CityExplorer.TYPE_FREE );
+			ArrayList<Trip> fixedList = db.getTripsWithPOIs( CityExplorer.TYPE_FIXED );
+			//ArrayList<Trip> emptyTripList = db.getTrips( CityExplorer.TYPE_ALL );
 			
-			TripAdapter freeAdapter, fixedAdapter, emptyTripAdapter;
+			TripAdapter freeAdapter, fixedAdapter;//, emptyTripAdapter;
 			if(freeList.size() > 0){					
 				freeAdapter = new TripAdapter(ctx, R.layout.plan_listitem, freeList);
 				addSection("Free Tours", freeAdapter);
@@ -326,11 +326,11 @@ public class SeparatedListAdapter extends BaseAdapter {
 			}
 	
 			//Make the empty trip list
-			if(emptyTripList.size() > 0){			
-				emptyTripAdapter = new TripAdapter(ctx, R.layout.plan_listitem, emptyTripList);
-				addSection("Empty Tours", emptyTripAdapter);
-				emptyTripAdapter.notifyDataSetChanged();
-			}
+//			if(emptyTripList.size() > 0){			
+//				emptyTripAdapter = new TripAdapter(ctx, R.layout.plan_listitem, emptyTripList);
+//				addSection("Empty Tours", emptyTripAdapter);
+//				emptyTripAdapter.notifyDataSetChanged();
+//			}
 		}else if(listType == INTERNET_POIS){
 			debug(0, "Missing INTERNET_POIS Adapter?");
 		}else if(listType == INTERNET_TRIPS){

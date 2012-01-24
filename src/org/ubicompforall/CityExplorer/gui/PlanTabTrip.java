@@ -165,17 +165,17 @@ public class PlanTabTrip extends PlanTabActivity{
 		}
 		trip = (Trip) l.getAdapter().getItem(pos);
 
-		if(requestCode == NewTripActivity.ADD_TO_TRIP){
-			if(!isEmptyTrip(trip)){				
-				Intent resultIntent = new Intent();
-				resultIntent.putExtra(IntentPassable.TRIP, trip);
-				setResult( Activity.RESULT_OK, resultIntent );
-				finish();
-			}else {
-				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
-			}
-			return;
-		}
+//		if(requestCode == NewTripActivity.ADD_TO_TRIP){
+////			if(!isEmptyTrip(trip)){
+//				Intent resultIntent = new Intent();
+//				resultIntent.putExtra(IntentPassable.TRIP, trip);
+//				setResult( Activity.RESULT_OK, resultIntent );
+//				finish();
+////			}else {
+////				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
+////			}
+//			return;
+//		} // NewTrip->ADD_TO_TRIP
 
 		if (requestCode == PlanTabPoi.ADD_TO_TRIP){
 			Intent resultIntent = new Intent();
@@ -183,7 +183,7 @@ public class PlanTabTrip extends PlanTabActivity{
 			setResult( Activity.RESULT_OK, resultIntent );
 			finish();
 			return;
-		}
+		} // if ADD_TO_TRIP
 		
 		if (requestCode == DOWNLOAD_TRIP){
 
@@ -198,16 +198,16 @@ public class PlanTabTrip extends PlanTabActivity{
 				downloadedTrips.remove(trip);
 			}
 			return;
-		}
+		} // if download trip
 
-		if (!isEmptyTrip(trip)) {
-			Intent details = new Intent(PlanTabTrip.this, TripListActivity.class);
+//		if (!isEmptyTrip(trip)) {
+			Intent details = new Intent( this, TripListActivity.class );
 			details.putExtra("trip", trip);
 			startActivity(details);
-		} else {
-			Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
-		}
-	}
+//		} else {
+//			Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
+//		}
+	} // onListItemClick
 
 	/**
 	 * Checks if the given trip is empty.

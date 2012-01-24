@@ -107,7 +107,7 @@ public interface DatabaseInterface{
 	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
 	 * @return ArrayList containing all trips in the database.
 	 */
-	public ArrayList<Trip> getAllTrips( int type );
+	public ArrayList<Trip> getTripsWithPOIs( int type );
 
 	/**
 	 * Interface method for fetching free/fixed trips from the database.
@@ -162,7 +162,7 @@ public interface DatabaseInterface{
 	 * Interface method for fetching all empty trips from the database.
 	 * @return ArrayList containing Trips.
 	 */
-	ArrayList<Trip> getAllEmptyTrips( int mode );
+	ArrayList<Trip> getTripsWithoutPOIs( int mode );
 
 	/**
 	 * Interface method for fetching the unique names of all Categories in the database.

@@ -96,7 +96,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 	private int requestCode;
 	
 	/** The Constant ADD_TO_TRIP. */
-	protected static final int ADD_TO_TRIP = 2;
+	protected static final int ADD_TO_TRIP = TripListActivity.ADD_TO_TRIP;
 	
 	/** The existing pois, fetched from the old trip you will create the new from. */
 	private ArrayList<Poi> existingPois;
@@ -182,23 +182,22 @@ public class NewTripActivity extends Activity implements OnClickListener{
 
 		//Get new biggest ID
 		db = DBFactory.getInstance(this);
-		ArrayList<Trip> allTrips = db.getAllTrips( CityExplorer.TYPE_ALL );
-		ArrayList<Trip> allEmptyTrips = db.getAllEmptyTrips( CityExplorer.TYPE_ALL );
-		int idAllTrips = 0, idAllEmptyTrips = 0, pId;
+		ArrayList<Trip> allTrips = db.getTripsWithoutPOIs( CityExplorer.TYPE_ALL );
+		//ArrayList<Trip> allEmptyTrips = db.getTrips( CityExplorer.TYPE_ALL );
+		int idAllTrips = 0, pId;
 		if(allTrips.size() != 0){
 			idAllTrips = allTrips.get(allTrips.size()-1).getIdPrivate();
 		}
-		if(allEmptyTrips.size() != 0){
-			idAllEmptyTrips = allEmptyTrips.get(allEmptyTrips.size()-1).getIdPrivate();
-		}
-		if(idAllEmptyTrips>idAllTrips){
-			pId=idAllEmptyTrips+1;
-		}else{
+//		if(allEmptyTrips.size() != 0){
+//			idAllEmptyTrips = allEmptyTrips.get(allEmptyTrips.size()-1).getIdPrivate();
+//		}
+//		if(idAllEmptyTrips>idAllTrips){
+//			pId=idAllEmptyTrips+1;
+//		}else{
 			pId=idAllTrips+1;
-		}
+//		}
 
 		Trip trip = new Trip.Builder(name).description(description).freeTrip(free).idPrivate(pId).build();
-
 		db.newTrip(trip);
 
 		if (requestCode == PlanTabTrip.NEW_TRIP){

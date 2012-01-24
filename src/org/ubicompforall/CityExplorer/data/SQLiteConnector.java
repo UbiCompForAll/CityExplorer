@@ -287,82 +287,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	}//getAllPois(favorite)
 
 
-	/***
-	 * Get trips that have no POIs.
-	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
-	 * @return ArrayList of selected Trips
-	 */
-	@Override
-	public ArrayList<Trip> getAllEmptyTrips( int mode ){
-		ArrayList<Trip> trips = new ArrayList<Trip>();
-
-		String[] columns = {
-			"TRIP._id",	"TRIP.title", "TRIP.free_trip", "TRIP.description", "TRIP.global_id"
-		};
-		final Map<String,Integer> key = //new HashMap<String,Integer>();		getKeys( key, columns );
-				getKeys( columns );
-		String sqlStr = getSelectStr( columns );
-		debug (0, "select string is "+sqlStr );
-
-		sqlStr += " FROM trip as TRIP " +
-		"WHERE TRIP._id NOT IN (" +
-		"SELECT " +
-		"TRIP._id " +
-		"FROM trip as TRIP, poi as POI, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
-		Cursor c = myDataBase.rawQuery(sqlStr, null);
-
-		int currentTripId = -1;
-		Trip trip = new Trip.Builder("").build();
-		while( c.moveToNext() ){
-			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
-				if(currentTripId != -1) { //next trip on the list
-					trips.add(trip);
-				}
-				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
-				.idPrivate(c.getInt( key.get("TRIP._id") ))
-				.description(c.getString( key.get("TRIP.description") ))
-				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
-				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
-				.build();
-				debug(2, "Trip is "+trip );
-
-				currentTripId = trip.getIdPrivate();
-			} // while same trip
-		}// while more empty trips
-		if(currentTripId != -1) { //next trip on the list
-			trips.add(trip);
-		}
-		c.close();
-		debug(0, "FOUND size="+trips.size()+" empty trips" );
-		return trips;
-	}//getAllEmptyTrips
-
-	///////////////////////////////////
-	
-	public static final Map<String,Integer>
-	 getKeys( String[] columns ){
-		Map<String, Integer> key = new HashMap<String, Integer>();
-		for(int i=0; i<columns.length; i++){
-			key.put(columns[i], i);
-		} // for each column, store key index
-		return key;
-	} // getKeys
-	
-	public static final String
-	 getSelectStr( String[] columns ){
-		String selectStr =  "SELECT ";
-		String prefix="";
-		for(int i=0; i<columns.length; i++){
-			selectStr += prefix + columns[i];
-			prefix=",";
-		} // for each column, store key index
-		debug(2, "sqlstr is "+selectStr);
-		return selectStr;
-	} // getKeys
-
-	///////////////////////////////////
 	
 	/***
 	 * Return all Trips of the given TYPE
@@ -370,7 +294,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 */
 	@Override
 	//public ArrayList<Trip> getAllTrips( Boolean free ){
-	public ArrayList<Trip> getAllTrips( int type ){
+	public ArrayList<Trip> getTripsWithPOIs( int type ){
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
 		//CONSTANT key-index mappings
@@ -442,9 +366,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		
-		trips.addAll( this.getAllEmptyTrips( type ) );
+		trips.addAll( this.getTripsWithoutPOIs( type ) );
 		return trips;
 	}//getAllTrips(free)
+
+	@Override
+	public ArrayList<String>
+	 getCategoryNames() {
+		ArrayList<String> categories = new ArrayList<String>();
+		Cursor c = myDataBase.query("category", new String[]{"title"}, null, null, null, null, null);
+		while (c.moveToNext()) {
+			categories.add(c.getString(0));
+		}
+		c.close();
+		return categories;
+	}//getCategoryNames
 
 
 	@Override
@@ -481,7 +417,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * 12 image_url
 	 * 13 global_id
 	 */
-	private ArrayList<Poi> getPoisFromCursor(Cursor c){
+	private ArrayList<Poi>
+	 getPoisFromCursor(Cursor c){
 		ArrayList<Poi> pois = new ArrayList<Poi>();
 		while(c.moveToNext()){
 			pois.add(
@@ -615,19 +552,97 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return trips.get(0);
 	}//getTrip
 
+	/***
+	 * Get trips (without POIs).
+	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
+	 * @return ArrayList of selected Trips
+	 */
 	@Override
-	public ArrayList<String> getCategoryNames() {
-		ArrayList<String> categories = new ArrayList<String>();
-		Cursor c = myDataBase.query("category", new String[]{"title"}, null, null, null, null, null);
-		while (c.moveToNext()) {
-			categories.add(c.getString(0));
+	public ArrayList<Trip> getTripsWithoutPOIs( int type ){
+		ArrayList<Trip> trips = new ArrayList<Trip>();
+
+		String[] columns = {
+			"TRIP._id",	"TRIP.title", "TRIP.free_trip", "TRIP.description", "TRIP.global_id"
+		};
+		final Map<String,Integer> key = //new HashMap<String,Integer>();		getKeys( key, columns );
+				getKeys( columns );
+		String sqlStr, selectStr, fromStr, whereStr, freeStr;
+
+		selectStr = getSelectStr( columns );
+		fromStr = " FROM trip as TRIP ";
+		whereStr = " WHERE TRIP._id NOT IN (" +
+				"SELECT " +
+				"TRIP._id " +
+				"FROM trip as TRIP, poi as POI, trip_poi as TP " +
+				"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
+		freeStr = " AND TRIP.free_trip = ? ";
+		
+		Cursor c;
+		if ( type==CityExplorer.TYPE_ALL ){
+			sqlStr = selectStr + fromStr;
+			c = myDataBase.rawQuery( sqlStr, null );
+		}else{ //Filter for free or fixed
+			sqlStr = selectStr + fromStr + whereStr + freeStr;
+			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
+		}//if ALL
+		sqlStr = selectStr + fromStr + whereStr;
+		debug (0, "sql string is "+sqlStr );
+
+		int currentTripId = -1;
+		Trip trip = new Trip.Builder("").build();
+		while( c.moveToNext() ){
+			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
+				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
+				if(currentTripId != -1) { //next trip on the list
+					trips.add(trip);
+				}
+				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
+				.idPrivate(c.getInt( key.get("TRIP._id") ))
+				.description(c.getString( key.get("TRIP.description") ))
+				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
+				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
+				.build();
+				debug(2, "Trip is "+trip );
+
+				currentTripId = trip.getIdPrivate();
+			} // while same trip
+		}// while more empty trips
+		if(currentTripId != -1) { //next trip on the list
+			trips.add(trip);
 		}
 		c.close();
-		return categories;
-	}//getCategoryNames
+		debug(0, "FOUND size="+trips.size()+" empty trips" );
+		return trips;
+	}//getTrips
+
+	///////////////////////////////////
+	
+	public static final Map<String,Integer>
+	 getKeys( String[] columns ){
+		Map<String, Integer> key = new HashMap<String, Integer>();
+		for(int i=0; i<columns.length; i++){
+			key.put(columns[i], i);
+		} // for each column, store key index
+		return key;
+	} // getKeys
+	
+	public static final String
+	 getSelectStr( String[] columns ){
+		String selectStr =  "SELECT ";
+		String prefix="";
+		for(int i=0; i<columns.length; i++){
+			selectStr += prefix + columns[i];
+			prefix=",";
+		} // for each column, store key index
+		debug(2, "sqlstr is "+selectStr);
+		return selectStr;
+	} // getKeys
+
+	///////////////////////////////////
 
 	@Override
-	public ArrayList<String> getUniqueCategoryNames() {
+	public ArrayList<String>
+	 getUniqueCategoryNames() {
 
 		ArrayList<String> categories = new ArrayList<String>();
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
