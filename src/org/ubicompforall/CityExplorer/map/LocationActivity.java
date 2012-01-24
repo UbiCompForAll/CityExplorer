@@ -36,7 +36,7 @@ import java.util.List;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
-import org.ubicompforall.CityExplorer.gui.PreferencesActivity;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -55,16 +55,14 @@ import android.widget.TextView;
 public class LocationActivity extends MapActivity {
 
 	//GLOBAL CONSTANTS
-	private static final int DEBUG = CityExplorer.DEBUG;
+	//private static final int DEBUG = CityExplorer.DEBUG;
 
 	/***
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
-	private static void debug(int d, String msg) {
-		if (DEBUG >= d) {
-			CityExplorer.debug(0, msg );
-		}
-	} // debug
+	private void debug(int level, String message) {
+		CityExplorer.debug(level, message);
+	}
 
 	
 	// MyMapActivity methods
@@ -78,7 +76,7 @@ public class LocationActivity extends MapActivity {
 
 		List<Overlay> listOfOverlays = new ArrayList<Overlay>();
 		if (mapView==null){
-			debug(0, "Where's mapview?" );
+			CityExplorer.debug(0, "Where's mapview?" );
 		}else{
 			listOfOverlays = mapView.getOverlays();
 		}
@@ -105,20 +103,18 @@ public class LocationActivity extends MapActivity {
 				editor.putInt( CityExplorer.LAT, p.getLatitudeE6() );
 				editor.putInt( CityExplorer.LNG, p.getLongitudeE6() );
 				editor.commit();
-				debug(0, "committed" );
-
-				
-			    debug(0, Integer.toString( p.getLatitudeE6() ) + Integer.toString( p.getLongitudeE6() ) );
+				debug(0, "committed:" + Integer.toString( p.getLatitudeE6() ) + Integer.toString( p.getLongitudeE6() ) );
 			    //Update screen with new coordinates
 				TextView tv = (TextView) findViewById(R.id.map_lat);
 				tv.setText( Integer.toString( p.getLatitudeE6() ) );
 				tv = (TextView) findViewById(R.id.map_lng);
 				tv.setText( Integer.toString( p.getLongitudeE6() ) );
 				tv = (TextView) findViewById(R.id.map_name);
-				tv.setText( PreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
+				tv.setText( MyPreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
 			}
 			return false;
 		} // onTouchEvent
+
 	} // class MapOverlay
 
 } // LocationActivity

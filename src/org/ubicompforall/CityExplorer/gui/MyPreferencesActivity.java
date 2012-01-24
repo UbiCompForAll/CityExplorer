@@ -43,45 +43,72 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.*;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-public class PreferencesActivity extends Activity implements OnClickListener{ //Based on ImportActivity
+public class MyPreferencesActivity extends Activity implements OnClickListener{ //Based on ImportActivity
 
 	//Activity fields
-	SharedPreferences settings;
-	TextView tv;
+	static SharedPreferences settings;	// common settings for all the activities in the whole application
+	Editor editor;	// Editor for changing the shared preferences
+	private EditText url_edit;
 	
 	@Override
 	public void onCreate( Bundle savedInstanceState ){
-		debug(0, "create");
 		super.onCreate( savedInstanceState );
+		debug(0, "create");
+
 		setContentView( R.layout.preferencesview );
+
+		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		editor = settings.edit();	// Remember to commit changes->onPause etc.
+		url_edit = (EditText) findViewById( R.id.pref_url );
+
 		init();
 	}//onCreate
 
 	@Override
+	public void onPause(){
+		super.onPause();
+		String url = url_edit.getText().toString();
+		debug(2, "pause with "+url+", editor is "+editor );
+		editor.putString( CityExplorer.URL, url );
+		editor.commit();
+		debug(2, "committed:"+url_edit.getText().toString() );
+	} // onResume
+	
+	@Override
 	public void onResume(){
+		super.onResume();
 		debug(0, "resume");
-		super.onResume( );
-		initLocation();
+		init();
 	} // onResume
 	
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 
+	
+	public static String getDbPath( SharedPreferences settings ){
+		if (settings==null){
+			debug(0, "Where is settings?" );
+			return null;
+		}else{
+			return settings.getString( CityExplorer.URL, CityExplorer.RUNE_URL );
+		}
+	} // getDbPath
 
 	/**
 	 * Initializes the activity screen etc.
 	 */
 	private void init() {
-		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 
 		initDbUrl();
 		initLocation();
@@ -89,12 +116,8 @@ public class PreferencesActivity extends Activity implements OnClickListener{ //
 
 
 	private void initDbUrl() {
-		String url = settings.getString(CityExplorer.URL, CityExplorer.RUNE_URL );
-		tv = null;//(TextView) findViewById(R.id.pref_url);
-		if (tv==null){	debug(0, "where is tv pref_url ? " );
-		}else{
-			tv.setText( url );
-		}
+		String url = getDbPath( settings );
+		url_edit.setText( url );
 	} // initDbUrl
 
 
@@ -102,8 +125,7 @@ public class PreferencesActivity extends Activity implements OnClickListener{ //
 		//Write default lat/lng location
 		int lat = settings.getInt( CityExplorer.LAT, CityExplorer.TRONDHEIM_LAT );
 		int lng = settings.getInt( CityExplorer.LNG, CityExplorer.TRONDHEIM_LNG );
-		debug(0, "lat is "+lat );
-		debug(0, "lng is "+lng );
+		debug(2, "lat is "+lat+", lng is "+lng );
 		String address = getAddress( lat, lng, this );
 		
 		//Print prefs, and register click-listener(this)
@@ -111,7 +133,7 @@ public class PreferencesActivity extends Activity implements OnClickListener{ //
 		tl.setOnClickListener( this );
 
 		//Latitude
-		tv = (TextView) findViewById(R.id.pref_lat);
+		TextView tv = (TextView) findViewById(R.id.pref_lat);
 		if (tv==null){	debug(0, "where is tv?" );
 		}else{
 			tv.setText( Integer.toString( lat )+" (change: Push here)" );
@@ -156,7 +178,12 @@ public class PreferencesActivity extends Activity implements OnClickListener{ //
 		if (v.getId() == R.id.pref_location){
 			debug(0, "view clicked was LOCATION");
 			startActivity( new Intent( this, LocationActivity.class));
-		} // if location was clicked
+			// if location was clicked
+			
+		}else if ( v.getId() == R.id.pref_db ){ 
+			debug(0, "view clicked was set DB_PATH automaticall" );
+			
+		}// Switch on different key-press events
 	} //onClick
 
 }//class

@@ -42,9 +42,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 //import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -54,6 +56,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 
+/***
+ * How to debug SQL DB with ADB-shell to Phone:
+ * http://developer.android.com/guide/topics/data/data-storage.html#netw
+ */
+
 /**
  * The Class SQLiteConnector.
  */
@@ -61,7 +68,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
 
 	//private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
-	private String DB_PATH ="";
+	private String DB_PATH ="", WEB_DB_PATH = "";
 
 	/** The Constant DB_NAME, which is our database name. */
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
@@ -81,7 +88,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	//private static final String COUNT_ALL_POIS = "SELECT Count(*) FROM "+POI_TABLE;
 
 	/** The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all POIs. */
-	private static final String SELECT_ALL_POIS=
+	private static final String SELECT_ALL_POIS=	// Change this to String[] columns, see other examples below (RS-120124)
 			"SELECT " +
 					"POI._id," +
 					"POI.title," +
@@ -116,6 +123,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		File dbName = context.getDatabasePath(DB_NAME);
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
+
+		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		DB_PATH = MyPreferencesActivity.getDbPath( settings );
+		debug(0, "DB_PATH IS "+DB_PATH );
+		debug(0, "WEB_DB_PATH IS "+WEB_DB_PATH );
 	}//SQLiteConnector CONSTRUCTOR
 
 
@@ -586,13 +598,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
 		}//if ALL
 		sqlStr = selectStr + fromStr + whereStr;
-		debug (0, "sql string is "+sqlStr );
+		debug (2, "sql string is "+sqlStr );
 
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
 		while( c.moveToNext() ){
 			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
+				debug(2, "Got trip: "+c.getString( key.get("TRIP.title") ) );
 				if(currentTripId != -1) { //next trip on the list
 					trips.add(trip);
 				}
@@ -611,7 +623,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			trips.add(trip);
 		}
 		c.close();
-		debug(0, "FOUND size="+trips.size()+" empty trips" );
+		debug(2, "FOUND size="+trips.size()+" empty trips" );
 		return trips;
 	}//getTrips
 
@@ -667,7 +679,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			Bitmap bmp = null;//BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
 			String filename = "icons/"+c.getInt(1)+"_"+c.getString(0)+".bmp";
 			filename = filename.replace(' ', '_');
-			debug(0, "Getting bmp for category: "+filename );
+			debug(2, "Getting bmp for category: "+filename );
 			try{
 				InputStream isAssetPNG	= myContext.getAssets().open(filename);
 				bmp = BitmapFactory.decodeStream( isAssetPNG);
@@ -685,6 +697,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}
 			categories.put(c.getString(0), bmp);
 		}//while more categories
+		debug(1, "Got bmp for "+categories.size()+" categories" );
 		c.close();
 		return categories;
 	}//getUniqueCategoryNamesAndIcons

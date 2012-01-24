@@ -103,7 +103,7 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 			startActivity( new Intent( this, LocationActivity.class));
 
 		}else if (v.getId() == R.id.startButton3){
-			startActivity( new Intent( this, PreferencesActivity.class));
+			startActivity( new Intent( this, MyPreferencesActivity.class));
 
 		}else{
 			debug(0, "Unknown button clicked: "+v);

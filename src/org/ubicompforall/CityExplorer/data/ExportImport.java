@@ -83,15 +83,13 @@ public class ExportImport extends Activity
 		      
 		      DatabaseUpdater du = new DatabaseUpdater(this);
 		      res = du.doFileUpdatePois(pois.toString());
-		 
-		    }
+		    } // if instream
 		 
 		    // close the file again
 		    instream.close();
-		  } 
-		  catch (java.io.FileNotFoundException e) {
+		  } catch (java.io.FileNotFoundException e) {
 		    // do something if the myfilename.txt does not exits
-			  System.out.println("FNF error: "+e.getMessage());
+			  System.out.println("FileNotFound error: "+e.getMessage());
 		  }
 		  catch (IOException e) {
 			  System.out.println("IO error: "+e.getMessage());
@@ -99,7 +97,7 @@ public class ExportImport extends Activity
 		  System.out.println(res[0]+" locations added, "+res[1]+" locations updated");
 		  Toast.makeText(this, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
 		  finish();
-	}
+	}// onCreate
 	
 	/**
 	 * Share pois with another user.

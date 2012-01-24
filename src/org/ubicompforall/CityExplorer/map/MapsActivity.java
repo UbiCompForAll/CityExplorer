@@ -205,6 +205,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				debug(0, "poiOverlays is "+poiOverlays );
 				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
 			}else{
+				debug(0, "Could NOT find the POI overlays!!!" );
 				SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0);
 				int lat = settings.getInt( LAT, TRONDHEIM_LAT );
 				int lng = settings.getInt( LNG, TRONDHEIM_LNG );

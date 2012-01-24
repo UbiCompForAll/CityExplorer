@@ -104,7 +104,7 @@
 				</intent-filter>
 			</activity>
 		<activity android:name=".map.LocationActivity" android:label="@string/default_location"></activity>
-		<activity android:label="@string/preferences" android:name=".gui.PreferencesActivity"></activity>
+		<activity android:label="@string/preferences" android:name=".gui.MyPreferencesActivity"></activity>
 		
 	</application>
 	

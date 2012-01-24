@@ -126,7 +126,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){
-			exploreCiry();
+			exploreCity();
 
 		}else if (v.getId() == R.id.startButton3){
 			Intent locationActivity = new Intent(StartActivity.this, SettingsActivity.class);
@@ -150,7 +150,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	/***
 	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
 	 */
-	private void exploreCiry() {
+	private void exploreCity() {
 		debug(0, "Clicked: ExploreButton...");
 		if( userLocation == null){
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();

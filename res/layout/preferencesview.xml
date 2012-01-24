@@ -39,34 +39,37 @@
 		<TableRow>
 			<TextView
 				android:text="Longitude"
-				android:padding="3dip" />	    	    
+				android:padding="3dip" />
 			<TextView
 			    android:id="@+id/pref_lng"
 				android:padding="3dip" />	    	    
 		</TableRow>
+
+
+
 		<View
 			android:layout_height="2dip"
 			android:layout_width="fill_parent"
-			android:background="#FF909090" />
-	</TableLayout>
-	
-	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/pref_location"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:stretchColumns="1">
-	
+			android:background="#FF909090"
+		/>
+
+
+
 		<TableRow>
 			<TextView
+				android:id="@+id/pref_db"
 				android:text="Default DB URL" />
+			<TextView
+				android:text="(Auto-saved on back-key!)" />
 		</TableRow>
 		
 		<TableRow>
-			<TextView
+			<EditText
 				android:id="@+id/pref_url"
 				android:layout_width="wrap_content"
 				android:layout_span="2"
-				android:text="http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/" />
+				android:text="http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"
+			/>
 		</TableRow>
 		
 		<View
