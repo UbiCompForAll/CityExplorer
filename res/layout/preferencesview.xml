@@ -58,9 +58,9 @@
 		<TableRow>
 			<TextView
 				android:id="@+id/pref_db"
-				android:text="Default DB URL" />
+				android:text="Web URL" />
 			<TextView
-				android:text="(Auto-saved on back-key!)" />
+				android:text="(Type to change)" />
 		</TableRow>
 		
 		<TableRow>
@@ -68,7 +68,7 @@
 				android:id="@+id/pref_url"
 				android:layout_width="wrap_content"
 				android:layout_span="2"
-				android:text="http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"
+				android:text="@string/default_url"
 			/>
 		</TableRow>
 		

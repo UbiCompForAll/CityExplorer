@@ -64,8 +64,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final int TRONDHEIM_LAT = 63424000;  //63°25′36″N ;
 	public static final int TRONDHEIM_LNG =  9554600;	//10°23′48″E -1 ;
 	public static final String URL = "Url";
-	public static final String RUNE_URL 
-	 = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
+//	public static final String RUNE_URL 		JF: moved to @string/default_url
+//	 = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
 
 	public static final int TYPE_ALL = 0;
 	public static final int TYPE_FREE = 1;

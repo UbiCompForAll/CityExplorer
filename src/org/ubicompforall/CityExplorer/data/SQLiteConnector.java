@@ -67,8 +67,8 @@ import android.widget.Toast;
 public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
 
-	//private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
-	private String DB_PATH ="", WEB_DB_PATH = "";
+	// private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
+	private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
 
 	/** The Constant DB_NAME, which is our database name. */
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
@@ -125,9 +125,10 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		myPath = dbName.toString();
 
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		DB_PATH = MyPreferencesActivity.getDbPath( settings );
+//		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
 		debug(0, "DB_PATH IS "+DB_PATH );
-		debug(0, "WEB_DB_PATH IS "+WEB_DB_PATH );
+		
+//		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
 	}//SQLiteConnector CONSTRUCTOR
 
 
@@ -984,7 +985,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		try{
 			myDataBase = openDataBase();
 		}catch (SQLException e){
-			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+myPath);
+			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+ DB_PATH);
 			myDataBase=null;
 		}
 		long poiCount = 0;

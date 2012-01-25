@@ -101,7 +101,8 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			debug(0, "Where is settings?" );
 			return null;
 		}else{
-			return settings.getString( CityExplorer.URL, CityExplorer.RUNE_URL );
+			return "Smile, it will be done!";   //JF: 12.01.25 (25 Januar 2012)
+//			return settings.getString( CityExplorer.URL, CityExplorer.RUNE_URL );
 		}
 	} // getDbPath
 
@@ -136,13 +137,13 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		TextView tv = (TextView) findViewById(R.id.pref_lat);
 		if (tv==null){	debug(0, "where is tv?" );
 		}else{
-			tv.setText( Integer.toString( lat )+" (change: Push here)" );
+			tv.setText( Integer.toString( lat )+" (Click to change)" );
 		}
 		//Longitude
 		tv = (TextView) findViewById(R.id.pref_lng);
 		if (tv==null){	debug(0, "where is tv?" );
 		}else{
-			tv.setText( Integer.toString(lng)+" (change: Push here)" );
+			tv.setText( Integer.toString(lng)+" (Click to change)" );
 		}
 		//Place-name
 		tv = (TextView) findViewById(R.id.pref_loc);
