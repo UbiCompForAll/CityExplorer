@@ -320,7 +320,7 @@ public class PlanTabTrip extends PlanTabActivity{
 
 
 			// declare quick actions 
-			qa.addItem(addPoiIcon, "Add Locations", new OnClickListener(){
+			qa.addItem(addPoiIcon, "Add to Tour", new OnClickListener(){
 				public void onClick(View view)
 				{
 					

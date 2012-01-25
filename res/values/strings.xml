@@ -21,7 +21,8 @@ any static strings associated with maps -->
 <string name="activity_triplist_menu_delete">Delete</string><string name="action_mapview_poi">.map.PoiMapAcitivity</string>
 <string name="activity_triplist_menu_showOnMap">Show on Map</string><string name="activity_triplist_menu_addPoi">Add Location</string>
 <string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
-<string name="activity_triplist_menu_calendar">Time Table for Tour</string><string name="activity_plan_menu_addpois">Add Locations</string>
+<string name="activity_triplist_menu_calendar">Time Table for Tour</string>
+<string name="activity_plan_menu_addpois">Add Locations</string>
 <string name="activity_plan_menu_updatepois">Update Locations</string>
 <string name="activity_plan_menu_updatetrips">Update Tours</string>
     
