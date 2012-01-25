@@ -42,11 +42,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
+//import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
+//import android.content.SharedPreferences;
 //import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -124,7 +124,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
 
-		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+//		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 //		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
 		debug(0, "DB_PATH IS "+DB_PATH );
 		
