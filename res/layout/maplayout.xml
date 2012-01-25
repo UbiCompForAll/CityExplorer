@@ -15,7 +15,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:clickable="true"
-	android:apiKey="05MLhk0p9hp3JBgHGNN8QZVa-D8D3Pz6h4TuRjA"
+	android:apiKey="0M2hg6uGeHHzrQnmjPNweTu_kS8WdQtilGOSOaw"
 	/>
 <!-- Obtain Your Own Debug Google Map API key from here:
 http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html
