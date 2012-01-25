@@ -22,7 +22,7 @@ any static strings associated with maps -->
 <string name="activity_triplist_menu_showOnMap">Show on Map</string><string name="activity_triplist_menu_addPoi">Add Location</string>
 <string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
 <string name="activity_triplist_menu_calendar">Time Table for Tour</string>
-<string name="activity_plan_menu_addpois">Add Locations</string>
+<string name="activity_plan_menu_addpois">Add to Tour</string>
 <string name="activity_plan_menu_updatepois">Update Locations</string>
 <string name="activity_plan_menu_updatetrips">Update Tours</string>
     
@@ -39,7 +39,7 @@ any static strings associated with maps -->
 <string name="default_values">Default Values</string>
 <string name="default_location">SET DEFAULT LOCATION</string><string name="default_url">http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/</string>
 <string name="descriptionLabel">Description:</string>
-<string name="editfromexistingPoiLabel">Base on existing</string>
+<string name="editfromexistingPoiLabel">Use existing Location</string>
     <!-- as template</string -->
 
 
@@ -67,7 +67,7 @@ any static strings associated with maps -->
 <string name="poiMenufavourite">Favourite</string>
 <string name="poiMenuMap">Show on Map</string><string name="preferences">PREFERENCES</string>
 <string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
-<string name="savePoi">Save Location</string>
+<string name="savePoi">Save</string>
 <string name="saveCalendar">Save Times</string>
 
 <string name="setlocation">SET LOCATION</string><string name="settings">SETTINGS</string><string name="summary">SUMMARY</string><string name="sqlitemimetype">application/octet-stream</string><string name="telephoneLabel">Telephone:</string><string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
