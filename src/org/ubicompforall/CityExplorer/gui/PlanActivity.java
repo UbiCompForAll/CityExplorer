@@ -68,11 +68,11 @@ public class PlanActivity extends TabActivity {
 		TabHost.TabSpec spec;  // Reusable TabSpec for each tab
 		Intent intent;  // Reusable Intent for each tab
 
-		intent = new Intent().setClass(this, PlanTabPoi.class);
+		intent = new Intent().setClass(this, PlanPoiTab.class);
 		spec = tabHost.newTabSpec("poi").setIndicator("LOCATIONS", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, PlanTabTrip.class);
+		intent = new Intent().setClass(this, PlanTripTab.class);
 		spec = tabHost.newTabSpec("trip").setIndicator("TOURS", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 

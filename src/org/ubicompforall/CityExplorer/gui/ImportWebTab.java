@@ -49,7 +49,7 @@ import android.widget.Toast;
 /**
  * @description: Class to handle import/export of POIs/Trips
  */
-public class ImportTabWeb extends Activity{
+public class ImportWebTab extends Activity{
 
 	//FIELDS
 	Context context;

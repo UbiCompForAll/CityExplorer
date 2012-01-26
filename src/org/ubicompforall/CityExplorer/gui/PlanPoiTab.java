@@ -72,7 +72,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
+public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
 	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
@@ -159,7 +159,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 		requestCode = getIntent().getIntExtra("requestCode",0);
 		lv = getListView();
 		if (requestCode == NewPoiActivity.CHOOSE_POI || 
-				requestCode == PlanTabTrip.ADD_TO_TRIP || 
+				requestCode == PlanTripTab.ADD_TO_TRIP || 
 				requestCode == TripListActivity.ADD_TO_TRIP ||
 				requestCode == SHARE_POI ||
 				requestCode == DOWNLOAD_POI)
@@ -176,7 +176,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 			allPois = DBFactory.getInstance(this).getAllPois();
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.POI_LIST);
 		}
-		if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){		
+		if(requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){		
 			trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);		
 		}
 		res = getResources();
@@ -304,7 +304,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 			menu.removeItem(R.id.planMenuSharePois);
 			menu.removeItem(R.id.planMenuFilter);
 		}
-		else if(requestCode == PlanTabTrip.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
+		else if(requestCode == PlanTripTab.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			menu.removeItem(R.id.planMenuUpdatePois);
@@ -330,7 +330,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 		super.onOptionsItemSelected(item);
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
-			Intent newPoi = new Intent(PlanTabPoi.this, NewPoiActivity.class);
+			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);
 			startActivity(newPoi);
 		}
 
@@ -375,7 +375,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				}
 				finish();
 			}else {				
-				Intent downloadPoi= new Intent(PlanTabPoi.this, PlanTabPoi.class);
+				Intent downloadPoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
 				downloadPoi.putExtra("requestCode", DOWNLOAD_POI);
 				startActivityForResult(downloadPoi, DOWNLOAD_POI);
 			}
@@ -393,7 +393,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				}
 				finish();
 			}else {
-				Intent sharePoi= new Intent(PlanTabPoi.this, PlanTabPoi.class);
+				Intent sharePoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
 				sharePoi.putExtra("requestCode", SHARE_POI);
 				startActivityForResult(sharePoi, SHARE_POI);
 			}
@@ -401,7 +401,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 
 		if(item.getItemId() == R.id.planMenuAddPois)
 		{
-			if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
+			if(requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
 				if (selectedPois==null){
 					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
 					return false;
@@ -440,7 +440,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 			return;
 		}
 
-		if (requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
+		if (requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
 
 			if(selectedPois == null){				
 				selectedPois = new ArrayList<Poi>();
@@ -485,7 +485,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 			return;
 		}
 
-		Intent details = new Intent(PlanTabPoi.this, PoiDetailsActivity.class);
+		Intent details = new Intent(PlanPoiTab.this, PoiDetailsActivity.class);
 		details.putExtra(IntentPassable.POI, p);
 
 		startActivity(details);
@@ -499,7 +499,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 
 			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
 			{
-				Intent showInMap = new Intent(PlanTabPoi.this, MapsActivity.class);
+				Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
 				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
 				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 				for (int i = 0; i < sectionAd.getCount(); i++)
@@ -523,7 +523,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 					xy[0]+v.getWidth(), 
 					xy[1]+v.getHeight());
 
-			final QuickActionPopup qa = new QuickActionPopup(PlanTabPoi.this, v, rect);
+			final QuickActionPopup qa = new QuickActionPopup(PlanPoiTab.this, v, rect);
 
 			Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
 			Drawable mapviewIcon		= res.getDrawable(android.R.drawable.ic_menu_mapmode);
@@ -538,7 +538,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
 
 				public void onClick(View view){
-					Intent showInMap = new Intent(PlanTabPoi.this, MapsActivity.class);
+					Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
 					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 					selectedPois.add(p);
 					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
@@ -559,7 +559,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 					double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
 					double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
 
-					Intent navigate = new Intent(PlanTabPoi.this, NavigateFrom.class);
+					Intent navigate = new Intent(PlanPoiTab.this, NavigateFrom.class);
 					navigate.putExtra("slon", slon);
 					navigate.putExtra("slat", slat);
 					navigate.putExtra("dlon", dlon);
@@ -581,10 +581,10 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 						Poi poi = p;
 
 						poi = poi.modify().favourite(false).build();
-						DBFactory.getInstance(PlanTabPoi.this).editPoi(poi);//update poi;
+						DBFactory.getInstance(PlanPoiTab.this).editPoi(poi);//update poi;
 
 						adapter.notifyDataSetChanged();//update list
-						Toast.makeText(PlanTabPoi.this, poi.getLabel() + " removed from favourites.", Toast.LENGTH_LONG).show();
+						Toast.makeText(PlanPoiTab.this, poi.getLabel() + " removed from favourites.", Toast.LENGTH_LONG).show();
 						qa.dismiss();
 					}
 				});
@@ -598,11 +598,11 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 						Poi poi = p;
 
 						poi = poi.modify().favourite(true).build();
-						DBFactory.getInstance(PlanTabPoi.this).editPoi(poi);//update poi;
+						DBFactory.getInstance(PlanPoiTab.this).editPoi(poi);//update poi;
 
 						allPois.remove(p);
 						allPois.add(poi);
-						Toast.makeText(PlanTabPoi.this, poi.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+						Toast.makeText(PlanPoiTab.this, poi.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
 						adapter.notifyDataSetChanged();//update list
 						qa.dismiss();
 					}
@@ -616,7 +616,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 				public void onClick(View view){
 					ArrayList<Poi> sharePoi = new ArrayList<Poi>();
 					sharePoi.add(p);
-					Sharing.send(PlanTabPoi.this, sharePoi);
+					Sharing.send(PlanPoiTab.this, sharePoi);
 					qa.dismiss();
 				}
 			});
@@ -626,7 +626,7 @@ public class PlanTabPoi extends PlanTabActivity implements LocationListener, OnM
 
 				public void onClick(View view){
 					poi = p;
-					Intent selectTrip = new Intent(PlanTabPoi.this, PlanTabTrip.class);
+					Intent selectTrip = new Intent(PlanPoiTab.this, PlanTripTab.class);
 					selectTrip.putExtra("requestCode", ADD_TO_TRIP);
 					startActivityForResult(selectTrip, ADD_TO_TRIP);
 					qa.dismiss();

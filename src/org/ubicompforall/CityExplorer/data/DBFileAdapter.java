@@ -25,7 +25,7 @@
 
 /**
  * @description:
- * Adapter used by the ImportTabLocal-list to show sections and (corresponding) DBFile-names 
+ * Adapter used by the ImportLocalTab-list to show sections and (corresponding) DBFile-names 
  */
 
 package org.ubicompforall.CityExplorer.data;

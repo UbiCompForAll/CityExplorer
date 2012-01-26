@@ -31,7 +31,9 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.ubicompforall.CityExplorer.data.FileSystemConnector;
@@ -39,6 +41,7 @@ import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 import org.ubicompforall.CityExplorer.data.DB;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.DBFileAdapter;
+import org.ubicompforall.CityExplorer.data.SQLiteConnector;
 import org.ubicompforall.CityExplorer.data.SeparatedListAdapter;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
@@ -68,7 +71,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ImportTabLocal extends ListActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
+public class ImportLocalTab extends ListActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
 	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
@@ -89,14 +92,11 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	/*** Field containing the users current location.*/
 	private Location userLocation;
 
-	/*** Field containing an {@link ArrayList} of the categories.*/
-	private ArrayList<String> categories;
+	/*** Field containing an {@link ArrayList} of the categoryFolders.*/
+	private ArrayList<String> categoryFolders;
 
 	/*** Field containing this activity's context.*/
-	private Context context;  // This could be the pwd? What context? For drawing output?
-
-	/*** Field containing a {@link HashMap} for the checked categories in the filter.*/
-	private HashMap<String, Boolean> CheckedCategories = new HashMap<String, Boolean>();
+	private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
 
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
@@ -111,9 +111,17 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		debug(0, "ImportTabLocal~118 create");
+		debug(0, "ImportLocalTab~118 create");
+
+		//INITIALIZE OWN FIELDS
+		categoryFolders = new ArrayList<String>();
+		//categoryFolders.add( SQLiteConnector.DB_PATH ); //Cheating!
+		categoryFolders.add( getDatabasePath( SQLiteConnector.DB_NAME ).getParent() );
+		Collections.sort(categoryFolders);
+		debug(0, "categoryFolders is "+categoryFolders );
+
 		init();		
-	}
+	} // onCreate
 
 	
 	private void debug( int level, String message ) {
@@ -131,18 +139,12 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 		lv = getListView();
 		lv.setOnItemLongClickListener(new DrawPopup());
 
-		//allPois = FileSystemConnector.getInstance(this).getAllPois();
 		allDBs = getAllDBs();
 		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
 
 		res = getResources();
 		lv.setAdapter(adapter);
-		//categories = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
-		//Collections.sort(categories);
-		categories = new ArrayList<String>();
-		categories.add("/data/data");
-		CheckedCategories.put("Favourites", true);
-		buildFilter();
+
 		makeSections();
 		//lv.setAdapter(adapter);
 
@@ -150,7 +152,23 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	}//init
 
 	private ArrayList<DB> getAllDBs() {
-		allDBs.add( new DB( "Rune", "Rock'n'Roll" ) );
+		if (categoryFolders == null){
+			debug(0, "categoryFolders NOT FOUND!" );
+		}else{
+			categoryFolders.add( getFilesDir().getPath() );
+			for ( String path : categoryFolders ){
+				File dir = new File(path);
+				File[] files = dir.listFiles();
+				if (files == null){
+					debug(0, "No files found in "+dir.getPath() );
+				}else{
+					for ( int f=0; f<files.length ; f++ ){
+						File file = files[f];
+						allDBs.add( new DB( file.getName(), dir.getName() ) );
+					}// for each file
+				}// if not null-pointer path->files
+			} // for each folder
+		} // if not null-pointer
 		return allDBs;
 	}//getAllDBs
 
@@ -185,12 +203,6 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 		allDBs = new FileSystemConnector().getAllDBs();
 		ArrayList<String> sectionsInUse = new ArrayList<String>(); 
 		for (DB db : allDBs){
-			//ignore sections that are turned off:
-			if(CheckedCategories.keySet().contains(db.getCategory())){
-				if( !CheckedCategories.get(db.getCategory())){ //this section is turned off:
-					continue;
-				}
-			}
 			sectionsInUse.add(db.getCategory());
 			if(!adapter.getSectionNames().contains(db.getCategory())){
 				ArrayList<DB> list = new ArrayList<DB>();
@@ -208,16 +220,6 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 		lv.setAdapter(adapter);
 	}//updateSections
 
-	/**
-	 * Builds the filter list.
-	 */
-	private void buildFilter(){
-		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
-		for (String cat : categories){
-			boolean checked = settings.getBoolean(cat, true);
-			CheckedCategories.put(cat, checked);
-		}
-	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -266,29 +268,29 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 		super.onOptionsItemSelected(item);
 
 //		if(item.getItemId() == R.id.planMenuNewDB){
-//			Intent newDB = new Intent(ImportTabLocal.this, NewDBActivity.class);
+//			Intent newDB = new Intent(ImportLocalTab.this, NewDBActivity.class);
 //			startActivity(newDB);
 //		}
 //
 //		if(item.getItemId() == R.id.planMenuFilter)
 //		{
-//			categories = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
-//			Collections.sort(categories);
+//			categoryFolders = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
+//			Collections.sort(categoryFolders);
 //
 //			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 //			alert.setTitle("Filter");
-//			ArrayList<String> cat = (ArrayList<String>) categories.clone();
+//			ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
 //			cat.add(0, "Favourites");
 //
 //
 //			boolean[] CheckedCat = new boolean[cat.size()];
 //			for (String c : cat)
 //			{
-//				if(CheckedCategories.get(c) == null)
+//				if(CheckedcategoryFolders.get(c) == null)
 //				{
-//					CheckedCategories.put(c, true);
+//					CheckedcategoryFolders.put(c, true);
 //				}
-//				CheckedCat[cat.indexOf(c)] = CheckedCategories.get(c);
+//				CheckedCat[cat.indexOf(c)] = CheckedcategoryFolders.get(c);
 //			}
 //
 //			String[] array = new String[cat.size()];
@@ -311,7 +313,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 //				}
 //				finish();
 //			}else {				
-//				Intent downloadDB= new Intent(ImportTabLocal.this, ImportTabLocal.class);
+//				Intent downloadDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
 //				downloadDB.putExtra("requestCode", DOWNLOAD_DB);
 //				startActivityForResult(downloadDB, DOWNLOAD_DB);
 //			}
@@ -329,7 +331,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 //				}
 //				finish();
 //			}else {
-//				Intent shareDB= new Intent(ImportTabLocal.this, ImportTabLocal.class);
+//				Intent shareDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
 //				shareDB.putExtra("requestCode", SHARE_DB);
 //				startActivityForResult(shareDB, SHARE_DB);
 //			}
@@ -357,7 +359,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 //		}
 
 		return true;
-	}
+	} // onOptionsItemSelected( MenuItem )
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
@@ -367,23 +369,23 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 			return;
 		}
 		DB d = (DB) l.getAdapter().getItem(pos);
+		debug(0, "requestCode is "+ requestCode );
 
-		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
+//		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
 			Intent resultIntent = new Intent();
 			//resultIntent.putExtra(IntentPassable.DB, p);
 			debug(0, "I just found DB "+d);
 			setResult( Activity.RESULT_OK, resultIntent );
 			finish();
-			return;
-		}
+			//return;
+//			Intent details = new Intent(ImportLocalTab.this, DBDetailsActivity.class);
+//			details.putExtra(IntentPassable.POI, true);
+//			startActivity(details);
+//		} // Not using requestCodes here I think (RS-120127)
 
 
-//		Intent details = new Intent(ImportTabLocal.this, DBDetailsActivity.class);
-		Intent details = new Intent(ImportTabLocal.this, StartActivity.class);
-		details.putExtra(IntentPassable.POI, true);
-
-		startActivity(details);
-	}
+//		Intent details = new Intent(ImportLocalTab.this, StartActivity.class);
+	} // onListItemClick
 
 	/**
 	 * Shows quick actions when the user long-presses an item.
@@ -393,7 +395,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 
 			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
 			{
-				Intent showInMap = new Intent(ImportTabLocal.this, MapsActivity.class);
+				Intent showInMap = new Intent(ImportLocalTab.this, MapsActivity.class);
 				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
 				ArrayList<DB> selectedDBs = new ArrayList<DB>();
 				for (int i = 0; i < sectionAd.getCount(); i++)
@@ -414,7 +416,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 					xy[1]+v.getHeight()
 				);
 
-			final QuickActionPopup qa = new QuickActionPopup(ImportTabLocal.this, v, rect);
+			final QuickActionPopup qa = new QuickActionPopup(ImportLocalTab.this, v, rect);
 			//Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
 			Drawable mapviewIcon	= res.getDrawable(android.R.drawable.ic_menu_mapmode);
 			Drawable directIcon		= res.getDrawable(android.R.drawable.ic_menu_directions);
@@ -428,10 +430,10 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 					//set as favourite
 					DB db = d;
 //					db = db.modify().favourite(true).build();
-//					FileSystemConnector.getInstance(ImportTabLocal.this).editdb(db);//update db;
+//					FileSystemConnector.getInstance(ImportLocalTab.this).editdb(db);//update db;
 //					alldbs.remove(d);
 //					alldbs.add(db);
-					Toast.makeText(ImportTabLocal.this, db.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+					Toast.makeText(ImportLocalTab.this, db.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
 					adapter.notifyDataSetChanged();//update list
 					qa.dismiss();
 				}
@@ -439,7 +441,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
 				public void onClick(View view){
-					Intent showInMap = new Intent(ImportTabLocal.this, MapsActivity.class);
+					Intent showInMap = new Intent(ImportLocalTab.this, MapsActivity.class);
 					ArrayList<DB> selectedDBs = new ArrayList<DB>();
 					selectedDBs.add(d);
 //					showInMap.putParcelableArrayListExtra(IntentPassable.DBLIST, selectedDBs);
@@ -457,7 +459,7 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 //					double dlon = d.getGeoDBnt().getLongitudeE6()/1E6;
 //					double dlat = d.getGeoDBnt().getLatitudeE6()/1E6;
 
-					Intent navigate = new Intent(ImportTabLocal.this, NavigateFrom.class);
+					Intent navigate = new Intent(ImportLocalTab.this, NavigateFrom.class);
 					navigate.putExtra("slon", slon);
 					navigate.putExtra("slat", slat);
 //					navigate.putExtra("dlon", dlon);
@@ -526,11 +528,8 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	@Override
 	public void onClick(DialogInterface dialog, int which, boolean isChecked){
 		@SuppressWarnings("unchecked")
-		ArrayList<String> cat = (ArrayList<String>) categories.clone();
+		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
 		cat.add(0, "Favourites");
-
-		CheckedCategories.remove(cat.get(which));
-		CheckedCategories.put(cat.get(which), isChecked);
 	}
 
 	/**
@@ -544,32 +543,23 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 		SharedPreferences.Editor editor = settings.edit();
 		//editor.putBoolean("key", value);
 
-		ArrayList<String> cat = (ArrayList<String>) categories.clone();
+		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
 		cat.add(0, "Favourites");
 
 		for (String title : cat){
-			boolean isChecked = CheckedCategories.get(title);
-
 			//preferences:
-			editor.putBoolean(title, isChecked);
+			ArrayList<DB> list = new ArrayList<DB>();
 
-			if( !isChecked){
-				if(adapter.getSectionNames().contains(title))
-					adapter.removeSection(title);
-			}else{
-				ArrayList<DB> list = new ArrayList<DB>();
-
-				for (DB db : allDBs){
-					if (title.equals("Favourites") ){ //add to favorite section
-						list.add(db);
-					}else if(db.getCategory().equals(title)){
-						list.add(db);
-					}
-				}//for DBs
-				DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
-				adapter.addSection(title, testAdapter);
-			}//if checked
-		}//for categories
+			for (DB db : allDBs){
+				if (title.equals("Favourites") ){ //add to favorite section
+					list.add(db);
+				}else if(db.getCategory().equals(title)){
+					list.add(db);
+				}
+			}//for DBs
+			DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
+			adapter.addSection(title, testAdapter);
+		}//for categoryFolders
 
 		// Commit the edits!
 		editor.commit();
@@ -584,4 +574,4 @@ public class ImportTabLocal extends ListActivity implements LocationListener, On
 	public void setContext(Context context) {
 		this.context = context;
 	}
-}//ImportTabLocal
+}//ImportLocalTab

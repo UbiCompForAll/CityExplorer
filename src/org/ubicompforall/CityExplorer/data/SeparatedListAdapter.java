@@ -63,11 +63,13 @@ public class SeparatedListAdapter extends BaseAdapter {
 	/*** Constant field describing a list of trips.*/
 	public final static int TRIP_LIST = 2;
 	/*** Constant field describing a list of downloaded pois.*/
-	public static final int INTERNET_POIS = 3;
+	public final static int INTERNET_POIS = 3;
 	/*** Constant field describing a list of downloaded pois.*/
-	public static final int INTERNET_TRIPS = 4;
+	public final static int INTERNET_TRIPS = 4;
 	/*** Constant field describing a list of downloaded pois.*/
-	public static final int LOCAL_DBS = 5;
+	public final static int LOCAL_DBS = 5;
+	
+	private final static String[] CONSTANTS = { "UNUSED", "POI_LIST", "TRIP_LIST", "INTERNET_POIS", "INTERNET_TRIPS", "LOCAL_DBS"	}; // String[] CONSTANTS
 	
 	/*** Field containing the type of list. */
 	private int listType;
@@ -83,7 +85,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 	public SeparatedListAdapter(Activity context, int listType) {  
 	    ctx = context;
 	    this.listType = listType;
-	    debug(0, "SeparatedListAdapter~86: I'm listType: "+listType);
+	    debug(0, "SeparatedListAdapter~86: I'm listType: "+ CONSTANTS[listType] );
 	} // CONSTRUCTOR
 	
 	
