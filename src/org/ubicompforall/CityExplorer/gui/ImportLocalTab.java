@@ -34,12 +34,9 @@ package org.ubicompforall.CityExplorer.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-
 import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 //import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
 import org.ubicompforall.CityExplorer.data.DB;
-import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.DBFileAdapter;
 import org.ubicompforall.CityExplorer.data.SQLiteConnector;
 import org.ubicompforall.CityExplorer.data.SeparatedListAdapter;
@@ -372,11 +369,11 @@ public class ImportLocalTab extends ListActivity implements LocationListener, On
 		debug(0, "requestCode is "+ requestCode );
 
 //		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
-			Intent resultIntent = new Intent();
+//			Intent resultIntent = new Intent();
 			//resultIntent.putExtra(IntentPassable.DB, p);
-			debug(0, "I just found DB "+d);
-			setResult( Activity.RESULT_OK, resultIntent );
-			finish();
+			debug(0, "I just found DB "+d.getLabel() );
+//			setResult( Activity.RESULT_OK, resultIntent );
+//			finish();
 			//return;
 //			Intent details = new Intent(ImportLocalTab.this, DBDetailsActivity.class);
 //			details.putExtra(IntentPassable.POI, true);
@@ -526,7 +523,7 @@ public class ImportLocalTab extends ListActivity implements LocationListener, On
 	 * Handles click events in the filter dialog.
 	 */
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked){
+	public void onClick( DialogInterface dialog, int which, boolean isChecked ){
 		@SuppressWarnings("unchecked")
 		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
 		cat.add(0, "Favourites");

@@ -192,88 +192,89 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * Get the names of the section. 
 	 * @return Arraylist containing the section names.
 	 */
-	    public ArrayList<String> getSectionNames(){
-	    	return sectionNames;
-	    }
-	  
-	    @Override
-	    public Object getItem(int position) {  
-	    	for (Section section : this.sections) {
-	    		Adapter adapter = section.getAdapter();  
-	            int size = adapter.getCount() + 1;  
-	  
-	            // check if position inside this section  
-	            if(position == 0) return section;  
-	            if(position < size) return adapter.getItem(position - 1);  
-	  
-	            // otherwise jump into next section  
-	            position -= size;  
-	        }  
-	        return null;  
-	    }  
-	  
-	    @Override
-	    public int getCount() {  
-	        // total together all sections, plus one for each section header  
-	        int total = 0;  
-	        for (Section section : this.sections) {
-	        	total += section.getAdapter().getCount() + 1;  
-	        }
-	        return total;  
-	    }  
-	  
-	    @Override
-	    public int getViewTypeCount() {  
-	        // assume that headers count as one, then total all sections  
-	        int total = 1;  
-	        for (Section section : this.sections)
-	            total += section.getAdapter().getViewTypeCount();  
-	        return total;  
-	    }  
-	  
-	    @Override
-	    public int getItemViewType(int position) {  
-	        int type = 1;  
-	        for (Section section : this.sections) {
-	        	Adapter adapter = section.getAdapter();  
-	            int size = adapter.getCount() + 1;  
-	  
-	            // check if position inside this section  
-	            if(position == 0) return TYPE_SECTION_HEADER;  
-	            if(position < size) return type + adapter.getItemViewType(position - 1);  
-	  
-	            // otherwise jump into next section  
-	            position -= size;  
-	            type += adapter.getViewTypeCount();  
-	        }  
-	        return -1;  
-	    }  
-	  
-	    @Override  
-	    public View getView(int position, View convertView, ViewGroup parent) {  
-	        int sectionnum = 0;  
-	        for (Section section : this.sections) {
-	        	Adapter adapter = section.getAdapter();  
-	            int size = adapter.getCount() + 1;  
-	  
-	            // check if position inside this section  
-	            if(position == 0) return getHeaderView(section.getCaption(), sectionnum,
-	            convertView, parent);
-	            if(position < size) return adapter.getView(position - 1, convertView, parent);  
-	  
-	            // otherwise jump into next section  
-	            position -= size;  
-	            sectionnum++;  
-	        }  
-	        return null;  
-	    }  
-	  
-	    @Override  
-	    public long getItemId(int position) {  
-	        return position;  
-	    }  
-	    
-	    /**
+    public ArrayList<String> getSectionNames(){
+    	return sectionNames;
+    }
+  
+    @Override
+    public Object getItem(int position) {  
+    	for (Section section : this.sections) {
+    		Adapter adapter = section.getAdapter();  
+            int size = adapter.getCount() + 1;  
+  
+            // check if position inside this section  
+            if(position == 0) return section;  
+            if(position < size) return adapter.getItem(position - 1);  
+  
+            // otherwise jump into next section  
+            position -= size;  
+        }  
+        return null;  
+    }  
+  
+    @Override
+    public int getCount() {  
+        // total together all sections, plus one for each section header  
+        int total = 0;  
+        for (Section section : this.sections) {
+        	total += section.getAdapter().getCount() + 1;  
+        }
+        return total;  
+    }  
+  
+    @Override
+    public int getViewTypeCount() {  
+        // assume that headers count as one, then total all sections  
+        int total = 1;  
+        for (Section section : this.sections)
+            total += section.getAdapter().getViewTypeCount();  
+        return total;  
+    }  
+  
+    @Override
+    public int getItemViewType(int position) {  
+        int type = 1;  
+        for (Section section : this.sections) {
+        	Adapter adapter = section.getAdapter();  
+            int size = adapter.getCount() + 1;  
+  
+            // check if position inside this section  
+            if(position == 0) return TYPE_SECTION_HEADER;  
+            if(position < size) return type + adapter.getItemViewType(position - 1);  
+  
+            // otherwise jump into next section  
+            position -= size;  
+            type += adapter.getViewTypeCount();  
+        }  
+        return -1;  
+    }  
+  
+    @Override  
+    public View getView(int position, View convertView, ViewGroup parent) {
+    	//debug(0, "position is "+position );
+        int sectionnum = 0;  
+        for (Section section : this.sections) {
+        	Adapter adapter = section.getAdapter();  
+            int size = adapter.getCount() + 1;  
+  
+            // check if position inside this section  
+            if(position == 0) return getHeaderView(section.getCaption(), sectionnum,
+            convertView, parent);
+            if(position < size) return adapter.getView(position - 1, convertView, parent);  
+  
+            // otherwise jump into next section  
+            position -= size;  
+            sectionnum++;  
+        }  
+        return null;  
+    }  
+  
+    @Override  
+    public long getItemId(int position) {  
+        return position;  
+    }
+
+	/**
 	 * Gets a header view.
 	 * @param caption The caption of the wanted view.
 	 * @param index An int of the index for the wanted view.
@@ -282,15 +283,16 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * @return A View of the header.
 	 */
 	private View getHeaderView(String caption, int index, View convertView,	ViewGroup parent) {
-			TextView result=(TextView)convertView;
-	
-			if (convertView==null) {
-				result=(TextView)ctx.getLayoutInflater().inflate(R.layout.header,null);
-			}
-	
-			result.setText(caption);
-	
-			return(result);
+		debug(0, "Caption is "+caption );
+		TextView result=(TextView)convertView;
+
+		if (convertView==null) {
+			result=(TextView)ctx.getLayoutInflater().inflate(R.layout.header,null);
+		}
+
+		result.setText(caption);
+
+		return(result);
 	}
 	
 	@Override

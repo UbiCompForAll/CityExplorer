@@ -40,6 +40,7 @@ import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
@@ -47,6 +48,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 /**
@@ -64,6 +66,9 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		CityExplorer.debug(level, message);
 	}
 
+	/** The map controller. */
+	private MapController mapController;
+
 	
 	// MyMapActivity methods
 	@Override
@@ -71,14 +76,19 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.locationlayout);
 
-		final MapView mapView = (MapView) findViewById(R.id.location_mapview);
+		final MapView mapView = (com.google.android.maps.MapView) findViewById(R.id.location2_mapview);
 		MapOverlay mapOverlay = new MapOverlay();
 
 		List<Overlay> listOfOverlays = new ArrayList<Overlay>();
 		if (mapView==null){
-			CityExplorer.debug(0, "Where's mapview?" );
+			debug(0, "Where's mapview?" );
 		}else{
 			listOfOverlays = mapView.getOverlays();
+
+			mapController  = mapView.getController();
+			mapView.setBuiltInZoomControls(true);
+			mapController.setZoom(5);
+			mapController.animateTo( new GeoPoint(63351984, 10528342) );
 		}
 		listOfOverlays.clear();
 		listOfOverlays.add(mapOverlay);
@@ -88,6 +98,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	protected boolean isRouteDisplayed() {
 		return false;
 	} // isRouteDisplayed
+
 
 	///////////////////////////////////////////////////////////////////////////
 
@@ -115,7 +126,17 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 			return false;
 		} // onTouchEvent
 
+//		/* (non-Javadoc)
+//		 * @see android.view.View.OnClickListener#onClick(android.view.View)
+//		 */
+//		@Override
+//		public void onClick(View v){
+//			debug(0, "onClick");
+//			mapController.animateTo( new GeoPoint(63000000, 10000000) );
+//		} // onClick
+
 	} // class MapOverlay
+
 
 } // LocationActivity
 
@@ -220,15 +241,6 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 ////				double slon = getCurrentLocation().getLongitudeE6()/1E6;
 ////				double slat = getCurrentLocation().getLatitudeE6()/1E6;
 ////			}
-//
-//	/* (non-Javadoc)
-//	 * @see android.view.View.OnClickListener#onClick(android.view.View)
-//	 */
-//	@Override
-//	public void onClick(View v){
-//		debug(0, "onClick");
-//		mapController.animateTo( new GeoPoint(63000000, 10000000) );
-//	} // onClick
 //
 //	/* (non-Javadoc)
 //	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)

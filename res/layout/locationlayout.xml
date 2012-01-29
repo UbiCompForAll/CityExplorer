@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="fill_parent"
-	android:layout_width="fill_parent"
-	>
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <com.google.android.maps.MapView
-		android:id="@+id/location_mapview"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:clickable="true"
-		android:apiKey="05MLhk0p9hp3JBgHGNN8QZVa-D8D3Pz6h4TuRjA"
-	/>
-		<!-- Obtain Your Own Debug Google Map API key from here: Or use our debug-key from Git
+	<TextView
+		android:id="@+id/map_lat"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:text="Latitude E" />
+	
+	<TextView
+		android:id="@+id/map_name"
+		android:layout_width="wrap_content"
+		android:layout_height="66dp"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		android:text="Here" />
+
+	<TextView
+	     android:id="@+id/map_lng"
+	     android:layout_width="wrap_content"
+	     android:layout_height="36dp"
+	     android:layout_alignParentRight="true"
+	     android:layout_alignParentTop="true"
+	     android:text="Longitude N" />
+	
+	<!--
+        Obtain Your Own Debug Google Map API key from here: Or use our debug-key from Git
 		http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html
 		 android:apiKey="
 		 Student's Key: 	0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA
@@ -19,49 +35,28 @@
 							05MLhk0p9hp3JBgHGNN8QZVa-D8D3Pz6h4TuRjA Works with cityExplorer/debug.keystore !
 		 Rune's MAC Key:	05MLhk0p9hp3ISqul1fOOQfXG53U8Cv7J-I_FfA
 		 Jacqueline's key:	0M2hg6uGeHHzrQnmjPNweTu_kS8WdQtilGOSOaw
-		-->
-	
-	<LinearLayout android:id="@+id/location_center"
+    -->
+
+    <com.google.android.maps.MapView
+        android:id="@+id/location2_mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="18dp"
+        android:apiKey="05MLhk0p9hp3JBgHGNN8QZVa-D8D3Pz6h4TuRjA"
+        android:clickable="true" 
+		android:visibility="visible"
+		style="@style/mapView">
+    </com.google.android.maps.MapView>
+
+	<TextView
+		android:id="@+id/X"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
 		android:layout_centerVertical="true"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content">
+		android:gravity="center_vertical|center_horizontal"
+		android:text="X">
+	</TextView>
 	
-		<TextView
-		     android:id="@+id/map_lat"
-		     android:text=""
-		     android:layout_width="wrap_content"
-		     android:layout_height="wrap_content"
-		/>
-	
-	    <TextView
-			android:id="@+id/X"
-	    	android:text="X"
-			android:layout_width="wrap_content"
-		    android:layout_height="fill_parent"
-	   		android:gravity="center_vertical|center_horizontal"
-	    />
-
-		<TextView
-			android:id="@+id/map_lng"
-			android:text=""
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		/>
-	</LinearLayout>
-		
-	<LinearLayout
-		android:layout_centerHorizontal="true"
-		android:layout_below="@id/location_center"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content">
-
-	    <TextView
-			android:id="@+id/map_name"
-			android:text="Here"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		/>
-	</LinearLayout>
-	   		    	
 </RelativeLayout>
