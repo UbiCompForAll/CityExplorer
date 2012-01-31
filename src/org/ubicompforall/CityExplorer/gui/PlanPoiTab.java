@@ -622,7 +622,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			});
 
 			// 6: 
-			qa.addItem(addToTripIcon, "Add Locations", new OnClickListener(){
+			qa.addItem(addToTripIcon, R.string.activity_plan_menu_addpois, new OnClickListener(){
 
 				public void onClick(View view){
 					poi = p;
