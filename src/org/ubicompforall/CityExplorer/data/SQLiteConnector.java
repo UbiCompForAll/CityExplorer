@@ -42,11 +42,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
+//import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
+//import android.content.SharedPreferences;
 //import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -72,7 +72,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	/** The Constant DB_NAME, which is our database name. */
 	//private static final String	DB_NAME = "CityExplorer.backup.db";
-	private static String	DB_NAME = "CityExplorer.sqlite";
+	public static String	DB_NAME = "CityExplorer.sqlite";
 
 
 	/** The SQLiteDatabase object we are using. */
@@ -124,20 +124,45 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		DB_PATH = dbName.getParent();
 		myPath = dbName.toString();
 
-		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+//		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 //		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
 		debug(0, "DB_PATH IS "+DB_PATH );
 		
 //		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
 	}//SQLiteConnector CONSTRUCTOR
 
-
 	
+	///////////////////////////////////
+	// STATIC METHODS
+	///////////////////////////////////
 	private static void debug(int level, String message ){
 		CityExplorer.debug( level, message );
 	} // debug
 
 	
+	public static final Map<String,Integer>
+	 getKeys( String[] columns ){
+		Map<String, Integer> key = new HashMap<String, Integer>();
+		for(int i=0; i<columns.length; i++){
+			key.put(columns[i], i);
+		} // for each column, store key index
+		return key;
+	} // getKeys
+	
+	public static final String
+	 getSelectStr( String[] columns ){
+		String selectStr =  "SELECT ";
+		String prefix="";
+		for(int i=0; i<columns.length; i++){
+			selectStr += prefix + columns[i];
+			prefix=",";
+		} // for each column, store key index
+		debug(2, "sqlstr is "+selectStr);
+		return selectStr;
+	} // getKeys
+
+	///////////////////////////////////
+
 
 	@Override
 	public boolean addPoiToTrip(Trip t, Poi poi) {
@@ -320,6 +345,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				"CAT.title",
 				"TP.poi_number",	"TP.hour",		"TP.minute"
 		};
+		
 		final Map<String,Integer> key = //new HashMap<String,Integer>(); 		getKeys( key, columns );
 				getKeys( columns );
 		String sqlStr, selectStr, fromStr, whereStr, freeStr, orderStr;
@@ -628,30 +654,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		return trips;
 	}//getTrips
 
-	///////////////////////////////////
-	
-	public static final Map<String,Integer>
-	 getKeys( String[] columns ){
-		Map<String, Integer> key = new HashMap<String, Integer>();
-		for(int i=0; i<columns.length; i++){
-			key.put(columns[i], i);
-		} // for each column, store key index
-		return key;
-	} // getKeys
-	
-	public static final String
-	 getSelectStr( String[] columns ){
-		String selectStr =  "SELECT ";
-		String prefix="";
-		for(int i=0; i<columns.length; i++){
-			selectStr += prefix + columns[i];
-			prefix=",";
-		} // for each column, store key index
-		debug(2, "sqlstr is "+selectStr);
-		return selectStr;
-	} // getKeys
-
-	///////////////////////////////////
 
 	@Override
 	public ArrayList<String>

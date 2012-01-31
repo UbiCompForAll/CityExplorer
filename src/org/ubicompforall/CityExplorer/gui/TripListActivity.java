@@ -168,7 +168,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 
 		switch (item.getItemId()) {
 		case R.id.triplistMenuAddPoi:
-			Intent selectPoi = new Intent(this, PlanTabPoi.class);
+			Intent selectPoi = new Intent(this, PlanPoiTab.class);
 			selectPoi.putExtra(IntentPassable.TRIP, trip);
 			selectPoi.putExtra("requestCode", ADD_TO_TRIP);
 			startActivityForResult(selectPoi, ADD_TO_TRIP);

@@ -44,7 +44,7 @@ any static strings associated with maps -->
 
 
 <string name="editcityLabel">* City:</string>
-<string name="exploreCity">EXPLORE CITY</string>
+<string name="exploreCity">EXPLORE CITY MAP</string>
 <string name="editzipLabel">Zip:</string>
 <string name="editcategoryLabel">* Category:</string>
 <string name="editaddressLabel">* Address:</string>

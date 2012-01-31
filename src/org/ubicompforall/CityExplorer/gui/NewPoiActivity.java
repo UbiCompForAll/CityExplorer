@@ -321,7 +321,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		if(v == choosePoiButton){
-			Intent selectPoi = new Intent(this, PlanTabPoi.class);
+			Intent selectPoi = new Intent(this, PlanPoiTab.class);
 			selectPoi.putExtra("requestCode", CHOOSE_POI);
 			startActivityForResult(selectPoi, CHOOSE_POI);
 		}

@@ -200,7 +200,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 		Trip trip = new Trip.Builder(name).description(description).freeTrip(free).idPrivate(pId).build();
 		db.newTrip(trip);
 
-		if (requestCode == PlanTabTrip.NEW_TRIP){
+		if (requestCode == PlanTripTab.NEW_TRIP){
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra(IntentPassable.POILIST, existingPois);
 			resultIntent.putExtra(IntentPassable.TRIP, trip);
@@ -216,7 +216,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		if(v == fromExistingButton){			
-			Intent selectTrip = new Intent(this, PlanTabTrip.class);
+			Intent selectTrip = new Intent(this, PlanTripTab.class);
 			selectTrip.putExtra("requestCode", ADD_TO_TRIP );
 			startActivityForResult(selectTrip, ADD_TO_TRIP);
 		}

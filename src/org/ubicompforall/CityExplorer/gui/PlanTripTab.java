@@ -60,7 +60,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class PlanTabTrip extends PlanTabActivity{
+public class PlanTripTab extends PlanActivityTab{
 
 	/**
 	 * Field containing this activity's resources.
@@ -134,7 +134,7 @@ public class PlanTabTrip extends PlanTabActivity{
 		requestCode = getIntent().getIntExtra("requestCode",0);
 		lv = getListView();
 
-		if (requestCode == PlanTabPoi.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP || requestCode == DOWNLOAD_TRIP){
+		if (requestCode == PlanPoiTab.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP || requestCode == DOWNLOAD_TRIP){
 			lv.setOnItemLongClickListener(null);
 		}else {			
 			lv.setOnItemLongClickListener(new DrawPopup());
@@ -177,7 +177,7 @@ public class PlanTabTrip extends PlanTabActivity{
 //			return;
 //		} // NewTrip->ADD_TO_TRIP
 
-		if (requestCode == PlanTabPoi.ADD_TO_TRIP){
+		if (requestCode == PlanPoiTab.ADD_TO_TRIP){
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra(IntentPassable.TRIP, trip);
 			setResult( Activity.RESULT_OK, resultIntent );
@@ -245,10 +245,10 @@ public class PlanTabTrip extends PlanTabActivity{
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (requestCode == PlanTabPoi.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP){
+		if (requestCode == PlanPoiTab.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP){
 			menu.setGroupVisible(R.id.planMenuGroupTrip, false);
 		}
-		if(requestCode == PlanTabTrip.DOWNLOAD_TRIP){
+		if(requestCode == PlanTripTab.DOWNLOAD_TRIP){
 			menu.removeItem(R.id.planMenuNewTrip);
 		}
 		return true;
@@ -266,7 +266,7 @@ public class PlanTabTrip extends PlanTabActivity{
 		super.onOptionsItemSelected(item);
 
 		if(item.getItemId() == R.id.planMenuNewTrip){
-			Intent newTrip = new Intent(PlanTabTrip.this, NewTripActivity.class);
+			Intent newTrip = new Intent(PlanTripTab.this, NewTripActivity.class);
 			newTrip.putExtra("requestCode", NEW_TRIP);
 			startActivityForResult(newTrip, NEW_TRIP);
 
@@ -312,7 +312,7 @@ public class PlanTabTrip extends PlanTabActivity{
 					xy[0]+v.getWidth(), 
 					xy[1]+v.getHeight());
 
-			final QuickActionPopup qa = new QuickActionPopup(PlanTabTrip.this, v, rect);
+			final QuickActionPopup qa = new QuickActionPopup(PlanTripTab.this, v, rect);
 
 			Drawable	addPoiIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
 			Drawable	mapviewIcon	= res.getDrawable(android.R.drawable.ic_menu_mapmode);
@@ -324,7 +324,7 @@ public class PlanTabTrip extends PlanTabActivity{
 				public void onClick(View view)
 				{
 					
-					Intent selectPoi = new Intent(PlanTabTrip.this, PlanTabPoi.class);
+					Intent selectPoi = new Intent(PlanTripTab.this, PlanPoiTab.class);
 					selectPoi.putExtra(IntentPassable.TRIP, t);
 					selectPoi.putExtra("requestCode", ADD_TO_TRIP);
 					startActivityForResult(selectPoi, ADD_TO_TRIP);
@@ -334,7 +334,7 @@ public class PlanTabTrip extends PlanTabActivity{
 			});
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
 				public void onClick(View view){
-					Intent showInMap = new Intent(PlanTabTrip.this, MapsActivity.class);
+					Intent showInMap = new Intent(PlanTripTab.this, MapsActivity.class);
 					showInMap.putExtra(IntentPassable.TRIP, t);
 					startActivity(showInMap);
 					qa.dismiss();
