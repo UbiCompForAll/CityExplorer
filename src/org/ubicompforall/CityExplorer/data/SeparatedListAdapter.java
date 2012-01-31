@@ -258,8 +258,7 @@ public class SeparatedListAdapter extends BaseAdapter {
             int size = adapter.getCount() + 1;  
   
             // check if position inside this section  
-            if(position == 0) return getHeaderView(section.getCaption(), sectionnum,
-            convertView, parent);
+            if(position == 0) return getHeaderView(section.getCaption(), sectionnum, convertView, parent);
             if(position < size) return adapter.getView(position - 1, convertView, parent);  
   
             // otherwise jump into next section  
@@ -267,7 +266,7 @@ public class SeparatedListAdapter extends BaseAdapter {
             sectionnum++;  
         }  
         return null;  
-    }  
+    } // getView
   
     @Override  
     public long getItemId(int position) {  

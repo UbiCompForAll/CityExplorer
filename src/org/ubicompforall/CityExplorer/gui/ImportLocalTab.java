@@ -136,14 +136,16 @@ public class ImportLocalTab extends ListActivity implements LocationListener, On
 		lv = getListView();
 		lv.setOnItemLongClickListener(new DrawPopup());
 
-		allDBs = getAllDBs();
 		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
+		lv.setAdapter(adapter);
+		lv.setCacheColorHint(0);
+
+		allDBs = getAllDBs();
 
 		res = getResources();
-		lv.setAdapter(adapter);
 
+		//Init View-adapters etc.
 		makeSections();
-		//lv.setAdapter(adapter);
 
 		//initGPS(); //For maps?
 	}//init
