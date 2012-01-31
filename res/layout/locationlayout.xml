@@ -56,7 +56,9 @@
 		android:layout_centerHorizontal="true"
 		android:layout_centerVertical="true"
 		android:gravity="center_vertical|center_horizontal"
-		android:text="X">
+		android:text="X"
+		android:textColor="#FF0000"
+		>
 	</TextView>
 	
 </RelativeLayout>
