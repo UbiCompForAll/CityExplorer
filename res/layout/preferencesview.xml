@@ -19,7 +19,7 @@
 				/>
 			<TextView
 				android:id="@+id/pref_loc"
-				android:text="63424000"
+				android:text="set at launch"
 				android:padding="3dip"
 				/>
 			</TableRow>
@@ -31,7 +31,7 @@
 				/>
 			<TextView
 			    android:id="@+id/pref_lat"
-			    android:text="9554600"
+			    android:text="set at launch"
 				android:padding="3dip"
 				/>
 		</TableRow>
