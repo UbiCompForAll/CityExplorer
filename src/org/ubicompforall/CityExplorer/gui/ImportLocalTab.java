@@ -227,7 +227,7 @@ public class ImportLocalTab extends ListActivity implements LocationListener, On
 			debug(0, "Code Two!");
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
-			menu.removeItem(R.id.planMenuUpdatePois);
+			//Smenu.removeItem(R.id.planMenuUpdatePois );
 			menu.removeItem(R.id.planMenuAddPois);
 		}
 //		else if (requestCode == SHARE_DB)
