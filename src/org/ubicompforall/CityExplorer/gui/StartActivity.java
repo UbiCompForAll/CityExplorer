@@ -94,6 +94,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 		//FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
+		startActivity(new Intent( this, ImportActivity.class) );
 
 
 	}//onCreate

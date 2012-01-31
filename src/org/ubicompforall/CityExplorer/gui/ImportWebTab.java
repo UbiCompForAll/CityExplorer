@@ -1,8 +1,8 @@
 /**
- * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @contributor(s): Rune Sætre (NTNU)
  * @version: 		0.1
- * @date:			23 May 2011
- * @revised:		15 Dec 2011
+ * @date:			22 November 2011
+ * @revised:		15 December 2011
  *
  * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -23,168 +23,554 @@
  * 
  */
 
+/**
+ * @description: 
+ * This class tracks existing DBs.
+ * This class keeps hold of the tabs used in import mode.
+ */
+
 package org.ubicompforall.CityExplorer.gui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import org.ubicompforall.CityExplorer.data.FileSystemConnector;
+//import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
+import org.ubicompforall.CityExplorer.data.DB;
+import org.ubicompforall.CityExplorer.data.DBFileAdapter;
+import org.ubicompforall.CityExplorer.data.SQLiteConnector;
+import org.ubicompforall.CityExplorer.data.SeparatedListAdapter;
+import org.ubicompforall.CityExplorer.map.MapsActivity;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
-import org.ubicompforall.CityExplorer.data.Poi;
+import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-/**
- * @description: Class to handle import/export of POIs/Trips
- */
-public class ImportWebTab extends Activity{
+public class ImportWebTab extends ListActivity implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
-	//FIELDS
-	Context context;
+	/** Field containing the String of the category settings, used in shared preferences. */
+	private static String CATEGORY_SETTINGS = "catset";
+
+	/*** Field containing all DBs.*/
+	//private ArrayList<Poi> allPois = new ArrayList<Poi>();
+	private ArrayList<DB> allDBs = new ArrayList<DB>();
+
+	/*** Field containing this activity's resources.*/
+	private Resources res;
+
+	/*** Field containing the {@link SeparatedListAdapter} that holds all the other adapters.*/
+	private SeparatedListAdapter adapter;
+
+	/*** Field containing this activity's {@link ListView}.*/
+	private ListView lv;
+
+	/*** Field containing the users current location.*/
+	private Location userLocation;
+
+	/*** Field containing an {@link ArrayList} of the categoryFolders.*/
+	private ArrayList<String> categoryFolders;
+
+	/*** Field containing this activity's context.*/
+	private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
+
+	/*** Field containing the request code from other activities.*/
+	private int requestCode;
+
+	/*** Field containing a single DB.*/
+	//private POI poi;
+	//private DB db;
+
+	/*** Field giving access to databaseUpdater methods.*/
+	//private DatabaseUpdater du;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState){
+	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		int[] res = new int[]{0,0};	// What is res? result?
-		
-		Uri uri = getIntent().getData();
-		
-		try {	// try opening the file
-		    // open the file for reading
-			if ( uri == null ){
-				debug(0, "No file sent to ImportTabWeb! Used to be ExportImport.java" );
-			}else{
-				File f = new File( uri.getPath() );
-				InputStream instream = new FileInputStream(f);
-				//InputStream instream = openFileInput("cityexplorer.txt");
-				 
-				    // if file the available for reading
-				if (instream != null) {
-					// prepare the file for reading
-					InputStreamReader inputreader = new InputStreamReader(instream);
-					BufferedReader buffreader = new BufferedReader(inputreader);
-					
-					StringBuilder pois = new StringBuilder();
-					String line;
-					// read every line of the file into the line-variable, on line at the time
-					while (( line = buffreader.readLine()) != null) {
-						pois.append(line+"\n");
-					}
-					//System.out.println("EXIMP: "+sb.toString());
-					
-					DatabaseUpdater du = new DatabaseUpdater(this);
-					res = du.doFileUpdatePois(pois.toString());
-				} // if instream
-				// close the file again
-				instream.close();
-			} // if filename given in Intent
-		} catch (java.io.FileNotFoundException e) {
-		// do something if the myfilename.txt does not exits
-			System.out.println("FileNotFound error: "+e.getMessage());
-		} catch (IOException e) {
-			System.out.println("IO error: "+e.getMessage());
-		}
-		  System.out.println(res[0]+" locations added, "+res[1]+" locations updated");
-		  Toast.makeText(this, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-		  finish();
-	}// onCreate
+		debug(0, "ImportLocalTab~118 create");
+
+		//INITIALIZE OWN FIELDS
+		categoryFolders = new ArrayList<String>();
+		//categoryFolders.add( SQLiteConnector.DB_PATH ); //Cheating!
+		categoryFolders.add( getDatabasePath( SQLiteConnector.DB_NAME ).getParent() );
+		Collections.sort(categoryFolders);
+		debug(0, "categoryFolders is "+categoryFolders );
+
+		init();		
+	} // onCreate
+
 	
-	private void debug(int level, String message ) {
-		CityExplorer.debug(level, message );
-	} // debug
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 
 	/**
-	 * Share pois with another user.
-	 *
-	 * @param c The context.
-	 * @param pois The pois you want to send.
+	 * Initializes the activity.
 	 */
-	public static void send(Context c, ArrayList<Poi> pois)
-	{
-		OutputStreamWriter osw;
-		try
-		{
-			FileOutputStream fOut = c.openFileOutput("cityexplorer.txt",
-					MODE_WORLD_READABLE);
-			osw = new OutputStreamWriter(fOut); 
-			// Write the string to the file
-			for (Poi poi : pois){
-				/*
-				 * 0  global_id;
-				 * 1  title;
-				 * 2  description;
-				 * 3  street_name;
-// ZIP code removed
-//				 * x4  zipcode;
-				 * 4  city;
-				 * 5  lat;
-				 * 6  lon;
-				 * 
-				 * 7  category_title;
-				 * 8 web_page;
-				 * 9 openingHours;
-				 * 10 telephone;
-				 * 11 image_url
-				*/
-				osw.write(
-						poi.getIdGlobal()	+";"+
-						poi.getLabel()		+";"+
-						poi.getDescription().replaceAll("\n", "%EOL")+";"+
-						poi.getAddress().getStreet()+";"+
-// ZIP code removed
-//						poi.getAddress().getZipCode()+";"+
-						poi.getAddress().getCity()+";"+
-						poi.getAddress().getLatitude()+";"+
-						poi.getAddress().getLongitude()+";"+
-						poi.getCategory()+";"+
-						poi.getWebPage()+";"+
-						poi.getOpeningHours().replaceAll("\n", "%EOL")+";"+
-						poi.getTelephone()+";"+
-						poi.getImageURL()+"\n"
-						);
+	private void init() {
+		setContext(this);
+		requestCode = getIntent().getIntExtra("requestCode",0);
+		lv = getListView();
+		lv.setOnItemLongClickListener(new DrawPopup());
+
+		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
+		lv.setAdapter(adapter);
+		lv.setCacheColorHint(0);
+
+		allDBs = getAllDBs();
+
+		res = getResources();
+
+		//Init View-adapters etc.
+		makeSections();
+
+		//initGPS(); //For maps?
+	}//init
+
+	private ArrayList<DB> getAllDBs() {
+		if (categoryFolders == null){
+			debug(0, "categoryFolders NOT FOUND!" );
+		}else{
+			categoryFolders.add( getFilesDir().getPath() );
+			for ( String path : categoryFolders ){
+				File dir = new File(path);
+				File[] files = dir.listFiles();
+				if (files == null){
+					debug(0, "No files found in "+dir.getPath() );
+				}else{
+					for ( int f=0; f<files.length ; f++ ){
+						File file = files[f];
+						allDBs.add( new DB( file.getName(), dir.getName() ) );
+					}// for each file
+				}// if not null-pointer path->files
+			} // for each folder
+		} // if not null-pointer
+		return allDBs;
+	}//getAllDBs
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	/**
+	 * Makes the category sections that is shown in the list. 
+	 */
+	private void makeSections(){
+		for (DB db : allDBs){
+			if( !adapter.getSectionNames().contains(db.getCategory())){ //category does not exist, create it.
+				ArrayList<DB> list = new ArrayList<DB>();
+
+				DBFileAdapter testAdapter;
+				testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
+				adapter.addSection(db.getCategory(), testAdapter);
 			}
-			
-			/* ensure that everything is
-			 * really written out and close */
-			osw.flush();
-			osw.close();
-		} 
-		catch (IOException e){
-			System.out.println("IO error: "+e.getMessage());
+			((DBFileAdapter)adapter.getAdapter(db.getCategory())).add(db);//add to the correct section
+			((DBFileAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
 		}
-		
-		File F = c.getFileStreamPath("cityexplorer.txt");
-        Uri U = Uri.fromFile(F);
+	}
 
-		
-		Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-		sharingIntent.setType("text/plain");
-		//sharingIntent.setData(U);
-		sharingIntent.putExtra(Intent.EXTRA_STREAM, U);
-		//sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "This is a test");
-		c.startActivity(Intent.createChooser(sharingIntent,"Share ce file using"));
-	}//send
-	
-	public static int countOccurrences(String haystack, char needle){
-	    int count = 0;
-	    for (int i=0; i < haystack.length(); i++){
-	        if (haystack.charAt(i) == needle){
-	             count++;
-	        }
-	    }
-	    return count;
-	}//countOccurrences
+	/**
+	 * Updates the category sections in the list, e.g. after choosing filtering.
+	 */
+	@SuppressWarnings("unchecked")
+	private void updateSections()
+	{
+		allDBs = new FileSystemConnector().getAllDBs();
+		ArrayList<String> sectionsInUse = new ArrayList<String>(); 
+		for (DB db : allDBs){
+			sectionsInUse.add(db.getCategory());
+			if(!adapter.getSectionNames().contains(db.getCategory())){
+				ArrayList<DB> list = new ArrayList<DB>();
+				list.add(db);
+				DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
+				adapter.addSection(db.getCategory(), testAdapter);
+			}//if contains category
+		}//for DBs
+		ArrayList<String> ListSections = (ArrayList<String>) adapter.getSectionNames().clone();
+		for(String sec : ListSections){
+			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites")){	
+				adapter.removeSection(sec);
+			}
+		}//for sections
+		lv.setAdapter(adapter);
+	}//updateSections
 
-}//ExportImport extends Activity
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		if (requestCode == 2){
+			debug(0, "Code Two!");
+			menu.removeItem(R.id.planMenuNewPoi);
+			menu.removeItem(R.id.planMenuSharePois);
+			menu.removeItem(R.id.planMenuUpdatePois);
+			menu.removeItem(R.id.planMenuAddPois);
+		}
+//		else if (requestCode == SHARE_DB)
+//		{	
+//			menu.removeItem(R.id.planMenuAddDBs);
+//			menu.removeItem(R.id.planMenuNewDB);
+//			menu.removeItem(R.id.planMenuUpdateDBs);
+//		}
+//		else if(requestCode == DOWNLOAD_DB){
+//			menu.removeItem(R.id.planMenuAddDBs);
+//			menu.removeItem(R.id.planMenuNewDB);
+//			menu.removeItem(R.id.planMenuShareDBs);
+//			menu.removeItem(R.id.planMenuFilter);
+//		}
+//		else if(requestCode == PlanTabTrip.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
+//			menu.removeItem(R.id.planMenuNewDB);
+//			menu.removeItem(R.id.planMenuShareDBs);
+//			menu.removeItem(R.id.planMenuUpdateDBs);
+//		}
+//		else
+//		{
+//			menu.removeItem(R.id.planMenuAddDBs);
+//		}
+
+		return true;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		super.onCreateOptionsMenu(menu);
+		menu.setGroupVisible(R.id.planMenuGroupTrip, false);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+
+//		if(item.getItemId() == R.id.planMenuNewDB){
+//			Intent newDB = new Intent(ImportLocalTab.this, NewDBActivity.class);
+//			startActivity(newDB);
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuFilter)
+//		{
+//			categoryFolders = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
+//			Collections.sort(categoryFolders);
+//
+//			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//			alert.setTitle("Filter");
+//			ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
+//			cat.add(0, "Favourites");
+//
+//
+//			boolean[] CheckedCat = new boolean[cat.size()];
+//			for (String c : cat)
+//			{
+//				if(CheckedcategoryFolders.get(c) == null)
+//				{
+//					CheckedcategoryFolders.put(c, true);
+//				}
+//				CheckedCat[cat.indexOf(c)] = CheckedcategoryFolders.get(c);
+//			}
+//
+//			String[] array = new String[cat.size()];
+//			cat.toArray(array);
+//			alert.setMultiChoiceItems(array, CheckedCat, this);
+//			alert.setPositiveButton("OK", this);
+//			alert.create();
+//			alert.show();
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuUpdateDBs)
+//		{
+//			if(requestCode == DOWNLOAD_DB){
+//				if (downloadedDBs==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					int[] res = du.storeDBs(downloadedDBs);
+//					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
+//				}
+//				finish();
+//			}else {				
+//				Intent downloadDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
+//				downloadDB.putExtra("requestCode", DOWNLOAD_DB);
+//				startActivityForResult(downloadDB, DOWNLOAD_DB);
+//			}
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuShareDBs)
+//		{
+//			if(requestCode == SHARE_DB){
+//				if (shareDBs==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					Sharing.send(this, shareDBs);
+//					shareDBs = null;
+//				}
+//				finish();
+//			}else {
+//				Intent shareDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
+//				shareDB.putExtra("requestCode", SHARE_DB);
+//				startActivityForResult(shareDB, SHARE_DB);
+//			}
+//		}
+//
+//		if(item.getItemId() == R.id.planMenuAddDBs)
+//		{
+//			if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
+//				if (selectedDBs==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					for (DB p : selectedDBs) {
+//						trip.addDB(p);
+//						FileSystemConnector.getInstance(this).addDBToTrip(trip, p);						
+//					}
+//					Toast.makeText(this, selectedDBs.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
+//					selectedDBs = null;
+//				}
+//				Intent resultIntent = new Intent();
+//				resultIntent.putExtra(IntentPassable.TRIP, trip);
+//				setResult( Activity.RESULT_OK, resultIntent );
+//				finish();
+//			}
+//		}
+
+		return true;
+	} // onOptionsItemSelected( MenuItem )
+
+	@Override
+	public void onListItemClick(ListView l, View v, int pos, long id) {
+		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
+			//Pressing a header
+			debug(0, "Pressed a header... Dummy!");
+			return;
+		}
+		DB d = (DB) l.getAdapter().getItem(pos);
+		debug(0, "requestCode is "+ requestCode );
+
+//		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
+//			Intent resultIntent = new Intent();
+			//resultIntent.putExtra(IntentPassable.DB, p);
+			debug(0, "I just found DB "+d.getLabel() );
+//			setResult( Activity.RESULT_OK, resultIntent );
+//			finish();
+			//return;
+//			Intent details = new Intent(ImportLocalTab.this, DBDetailsActivity.class);
+//			details.putExtra(IntentPassable.POI, true);
+//			startActivity(details);
+//		} // Not using requestCodes here I think (RS-120127)
+
+
+//		Intent details = new Intent(ImportLocalTab.this, StartActivity.class);
+	} // onListItemClick
+
+	/**
+	 * Shows quick actions when the user long-presses an item.
+	 */
+	final private class DrawPopup implements AdapterView.OnItemLongClickListener {
+		public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
+
+			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
+			{
+				Intent showInMap = new Intent(ImportWebTab.this, MapsActivity.class);
+				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
+				ArrayList<DB> selectedDBs = new ArrayList<DB>();
+				for (int i = 0; i < sectionAd.getCount(); i++)
+				{
+					selectedDBs.add((DB) sectionAd.getItem(i));
+				}
+				//showInMap.putParcelableArrayListExtra(IntentPassable.DBLIST, selectedDBs);
+				startActivity(showInMap);
+				return true;
+			}
+
+			final DB	d 			= (DB) parent.getAdapter().getItem(pos);
+			final AdapterView<?> par = parent;
+			final int[] xy 			= new int[2]; v.getLocationInWindow(xy);
+			final Rect rect 		= new Rect(	xy[0], 
+					xy[1], 
+					xy[0]+v.getWidth(), 
+					xy[1]+v.getHeight()
+				);
+
+			final QuickActionPopup qa = new QuickActionPopup(ImportWebTab.this, v, rect);
+			//Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
+			Drawable mapviewIcon	= res.getDrawable(android.R.drawable.ic_menu_mapmode);
+			Drawable directIcon		= res.getDrawable(android.R.drawable.ic_menu_directions);
+			//Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
+			Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
+
+			// Declare quick actions 
+			Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
+			qa.addItem(favIcon,	"",	new OnClickListener(){
+				public void onClick(View view){
+					//set as favourite
+					DB db = d;
+//					db = db.modify().favourite(true).build();
+//					FileSystemConnector.getInstance(ImportLocalTab.this).editdb(db);//update db;
+//					alldbs.remove(d);
+//					alldbs.add(db);
+					Toast.makeText(ImportWebTab.this, db.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+					adapter.notifyDataSetChanged();//update list
+					qa.dismiss();
+				}
+			});
+
+			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
+				public void onClick(View view){
+					Intent showInMap = new Intent(ImportWebTab.this, MapsActivity.class);
+					ArrayList<DB> selectedDBs = new ArrayList<DB>();
+					selectedDBs.add(d);
+//					showInMap.putParcelableArrayListExtra(IntentPassable.DBLIST, selectedDBs);
+					startActivity(showInMap);
+					qa.dismiss();
+				}
+			});
+
+			qa.addItem(directIcon, "Get directions", new OnClickListener(){
+				public void onClick(View view){
+					//Latitude and longitude for current position
+					double slon = userLocation.getLongitude();
+					double slat = userLocation.getLatitude();
+					//Latitude and longitude for selected DB
+//					double dlon = d.getGeoDBnt().getLongitudeE6()/1E6;
+//					double dlat = d.getGeoDBnt().getLatitudeE6()/1E6;
+
+					Intent navigate = new Intent(ImportWebTab.this, NavigateFrom.class);
+					navigate.putExtra("slon", slon);
+					navigate.putExtra("slat", slat);
+//					navigate.putExtra("dlon", dlon);
+//					navigate.putExtra("dlat", dlat);
+					startActivity(navigate);
+
+					qa.dismiss();
+				}
+			});
+
+			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
+				public void onClick(View view){
+					new FileSystemConnector().deleteDB(d);
+					updateSections();
+					((SeparatedListAdapter)par.getAdapter()).notifyDataSetChanged();
+					qa.dismiss();
+				}
+			});
+			qa.show();
+			return true;
+		}//onItemLongClick
+	}//DrawPopup
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(resultCode==Activity.RESULT_CANCELED){
+			return;
+		}
+	}//onActivityResult
+
+	/*** Initializes the GPS of the phone.*/
+	void initGPS(){
+		// Acquire a reference to the system Location Manager
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		onLocationChanged(lastKnownLocation);
+
+		// Register the listener with the Location Manager to receive location updates
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+	}//initGPS, why here??
+
+	@Override
+	public void onLocationChanged(Location location) {
+		this.userLocation = location;
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		Toast.makeText(this, "Waiting for GPS lock", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+
+	}
+
+	/**
+	 * Handles click events in the filter dialog.
+	 */
+	@Override
+	public void onClick( DialogInterface dialog, int which, boolean isChecked ){
+		@SuppressWarnings("unchecked")
+		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
+		cat.add(0, "Favourites");
+	}
+
+	/**
+	 * Handles the buttons in the filter dialog. 
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onClick(DialogInterface dialog, int which){
+		//add selection to settings:
+		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		//editor.putBoolean("key", value);
+
+		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
+		cat.add(0, "Favourites");
+
+		for (String title : cat){
+			//preferences:
+			ArrayList<DB> list = new ArrayList<DB>();
+
+			for (DB db : allDBs){
+				if (title.equals("Favourites") ){ //add to favorite section
+					list.add(db);
+				}else if(db.getCategory().equals(title)){
+					list.add(db);
+				}
+			}//for DBs
+			DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
+			adapter.addSection(title, testAdapter);
+		}//for categoryFolders
+
+		// Commit the edits!
+		editor.commit();
+
+		lv.setAdapter(adapter);
+	}//onClick
+
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+}//ImportLocalTab
