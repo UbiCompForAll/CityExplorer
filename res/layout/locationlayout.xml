@@ -8,7 +8,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
-		android:text="Latitude E" />
+		android:text="Latitude" />
 	
 	<TextView
 		android:id="@+id/map_name"
@@ -16,7 +16,7 @@
 		android:layout_height="66dp"
 		android:layout_alignParentTop="true"
 		android:layout_centerHorizontal="true"
-		android:text="Here" />
+		android:text="Move and Zoom" />
 
 	<TextView
 	     android:id="@+id/map_lng"
@@ -24,7 +24,7 @@
 	     android:layout_height="36dp"
 	     android:layout_alignParentRight="true"
 	     android:layout_alignParentTop="true"
-	     android:text="Longitude N" />
+	     android:text="Longitude" />
 	
 	<!--
         Obtain Your Own Debug Google Map API key from here: Or use our debug-key from Git

@@ -75,11 +75,10 @@ public class DatabaseUpdater
 		
 		String[] poidata;
 		
-		try
-		{
+		try{
 			updateServerURL = new URL(urlAddress+"pois.ce");
 			
-			InputStream is = updateServerURL.openStream();
+			InputStream is = updateServerURL.openStream(); 
 			BufferedReader in = new BufferedReader(new InputStreamReader(is));
 			
 			String line;

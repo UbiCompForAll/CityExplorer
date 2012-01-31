@@ -11,9 +11,9 @@
 		<item android:id="@+id/planMenuFilter" android:icon="@android:drawable/ic_menu_agenda"
 			android:title="@string/activity_plan_menu_filter" />
 
-		<item android:id="@+id/planMenuUpdatePois" android:icon="@android:drawable/ic_menu_rotate"
+<!-- 		<item android:id="@+id/planMenuUpdatePois" android:icon="@android:drawable/ic_menu_rotate"
 			android:title="@string/activity_plan_menu_updatepois" />
-			
+ -->			
 			<item android:id="@+id/planMenuAddPois" android:icon="@android:drawable/ic_menu_add"
 			android:title="@string/activity_plan_menu_addpois" />
 

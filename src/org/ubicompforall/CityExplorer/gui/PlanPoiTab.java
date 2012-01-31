@@ -289,14 +289,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		{	
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
-			menu.removeItem(R.id.planMenuUpdatePois);
+			//menu.removeItem(R.id.planMenuUpdatePois);
 			menu.removeItem(R.id.planMenuAddPois);
 		}
 		else if (requestCode == SHARE_POI)
 		{	
 			menu.removeItem(R.id.planMenuAddPois);
 			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuUpdatePois);
+			//menu.removeItem(R.id.planMenuUpdatePois);
 		}
 		else if(requestCode == DOWNLOAD_POI){
 			menu.removeItem(R.id.planMenuAddPois);
@@ -307,7 +307,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		else if(requestCode == PlanTripTab.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
-			menu.removeItem(R.id.planMenuUpdatePois);
+			//menu.removeItem(R.id.planMenuUpdatePois);
 		}
 		else
 		{
@@ -363,23 +363,23 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			alert.show();
 		}
 
-		if(item.getItemId() == R.id.planMenuUpdatePois)
-		{
-			if(requestCode == DOWNLOAD_POI){
-				if (downloadedPois==null){
-					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					int[] res = du.storePois(downloadedPois);
-					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-				}
-				finish();
-			}else {				
-				Intent downloadPoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
-				downloadPoi.putExtra("requestCode", DOWNLOAD_POI);
-				startActivityForResult(downloadPoi, DOWNLOAD_POI);
-			}
-		}
+//		if(item.getItemId() == R.id.planMenuUpdatePois)
+//		{
+//			if(requestCode == DOWNLOAD_POI){
+//				if (downloadedPois==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					int[] res = du.storePois(downloadedPois);
+//					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
+//				}
+//				finish();
+//			}else {				
+//				Intent downloadPoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
+//				downloadPoi.putExtra("requestCode", DOWNLOAD_POI);
+//				startActivityForResult(downloadPoi, DOWNLOAD_POI);
+//			}
+//		}
 
 		if(item.getItemId() == R.id.planMenuSharePois)
 		{
@@ -622,7 +622,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			});
 
 			// 6: 
-			qa.addItem(addToTripIcon, "Add Locations", new OnClickListener(){
+			qa.addItem(addToTripIcon, R.string.activity_plan_menu_addpois, new OnClickListener(){
 
 				public void onClick(View view){
 					poi = p;

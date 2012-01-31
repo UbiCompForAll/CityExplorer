@@ -19,7 +19,8 @@
 Using standard ones is likely to save us a lot of trouble, but I cant find 
 any static strings associated with maps -->
 <string name="activity_triplist_menu_delete">Delete</string><string name="action_mapview_poi">.map.PoiMapAcitivity</string>
-<string name="activity_triplist_menu_showOnMap">Show on Map</string><string name="activity_triplist_menu_addPoi">Add Location</string>
+<string name="activity_triplist_menu_showOnMap">Show on Map</string>
+<string name="activity_triplist_menu_addPoi">Add Location</string>
 <string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
 <string name="activity_triplist_menu_calendar">Time Table for Tour</string>
 <string name="activity_plan_menu_addpois">Add to Tour</string>
@@ -70,7 +71,10 @@ any static strings associated with maps -->
 <string name="savePoi">Save</string>
 <string name="saveCalendar">Save Times</string>
 
-<string name="setlocation">SET LOCATION</string><string name="settings">SETTINGS</string><string name="summary">SUMMARY</string><string name="sqlitemimetype">application/octet-stream</string><string name="telephoneLabel">Telephone:</string><string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
+<string name="setlocation">SET LOCATION</string><string name="settings">SETTINGS</string><string name="summary">SUMMARY</string>
+<string name="sqlitemimetype">application/octet-stream</string>
+<string name="telephoneLabel">Telephone:</string>
+<string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
 
 <string name="zipLabel">Zip:</string>
 

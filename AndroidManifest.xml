@@ -26,18 +26,20 @@
 				<data android:mimeType="text/plain" />
 			</intent-filter>
 		</activity>
+
 		<activity android:name=".data.ImportDB" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter android:label="@string/opensqlite" android:icon="@drawable/icon">
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="@string/sqlitemimetype" />
+				<data android:mimeType="@string/sqlitemimetype" />	
 				
-<!-- 				<category android:name="android.intent.category.BROWSABLE" />
+<!-- 			<category android:name="android.intent.category.BROWSABLE" />
 				<data android:scheme="file" android:mimeType="*/*" android:pathPattern=".*\\.sqlite" />
  -->
  		</intent-filter>
 		</activity>
-		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:name=".gui.CalendarActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+
+		    		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:name=".gui.CalendarActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name=".gui.CalendarActivity" />
 				<category android:name="android.intent.category.DEFAULT" />

@@ -43,6 +43,7 @@ import org.ubicompforall.CityExplorer.data.TripAdapter;
 import org.ubicompforall.CityExplorer.gui.TripListActivity;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
@@ -254,8 +255,13 @@ public class PlanTripTab extends PlanActivityTab{
 		return true;
 	}
 
+	private void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
+		debug(0, "here" );
 		super.onCreateOptionsMenu(menu);
 		menu.setGroupVisible(R.id.planMenuGroupPoi, false);
 		return true;
