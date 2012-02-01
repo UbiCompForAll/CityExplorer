@@ -154,7 +154,7 @@ public class ImportLocalTab extends ListActivity implements LocationListener, On
 		if (categoryFolders == null){
 			debug(0, "categoryFolders NOT FOUND!" );
 		}else{
-			categoryFolders.add( getFilesDir().getPath() );
+			//categoryFolders.add( getFilesDir().getPath() ); // Testing RS-120201
 			for ( String path : categoryFolders ){
 				File dir = new File(path);
 				File[] files = dir.listFiles();

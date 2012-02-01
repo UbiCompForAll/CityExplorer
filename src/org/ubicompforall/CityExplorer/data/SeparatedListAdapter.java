@@ -105,23 +105,21 @@ public class SeparatedListAdapter extends BaseAdapter {
 		if(sectionNames.contains(section))
 			return;
 		
-		if(section.equalsIgnoreCase("Favourites"))
-		{
+		if(section.equalsIgnoreCase("Favourites")){
 			favouriteSection = new Section("Favourites", adapter);
-			this.sections.add(favouriteSection); 
+			sections.add(favouriteSection); 
+		}else{
+			sections.add(new Section(section, adapter));
 		}
-		else
-			this.sections.add(new Section(section, adapter)); 
 		
 		Collections.sort(sections);
 		sectionNames.add(section);
 		
-		if(sectionNames.contains("Favourites"))
-		{
+		if(sectionNames.contains("Favourites")){
 			sections.remove(favouriteSection);//take out
-			this.sections.add(0, favouriteSection);//put inn at the top of the list.
+			sections.add(0, favouriteSection);//put inn at the top of the list.
 		}
-	}  
+	} // addSection
 	
 	/**
 	 * Removes a section from the adapter.

@@ -72,11 +72,13 @@ public class ImportActivity extends TabActivity {
 		TabHost.TabSpec spec;  // Reusable TabSpec for each tab
 		Intent intent;  // Reusable Intent for each tab
 
+		// TAB 1 Intent
 		intent = new Intent().setClass(this, ImportLocalTab.class);
 		spec = tabHost.newTabSpec("local").setIndicator("LOCAL", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, ImportWebTab_old.class);
+		// TAB 2 Intent
+		intent = new Intent().setClass(this, ImportWebTab.class);
 		spec = tabHost.newTabSpec("web").setIndicator("WEB", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 
