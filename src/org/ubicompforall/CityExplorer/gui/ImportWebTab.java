@@ -31,8 +31,20 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 //import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
 import org.ubicompforall.CityExplorer.data.DB;
@@ -41,18 +53,15 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.webkit.WebView;
 
-public class ImportWebTab extends Activity{ // implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
-
-	/** Field containing the String of the category settings, used in shared preferences. */
-	private static String CATEGORY_SETTINGS = "catset";
+public class ImportWebTab extends Activity implements OnTouchListener{ // LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
 	/*** Field containing all DBs.*/
 	//private ArrayList<Poi> allPois = new ArrayList<Poi>();
@@ -73,6 +82,8 @@ public class ImportWebTab extends Activity{ // implements LocationListener, OnMu
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
 
+	private boolean loaded=false;
+
 	/*** Field containing a single DB.*/
 	//private POI poi;
 	//private DB db;
@@ -89,7 +100,7 @@ public class ImportWebTab extends Activity{ // implements LocationListener, OnMu
 	} // onCreate
 
 	
-	private void debug( int level, String message ) {
+	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 
@@ -104,8 +115,9 @@ public class ImportWebTab extends Activity{ // implements LocationListener, OnMu
 		if (webview == null){ 
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
-		    webview.getSettings().setJavaScriptEnabled(true);
-			webview.loadUrl("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
+		    //webview.getSettings().setJavaScriptEnabled(true);
+			webview.loadData("Click to load online databases from web<BR>", "text/hml", "utf-8");
+			webview.setOnTouchListener(this);
 		}
 
 //		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
@@ -119,6 +131,54 @@ public class ImportWebTab extends Activity{ // implements LocationListener, OnMu
 
 		//initGPS(); //For maps?
 	}//init
+
+	public static String extractDBs(String text){
+		String BASE_URL = "http://www.sintef.no";
+		StringBuffer linkTerms = new StringBuffer(); //E.g. "(End-user Development)|(EUD)"
+		// Find all the a href's
+		Matcher m = Pattern.compile("<a href=\"([^>]+(sqlite|db|db3))\">([^<]+)</a>", Pattern.CASE_INSENSITIVE).matcher(text);
+		while (m.find()) {
+			linkTerms.append( "<A HREF=\"" + BASE_URL + m.group(1)+ "\">"+m.group(3)+"</A><BR>\n" ); // group 0 is everything
+		}
+		return linkTerms.toString();
+	}//extractDBs
+
+	
+	public boolean onTouch(View v, MotionEvent event) {
+		String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
+		if ( ! loaded ){
+			loaded=true;
+			String responseString;
+			debug(0, "how touching ;-)");
+			HttpClient httpclient = new DefaultHttpClient();
+		    HttpResponse response;
+			try {
+				response = httpclient.execute(new HttpGet(URL));
+			    StatusLine statusLine = response.getStatusLine();
+			    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+			        ByteArrayOutputStream out = new ByteArrayOutputStream();
+			        response.getEntity().writeTo(out);
+			        out.close();
+			        responseString = out.toString();
+			        //..more logic
+					String linkTerms = extractDBs( responseString );
+					//debug(1, "found "+linkTerms.size()+", extracted is "+linkTerms );
+					webview.loadData(linkTerms, "text/hml", "utf-8" );
+			    } else{
+			        //Closes the connection.
+			        response.getEntity().getContent().close();
+			        throw new IOException(statusLine.getReasonPhrase());
+			    }
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
+	} // onTouch (for smooth init)
 
 	private ArrayList<DB> getAllDBs() {
 		if (categoryFolders == null){
@@ -206,156 +266,15 @@ public class ImportWebTab extends Activity{ // implements LocationListener, OnMu
 	public boolean onCreateOptionsMenu(Menu menu){
 		super.onCreateOptionsMenu(menu);
 		menu.setGroupVisible(R.id.planMenuGroupTrip, false);
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
-
-//		if(item.getItemId() == R.id.planMenuNewDB){
-//			Intent newDB = new Intent(ImportLocalTab.this, NewDBActivity.class);
-//			startActivity(newDB);
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuFilter)
-//		{
-//			categoryFolders = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
-//			Collections.sort(categoryFolders);
-//
-//			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-//			alert.setTitle("Filter");
-//			ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-//			cat.add(0, "Favourites");
-//
-//
-//			boolean[] CheckedCat = new boolean[cat.size()];
-//			for (String c : cat)
-//			{
-//				if(CheckedcategoryFolders.get(c) == null)
-//				{
-//					CheckedcategoryFolders.put(c, true);
-//				}
-//				CheckedCat[cat.indexOf(c)] = CheckedcategoryFolders.get(c);
-//			}
-//
-//			String[] array = new String[cat.size()];
-//			cat.toArray(array);
-//			alert.setMultiChoiceItems(array, CheckedCat, this);
-//			alert.setPositiveButton("OK", this);
-//			alert.create();
-//			alert.show();
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuUpdateDBs)
-//		{
-//			if(requestCode == DOWNLOAD_DB){
-//				if (downloadedDBs==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					int[] res = du.storeDBs(downloadedDBs);
-//					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-//				}
-//				finish();
-//			}else {				
-//				Intent downloadDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
-//				downloadDB.putExtra("requestCode", DOWNLOAD_DB);
-//				startActivityForResult(downloadDB, DOWNLOAD_DB);
-//			}
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuShareDBs)
-//		{
-//			if(requestCode == SHARE_DB){
-//				if (shareDBs==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					Sharing.send(this, shareDBs);
-//					shareDBs = null;
-//				}
-//				finish();
-//			}else {
-//				Intent shareDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
-//				shareDB.putExtra("requestCode", SHARE_DB);
-//				startActivityForResult(shareDB, SHARE_DB);
-//			}
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuAddDBs)
-//		{
-//			if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
-//				if (selectedDBs==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					for (DB p : selectedDBs) {
-//						trip.addDB(p);
-//						FileSystemConnector.getInstance(this).addDBToTrip(trip, p);						
-//					}
-//					Toast.makeText(this, selectedDBs.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
-//					selectedDBs = null;
-//				}
-//				Intent resultIntent = new Intent();
-//				resultIntent.putExtra(IntentPassable.TRIP, trip);
-//				setResult( Activity.RESULT_OK, resultIntent );
-//				finish();
-//			}
-//		}
-
-		return true;
+		return false;
 	} // onOptionsItemSelected( MenuItem )
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		if(resultCode==Activity.RESULT_CANCELED){
-			return;
-		}
-	}//onActivityResult
-
-	/**
-	 * Handles click events in the filter dialog.
-	 */
-	public void onClick( DialogInterface dialog, int which, boolean isChecked ){
-		@SuppressWarnings("unchecked")
-		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-		cat.add(0, "Favourites");
-	}
-
-	/**
-	 * Handles the buttons in the filter dialog. 
-	 */
-	@SuppressWarnings("unchecked")
-	public void onClick(DialogInterface dialog, int which){
-		//add selection to settings:
-		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		//editor.putBoolean("key", value);
-
-		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-		cat.add(0, "Favourites");
-
-		for (String title : cat){
-			//preferences:
-			ArrayList<DB> list = new ArrayList<DB>();
-
-			for (DB db : allDBs){
-				if (title.equals("Favourites") ){ //add to favorite section
-					list.add(db);
-				}else if(db.getCategory().equals(title)){
-					list.add(db);
-				}
-			}//for DBs
-			//DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
-			//adapter.addSection(title, testAdapter);
-		}//for categoryFolders
-
-		// Commit the edits!
-		editor.commit();
-
-		//lv.setAdapter(adapter);
-	}//onClick
 
 	public Context getContext() {
 		return context;
@@ -364,4 +283,7 @@ public class ImportWebTab extends Activity{ // implements LocationListener, OnMu
 	public void setContext(Context context) {
 		this.context = context;
 	}
+
+
+
 }//ImportLocalTab
