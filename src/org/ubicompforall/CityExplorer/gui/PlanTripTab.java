@@ -325,8 +325,20 @@ public class PlanTripTab extends PlanActivityTab{
 			Drawable	deleteIcon	= res.getDrawable(android.R.drawable.ic_menu_delete);
 
 
-			// declare quick actions 
-			qa.addItem(addPoiIcon, "Add to Tour", new OnClickListener(){
+			// Declare quick actions 
+
+			// 1: Show on Map
+			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
+				public void onClick(View view){
+					Intent showInMap = new Intent(PlanTripTab.this, MapsActivity.class);
+					showInMap.putExtra(IntentPassable.TRIP, t);
+					startActivity(showInMap);
+					qa.dismiss();
+				}
+			});
+
+			// 2: Add Location
+			qa.addItem(addPoiIcon, R.string.activity_triplist_menu_addPoi, new OnClickListener(){
 				public void onClick(View view)
 				{
 					
@@ -338,16 +350,8 @@ public class PlanTripTab extends PlanActivityTab{
 					qa.dismiss();
 				}
 			});
-			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
-				public void onClick(View view){
-					Intent showInMap = new Intent(PlanTripTab.this, MapsActivity.class);
-					showInMap.putExtra(IntentPassable.TRIP, t);
-					startActivity(showInMap);
-					qa.dismiss();
-				}
-			});
 
-
+			// 3: Deletes
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
 				public void onClick(View view){	
 					((TripAdapter)adapter.getAdapter(idx)).remove(t);

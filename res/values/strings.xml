@@ -19,13 +19,13 @@
 Using standard ones is likely to save us a lot of trouble, but I cant find 
 any static strings associated with maps -->
 <string name="activity_triplist_menu_delete">Delete</string><string name="action_mapview_poi">.map.PoiMapAcitivity</string>
-<string name="activity_triplist_menu_showOnMap">Show on Map</string>
+<string name="activity_plan_menu_updatetrips">Update Tours</string><string name="activity_triplist_menu_showOnMap">Show on Map</string>
 <string name="activity_triplist_menu_addPoi">Add Location</string>
 <string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
-<string name="activity_triplist_menu_calendar">Time Table for Tour</string>
-<string name="activity_plan_menu_addpois">Add to Tour</string>
-<string name="activity_plan_menu_updatepois">Update Locations</string>
-<string name="activity_plan_menu_updatetrips">Update Tours</string>
+<string name="activity_plan_menu_updatepois">Update Locations</string><string name="activity_plan_menu_addpois">Add to Tour</string><string name="activity_triplist_menu_calendar">Time Table for Tour</string>
+
+
+
     
 <!-- constants -->
 <string name="app_name">City Explorer</string><string name="action_plan">.gui.ActivityPlan</string><string name="constant_provider_authority">.provider.database</string>
