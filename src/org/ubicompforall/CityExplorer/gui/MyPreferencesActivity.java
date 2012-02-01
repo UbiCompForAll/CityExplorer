@@ -182,7 +182,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			// if location was clicked
 			
 		}else if ( v.getId() == R.id.pref_db ){ 
-			debug(0, "view clicked was set DB_PATH automaticall" );
+			debug(0, "view clicked was set DB_PATH automatically" );
 			
 		}// Switch on different key-press events
 	} //onClick

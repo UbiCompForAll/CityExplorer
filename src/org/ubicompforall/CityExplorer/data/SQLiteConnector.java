@@ -997,7 +997,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		debug(0, "poi-count is "+poiCount );
 		//JF: ZIP code removed
-		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file, and reopen
+		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen
 			debug(0, "close myDataBase, before re-open");
 			myDataBase.close();
 			try{
