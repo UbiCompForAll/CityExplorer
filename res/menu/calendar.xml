@@ -6,4 +6,7 @@
 	<item android:id="@+id/clearCalendar" 
 		android:icon="@android:drawable/ic_menu_close_clear_cancel"
 		android:title="@string/clearCalendar" />
+
+	<item android:id="@+id/composePOIs" 
+		android:title="@string/composeUbiServices" />
 </menu>

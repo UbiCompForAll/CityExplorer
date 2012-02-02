@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import org.ubicompforall.CityExplorer.data.*;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
@@ -119,7 +120,14 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.triplist);
 		init();
+		debug(0, "THis activity!" );
 	}
+
+	
+	private void debug(int i, String string) {
+		CityExplorer.debug(i, string);
+	}
+
 
 	/**
 	 * Initializes the activity.
@@ -162,7 +170,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 
 		return true;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 

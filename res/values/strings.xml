@@ -22,8 +22,11 @@ any static strings associated with maps -->
 <string name="activity_plan_menu_updatetrips">Update Tours</string><string name="activity_triplist_menu_showOnMap">Show on Map</string>
 <string name="activity_triplist_menu_addPoi">Add Location</string>
 <string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
-<string name="activity_plan_menu_updatepois">Update Locations</string><string name="activity_plan_menu_addpois">Add to Tour</string><string name="activity_triplist_menu_calendar">Time Table for Tour</string>
-
+<string name="activity_plan_menu_updatepois">Update Locations</string>
+<string name="activity_plan_menu_addpois">Add to Tour</string>
+<string name="activity_triplist_menu_calendar">Time Table for Tour</string>
+<string name="composeUbiServices">compose UbiServices</string>
+    
 
 
     

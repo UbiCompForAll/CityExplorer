@@ -33,6 +33,7 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
@@ -45,6 +46,7 @@ import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -77,6 +79,8 @@ public class CalendarActivity extends Activity {
     ArrayList<ViewDayHourItem> hourViews = new ArrayList<ViewDayHourItem>();
     boolean calendarIsEmpty = true;
 	
+    boolean wantToGoBack = false;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -110,6 +114,12 @@ public class CalendarActivity extends Activity {
 		}
 	}
 	
+
+	private void debug(int i, String string) {
+		CityExplorer.debug(i, string);
+	}
+
+
 	private void addPoisWithTime()
 	{
 		if(trip.getFixedTimes() == null)
@@ -172,9 +182,11 @@ public class CalendarActivity extends Activity {
 		
 		poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, poiList);
 	}
-	
-	private void addViews()
-	{
+
+	/***
+	 * Add the calendar view
+	 */
+	private void addViews(){
 		for (int ihour = 0; ihour < 24; ihour++) 
 		{
 			ViewDayHourItem view = new ViewDayHourItem(this, ihour, iTextHeight);
@@ -185,6 +197,29 @@ public class CalendarActivity extends Activity {
 		}
 	}
 	
+	@Override
+	public void onBackPressed() {
+		// do something on back.
+		if (wantToGoBack){
+			super.onBackPressed();
+		}else{
+			Toast.makeText( this, "Save your times in Menu first! Press back again to go back", Toast.LENGTH_LONG).show();
+			wantToGoBack = true;
+			debug(0, "back pressed!" );
+		}
+		return;
+	} //onBackPressed
+
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+//	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//			Toast.makeText( context, "Don't you want to save your times!?!", Toast.LENGTH_LONG).show();
+//			debug(0, "back pressed!" );
+//	        return true;
+//	    }
+//	    return super.onKeyDown(keyCode, event);
+//	} // onKeyDown
+
 	//appointment click listener
 	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick()
 	{
@@ -422,7 +457,7 @@ public class CalendarActivity extends Activity {
 		if(itemID == R.id.clearCalendar)
 		{
 			ll.removeAllViews();
-			addViews();
+			addViews(); //Add the calendar view
 			poiAdapter.clear();
 			preparePoiList();
 			
@@ -430,8 +465,27 @@ public class CalendarActivity extends Activity {
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 		}
 		
+		if(itemID == R.id.composePOIs){
+			ll.removeAllViews();
+			//poiAdapter.clear();
+			//preparePoiList();
+			//trip.clearTimes();
+			Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
+
+			String url = "http://129.241.200.195/UbiComposer";
+			
+			Intent intent = new Intent(Intent.ACTION_MAIN, null);
+			intent.addCategory(Intent.CATEGORY_LAUNCHER);
+			intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+			intent.setAction("org.mozilla.gecko.BOOKMARK");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra("args", "--url=" + url);
+			intent.setData(Uri.parse(url));
+
+			startActivity(intent);
+		}// if Compose UbiServices
 		return true;
-	}
+	} // onOptionsItemSelected
 
 	public OnClickListener ocl = new OnClickListener() {
 		
