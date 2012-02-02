@@ -8,5 +8,5 @@
 		android:title="@string/clearCalendar" />
 
 	<item android:id="@+id/composePOIs" 
-		android:title="@string/composeUbiServices" />
+		android:title="@string/composeUbiServices" android:icon="@drawable/compose"/>
 </menu>
