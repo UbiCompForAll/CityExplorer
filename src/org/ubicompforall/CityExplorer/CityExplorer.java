@@ -80,8 +80,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
         PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
 
         //Local debug (stacktrace level = 3)
-        StackTraceElement st = Thread.currentThread().getStackTrace()[2];
-		Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Start CityExplorer.java" );
+        //StackTraceElement st = Thread.currentThread().getStackTrace()[2];
+		//Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Start CityExplorer.java" );
+        debug(0, "Start CityExplorer.java" );
 
 		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ? When?
 		// And what about DB-loading?  Here? ...
@@ -98,17 +99,21 @@ public class CityExplorer extends Application{ // implements LocationListener //
     }//onTerminate
 
 
-    
-    /***
+    /*
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
-	public static void debug(int level, String message) {
-		if (DEBUG >= level) {
-			StackTraceElement st = Thread.currentThread().getStackTrace()[4];
-			//Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+message );
-			Log.d(C, st.getMethodName()+'~'+message+" at ("+st.getFileName()+":"+st.getLineNumber()+")" );
-		} // if verbosity is high enough
+	public static void debug(int d, String msg) {
+		if (DEBUG >= d) {
+			StackTraceElement[] st = Thread.currentThread().getStackTrace();
+			int stackLevel = 2;
+			while ( st[stackLevel].getMethodName().equals("debug") ){
+				stackLevel++;
+			}
+			StackTraceElement e = st[stackLevel];
+			Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+		}
 	} // debug
+
 
 
     public static boolean isConnected( Context context ) {

@@ -56,12 +56,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
+//import android.view.View.OnTouchListener;
 import android.webkit.WebView;
 
-public class ImportWebTab extends Activity implements OnTouchListener{ // LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
+public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
 	/*** Field containing all DBs.*/
 	//private ArrayList<Poi> allPois = new ArrayList<Poi>();
@@ -116,9 +114,11 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
 		    //webview.getSettings().setJavaScriptEnabled(true);
-			webview.loadData("Click to load online databases from web<BR>", "text/hml", "utf-8");
-			webview.setOnTouchListener(this);
-		}
+			//webview.loadData("Click to load online databases from web<BR>", "text/hml", "utf-8");
+			//webview.setOnTouchListener(this);
+			
+			this.setupWebDBs( webview );
+		}// if webView found
 
 //		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
 
@@ -144,7 +144,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	}//extractDBs
 
 	
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean setupWebDBs(WebView webview) {
 		String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
 		if ( ! loaded ){
 			loaded=true;
@@ -178,7 +178,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 			}
 		}
 		return false;
-	} // onTouch (for smooth init)
+	} // setupDBs (called from init / from onCreate... Too slow?)
 
 	private ArrayList<DB> getAllDBs() {
 		if (categoryFolders == null){

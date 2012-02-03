@@ -242,17 +242,15 @@ public class CalendarActivity extends Activity {
 			    	String tripPoiName = ((!trip.isFreeTrip()) ? s.substring(s.indexOf(" ")):s);
 			    	
 			    	Poi poi = null;
-			    	for (Poi p : trip.getPois()) 
-			    	{
+			    	for (Poi p : trip.getPois()){
 						if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
 					}
 			    	tripPoiIndex = trip.getPois().indexOf(poi);
-			    	
-			    	
+
 			    	//Add walking time:
 			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false)
 			    		return;
-			    	
+
 			    	//Add poi calendar entry:
 			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
 					tv.setMinutes(time.GetMinutes());
