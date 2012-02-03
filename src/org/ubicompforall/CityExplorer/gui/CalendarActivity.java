@@ -221,10 +221,8 @@ public class CalendarActivity extends Activity {
 //	} // onKeyDown
 
 	//appointment click listener
-	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick()
-	{
-		public void OnClick(ViewDayHourItem item)
-		{
+	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick(){
+		public void OnClick(ViewDayHourItem item){
 			//System.out.println("you clicked "+item.GetHour()+item.GetMinutes());
 			
 			//create poi picker:
@@ -235,9 +233,7 @@ public class CalendarActivity extends Activity {
 			builder.setTitle("Pick a PoI");
 			
 			builder.setAdapter(poiAdapter, new DialogInterface.OnClickListener() {
-			    public void onClick(DialogInterface dialog, int poiIndex) {
-			    	
-			    	
+			    public void onClick(DialogInterface dialog, int poiIndex) {	
 			    	//find the poi:
 			    	int tripPoiIndex = 0;
 			    	String s = poiAdapter.getItem(poiIndex);
@@ -272,52 +268,44 @@ public class CalendarActivity extends Activity {
 					calendarIsEmpty = false;
 					alert.hide();
 					poiAdapter.remove(poiAdapter.getItem(poiIndex));
-			    }
-			});
+			    } // onClick
+			}); // new OnclickListener class
 			
 			alert = builder.create();
 
 			alert.show();
-			
 		}
-	};
+	}; //OnNewApptItemClick: OnItemClick class
 	
-	private void setTripTime(Poi poi, Time time)
-	{
+	private void setTripTime(Poi poi, Time time){
 		trip.setTime(poi, time);
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @param tripPoiIndex
 	 * @param time
 	 * @param poi
 	 * @return success
 	 */
-	private boolean addWalkingTime(int tripPoiIndex, ViewDayHourItem time,int minutes, Poi poi)
-	{
+	private boolean addWalkingTime(int tripPoiIndex, ViewDayHourItem time,int minutes, Poi poi){
 		//find the previous poi entry
 		poiTextView ptvBeforeOrNull = findPoiViewBefore(trip, hourViews, time);
 		poiTextView ptvAfterOrNull  = findPoiViewAfter(trip, hourViews, time);
 		
-		if((tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip()))//no travel to the first POI
-    	{
+		if((tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip())){ //no travel to the first POI
     		
-    		if(ptvAfterOrNull != null)//there is another poi in the calendar after this one.
-    		{
+    		if(ptvAfterOrNull != null){ //there is another poi in the calendar after this one.
     			Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in cronological order.", Toast.LENGTH_LONG).show();
     			return false;
     		}
     		
-    		if(!trip.isFreeTrip())
-    		{
-    			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) )
-    			{
+    		if(!trip.isFreeTrip()){
+    			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) ){
     				Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in numerical order.", Toast.LENGTH_LONG).show();
     				return false;
-    			}
-    		}
+    			}// if empty, or bad order
+    		}// if FixedTour
+    		
     		Poi prevPoi = ptvBeforeOrNull.getPoi();
     		int prevHour = ptvBeforeOrNull.getHourItem().GetHour();
     		int prevMinutes	= ptvBeforeOrNull.getMinutes();
@@ -327,14 +315,12 @@ public class CalendarActivity extends Activity {
     		
     		//find the correct hour to insert the walk entry.
     		int numbHoursBack = 0;
-    		if(minutes-timeNeededInMin < 0)//more than 1 hours travel time.
-    		{
+    		if(minutes-timeNeededInMin < 0){ //more than 1 hours travel time.
     			numbHoursBack = (int) Math.floor(((-1*(minutes-timeNeededInMin)+60)/60));
     		}
     		
     		//add walking entry:
-			if(hourViews.indexOf(time) > numbHoursBack-1)//not if it is before the first hour
-			{
+			if(hourViews.indexOf(time) > numbHoursBack-1){	//not if it is before the first hour
 				ViewDayHourItem Hour = hourViews.get(hourViews.indexOf(time)-numbHoursBack);
 				
 				//check if the entry is before the prev poi. abort if it is.
@@ -353,18 +339,13 @@ public class CalendarActivity extends Activity {
 				tv.setOnClickListener(ocl);
 				tv.setAsWalkingEntry(true);
 				Hour.addView(tv);
-				Hour.UpdateHeight();
-				
-				
-			}
-    		
-    	}
-		
+				Hour.UpdateHeight();	
+			} // if hour > hoursBack-1
+    	} // addWalkingTime
 		return true;
-	}
+	} // addWalkingTime
 	
-	private poiTextView findPoiViewBefore(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView)
-	{
+	private poiTextView findPoiViewBefore(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
 		//XXX
 		
 		//find the poi before this one.
@@ -383,8 +364,7 @@ public class CalendarActivity extends Activity {
 		return null;
 	}
 	
-	private poiTextView findPoiViewAfter(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView)
-	{
+	private poiTextView findPoiViewAfter(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
 		//XXX
 		
 		//find the poi after this one.
@@ -403,8 +383,7 @@ public class CalendarActivity extends Activity {
 		return null;
 	}
 	
-	private double getDistance(Poi startPoi, Poi endPoi)
-	{
+	private double getDistance(Poi startPoi, Poi endPoi){
 		double dist = 0;
 		
 		/*if we are offline, use straight line to calculate distance: 
@@ -434,12 +413,10 @@ public class CalendarActivity extends Activity {
 	}
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) 
-	{
+	public boolean onOptionsItemSelected(MenuItem item){
 		int itemID = item.getItemId();
 		
-		if(itemID == R.id.saveCalendar)
-		{
+		if(itemID == R.id.saveCalendar){
 			if(trip.getFixedTimes().keySet().containsAll(trip.getPois()))
 			{
 				//done
@@ -448,14 +425,12 @@ public class CalendarActivity extends Activity {
 				resultIntent.putExtra(IntentPassable.TRIP, trip);
 				setResult( Activity.RESULT_OK, resultIntent );
 				finish();
-			}
-			else
-			{
+			}else{
 				Toast.makeText(this, "All locations are not added", Toast.LENGTH_LONG).show();
 			}
-		}
-		if(itemID == R.id.clearCalendar)
-		{
+		} // saveCalendar
+
+		if(itemID == R.id.clearCalendar){
 			ll.removeAllViews();
 			addViews(); //Add the calendar view
 			poiAdapter.clear();
@@ -463,8 +438,8 @@ public class CalendarActivity extends Activity {
 			
 			trip.clearTimes();
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
-		}
-		
+		} //clearCalendar
+
 		if(itemID == R.id.composePOIs){
 			ll.removeAllViews();
 			//poiAdapter.clear();
@@ -472,7 +447,8 @@ public class CalendarActivity extends Activity {
 			//trip.clearTimes();
 			Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
 
-			String url = "http://129.241.200.195/UbiComposer";
+			
+			String url = "http://129.241.200.195:8080/UbiComposer"; // make json
 			
 			Intent intent = new Intent(Intent.ACTION_MAIN, null);
 			intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -484,6 +460,7 @@ public class CalendarActivity extends Activity {
 
 			startActivity(intent);
 		}// if Compose UbiServices
+
 		return true;
 	} // onOptionsItemSelected
 
@@ -491,7 +468,7 @@ public class CalendarActivity extends Activity {
 		
 		@Override
 		public void onClick(View v){
-			//super.onClick(v); This doesn't work, tells me "OnClickListener" is actually "Object" ?!
+			//super.onClick(v); This doesn't work, tells me "OnClickListener" is actually "Object" ?! RS-111220
 			/*The problem was actually that Project -> Settings -> Java -> Compiler was set to 1.7 (too high for android!)
 			and the project-specific -> Configure -> was set to 1.5 (too LOW to Override Interfaces (only classes)!
 			*/ 
@@ -517,4 +494,5 @@ public class CalendarActivity extends Activity {
 			}//if poiTV
 		}//onclick
 	};
-}
+} //class CalendarActivity
+
