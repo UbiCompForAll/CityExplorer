@@ -87,7 +87,9 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 			mapController  = mapView.getController();
 			mapView.setBuiltInZoomControls(true);
 			mapController.setZoom(15);
-			mapController.animateTo( new GeoPoint(CityExplorer.TRONDHEIM_LAT, CityExplorer.TRONDHEIM_LNG) );
+
+			int [] lat_lng = MyPreferencesActivity.getLatLng (this);
+			mapController.animateTo( new GeoPoint(lat_lng [0], lat_lng [1]) );
 		}
 		listOfOverlays.clear();
 		listOfOverlays.add(mapOverlay);

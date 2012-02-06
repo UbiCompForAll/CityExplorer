@@ -56,16 +56,19 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	public static final int DEBUG = 1;
     public static final String C = "CityExplorer";
-	public static final String GENERAL_SETTINGS = "SETTINGS";
 
-	// DEFAULT GEO-POINT for first map view
+	// Constant keys for GENERAL SETTINS
+	public static final String GENERAL_SETTINGS = "SETTINGS";
+    public static final String URL = "Url";
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
-	public static final int TRONDHEIM_LAT = 63430396;  // Trondheim Torvet 63°25′49″N ;
-	public static final int TRONDHEIM_LNG = 10395041;  //Trondheim Torvet 10°23′42″E ;
-	public static final String URL = "Url";
-//	public static final String RUNE_URL 		JF: moved to @string/default_url
-//	 = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
+
+	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng
+//	public static final int TRONDHEIM_LAT = 63430396;  // Trondheim Torvet 63°25′49″N ;
+//	public static final int TRONDHEIM_LNG = 10395041;  //Trondheim Torvet 10°23′42″E ;
+
+//  Default URL moved to @string/default_url
+//	public static final String RUNE_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
 
 	public static final int TYPE_ALL = 0;
 	public static final int TYPE_FREE = 1;
