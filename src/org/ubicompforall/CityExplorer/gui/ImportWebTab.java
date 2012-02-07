@@ -110,11 +110,11 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 	private void init() {
 		//setContext(this);
 		webview = (WebView) findViewById(R.id.webview);
-		if (webview == null){ 
+		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
 		    //webview.getSettings().setJavaScriptEnabled(true);
-			//webview.loadData("Click to load online databases from web<BR>", "text/hml", "utf-8");
+			//webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
 			//webview.setOnTouchListener(this);
 			
 			this.setupWebDBs( webview );
