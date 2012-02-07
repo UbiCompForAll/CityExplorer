@@ -108,7 +108,6 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		@Override
 		public boolean onTouchEvent(MotionEvent e, MapView mapView){
 			if (e.getAction() == MotionEvent.ACTION_UP ){
-				//GeoPoint p = mapView.getProjection().fromPixels(
 			    GeoPoint p = mapView.getMapCenter();
 				SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 				Editor editor = settings.edit();
@@ -116,7 +115,8 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 				editor.putInt( CityExplorer.LNG, p.getLongitudeE6() );
 				editor.commit();
 				debug(0, "committed: lat=" + Integer.toString( p.getLatitudeE6() ) + ", lng="+ Integer.toString( p.getLongitudeE6() ) );
-			    //Update screen with new coordinates
+
+				//Update screen with new coordinates
 				TextView tv = (TextView) findViewById(R.id.map_lat);
 				tv.setText( Integer.toString( p.getLatitudeE6() ) );
 				tv = (TextView) findViewById(R.id.map_lng);

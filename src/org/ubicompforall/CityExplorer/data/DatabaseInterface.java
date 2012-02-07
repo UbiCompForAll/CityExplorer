@@ -55,7 +55,7 @@ public interface DatabaseInterface{
 	
 
 	/*** Interface method for closing the database connection.*/
-	public void 	close();
+	public void close();
 
 
 	/**
@@ -94,7 +94,7 @@ public interface DatabaseInterface{
 	public ArrayList<Poi> getAllPois(String category); 
 	
 	/**
-	 * Interface method for fetching favourite PoI's from the database.
+	 * Interface method for fetching favorite PoI's from the database.
 	 * @param favourite Status for PoIs to be fetched.
 	 * @return ArrayList containing PoIs from database.
 	 */

@@ -75,7 +75,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
 
-	private boolean loaded=false;
+	private boolean loaded = false;	// Flag to make sure setupWebDB is only done once
 
 	/*** Field containing a single DB.*/
 	//private POI poi;
@@ -112,7 +112,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 			//webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
 			//webview.setOnTouchListener(this);
 			
-			this.setupWebDBs( webview );
+			setupWebDBs( webview );
 		}// if webView found
 
 //		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
@@ -144,7 +144,6 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 		if ( ! loaded ){
 			loaded=true;
 			String responseString;
-			debug(0, "how touching ;-)");
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 			try {
@@ -155,23 +154,21 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 			        response.getEntity().writeTo(out);
 			        out.close();
 			        responseString = out.toString();
-			        //..more logic
+
 					String linkTerms = extractDBs( responseString );
 					//debug(1, "found "+linkTerms.size()+", extracted is "+linkTerms );
 					webview.loadData(linkTerms, "text/hml", "utf-8" );
 			    } else{
 			        //Closes the connection.
 			        response.getEntity().getContent().close();
-			        throw new IOException(statusLine.getReasonPhrase());
+			        throw new IOException( statusLine.getReasonPhrase() );
 			    }
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-		}
+			} // try downloading db's from the Web, catch exceptions
+		} // if not already loaded once before
 		return false;
 	} // setupDBs (called from init / from onCreate... Too slow?)
 

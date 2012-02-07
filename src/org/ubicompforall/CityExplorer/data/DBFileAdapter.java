@@ -80,12 +80,12 @@ public class DBFileAdapter extends ArrayAdapter<DB> {
 	 * Replace all DBs in the list of DBs.
 	 * @param dbs The DBs.
 	 */
-	public void replaceAll(ArrayList<DB> dbs){
+	public void replaceAll( ArrayList<DB> dbs ){
 		items.clear();
 		if (items == null){
 			debug(0, "DBFileAdapter~81: OOooppss!!... items==null");
-		}else if(dbs == null){
-			debug(0, "DBFileAdapter~81: OOooppss!!... dbs==null");
+		}else if( dbs == null ){
+			debug(0, "DBFileAdapter~81: OOooppss!!... NO DBs (== null)");
 		}else{
 			items.addAll(dbs);
 		}

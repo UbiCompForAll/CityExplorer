@@ -33,14 +33,11 @@ package org.ubicompforall.CityExplorer.data;
 
 import android.content.Context;
 
-public class DBFactory
-{
-	
+public class DBFactory{
 	/**
 	 * The Enum DBType.
 	 */
-	public enum DBType
-	{
+	public enum DBType{
 		SQLITE;
 	}
 	
@@ -59,11 +56,10 @@ public class DBFactory
 	public static DatabaseInterface getInstance(Context context){
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
-				//dbConnectorInstance = new SQLiteConnector2(context);
 				dbConnectorInstance = new SQLiteConnector(context);
-			}
+			} // if right type
 			dbConnectorInstance.open();
-		}
+		} // if DB not already open
 		dbConnectorInstance.setContext(context);
 		return dbConnectorInstance;
 	}//getInstance

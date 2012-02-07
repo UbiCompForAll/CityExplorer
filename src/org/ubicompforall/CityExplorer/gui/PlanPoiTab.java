@@ -737,8 +737,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		ArrayList<String> cat = (ArrayList<String>) categories.clone();
 		cat.add(0, "Favourites");
 
-		for (String title : cat)
-		{
+		for (String title : cat){
 			boolean isChecked = CheckedCategories.get(title);
 
 			//preferences:
@@ -747,18 +746,13 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			if( !isChecked){
 				if(adapter.getSectionNames().contains(title))
 					adapter.removeSection(title);
-			}
-			else {
+			} else {
 				ArrayList<Poi> list = new ArrayList<Poi>();
 
-				for (Poi poi : allPois)
-				{
-					if(title.equals("Favourites") && poi.isFavourite())//add to favourite section
-					{
+				for (Poi poi : allPois){
+					if( title.equals("Favourites") && poi.isFavourite() ){ //add to favourite section
 						list.add(poi);
-					}
-					else if(poi.getCategory().equals(title))
-					{
+					}else if(poi.getCategory().equals(title)){
 						list.add(poi);
 					}
 				}
@@ -767,12 +761,11 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 				if(title.equals("Favourites"))
 					favouriteList = list;
-			}
-		}
+			} // if checked, include
+		} // for each category
 
 		// Commit the edits!
 		editor.commit();
-
 		lv.setAdapter(adapter);
-	}
-}
+	} // onClick ( in filter dialog)
+} // class PlanPoiTab

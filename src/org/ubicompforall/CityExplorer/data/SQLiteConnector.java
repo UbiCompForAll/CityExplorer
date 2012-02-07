@@ -67,7 +67,7 @@ import android.widget.Toast;
 public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
 
-	// private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/";
+	// private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android default value for DBs
 	private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
 
 	/** The Constant DB_NAME, which is our database name. */
@@ -114,7 +114,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 *
 	 * @param context The context
 	 */
-	public SQLiteConnector(Context context) {
+	public SQLiteConnector( Context context ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
 		super(context, DB_NAME, null, 2);
 		this.myContext = context;
 		debug(0, myPath+" starting up");

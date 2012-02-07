@@ -249,7 +249,7 @@ public class SeparatedListAdapter extends BaseAdapter {
   
     @Override  
     public View getView(int position, View convertView, ViewGroup parent) {
-    	//debug(0, "position is "+position );
+    	//debug(0, "position is "+position+", converView is "+convertView );
         int sectionnum = 0;  
         for (Section section : this.sections) {
         	Adapter adapter = section.getAdapter();  
@@ -281,16 +281,18 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 */
 	private View getHeaderView(String caption, int index, View convertView,	ViewGroup parent) {
 		debug(0, "Caption is "+caption );
-		TextView result=(TextView)convertView;
+		TextView result = null;
 
-		if (convertView==null) {
-			result=(TextView)ctx.getLayoutInflater().inflate(R.layout.header,null);
+		if ( convertView != null && convertView.getClass() == TextView.class ){
+			result = (TextView) convertView;
+		}else{
+			result = (TextView) ctx.getLayoutInflater().inflate(R.layout.header,null);
 		}
 
 		result.setText(caption);
 
-		return(result);
-	}
+		return result;
+	} // getHeaderView
 	
 	@Override
 	public void notifyDataSetChanged() {
@@ -298,10 +300,10 @@ public class SeparatedListAdapter extends BaseAdapter {
 			DatabaseInterface db = DBFactory.getInstance(ctx);
 			for (Section s : sections){
 	    		if(s.getCaption().equalsIgnoreCase("Favourites")){
-	    			((PoiAdapter)favouriteSection.getAdapter()).replaceAll(db.getAllPois(true));
+	    			((PoiAdapter)favouriteSection.getAdapter()).replaceAll( db.getAllPois(true) );
 	    			s = favouriteSection;
 	    		}else{
-	    			((PoiAdapter)s.getAdapter()).replaceAll(db.getAllPois(s.getCaption()));
+	    			((PoiAdapter)s.getAdapter()).replaceAll( db.getAllPois(s.getCaption()) );
 				}
 			}
 		}else if(listType == TRIP_LIST){
@@ -311,7 +313,6 @@ public class SeparatedListAdapter extends BaseAdapter {
 		
 			ArrayList<Trip> freeList = db.getTripsWithPOIs( CityExplorer.TYPE_FREE );
 			ArrayList<Trip> fixedList = db.getTripsWithPOIs( CityExplorer.TYPE_FIXED );
-			//ArrayList<Trip> emptyTripList = db.getTrips( CityExplorer.TYPE_ALL );
 			
 			TripAdapter freeAdapter, fixedAdapter;//, emptyTripAdapter;
 			if(freeList.size() > 0){					
@@ -326,24 +327,22 @@ public class SeparatedListAdapter extends BaseAdapter {
 				fixedAdapter.notifyDataSetChanged();
 			}
 	
-			//Make the empty trip list
-//			if(emptyTripList.size() > 0){			
-//				emptyTripAdapter = new TripAdapter(ctx, R.layout.plan_listitem, emptyTripList);
-//				addSection("Empty Tours", emptyTripAdapter);
-//				emptyTripAdapter.notifyDataSetChanged();
-//			}
 		}else if(listType == INTERNET_POIS){
 			debug(0, "Missing INTERNET_POIS Adapter?");
 		}else if(listType == INTERNET_TRIPS){
 			debug(0, "Missing INTERNET_TRIPS Adaptar?");
+
 		}else if(listType == LOCAL_DBS){
-			//DatabaseInterface db = DBFactory.getInstance(ctx);
-			FileSystemInterface fs = new FileSystemConnector();
+			//DatabaseInterface db = DBFactory.getInstance( ctx );	// SQLiteConnector.java
+			FileSystemInterface fs = new FileSystemConnector( ctx );// ctx is Activity-Context
 			for (Section s : sections){
-	   			((DBFileAdapter)s.getAdapter()).replaceAll(fs.getAllDBs(s.getCaption()));
+				String caption = s.getCaption();
+				debug(0, "caption is "+caption );
+	   			((DBFileAdapter)s.getAdapter()).replaceAll( fs.getAllDBs( caption ) );
 			}//for sections
 		}//switch on listType
 	
 		super.notifyDataSetChanged();
 	}//notifyDataSetChanged
 }//SeparatedListAdapter
+

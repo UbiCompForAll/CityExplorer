@@ -120,8 +120,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 
 
 	private void initDbUrl() {
-		String url = getDbPath ( this );
-		url_edit.setText( url );
+		url_edit.setText( getDbPath (this) );
 	} // initDbUrl
 
 	public static int [] getLatLng (Context context ){
@@ -140,18 +139,16 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		editor.putInt( CityExplorer.LAT, lat);
 		editor.putInt( CityExplorer.LNG, lng);
 		editor.commit();
-		int [] lat_lng = {lat, lng};	// {63430396, 10395041 };
+		int[] lat_lng = {lat, lng};	// {63430396, 10395041 };
 
 		return lat_lng;
-	} // getDbPath
+	} // getLatLng
 
 
 	private void initLocation() {
 		
 		//Write default lat/lng location
-//		int lat = settings.getInt( CityExplorer.LAT, CityExplorer.TRONDHEIM_LAT );
-//		int lng = settings.getInt( CityExplorer.LNG, CityExplorer.TRONDHEIM_LNG );
-		int [] lat_lng = getLatLng (this);
+		int[] lat_lng = getLatLng (this);
 
 		debug(2, "lat is "+lat_lng [0]+", lng is "+ lat_lng [1] );
 		String address = getAddress( lat_lng [0], lat_lng [1], this );
