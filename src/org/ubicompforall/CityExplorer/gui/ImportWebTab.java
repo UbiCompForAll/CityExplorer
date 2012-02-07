@@ -32,9 +32,7 @@
 package org.ubicompforall.CityExplorer.gui;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,9 +43,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.ubicompforall.CityExplorer.data.FileSystemConnector;
-//import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
-import org.ubicompforall.CityExplorer.data.DB;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
@@ -63,7 +58,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 
 	/*** Field containing all DBs.*/
 	//private ArrayList<Poi> allPois = new ArrayList<Poi>();
-	private ArrayList<DB> allDBs = new ArrayList<DB>();
+	// private ArrayList<DB> allDBs = new ArrayList<DB>();
 
 	/*** Field containing the {@link SeparatedListAdapter} that holds all the other adapters.*/
 	//private SeparatedListAdapter adapter;
@@ -72,7 +67,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 	private WebView webview;
 
 	/*** Field containing an {@link ArrayList} of the categoryFolders.*/
-	private ArrayList<String> categoryFolders;
+	// private ArrayList<String> categoryFolders;
 
 	/*** Field containing this activity's context.*/
 	private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
@@ -122,7 +117,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 
 //		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
 
-		allDBs = getAllDBs();
+//		allDBs = getAllDBs();
 
 		getResources();
 
@@ -180,7 +175,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 		return false;
 	} // setupDBs (called from init / from onCreate... Too slow?)
 
-	private ArrayList<DB> getAllDBs() {
+/**	private ArrayList<DB> getAllDBs() {
 		if (categoryFolders == null){
 			debug(0, "categoryFolders NOT FOUND!" );
 		}else{
@@ -200,7 +195,8 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 		} // if not null-pointer
 		return allDBs;
 	}//getAllDBs
-
+**/
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -225,7 +221,6 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 
 	/**
 	 * Updates the category sections in the list, e.g. after choosing filtering.
-	 */
 	@SuppressWarnings("unused")
 	private void updateSections(){
 		allDBs = new FileSystemConnector().getAllDBs();
@@ -247,6 +242,7 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 //		}//for sections
 		//lv.setAdapter(adapter);
 	}//updateSections
+	 */
 
 
 	@Override

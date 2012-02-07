@@ -48,7 +48,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -64,15 +63,6 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	 */
 	protected static final Button[] STARTBUTTONS = new Button[3];
 	protected static final int[] 	STARTBUTTON_IDS = new int[]{R.id.startButton1, R.id.startButton2, R.id.startButton3};
-
-	private static final String GENERAL_SETTINGS = CityExplorer.GENERAL_SETTINGS;
-
-	// DEFAULT GEO-POINT for first map view
-	private static final String LAT = CityExplorer.LAT;
-	private static final String LNG = CityExplorer.LNG;
-	private static final int TRONDHEIM_LAT = CityExplorer.TRONDHEIM_LAT;	//63°25′36″N ;
-	private static final int TRONDHEIM_LNG = CityExplorer.TRONDHEIM_LNG;	//10°23′48″E ;
-
 
 	/**
 	 * The user's current location.
@@ -124,13 +114,17 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	@Override
 	public void onClick(View v) {
 		debug(0, "Clicked: "+v );
-		if (v.getId() == R.id.startButton1){
+		if (v.getId() == R.id.startButton1){  // Button PLAN TOUR
+						
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
-		}else if (v.getId() == R.id.startButton2){
+		}else if (v.getId() == R.id.startButton2){ // Button EXPLORE CITY MAP
 			exploreCity();
 
-		}else if (v.getId() == R.id.startButton3){
+		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
+
+			MyPreferencesActivity.getDbPath(this);
+
 			Intent locationActivity = new Intent(StartActivity.this, SettingsActivity.class);
 			locationActivity.putParcelableArrayListExtra(IntentPassable.POILIST, new ArrayList<Poi>() );
 			startActivity( locationActivity );
@@ -158,11 +152,10 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		if( userLocation == null){
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 			debug(0, "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
-			SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0 );
-			int lat = settings.getInt( LAT, TRONDHEIM_LAT );
-			int lng = settings.getInt( LNG, TRONDHEIM_LNG );
-			userLocation.setLatitude(lat);	// Store current latitude location
-			userLocation.setLongitude(lng);	// Store current longitude location
+			
+			int[] lat_lng = MyPreferencesActivity.getLatLng (this);
+			userLocation.setLatitude(lat_lng [0]);	// Store current latitude location
+			userLocation.setLongitude(lat_lng [1]);	// Store current longitude location
 		}//userLocation == null, Check out GPS setting in CityExplorer.java
 
 		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);

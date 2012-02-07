@@ -56,7 +56,7 @@ import android.widget.TextView;
 public class MyPreferencesActivity extends Activity implements OnClickListener{ //Based on ImportActivity
 
 	//Activity fields
-	static SharedPreferences settings;	// common settings for all the activities in the whole application
+	SharedPreferences settings;	// common settings for all the activities in the whole application
 	Editor editor;	// Editor for changing the shared preferences
 	private EditText url_edit;
 	
@@ -65,10 +65,12 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		super.onCreate( savedInstanceState );
 		debug(0, "create");
 
+
 		setContentView( R.layout.preferencesview );
 
 		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		editor = settings.edit();	// Remember to commit changes->onPause etc.
+
 		url_edit = (EditText) findViewById( R.id.pref_url );
 
 		init();
@@ -96,14 +98,15 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	} //debug
 
 	
-	public static String getDbPath( SharedPreferences settings ){
-		if (settings==null){
-			debug(0, "Where is settings?" );
-			return null;
-		}else{
-			return "Smile, it will be done!";   //JF: 12.01.25 (25 Januar 2012)
-//			return settings.getString( CityExplorer.URL, CityExplorer.RUNE_URL );
-		}
+	public static String getDbPath (Context context ){
+		//add DB URL to settings - if not yet set
+		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		String url_db = settings.getString ( CityExplorer.URL, context.getResources().getString(R.string.default_url) );		
+		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			
+		editor.putString(CityExplorer.URL, url_db);
+		editor.commit();
+
+		return url_db;
 	} // getDbPath
 
 	/**
@@ -117,17 +120,40 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 
 
 	private void initDbUrl() {
-		String url = getDbPath( settings );
+		String url = getDbPath ( this );
 		url_edit.setText( url );
 	} // initDbUrl
 
+	public static int [] getLatLng (Context context ){
+		//add Lat and Lng to settings - if not yet set
+		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		
+/** Fails to work!!!
+		String lat = settings.getString (CityExplorer.LAT, context.getResources().getString (R.string.default_lat));
+		String lng = settings.getString (CityExplorer.LNG, context.getResources().getString (R.string.default_lng));
+
+		SharedPreferences.Editor editor = settings.edit();	// Make sure lat and lng are correctly set			
+		editor.putString (CityExplorer.LAT, lat);
+		editor.putString (CityExplorer.LNG, lng);
+		editor.commit();
+**/		
+//		int [] lat_lng = {lat, lng};
+		int [] lat_lng = {63430396, 10395041 };
+	
+		return lat_lng;
+	} // getDbPath
+
 
 	private void initLocation() {
+		
 		//Write default lat/lng location
-		int lat = settings.getInt( CityExplorer.LAT, CityExplorer.TRONDHEIM_LAT );
-		int lng = settings.getInt( CityExplorer.LNG, CityExplorer.TRONDHEIM_LNG );
-		debug(2, "lat is "+lat+", lng is "+lng );
-		String address = getAddress( lat, lng, this );
+//		int lat = settings.getInt( CityExplorer.LAT, CityExplorer.TRONDHEIM_LAT );
+//		int lng = settings.getInt( CityExplorer.LNG, CityExplorer.TRONDHEIM_LNG );
+		int [] lat_lng = getLatLng (this);
+
+		debug(2, "lat is "+lat_lng [0]+", lng is "+ lat_lng [1] );
+		String address = getAddress( lat_lng [0], lat_lng [1], this );
+
 		
 		//Print prefs, and register click-listener(this)
 		TableLayout tl = (TableLayout) findViewById(R.id.pref_location);
@@ -137,13 +163,13 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		TextView tv = (TextView) findViewById(R.id.pref_lat);
 		if (tv==null){	debug(0, "where is tv?" );
 		}else{
-			tv.setText( Integer.toString( lat )+" (Click to change)" );
+			tv.setText( Long.toString( lat_lng [0] )+" (Click to change)" );
 		}
 		//Longitude
 		tv = (TextView) findViewById(R.id.pref_lng);
 		if (tv==null){	debug(0, "where is tv?" );
 		}else{
-			tv.setText( Integer.toString(lng)+" (Click to change)" );
+			tv.setText( Long.toString(lat_lng [1])+" (Click to change)" );
 		}
 		//Place-name
 		tv = (TextView) findViewById(R.id.pref_loc);
@@ -152,6 +178,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			tv.setText( address );
 		}
 	} // initLocation
+
 
 	/***
 	 * Get address for a given lat/lng pair

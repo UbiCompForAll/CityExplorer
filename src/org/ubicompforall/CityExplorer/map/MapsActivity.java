@@ -39,6 +39,7 @@ import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.Trip;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 import org.ubicompforall.CityExplorer.gui.NavigateFrom;
 import org.ubicompforall.CityExplorer.gui.PoiDetailsActivity;
 import org.ubicompforall.CityExplorer.gui.QuickActionPopup;
@@ -54,7 +55,6 @@ import com.google.android.maps.Overlay;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -73,14 +73,6 @@ import android.widget.Toast;
  */
 public class MapsActivity extends MapActivity implements LocationListener, OnClickListener{
 	
-	private static final String GENERAL_SETTINGS = CityExplorer.GENERAL_SETTINGS;
-
-	// DEFAULT GEO-POINT for first map view
-	private static final String LAT = CityExplorer.LAT;
-	private static final String LNG = CityExplorer.LNG;
-	private static final int TRONDHEIM_LAT = CityExplorer.TRONDHEIM_LAT;	//63°25′36″N ;
-	private static final int TRONDHEIM_LNG = CityExplorer.TRONDHEIM_LNG;	//10°23′48″E ;
-
 	/** The map view. */
 	private MapView mapView;
 	
@@ -206,10 +198,9 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
 			}else{
 				debug(0, "Could NOT find the POI overlays!!!" );
-				SharedPreferences settings = getSharedPreferences( GENERAL_SETTINGS, 0);
-				int lat = settings.getInt( LAT, TRONDHEIM_LAT );
-				int lng = settings.getInt( LNG, TRONDHEIM_LNG );
-				mapController.animateTo( new GeoPoint( lat, lng ));//go to current location
+				int[] lat_lng = MyPreferencesActivity.getLatLng (this);
+				mapController.animateTo( new GeoPoint(lat_lng [0], lat_lng [1]) );
+
 			} // valid POIs, get position and pan to it
 		}//if (Intent.hasExtra(POILIST)
 	}//drawOverlays
