@@ -41,7 +41,7 @@ any static strings associated with maps -->
 <string name="chooseTrip">Choose Tour</string>
 <string name="choosePoi">Choose Location</string>
 <string name="default_values">Default Values</string>
-<string name="default_location">SET DEFAULT LOCATION</string><string name="default_lat">63430396</string><string name="default_lng">10395041</string><string name="default_url">http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/</string>
+<string name="default_location">SET DEFAULT LOCATION</string><string name="default_url">http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/</string>
 <string name="descriptionLabel">Description:</string>
 <string name="editfromexistingPoiLabel">Use existing Location</string>
     <!-- as template</string -->

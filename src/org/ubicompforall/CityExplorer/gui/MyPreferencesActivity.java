@@ -128,18 +128,20 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		//add Lat and Lng to settings - if not yet set
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		
-/** Fails to work!!!
-		String lat = settings.getString (CityExplorer.LAT, context.getResources().getString (R.string.default_lat));
-		String lng = settings.getString (CityExplorer.LNG, context.getResources().getString (R.string.default_lng));
+		//Get defaults from integers.xml
+		Integer lat = context.getResources().getInteger( R.integer.default_lat );
+		Integer lng = context.getResources().getInteger( R.integer.default_lng );
+
+		//Get stored values if existing
+		lat = settings.getInt( CityExplorer.LAT, lat );
+		lng = settings.getInt( CityExplorer.LNG, lng );
 
 		SharedPreferences.Editor editor = settings.edit();	// Make sure lat and lng are correctly set			
-		editor.putString (CityExplorer.LAT, lat);
-		editor.putString (CityExplorer.LNG, lng);
+		editor.putInt( CityExplorer.LAT, lat);
+		editor.putInt( CityExplorer.LNG, lng);
 		editor.commit();
-**/		
-//		int [] lat_lng = {lat, lng};
-		int [] lat_lng = {63430396, 10395041 };
-	
+		int [] lat_lng = {lat, lng};	// {63430396, 10395041 };
+
 		return lat_lng;
 	} // getDbPath
 
@@ -191,11 +193,14 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		try {
 			Geocoder geocoder = new Geocoder( context, Locale.getDefault());
 			List<Address> addresses = geocoder.getFromLocation(lat/1E6, lng/1E6, 1);
-			if ( addresses.size() > 0 ){
-				address = addresses.get(0).getSubAdminArea()+" - "+addresses.get(0).getAdminArea();
+			if ( addresses.size() > 0 && addresses.get(0).getSubAdminArea() != null ){
+				address += addresses.get(0).getSubAdminArea() + " - ";
+			}
+			if ( addresses.size() > 0 && addresses.get(0).getAdminArea() != null ){
+				address += addresses.get(0).getAdminArea();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			debug(0, "What's wrong with lat="+lat+", lng="+lng+", error is "+ e.getLocalizedMessage() );
 		}
 		return address;
 	} // getAddress

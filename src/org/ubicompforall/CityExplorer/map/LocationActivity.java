@@ -54,7 +54,6 @@ import android.widget.TextView;
  * The Class MapsActivity.
  */
 public class LocationActivity extends MapActivity{ // implements LocationListener{
-
 	//GLOBAL CONSTANTS
 	//private static final int DEBUG = CityExplorer.DEBUG;
 
@@ -75,24 +74,26 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.locationlayout);
 
-		final MapView mapView = (com.google.android.maps.MapView) findViewById(R.id.location2_mapview);
-		MapOverlay mapOverlay = new MapOverlay();
+		final MapView mapView = (com.google.android.maps.MapView) findViewById(R.id.location_mapview);
 
 		List<Overlay> listOfOverlays = new ArrayList<Overlay>();
 		if (mapView==null){
 			debug(0, "Where's mapview?" );
 		}else{
+			mapView.setBuiltInZoomControls(true);
+
 			listOfOverlays = mapView.getOverlays();
 
 			mapController  = mapView.getController();
-			mapView.setBuiltInZoomControls(true);
 			mapController.setZoom(15);
 
-			int [] lat_lng = MyPreferencesActivity.getLatLng (this);
-			mapController.animateTo( new GeoPoint(lat_lng [0], lat_lng [1]) );
+			int[] lat_lng = MyPreferencesActivity.getLatLng (this);
+			mapController.animateTo( new GeoPoint( lat_lng[0], lat_lng[1] ) );
 		}
 		listOfOverlays.clear();
-		listOfOverlays.add(mapOverlay);
+		listOfOverlays.add( new MapOverlay() );
+
+		//drawOverlays(); // From MapsActivity. Just put the first 50 POIs for example
 	} // onCreate
 
 	@Override
@@ -107,15 +108,14 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		@Override
 		public boolean onTouchEvent(MotionEvent e, MapView mapView){
 			if (e.getAction() == MotionEvent.ACTION_UP ){
-			    GeoPoint p = mapView.getProjection().fromPixels(
-			        (int) e.getX(),
-			        (int) e.getY());
+				//GeoPoint p = mapView.getProjection().fromPixels(
+			    GeoPoint p = mapView.getMapCenter();
 				SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 				Editor editor = settings.edit();
 				editor.putInt( CityExplorer.LAT, p.getLatitudeE6() );
 				editor.putInt( CityExplorer.LNG, p.getLongitudeE6() );
 				editor.commit();
-				debug(0, "committed:" + Integer.toString( p.getLatitudeE6() ) + Integer.toString( p.getLongitudeE6() ) );
+				debug(0, "committed: lat=" + Integer.toString( p.getLatitudeE6() ) + ", lng="+ Integer.toString( p.getLongitudeE6() ) );
 			    //Update screen with new coordinates
 				TextView tv = (TextView) findViewById(R.id.map_lat);
 				tv.setText( Integer.toString( p.getLatitudeE6() ) );

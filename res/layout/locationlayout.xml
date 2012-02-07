@@ -27,7 +27,7 @@
 	     android:text="Longitude" />
 	
 	<!--
-        Obtain Your Own Debug Google Map API key from here: Or use our debug-key from Git
+        Obtain Your Own Debug Google Map API key from here. Or BETTER: use our debug-key from Git
 		http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html
 		 android:apiKey="
 		 Student's Key: 	0d9SnKDjhS2k2TB5Xy2atUls_-I2xJdkafe8DLA
@@ -38,7 +38,7 @@
     -->
 
     <com.google.android.maps.MapView
-        android:id="@+id/location2_mapview"
+        android:id="@+id/location_mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="18dp"

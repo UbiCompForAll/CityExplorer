@@ -109,7 +109,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		if (DEBUG >= d) {
 			StackTraceElement[] st = Thread.currentThread().getStackTrace();
 			int stackLevel = 2;
-			while ( st[stackLevel].getMethodName().equals("debug") ){
+			while ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().equals("access$0") ){
 				stackLevel++;
 			}
 			StackTraceElement e = st[stackLevel];

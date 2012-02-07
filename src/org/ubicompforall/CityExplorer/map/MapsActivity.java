@@ -178,7 +178,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 			}
 		}//if (intent.hasExtra)
 		
-		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if pressent
+		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if present
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
 			//System.out.println(pois);
 			for (Parcelable parcelable : pois){
@@ -215,14 +215,14 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(lastKnownLocation);
+		onLocationChanged( lastKnownLocation );
 
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 	
 	/***
-	 * Make sure Wifi or Data connection is enabled
+	 * Make sure WiFi or Data connection is enabled
 	 */
 	void initWifi(){
 		boolean connected = CityExplorer.isConnected(this);

@@ -174,7 +174,9 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 			if ( userLocation != null  &&  userLocation.distanceTo(dest) <= 5000 ){
 				poiListNearBy.add(p);
-			} // if POIsNearBy
+			}else{ // if POIsNearBy
+				debug(0, "User location is "+userLocation );
+			}
 		}//for POIs
 		
 		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
