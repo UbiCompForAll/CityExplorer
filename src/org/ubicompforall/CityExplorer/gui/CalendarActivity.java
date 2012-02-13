@@ -46,7 +46,7 @@ import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -57,12 +57,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class CalendarActivity extends Activity {
+
+	/*** Field containing this activity's {@link WebView}.*/
+	private WebView webview;
 
 	Paint mpt = new Paint();
 	int iTextHeight = ViewDayHourItem.GetTextHeight(mpt);
@@ -84,7 +89,7 @@ public class CalendarActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.calendar);
+		setContentView(R.layout.calendar);
 
 		//trip = DBFactory.getInstance(this).getAllTrips(false).get(0);
 		trip = this.getIntent().getParcelableExtra("trip");
@@ -165,11 +170,10 @@ public class CalendarActivity extends Activity {
 				
 			}	
 		}
-	}
+	}//addPoisWithTime
 	
 	
-	private void preparePoiList()
-	{
+	private void preparePoiList(){
 		ArrayList<String> poiList = new ArrayList<String>();
 		
 		//pois have not been added.
@@ -347,10 +351,8 @@ public class CalendarActivity extends Activity {
 		//XXX
 		
 		//find the poi before this one.
-		for(int i = hourViews.indexOf(newView); i >= 0; i--)//start here and work backwards.
-		{
-			for (int j = hourViews.get(i).getPoiTextViews().size()-1; j >= 0; j--) 
-			{
+		for(int i = hourViews.indexOf(newView); i >= 0; i--){//start here and work backwards.
+			for (int j = hourViews.get(i).getPoiTextViews().size()-1; j >= 0; j--){
 				poiTextView tv = hourViews.get(i).getPoiTextViews().get(j);
 				if(tv.isWalkingEntry() || (hourViews.get(i).GetHour() == newView.GetHour() && tv.getMinutes()>newView.GetMinutes()))
 					continue;
@@ -360,7 +362,7 @@ public class CalendarActivity extends Activity {
 		}
 	
 		return null;
-	}
+	}//findPoiViewBefore
 	
 	private poiTextView findPoiViewAfter(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
 		//XXX
@@ -379,7 +381,7 @@ public class CalendarActivity extends Activity {
 			}
 		}
 		return null;
-	}
+	}//findPoiViewAfter
 	
 	private double getDistance(Poi startPoi, Poi endPoi){
 		double dist = 0;
@@ -399,8 +401,20 @@ public class CalendarActivity extends Activity {
 		dist = r.getDistance();
 		
 		return dist;
-	}
+	}//getDistance
 	
+	/***
+	 * Make sure WiFi or Data connection is enabled
+	 */
+	boolean initWifi(){
+		boolean connected = CityExplorer.isConnected(this);
+		if ( ! connected ){
+			CityExplorer.showNoConnectionDialog( this );
+			return false;
+		}
+		return true;
+	} //initWifi
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
 		menu.clear();
@@ -445,18 +459,52 @@ public class CalendarActivity extends Activity {
 			//trip.clearTimes();
 			Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
 
-			
 			String url = "http://129.241.200.195:8080/UbiComposer"; // make json
 			
-			Intent intent = new Intent(Intent.ACTION_MAIN, null);
-			intent.addCategory(Intent.CATEGORY_LAUNCHER);
-			intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-			intent.setAction("org.mozilla.gecko.BOOKMARK");
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.putExtra("args", "--url=" + url);
-			intent.setData(Uri.parse(url));
+// Testing how to launch a specific intent for the Firefox browser
+//			Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//			intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//			intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+//			intent.setAction("org.mozilla.gecko.BOOKMARK");
+//			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//			intent.putExtra("args", "--url=" + url);
+//			intent.setData(Uri.parse(url));
+//			startActivity(intent);
+			
+			setContentView(R.layout.weblayout);
+			webview = (WebView) findViewById(R.id.webview);
+			if (webview == null){
+				debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
+			}else{
+				webview.getSettings().setJavaScriptEnabled(true);
+				if ( initWifi() ){ //For downloading DBs
 
-			startActivity(intent);
+					webview.loadUrl(url);
+
+// Verifying that our Javascript Interface class "Android" works
+//					webview.loadData(""
+//							+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
+//							+"<script type=\"text/javascript\">"
+//							+"  function showAndroidToast(toast) {"
+//							+"		Android.showToast(toast);"
+//							+"	}"
+//							+"</script>"
+//
+//							+"Click a term in the list...", "text/hml", "utf-8");
+					webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
+					webview.setWebViewClient( new WebViewClient() );
+					webview.getSettings().setJavaScriptEnabled(true);
+					webview.getSettings().setBuiltInZoomControls(true);
+					
+					Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+					//OK...
+					//setupWebDBs( webview );
+				}else{
+					webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
+					//webview.setOnTouchListener(this);
+				}
+			}// if webView found
+			
 		}// if Compose UbiServices
 
 		return true;
@@ -492,5 +540,21 @@ public class CalendarActivity extends Activity {
 			}//if poiTV
 		}//onclick
 	};
+	
+	public class JavaScriptInterface {
+	    Context mContext;
+
+	    /** Instantiate the interface and set the context */
+	    public JavaScriptInterface(Context c) {
+	        mContext = c;
+	    }
+
+	    /** Show a toast from the web page */
+	    public void showToast(String toast) {
+	        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+	    }//showToast
+	}//class JavaScriptInterface
+
+
 } //class CalendarActivity
 

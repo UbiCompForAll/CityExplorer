@@ -193,6 +193,22 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		initGPS();
 	}//init()
 
+	/**
+	 * Initializes the GPS of the phone.
+	 */
+	void initGPS(){
+		// Acquire a reference to the system Location Manager
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		onLocationChanged(lastKnownLocation);
+
+		// Register the listener with the Location Manager to receive location updates
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+		userLocation = StartActivity.verifyUserLocation( userLocation, this );
+	}// initGPS
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -489,7 +505,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		details.putExtra(IntentPassable.POI, p);
 
 		startActivity(details);
-	}
+	}//onListItemClick
 
 	/**
 	 * Shows quick actions when the user long-presses an item.
@@ -648,8 +664,8 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 			qa.show();
 			return true;
-		}
-	}
+		}//onItemLongClick
+	}//class DrawPopup
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -670,23 +686,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		default:
 			break;
 		}
-
-	}
-
-	/**
-	 * Initializes the GPS of the phone.
-	 */
-	void initGPS()
-	{
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
+	}//onActivityResult
 
 	@Override
 	public void onLocationChanged(Location location) {

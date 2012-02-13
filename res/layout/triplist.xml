@@ -14,5 +14,5 @@
 		android:background="#EBF2FA" android:layout_below="@id/triplabel"/>
 	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:background="#EBF2FA"
-		android:text="No data" />
+		android:text="@string/add_from_menu" />
 </RelativeLayout>

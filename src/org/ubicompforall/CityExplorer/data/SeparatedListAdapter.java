@@ -338,7 +338,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 			for (Section s : sections){
 				String caption = s.getCaption();
 				debug(0, "caption is "+caption );
-	   			((DBFileAdapter)s.getAdapter()).replaceAll( fs.getAllDBs( caption ) );
+	   			((DBFileAdapter)s.getAdapter()).replaceAll( fs.findAllDBs( caption ) );
 			}//for sections
 		}//switch on listType
 	

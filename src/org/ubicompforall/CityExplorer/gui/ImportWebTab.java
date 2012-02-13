@@ -180,9 +180,9 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 			String responseString;
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
-		    for (String URL : webFolders){
+		    for (String webURL : webFolders){
 				try {
-					response = httpclient.execute( new HttpGet(URL) );
+					response = httpclient.execute( new HttpGet(webURL) );
 				    StatusLine statusLine = response.getStatusLine();
 				    if( statusLine.getStatusCode() == HttpStatus.SC_OK ){
 				        ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -190,7 +190,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 				        out.close();
 				        responseString = out.toString();
 	
-						String SERVER_URL = new URL(URL).getHost();
+						String SERVER_URL = "http://"+(new URL(webURL).getHost());
 						String linkTerms = extractDBs( responseString, SERVER_URL );
 						debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
 						webview.loadData(linkTerms, "text/hml", "utf-8" );
@@ -316,7 +316,13 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		setupWebDBs( webview );
+		if ( initWifi() ){ //For downloading DBs
+			//OK...
+			setupWebDBs( webview );
+		}else{
+			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
+			webview.setOnTouchListener(this);
+		}
 		return false;
 	}//On touch
 

@@ -12,5 +12,5 @@
 	<!-- TextView containing the "default" empty message... Overwritten by ListView later -->
 	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:background="#EBF2FA"
-		android:text="No data" />
+		android:text="@string/add_from_menu" />
 </RelativeLayout>

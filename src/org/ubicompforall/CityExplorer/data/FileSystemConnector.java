@@ -52,6 +52,7 @@ public class FileSystemConnector implements FileSystemInterface {
 	public FileSystemConnector( Context context ){
 		//INITIALIZE OWN FIELDS
 		dbPath  = context.getDatabasePath( SQLiteConnector.DB_NAME ).getParent();
+		debug(0, "dbPath is "+dbPath );
 		categoryFolders = new ArrayList<String>();
 		categoryFolders.add( dbPath );
 		Collections.sort(categoryFolders);
@@ -75,7 +76,7 @@ public class FileSystemConnector implements FileSystemInterface {
 			}else{
 				//categoryFolders.add( getFilesDir().getPath() ); // Testing RS-120201
 				for ( String path : categoryFolders ){
-					allDBs.addAll( getAllDBs(path) );
+					allDBs.addAll( findAllDBs(path) );
 				} // for each folder
 			} // if not null-pointer
 		}
@@ -83,7 +84,8 @@ public class FileSystemConnector implements FileSystemInterface {
 	}//getAllDBs
 
 	@Override
-	public ArrayList<DB> getAllDBs( String category ) {
+	public ArrayList<DB> findAllDBs( String category ) {
+		ArrayList<DB> foundDBs = new ArrayList<DB>();
 		File dir = new File( category );
 		File[] files = dir.listFiles();
 		if (files == null){
@@ -91,10 +93,16 @@ public class FileSystemConnector implements FileSystemInterface {
 		}else{
 			for ( int f=0; f<files.length ; f++ ){
 				File file = files[f];
-				allDBs.add( new DB( file.getName(), dir.getName() ) );
+//Just cleaning up after an old Bug ;-)
+				if ( file.getName().matches( ".*webview(Cache)?.db" ) ){
+					file.delete();
+				}else{
+					debug(0, "Keep "+file );
+				}
+				foundDBs.add( new DB( file.getName(), dir.getName() ) );
 			}// for each file
 		}// if not null-pointer path->files
-		return allDBs;
+		return foundDBs;
 	}// getAllDBs( category )
 
 	@Override

@@ -302,8 +302,9 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 			poi = poi.modify().favourite(true).build();
 			DBFactory.getInstance(this).editPoi(poi);
 			return true;
-
-		}if(itemID==dirID){
+		}
+		if(itemID==dirID){
+			userLocation = StartActivity.verifyUserLocation( userLocation, this );
 
 			//Latitude and longitude for current position
 			double slon = userLocation.getLongitude();
@@ -320,7 +321,8 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 			startActivity(navigate);
 
 			return true;
-		}if(itemID==mapID){
+		}
+		if(itemID==mapID){
 			Intent showInMap = new Intent(PoiDetailsActivity.this, MapsActivity.class);
 			ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 			selectedPois.add(poi);
@@ -330,7 +332,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 			return true;
 		}
 		return true;
-	}
+	}//onOptionsItemSelected
 
 	/**
 	 * Method containing GPS initialization.

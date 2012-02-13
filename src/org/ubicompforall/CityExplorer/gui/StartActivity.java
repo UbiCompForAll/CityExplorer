@@ -79,7 +79,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		//Init userLocation
-		userLocation = new Location("");
+		userLocation = verifyUserLocation( userLocation, this );
 
 
 		//FOR DEBUGGING
@@ -139,7 +139,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
 
 
-	private void debug(int level, String message ) {
+	private static void debug(int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 
@@ -149,15 +149,10 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	 */
 	private void exploreCity() {
 		debug(0, "Clicked: ExploreButton...");
-		if( userLocation == null){
+		if (userLocation == null){
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-			debug(0, "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
-			
-			int[] lat_lng = MyPreferencesActivity.getLatLng (this);
-			userLocation.setLatitude(lat_lng [0]);	// Store current latitude location
-			userLocation.setLongitude(lat_lng [1]);	// Store current longitude location
-		}//userLocation == null, Check out GPS setting in CityExplorer.java
-
+		}
+		userLocation = verifyUserLocation( userLocation, this );
 		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
 
 		DatabaseInterface db = DBFactory.getInstance(this);
@@ -181,14 +176,28 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		
 		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
 		startActivity(showInMap);
-	} // expolorCity
+	}//expolorCity
+
+	
+	public static Location verifyUserLocation( Location userLocation, Context context ) {
+		if( userLocation == null){
+			debug(0, "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
+			
+			userLocation = new Location("");
+
+			int[] lat_lng = MyPreferencesActivity.getLatLng ( context );
+			userLocation.setLatitude( lat_lng [0]/1E6 );	// Store current latitude location
+			userLocation.setLongitude( lat_lng [1]/1E6 );	// Store current longitude location
+		}//userLocation == null, Check out GPS setting in CityExplorer.java
+		return userLocation;
+	}//verifyUserLocation
+
 
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
 	 * Initializes the GPS on the device.
 	 * */
-	void initGPS()
-	{
+	void initGPS(){
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 

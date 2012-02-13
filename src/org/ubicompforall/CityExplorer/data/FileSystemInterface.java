@@ -47,7 +47,7 @@ public interface FileSystemInterface{
 	 * @param category To correspond with the fetched DBs.
 	 * @return ArrayList containing DBs from fileSystem.
 	 */
-	public ArrayList<DB> getAllDBs(String category); 
+	public ArrayList<DB> findAllDBs(String category); 
 	
 	/**
 	 * Interface method for fetching a DB from the fileSystem.

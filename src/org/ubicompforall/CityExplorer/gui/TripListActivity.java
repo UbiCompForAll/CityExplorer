@@ -157,7 +157,9 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		}
 		initGPS();
 		poiAdapter.notifyDataSetChanged();
-	}
+
+		userLocation = StartActivity.verifyUserLocation( userLocation, this );
+	}// init
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){

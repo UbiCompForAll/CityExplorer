@@ -127,47 +127,6 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 
-	//Moved to CityExplorer.java common Application settings
-	@Override
-	public void onLocationChanged(Location location) {
-		this.userLocation = location;
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-	}
 }//class
 
 
-/*
-Old Student Code:
-buttonPlan	 = (Button) findViewById(R.id.startButtonPlan);
-if (buttonPlan != null){
-	buttonPlan.setOnClickListener(this);
-}else{
-	debug(0, "Plan-button was NULL ~77");
-}
-buttonExplore = (Button) findViewById(R.id.startButtonExplore);
-if (buttonExplore != null){
-	buttonExplore.setOnClickListener(this);
-}else{
-	debug(0, "Explorer-button was NULL ~83");
-}
-buttonSettings = (Button) findViewById(R.id.startButtonSettings);
-if (buttonSettings != null){
-	buttonSettings.setOnClickListener(this);
-}else{
-	debug(0, "Import-button was NULL ~90");
-}
-*/
