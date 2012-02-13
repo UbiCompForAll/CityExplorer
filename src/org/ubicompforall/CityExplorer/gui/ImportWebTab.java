@@ -33,6 +33,8 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,10 +53,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-//import android.view.View.OnTouchListener;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.webkit.WebView;
 
-public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
+public class ImportWebTab extends Activity implements OnTouchListener{ // LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
 	/*** Field containing all DBs.*/
 	//private ArrayList<Poi> allPois = new ArrayList<Poi>();
@@ -66,8 +70,8 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 	/*** Field containing this activity's {@link WebView}.*/
 	private WebView webview;
 
-	/*** Field containing an {@link ArrayList} of the categoryFolders.*/
-	// private ArrayList<String> categoryFolders;
+	/*** Field containing an {@link ArrayList} with all categoryFolders.*/
+	private ArrayList<String> webFolders;
 
 	/*** Field containing this activity's context.*/
 	private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
@@ -88,15 +92,17 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.weblayout);
 
-		debug(0, "going to open web-page" );
-		init();		
-	} // onCreate
+		//String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
+		webFolders = new ArrayList<String>();
+		webFolders.add("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
+		debug(0, "opening web-pages: "+webFolders );
 
+		init();
+	} // onCreate
 	
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
-
 
 
 	/**
@@ -108,11 +114,14 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
-		    //webview.getSettings().setJavaScriptEnabled(true);
-			//webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
-			//webview.setOnTouchListener(this);
-			
-			setupWebDBs( webview );
+			if ( initWifi() ){ //For downloading DBs
+				//OK...
+				setupWebDBs( webview );
+			}else{
+				webview.getSettings().setJavaScriptEnabled(true);
+				webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
+				webview.setOnTouchListener(this);
+			}
 		}// if webView found
 
 //		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
@@ -127,47 +136,75 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 		//initGPS(); //For maps?
 	}//init
 
-	public static String extractDBs(String text){
-		String BASE_URL = "http://www.sintef.no";
+	/***
+	 * Make sure WiFi or Data connection is enabled
+	 */
+	boolean initWifi(){
+		boolean connected = CityExplorer.isConnected(this);
+		if ( ! connected ){
+			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+			CityExplorer.showNoConnectionDialog( this );
+			return false;
+		}
+		return true;
+	} //initWifi
+
+	/***
+	 * Extract database URLs from the web-page source code, given as the string text
+	 * @param text	the web-page source code
+	 * @return		new web-page source code with multiple "<A HREF='databaseX.sqlite'>databaseX</A>" only
+	 */
+	public static String extractDBs( String text, String SERVER_URL ){
+		//String BASE_URL = "http://www.sintef.no";
 		StringBuffer linkTerms = new StringBuffer(); //E.g. "(End-user Development)|(EUD)"
 		// Find all the a href's
 		Matcher m = Pattern.compile("<a href=\"([^>]+(sqlite|db|db3))\">([^<]+)</a>", Pattern.CASE_INSENSITIVE).matcher(text);
 		while (m.find()) {
-			linkTerms.append( "<A HREF=\"" + BASE_URL + m.group(1)+ "\">"+m.group(3)+"</A><BR>\n" ); // group 0 is everything
+			String URL = m.group(1);	// group 0 is everything
+			if ( URL.charAt(0) == '/' ){
+				URL = SERVER_URL + URL; 
+			}
+			linkTerms.append( "<A HREF=\""+ URL +"\">"+m.group(3)+"</A><BR>\n" );
 		}
 		return linkTerms.toString();
 	}//extractDBs
 
-	
+	/***
+	 * 
+	 * @param webview
+	 * @return
+	 */
 	public boolean setupWebDBs(WebView webview) {
-		String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
 		if ( ! loaded ){
 			loaded=true;
 			String responseString;
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
-			try {
-				response = httpclient.execute(new HttpGet(URL));
-			    StatusLine statusLine = response.getStatusLine();
-			    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-			        ByteArrayOutputStream out = new ByteArrayOutputStream();
-			        response.getEntity().writeTo(out);
-			        out.close();
-			        responseString = out.toString();
-
-					String linkTerms = extractDBs( responseString );
-					//debug(1, "found "+linkTerms.size()+", extracted is "+linkTerms );
-					webview.loadData(linkTerms, "text/hml", "utf-8" );
-			    } else{
-			        //Closes the connection.
-			        response.getEntity().getContent().close();
-			        throw new IOException( statusLine.getReasonPhrase() );
-			    }
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} // try downloading db's from the Web, catch exceptions
+		    for (String URL : webFolders){
+				try {
+					response = httpclient.execute( new HttpGet(URL) );
+				    StatusLine statusLine = response.getStatusLine();
+				    if( statusLine.getStatusCode() == HttpStatus.SC_OK ){
+				        ByteArrayOutputStream out = new ByteArrayOutputStream();
+				        response.getEntity().writeTo(out);
+				        out.close();
+				        responseString = out.toString();
+	
+						String SERVER_URL = new URL(URL).getHost();
+						String linkTerms = extractDBs( responseString, SERVER_URL );
+						debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
+						webview.loadData(linkTerms, "text/hml", "utf-8" );
+				    }else{
+						//Closes the connection on failure
+						response.getEntity().getContent().close();
+						throw new IOException( statusLine.getReasonPhrase() );
+				    }
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} // try downloading db's from the Web, catch and print exceptions
+		    }// for all web-locations with DBs on them
 		} // if not already loaded once before
 		return false;
 	} // setupDBs (called from init / from onCreate... Too slow?)
@@ -276,6 +313,12 @@ public class ImportWebTab extends Activity{ // LocationListener, OnMultiChoiceCl
 	public void setContext(Context context) {
 		this.context = context;
 	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		setupWebDBs( webview );
+		return false;
+	}//On touch
 
 
 

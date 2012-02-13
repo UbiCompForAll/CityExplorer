@@ -58,6 +58,7 @@ public class FileSystemConnector implements FileSystemInterface {
 		debug(0, "categoryFolders is "+categoryFolders );
 
 		allDBs = getAllDBs();	// Find all DBs in categoryFolders
+		debug(0, "allDBs.size is "+allDBs.size() );
 	} // CONSTRUCTOR
 
 	private void debug( int level, String message ) {

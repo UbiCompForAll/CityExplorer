@@ -99,7 +99,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		debug(0, "ImportLocalTab~118 create");
+		debug(1, "");
 
 		//INITIALIZE OWN FIELDS
 		allDBs = new ArrayList<DB>();
@@ -159,10 +159,10 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 				testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(db.getCategory(), testAdapter);
 			}
-			((DBFileAdapter)adapter.getAdapter(db.getCategory())).add(db);//add to the correct section
+			((DBFileAdapter)adapter.getAdapter( db.getCategory() ) ).add(db);//add to the correct section
 			((DBFileAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
 		}
-	}
+	}//makeSections
 
 	/**
 	 * Updates the category sections in the list, e.g. after choosing filtering.
@@ -170,7 +170,10 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	@SuppressWarnings("unchecked")
 	private void updateSections(){
 		allDBs = new FileSystemConnector( context ).getAllDBs();
-		ArrayList<String> sectionsInUse = new ArrayList<String>(); 
+		debug(0, "allDBs.size is "+allDBs.size() );
+
+		ArrayList<String> sectionsInUse = new ArrayList<String>();
+		// Get section for each DB
 		for (DB db : allDBs){
 			sectionsInUse.add(db.getCategory());
 			if(!adapter.getSectionNames().contains(db.getCategory())){
@@ -195,10 +198,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		super.onPrepareOptionsMenu(menu);
 		if (requestCode == 2){
 			debug(0, "Code Two!");
-			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
 			//Smenu.removeItem(R.id.planMenuUpdatePois );
-			menu.removeItem(R.id.planMenuAddPois);
 		}
 //		else if (requestCode == SHARE_DB)
 //		{	
@@ -211,11 +211,6 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 //			menu.removeItem(R.id.planMenuNewDB);
 //			menu.removeItem(R.id.planMenuShareDBs);
 //			menu.removeItem(R.id.planMenuFilter);
-//		}
-//		else if(requestCode == PlanTabTrip.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
-//			menu.removeItem(R.id.planMenuNewDB);
-//			menu.removeItem(R.id.planMenuShareDBs);
-//			menu.removeItem(R.id.planMenuUpdateDBs);
 //		}
 //		else
 //		{
@@ -236,11 +231,6 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-//		if(item.getItemId() == R.id.planMenuNewDB){
-//			Intent newDB = new Intent(ImportLocalTab.this, NewDBActivity.class);
-//			startActivity(newDB);
-//		}
-//
 //		if(item.getItemId() == R.id.planMenuFilter)
 //		{
 //			categoryFolders = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
@@ -338,7 +328,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 			return;
 		}
 		DB d = (DB) l.getAdapter().getItem(pos);
-		debug(0, "requestCode is "+ requestCode );
+		debug(1, "requestCode is "+ requestCode );
 
 //		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
 //			Intent resultIntent = new Intent();

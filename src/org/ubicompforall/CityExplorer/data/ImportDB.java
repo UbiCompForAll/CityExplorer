@@ -45,19 +45,17 @@ import android.widget.Toast;
 /**
  * @description: Class to handle import a database on reception of the VIEW FILE intent. NOT IMPLEMENTED
  * At the moment the file file is copied from ExportImport (or Sharing?) that is text based.
- * Functionality: copy to application folder and open it.
+ * 
+ * Suggested Functionality: copy to application folder and open it.
  */
-public class ImportDB extends Activity
-{
-
-	/** The context. */
-	Context context;
+public class ImportDB extends Activity{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		
 		Uri uri = getIntent().getData();
+		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
 		
 		int[] res = new int[]{0,0};
 		

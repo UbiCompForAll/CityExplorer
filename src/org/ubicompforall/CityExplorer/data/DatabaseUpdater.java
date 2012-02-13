@@ -39,6 +39,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.ubicompforall.CityExplorer.CityExplorer;
+
 import android.content.Context;
 import android.widget.Toast;
 
@@ -59,18 +62,22 @@ public class DatabaseUpdater
 	 *
 	 * @param c the c
 	 */
-	public DatabaseUpdater(Context c)
-	{
+	public DatabaseUpdater(Context c){
 		context = c;
 	}
 	
+	@SuppressWarnings("unused")
+	private static void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
+
 	/**
 	 * Downloads, adds and updates pois from a repository.
 	 * 
 	 * @return int[0] number of pois added. int[1] number of pois updated.
 	 */
-	public int[] doInternetUpdatePois()
-	{
+	public int[] doInternetUpdatePois(){
 		int[] res = new int[]{0,0};
 		
 		String[] poidata;
@@ -94,9 +101,11 @@ public class DatabaseUpdater
 			}
 			in.close();
 		} 
-		catch (MalformedURLException e) {Toast.makeText(context, "Error updating MalformedURLException", Toast.LENGTH_LONG).show();
+		catch (MalformedURLException e) {
+			Toast.makeText(context, "Error updating MalformedURLException", Toast.LENGTH_LONG).show();
 		} 
-		catch (IOException e) {Toast.makeText(context, "Error updating IOException "+e.getMessage(), Toast.LENGTH_LONG).show();
+		catch (IOException e) {
+			Toast.makeText(context, "Error updating IOException "+e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 		
 		return res;
@@ -142,16 +151,14 @@ public class DatabaseUpdater
 	 * @param filetext the filetext
 	 * @return int[0] number of pois added. int[1] number of pois updated.
 	 */
-	public int[] doFileUpdatePois(String filetext)
-	{
+	public int[] doFileUpdatePois(String filetext){
 		int[] res = new int[]{0,0};
 		
 		String[] poidata = new String[/*13*/ 12]; // ZIP code removed => 12
 
 		String[] lines = filetext.split("\n");
 
-		for (String line : lines)
-		{
+		for (String line : lines){
 			
 			if(line.startsWith("global_id"))continue;
 			line.replace("%EOL", "\n");
@@ -160,12 +167,10 @@ public class DatabaseUpdater
 			poidata[/*12*/ 11] = poidata[/*12*/ 11].replace("%EOL", "");
 			res[handlePoiData(poidata)]++;
 		}
-
 		return res;
-	}
+	}//doFileUpdatePois
 	
-	private Poi getPoiFromPoiData(String[] poidata)
-	{
+	private Poi getPoiFromPoiData(String[] poidata){
 		/*
 		 * 0  global_id;
 		 * 1  title;

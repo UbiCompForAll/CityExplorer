@@ -44,11 +44,7 @@ import android.widget.Toast;
 /**
  * @description: Class to handle import/export of POIs/Trips
  */
-public class ExportImport extends Activity
-{
-
-	/** The context. */
-	Context context;
+public class ExportImport extends Activity{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -56,6 +52,8 @@ public class ExportImport extends Activity
 		
 		Uri uri = getIntent().getData();
 		
+		Toast.makeText( this, "ExportImport.java, db-file from somewhere else. uri is "+uri, Toast.LENGTH_LONG).show();
+
 		int[] res = new int[]{0,0};
 		
 		// try opening the file
