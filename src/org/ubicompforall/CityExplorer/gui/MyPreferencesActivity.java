@@ -139,7 +139,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		editor.putInt( CityExplorer.LAT, lat);
 		editor.putInt( CityExplorer.LNG, lng);
 		editor.commit();
-		int[] lat_lng = {lat, lng};	// {63430396, 10395041 };
+		int[] lat_lng = {lat, lng};	// Trondheim Torg: {63430396N, 10395041E};
 
 		return lat_lng;
 	} // getLatLng

@@ -84,7 +84,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 		//FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
-		//startActivity(new Intent( this, ImportActivity.class) );
+		//startActivity(new Intent( this, ImportDB.class) );
 		//ImportWebTab.onTouch2(new View(this), null);
 
 
@@ -230,25 +230,3 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	}
 }//class
 
-
-/*
-Old Student Code:
-buttonPlan	 = (Button) findViewById(R.id.startButtonPlan);
-if (buttonPlan != null){
-	buttonPlan.setOnClickListener(this);
-}else{
-	debug(0, "Plan-button was NULL ~77");
-}
-buttonExplore = (Button) findViewById(R.id.startButtonExplore);
-if (buttonExplore != null){
-	buttonExplore.setOnClickListener(this);
-}else{
-	debug(0, "Explorer-button was NULL ~83");
-}
-buttonSettings = (Button) findViewById(R.id.startButtonSettings);
-if (buttonSettings != null){
-	buttonSettings.setOnClickListener(this);
-}else{
-	debug(0, "Import-button was NULL ~90");
-}
-*/

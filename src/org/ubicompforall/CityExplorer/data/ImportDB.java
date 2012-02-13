@@ -26,15 +26,19 @@
 
 package org.ubicompforall.CityExplorer.data;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+
+import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.gui.ImportLocalTab;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -55,51 +59,53 @@ public class ImportDB extends Activity{
 		super.onCreate(savedInstanceState);
 		
 		Uri uri = getIntent().getData();
+		debug(0, "ImportDB, file intent uri is "+uri );
 		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
 		
 		int[] res = new int[]{0,0};
 		
 		// try opening the file
-		  try {
-		    // open the file for reading
-			File f = new File(uri.getPath());
-		    InputStream instream = new FileInputStream(f);
-			//InputStream instream = openFileInput("cityexplorer.txt");
-		 
-		    // if file the available for reading
-		    if (instream != null) {
-		      // prepare the file for reading
-		      InputStreamReader inputreader = new InputStreamReader(instream);
-		      BufferedReader buffreader = new BufferedReader(inputreader);
-		      
-		      StringBuilder pois = new StringBuilder();
-		      String line;
-		 
-		      // read every line of the file into the line-variable, on line at the time
-		      while (( line = buffreader.readLine()) != null) {
-		        pois.append(line+"\n");
-		      }
-		      
-		      //System.out.println("EXIMP: "+sb.toString());
-		      
-		      DatabaseUpdater du = new DatabaseUpdater(this);
-		      res = du.doFileUpdatePois(pois.toString());
-		    } // if instream
-		 
-		    // close the file again
-		    instream.close();
-		  } catch (java.io.FileNotFoundException e) {
-		    // do something if the myfilename.txt does not exits
-			  System.out.println("FileNotFound error: "+e.getMessage());
-		  }
-		  catch (IOException e) {
-			  System.out.println("IO error: "+e.getMessage());
-		  }
-		  System.out.println(res[0]+" locations added, "+res[1]+" locations updated");
-		  Toast.makeText(this, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-		  finish();
+		if ( uri != null ){
+			// open the file for reading
+			File file = new File( uri.getPath() );
+
+			InputStream in = null;
+			OutputStream out = null;
+			try {
+				in = new BufferedInputStream( new FileInputStream(file) );
+				out = new FileOutputStream( getDatabasePath( file.getName() ) );
+				debug(0, "Copying from input to " + getDatabasePath( file.getName() ) );
+				copyFile(in, out);
+				in.close();
+				in = null;
+				out.flush();
+				out.close();
+				out = null;	
+			} catch(Exception e) {
+			    debug(0, e.getMessage() );
+			    e.printStackTrace();
+			}
+			
+		}else{//if uri given in intent
+			Toast.makeText( this, "ImportDB, file intent uri.getPath==null in uri "+uri, Toast.LENGTH_LONG).show();
+			debug(0, "file intent uri.getPath==null in uri "+uri );
+		}
+		startActivity(new Intent( this, ImportLocalTab.class) );
+		finish();
 	}// onCreate
 	
+	private void copyFile(InputStream in, OutputStream out) throws IOException {
+	    byte[] buffer = new byte[1024];
+	    int read;
+	    while((read = in.read(buffer)) != -1){
+	      out.write(buffer, 0, read);
+	    }
+	}//copyFile
+
+	private void debug(int i, String string) {
+		CityExplorer.debug(i, string);
+	}// debug
+
 	/**
 	 * Share pois with another user.
 	 *
