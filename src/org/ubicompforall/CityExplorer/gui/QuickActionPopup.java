@@ -133,6 +133,7 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 		setWidth(mScreenWidth + mShadowHoriz + mShadowHoriz);
 
 		debug(0, "setWidth("+mScreenWidth +"+"+ mShadowHoriz +"+"+ mShadowHoriz+");");
+		debug(0, "pView is "+pView+" and Rect is "+rect );
 
 		setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
@@ -318,9 +319,8 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 			onBackPressed();
 			return true;
 		}
-
 		return false;
-	}
+	}// onKeyUp
 
 	/**
 	 * Method that closes the quick action popup window when the back button is pressed.
@@ -380,5 +380,6 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		return false;
-	}
-}
+	}//onKeyLongPress
+
+}//class QuickActionPopup

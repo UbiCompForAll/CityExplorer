@@ -36,6 +36,7 @@ import java.util.Collections;
 import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 //import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
 import org.ubicompforall.CityExplorer.data.DB;
+import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DBFileAdapter;
 import org.ubicompforall.CityExplorer.data.SeparatedListAdapter;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
@@ -327,11 +328,11 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 			debug(0, "Pressed a header... Dummy!");
 			return;
 		}
-		DB d = (DB) l.getAdapter().getItem(pos);
+		DB dbObject = (DB) l.getAdapter().getItem(pos);
 		debug(1, "requestCode is "+ requestCode );
-
-		debug(0, "I just found DB "+d.getLabel() );
-		//SQLiteConnector.
+		debug(0, "I just found DB "+dbObject.getLabel() );
+		DBFactory.changeInstance( this, dbObject.getLabel() );
+		startActivity( new Intent( this, PlanActivity.class) );
 	} // onListItemClick
 
 	/**

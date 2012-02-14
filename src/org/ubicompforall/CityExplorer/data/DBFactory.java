@@ -53,7 +53,22 @@ public class DBFactory{
 	 * @param context The context, that will be current from now to next getInstance
 	 * @return Single instance of DBFactory
 	 */
-	public static DatabaseInterface getInstance(Context context){
+	public static DatabaseInterface changeInstance( Context context, String new_DB_NAME ){
+		if(databaseType == DBType.SQLITE){
+			dbConnectorInstance = new SQLiteConnector( context, new_DB_NAME );
+		} // if right type
+		dbConnectorInstance.open();
+		dbConnectorInstance.setContext(context);
+		return dbConnectorInstance;
+	}//changeInstance
+
+	/**
+	 * Gets the single instance of DBFactory.
+	 *
+	 * @param context The context, that will be current from now to next getInstance
+	 * @return Single instance of DBFactory
+	 */
+	public static DatabaseInterface getInstance( Context context ){
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
 				dbConnectorInstance = new SQLiteConnector(context);

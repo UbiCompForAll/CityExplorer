@@ -67,7 +67,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -513,19 +512,17 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	final private class DrawPopup implements AdapterView.OnItemLongClickListener {
 		public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
 
-			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
-			{
-				Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
-				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
-				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
-				for (int i = 0; i < sectionAd.getCount(); i++)
-				{
-					selectedPois.add((Poi) sectionAd.getItem(i));
-				}
-				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
-
-				startActivity(showInMap);
-
+			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
+//RS-120214: Don't implement different behavior for headings and single items. Suddenly seeing the map is confusing!
+//
+//				Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
+//				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
+//				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
+//				for (int i = 0; i < sectionAd.getCount(); i++){
+//					selectedPois.add((Poi) sectionAd.getItem(i));
+//				}
+//				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
+//				startActivity(showInMap);
 				return true;
 			}
 
@@ -539,7 +536,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 					xy[0]+v.getWidth(), 
 					xy[1]+v.getHeight());
 
-			final QuickActionPopup qa = new QuickActionPopup(PlanPoiTab.this, v, rect);
+			final QuickActionPopup qa = new QuickActionPopup( PlanPoiTab.this, v, rect );
 
 			Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
 			Drawable mapviewIcon		= res.getDrawable(android.R.drawable.ic_menu_mapmode);

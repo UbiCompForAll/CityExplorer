@@ -83,7 +83,7 @@ public class ImportDB extends Activity{
 			    e.printStackTrace();
 			}
 			
-		}else{//if uri given in intent
+		}else{//if URI given in intent
 			Toast.makeText( this, "ImportDB, file intent uri.getPath==null in uri "+uri, Toast.LENGTH_LONG).show();
 			debug(0, "file intent uri.getPath==null in uri "+uri );
 		}

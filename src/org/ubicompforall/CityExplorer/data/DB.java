@@ -46,8 +46,7 @@ public class DB {
 		return category;
 	} // getCategory
 
-	public CharSequence getLabel() {
-		// TODO Auto-generated method stub
+	public String getLabel() {
 		return url;
 	} // getLabel
 

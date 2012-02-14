@@ -115,7 +115,18 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @param context The context
 	 */
 	public SQLiteConnector( Context context ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
-		super(context, DB_NAME, null, 2);
+		this( context, DB_NAME );
+	}//SQLiteConnector CONSTRUCTOR
+
+	/**
+	 * Public constructor that takes and keeps a reference of the passed context
+	 * in order to access the application assets and resources.
+	 *
+	 * @param context The context
+	 */
+	public SQLiteConnector( Context context, String charSequence ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
+		super(context, charSequence, null, 2);
+		DB_NAME = charSequence;
 		this.myContext = context;
 		debug(0, myPath+" starting up");
 
@@ -126,9 +137,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 //		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 //		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
-		debug(0, "DB_PATH IS "+DB_PATH );
-		
 //		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
+		debug(0, "DB_PATH IS "+DB_PATH );
 	}//SQLiteConnector CONSTRUCTOR
 
 	
