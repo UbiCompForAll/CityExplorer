@@ -54,6 +54,9 @@ public class DBFactory{
 	 * @return Single instance of DBFactory
 	 */
 	public static DatabaseInterface changeInstance( Context context, String new_DB_NAME ){
+		if( dbConnectorInstance != null && dbConnectorInstance.isOpen() == true ){
+			dbConnectorInstance.close();
+		}
 		if(databaseType == DBType.SQLITE){
 			dbConnectorInstance = new SQLiteConnector( context, new_DB_NAME );
 		} // if right type
