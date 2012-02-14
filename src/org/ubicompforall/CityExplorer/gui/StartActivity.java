@@ -54,9 +54,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 public class StartActivity extends Activity implements OnClickListener, LocationListener{
+	//RS-111122, "implements LocationListener{" move to CityExplorer.java (Application
 	
-
-	//RS-111122, "implements LocationListener{" moved to CityExplorer.java
+	/***
+	 * The current db connection
+	 */
+	DatabaseInterface db;
 
 	/**
 	 * The buttons in this activity.
@@ -155,7 +158,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		userLocation = verifyUserLocation( userLocation, this );
 		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
 
-		DatabaseInterface db = DBFactory.getInstance(this);
+		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
 		ArrayList<Poi> poiList = db.getAllPois();
 		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
 

@@ -330,20 +330,8 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		DB d = (DB) l.getAdapter().getItem(pos);
 		debug(1, "requestCode is "+ requestCode );
 
-//		if (requestCode == 3){//NewPoiActivity.CHOOSE_DB){
-//			Intent resultIntent = new Intent();
-			//resultIntent.putExtra(IntentPassable.DB, p);
-			debug(0, "I just found DB "+d.getLabel() );
-//			setResult( Activity.RESULT_OK, resultIntent );
-//			finish();
-			//return;
-//			Intent details = new Intent(ImportLocalTab.this, DBDetailsActivity.class);
-//			details.putExtra(IntentPassable.POI, true);
-//			startActivity(details);
-//		} // Not using requestCodes here I think (RS-120127)
-
-
-//		Intent details = new Intent(ImportLocalTab.this, StartActivity.class);
+		debug(0, "I just found DB "+d.getLabel() );
+		//SQLiteConnector.
 	} // onListItemClick
 
 	/**

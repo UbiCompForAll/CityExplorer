@@ -84,7 +84,8 @@ public class FileSystemConnector implements FileSystemInterface {
 	}//getAllDBs
 
 	@Override
-	public ArrayList<DB> findAllDBs( String category ) {
+	public ArrayList<DB>
+	 findAllDBs( String category ) {
 		ArrayList<DB> foundDBs = new ArrayList<DB>();
 		File dir = new File( category );
 		File[] files = dir.listFiles();

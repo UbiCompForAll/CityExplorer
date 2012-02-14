@@ -32,6 +32,18 @@
 
 package org.ubicompforall.CityExplorer;
 
+import java.io.IOException;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.ubicompforall.CityExplorer.data.DBFactory;
+import org.ubicompforall.CityExplorer.data.DatabaseInterface;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
@@ -39,6 +51,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -53,42 +66,52 @@ import android.widget.Toast;
  * of how to perform unit tests on an Application object.
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
-
+	
 	public static final int DEBUG = 1;
-    public static final String C = "CityExplorer";
-
+	public static final String C = "CityExplorer";
+	
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
-    public static final String URL = "Url";
+	public static final String URL = "Url";
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
-
+	
 	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng // Trondheim Torvet 63°25′49″N  10°23′42″E ;
-
 	//  Default URL moved to @string/default_url
 	//	public static final String RUNE_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
-
+	
 	public static final int TYPE_ALL = 0;
 	public static final int TYPE_FREE = 1;
 	public static final int TYPE_FIXED = 2;
-
+	
+	/***
+	 * The global current db connection
+	 */
+	public static DatabaseInterface db;
+	private static boolean verifiedDataConnection;
+	private static String googleURL = "http://www.google.com";
+	
 	@Override
-    public void onCreate() {
-        /*
-         * This populates the default values from the preferences XML file. See
-         * {@link DefaultValues} for more details.
-         */
-        PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
-
-        //Local debug (stacktrace level = 3)
-        //StackTraceElement st = Thread.currentThread().getStackTrace()[2];
-		//Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Start CityExplorer.java" );
-        debug(0, "Start CityExplorer.java" );
-
+	public void onCreate() {
+	    /*
+	     * This populates the default values from the preferences XML file. See
+	     * {@link DefaultValues} for more details.
+	     */
+	    PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
+	
+	    //Local debug (stacktrace level = 3)
+	    //StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+		//Log.d(C, ste.getFileName().replace("java", "")+ste.getLineNumber()+'~'+ste.getMethodName()+'~'+"Start CityExplorer.java" );
+	    debug(0, "Start CityExplorer.java" );
+	
 		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ? When?
-		// And what about DB-loading?  Here? ...
+	
+	    // And what about DB-loading?  Initialize the single instance here :-)
+		db = DBFactory.getInstance(this);
 		
-    }//onCreate
+		//Remember to verify that the web is available!
+		verifiedDataConnection = false;
+	}//onCreate
 
     @Override
     public void onTerminate() {
@@ -117,23 +140,58 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 
 
-    public static boolean isConnected( Context context ) {
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-            context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = null;
-        if (connectivityManager != null) {
-            networkInfo = connectivityManager.getActiveNetworkInfo();
-        }
-        if ( networkInfo == null ){
+	public static boolean isConnected( Activity context ) {
+		ConnectivityManager connectivityManager = (ConnectivityManager)
+		    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = null;
+		if (connectivityManager != null) {
+		    networkInfo = connectivityManager.getActiveNetworkInfo();
+		}
+		if ( networkInfo == null ){
 			Toast.makeText( context, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
-        	return false; //Network is not enabled
-        }else{
-        	return networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
-        }
-    } // isConnected
-    
+			return false; //Network is not enabled
+		}else{
+			boolean activated = networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
+			if ( activated ){
+				//Ping Google
+				activated = verifyDataConnection( context );
+			}
+			return activated;
+		}
+	} // isConnected
 
-    /**
+
+    private static boolean verifyDataConnection( Activity context ) {
+    	boolean verified = false;
+		if ( ! verifiedDataConnection ){
+			HttpClient httpclient = new DefaultHttpClient();
+		    HttpResponse response;
+			try {
+				response = httpclient.execute( new HttpGet( googleURL ) );
+			    StatusLine statusLine = response.getStatusLine();
+			    if( statusLine.getStatusCode() == HttpStatus.SC_OK ){
+			    	verified = true;
+			    }else{
+					//Closes the connection on failure
+					response.getEntity().getContent().close();
+
+					//throw new IOException( statusLine.getReasonPhrase() );
+					Toast.makeText( context, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
+					Uri uri = Uri.parse( googleURL );
+					context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
+					verified = true;
+	                context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+			    }
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} // try downloading db's from the Web, catch and print exceptions
+		} // if not already loaded once before
+		return verified;
+	}// verifyDataConnection
+
+	/**
      * Display a dialog that user has no Internet connection
      * @param ctx1
      *

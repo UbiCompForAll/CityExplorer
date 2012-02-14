@@ -50,7 +50,7 @@ public class DBFactory{
 	/**
 	 * Gets the single instance of DBFactory.
 	 *
-	 * @param context The context
+	 * @param context The context, that will be current from now to next getInstance
 	 * @return Single instance of DBFactory
 	 */
 	public static DatabaseInterface getInstance(Context context){

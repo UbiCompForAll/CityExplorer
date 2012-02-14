@@ -37,8 +37,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-import org.ubicompforall.CityExplorer.gui.ImportLocalTab;
-
+import org.ubicompforall.CityExplorer.gui.ImportActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -61,8 +60,6 @@ public class ImportDB extends Activity{
 		Uri uri = getIntent().getData();
 		debug(0, "ImportDB, file intent uri is "+uri );
 		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
-		
-		int[] res = new int[]{0,0};
 		
 		// try opening the file
 		if ( uri != null ){
@@ -90,8 +87,8 @@ public class ImportDB extends Activity{
 			Toast.makeText( this, "ImportDB, file intent uri.getPath==null in uri "+uri, Toast.LENGTH_LONG).show();
 			debug(0, "file intent uri.getPath==null in uri "+uri );
 		}
-		startActivity(new Intent( this, ImportLocalTab.class) );
 		finish();
+		startActivity(new Intent( this, ImportActivity.class) );
 	}// onCreate
 	
 	private void copyFile(InputStream in, OutputStream out) throws IOException {

@@ -695,7 +695,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 	}
 
 	@Override

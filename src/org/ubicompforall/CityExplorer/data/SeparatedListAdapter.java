@@ -280,7 +280,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * @return A View of the header.
 	 */
 	private View getHeaderView(String caption, int index, View convertView,	ViewGroup parent) {
-		debug(0, "Caption is "+caption );
+		debug(2, "Caption is "+caption );
 		TextView result = null;
 
 		if ( convertView != null && convertView.getClass() == TextView.class ){
