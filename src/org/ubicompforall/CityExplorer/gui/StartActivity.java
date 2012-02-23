@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Jacqueline Floch (SINTEF), Rune S�tre (NTNU)
+ * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
  * @revised:
