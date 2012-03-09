@@ -411,6 +411,9 @@ final public class Poi extends IntentPassable {
 	 * @return The telephone number of a poi.
 	 */
 	public String getTelephone(){
+		if (telephone.equals("0")) {
+			return "";
+		}
 		return telephone;
 	}
 

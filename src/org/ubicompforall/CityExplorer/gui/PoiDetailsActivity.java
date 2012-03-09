@@ -165,7 +165,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 
 		if(getIntent().getParcelableExtra("trip") != null)
 		{
-			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);
+			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);	// POI MSUT BE UPDATED WHEN TEH ARROW ARE USED TODO 
 			nextPoi = (ImageButton) findViewById(R.id.nextPoiButton);
 			prevPoi.setVisibility(0);
 			nextPoi.setVisibility(0);
