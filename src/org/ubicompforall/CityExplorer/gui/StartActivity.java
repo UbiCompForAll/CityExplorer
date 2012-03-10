@@ -116,7 +116,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 	@Override
 	public void onClick(View v) {
-		debug(0, "Clicked: "+v );
+		debug(1, "Clicked: "+v );
 		if (v.getId() == R.id.startButton1){  // Button PLAN TOUR
 						
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
@@ -151,7 +151,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
 	 */
 	private void exploreCity() {
-		debug(0, "Clicked: ExploreButton...");
+		debug(0, "Clicked ExploreMap Button...");
 		if (userLocation == null){
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 		}

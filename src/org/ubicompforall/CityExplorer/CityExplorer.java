@@ -88,8 +88,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 * The global current db connection
 	 */
 	public static DatabaseInterface db;
-	private static boolean verifiedDataConnection;
-	private static String googleURL = "http://www.google.com";
+	//private static boolean verifiedDataConnection;
+	//private static String googleURL = "http://www.google.com";
 	
 	@Override
 	public void onCreate() {
@@ -109,13 +109,13 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	    // And what about DB-loading?  Initialize the single instance here :-)
 		db = DBFactory.getInstance(this);
 		
-		//Remember to verify that the web is available!
-		verifiedDataConnection = false;
+		//Verify that specific URLs on the web are available!
+		//verifiedDataConnection = false;
 	}//onCreate
 
     @Override
     public void onTerminate() {
-    	//TODO: save preferences now???
+    	//Save preferences now? Taken care of automatically by SharedPreferences object?
 
         //Local debug (stacktrace level = 3)
         StackTraceElement st = Thread.currentThread().getStackTrace()[2];
@@ -123,7 +123,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
     }//onTerminate
 
 
-    /*
+// STATIC METHODS
+
+	/*
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
 	public static void debug(int d, String msg) {
@@ -148,51 +150,50 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		    networkInfo = connectivityManager.getActiveNetworkInfo();
 		}
 		if ( networkInfo == null ){
-			Toast.makeText( context, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+			//Toast.makeText( context, R.string.no_connection, Toast.LENGTH_LONG).show();
 			return false; //Network is not enabled
 		}else{
-			boolean activated = networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
-			if ( activated ){
-				//Ping Google
-				activated = verifyGoogleConnection ( context );
-			}
-			return activated;
+			return networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
 		}
 	} // isConnected
 
 
-    private static boolean verifyGoogleConnection( Activity context ) {
-    	boolean googleAvailable = false;
-		if ( ! verifiedDataConnection ){
+	//Ping Google
+    public static boolean pingConnection( Activity context, String url ) {
+    	boolean googleAvailable = isConnected(context);	// googleAvailable = false;
+		if ( ! googleAvailable ){
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 			try {
-				response = httpclient.execute( new HttpGet( googleURL ) );
-			    StatusLine statusLine = response.getStatusLine();
-// HTTP status is OK even if not logged in to NTNU
-			    if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
-			    	verifiedDataConnection = true;
-			    	if (true) {	// Connection to google should be checked. TODO
-			    		googleAvailable = true;
-			    	} else { // else if svar fra andre ->false
-						//Closes the connection on failure
-						response.getEntity().getContent().close();
-	
-						//throw new IOException( statusLine.getReasonPhrase() );
-						Toast.makeText( context, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
-						Uri uri = Uri.parse( googleURL );
-						context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
+				response = httpclient.execute( new HttpGet( url ) );
+				StatusLine statusLine = response.getStatusLine();
+				debug(0, "statusLine is "+statusLine );
+
+				// HTTP status is OK even if not logged in to NTNU
+				Toast.makeText( context, "Status-code is "+statusLine.getStatusCode(), Toast.LENGTH_LONG).show();
+				if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
+					if (true) {	// Connection to url should be checked. TODO
 						googleAvailable = true;
+					} else { // else if svar fra andre ->false
 				    }
-			    } else {
-			    	context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
-			    }
+				} else {
+					//Closes the connection on failure
+					response.getEntity().getContent().close();
+			
+					//throw new IOException( statusLine.getReasonPhrase() );
+					Toast.makeText( context, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
+
+					Uri uri = Uri.parse( url );
+					context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
+					googleAvailable = true;
+
+					context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} // try downloading db's from the Web, catch and print exceptions
-			// googleAvailable = false; //test TODO
 		} // if not already loaded once before
 		return googleAvailable;
 	}// verifyDataConnection
@@ -228,30 +229,22 @@ public class CityExplorer extends Application{ // implements LocationListener //
         builder.show();
     } // showNoConnectionDialog
 
-
-/* Not valid for Application ?!!
+/* Not valid for Application? Only for "implements LocationListener"
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
 		System.getProperty("java.version");
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
 	}
 */
 
