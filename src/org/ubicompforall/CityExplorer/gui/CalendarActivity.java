@@ -461,7 +461,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 //		startActivity(intent);
 		
 		setContentView(R.layout.weblayout);
-		webview = (WebView) findViewById(R.id.webview);
+		webview = (WebView) findViewById(R.id.myWebView);
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{

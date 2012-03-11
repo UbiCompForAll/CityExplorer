@@ -89,7 +89,10 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.weblayout);
+
+		debug(0, "opening web-pages " );
+		setContentView( R.layout.weblayout ); //webviewCache problem: two extra dbopen() are created here (they are called webview.db and webviewCache.db)
+		debug(0, "opening web-pages " );
 
 		//String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
 		webFolders = new ArrayList<String>();
@@ -109,7 +112,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	 */
 	private void init() {
 		//setContext(this);
-		webview = (WebView) findViewById(R.id.webview);
+		webview = (WebView) findViewById(R.id.myWebView);
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
@@ -145,6 +148,10 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 			}
 			linkTerms.append( "<A HREF=\""+ URL +"\">"+m.group(3)+"</A><BR>\n" );
 		}
+
+		//linkTerms.append( "<BR><HR><BR>\n" );
+		//linkTerms.append( text );
+
 		return linkTerms.toString();
 	}//extractDBs
 
@@ -159,6 +166,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 		    for (String webURL : webFolders){
+		    	debug(0, "Getting webFolder "+webURL);
 				try {
 					response = httpclient.execute( new HttpGet(webURL) );
 				    StatusLine statusLine = response.getStatusLine();
@@ -171,7 +179,8 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 						String SERVER_URL = "http://"+(new URL(webURL).getHost());
 						String linkTerms = extractDBs( responseString, SERVER_URL );
 						debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
-						webview.loadData(linkTerms, "text/hml", "utf-8" );
+						webview.loadData(linkTerms, "text/html", "utf-8" );
+						//webview.loadData( responseString, "text/html", "utf-8" );
 				    }else{
 						//Closes the connection on failure
 						response.getEntity().getContent().close();

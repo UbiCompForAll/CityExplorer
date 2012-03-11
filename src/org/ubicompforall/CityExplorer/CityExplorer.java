@@ -33,6 +33,8 @@
 package org.ubicompforall.CityExplorer;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -160,8 +162,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	//Ping Google
     public static boolean pingConnection( Activity context, String url ) {
-    	boolean googleAvailable = isConnected(context);	// googleAvailable = false;
-		if ( ! googleAvailable ){
+    	boolean urlAvailable = isConnected(context);	// googleAvailable = false;
+		if ( ! urlAvailable ){
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 			try {
@@ -170,11 +172,11 @@ public class CityExplorer extends Application{ // implements LocationListener //
 				debug(0, "statusLine is "+statusLine );
 
 				// HTTP status is OK even if not logged in to NTNU
-				Toast.makeText( context, "Status-code is "+statusLine.getStatusCode(), Toast.LENGTH_LONG).show();
+				Toast.makeText( context, "Status-line is "+statusLine, Toast.LENGTH_LONG).show();
 				if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
 					if (true) {	// Connection to url should be checked. TODO
-						googleAvailable = true;
-					} else { // else if svar fra andre ->false
+						urlAvailable = true;
+					} else { // else if answer from others ->false
 				    }
 				} else {
 					//Closes the connection on failure
@@ -185,18 +187,21 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 					Uri uri = Uri.parse( url );
 					context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
-					googleAvailable = true;
+					urlAvailable = true;
 
 					context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} // try downloading db's from the Web, catch and print exceptions
+			} catch (IllegalStateException e){	// Caused by bad url for example, missing http:// etc. Can still use cached maps...
+				urlAvailable=false;
+				debug(0, "Missing http:// in "+url+" ?" );
+			} catch (IOException e) { // e.g. UnknownHostException // try downloading db's from the Web, catch (and print) exceptions
+				urlAvailable=false;
+			}
 		} // if not already loaded once before
-		return googleAvailable;
-	}// verifyDataConnection
+		return urlAvailable;
+	}// pingConnection
 
 	/**
      * Display a dialog that user has no Internet connection

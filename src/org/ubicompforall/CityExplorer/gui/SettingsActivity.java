@@ -69,6 +69,8 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 		RelativeLayout start = (RelativeLayout) findViewById(R.id.startView);
 		//(Re-) Set button functionality
 		if (start != null){
+			start.setBackgroundResource(R.drawable.background_for_settings);
+
 			Button b1 = (Button) findViewById(R.id.startButton1);
 			b1.setText( getResources().getString(R.string.importdata) );
 			Button b2 = (Button) findViewById(R.id.startButton2);

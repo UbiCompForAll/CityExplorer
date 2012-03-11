@@ -225,9 +225,10 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * Make sure WiFi or Data connection is enabled
 	 */
 	void initWifi(){
-		boolean verifiedConnection = CityExplorer.pingConnection(this, "maps.google.com");
+		boolean verifiedConnection = CityExplorer.pingConnection( this, "http://www.google.com" );
 		if ( ! verifiedConnection ){
-			Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
+			CityExplorer.showNoConnectionDialog( this );
 		}
 	} //initWifi
 
