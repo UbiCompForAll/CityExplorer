@@ -33,8 +33,6 @@
 package org.ubicompforall.CityExplorer;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;

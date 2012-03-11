@@ -122,6 +122,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){ // Button EXPLORE CITY MAP
+			//Starting the maps activity is too slooow! How to show a progress bar etc.?
 //			Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
 //			try {
 //				wait(500);

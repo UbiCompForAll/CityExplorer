@@ -89,17 +89,15 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-
-		debug(0, "opening web-pages " );
-		setContentView( R.layout.weblayout ); //webviewCache problem: two extra dbopen() are created here (they are called webview.db and webviewCache.db)
-		debug(0, "opening web-pages " );
+		setContentView( R.layout.weblayout ); // A very simple, named WebView
 
 		//String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
 		webFolders = new ArrayList<String>();
 		webFolders.add("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
 		debug(0, "opening web-pages: "+webFolders );
-
-		init();
+		
+		init(); //webview etc.
+		//webviewCache: two private dbopen() are automagically executed here (to create temp databases for this activity: webview.db and webviewCache.db)
 	} // onCreate
 	
 	private static void debug( int level, String message ) {
@@ -111,25 +109,17 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	 * Initializes the activity.
 	 */
 	private void init() {
-		//setContext(this);
 		webview = (WebView) findViewById(R.id.myWebView);
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
 			showDownloadPage();
 		}// if webView found
-
-//		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
-
-//		allDBs = getAllDBs();
-
-		getResources();
-
-		//Init View-adapters etc.
-//		makeSections();
-
-		//initGPS(); //For maps?
 	}//init
+//	adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
+//	allDBs = getAllDBs();
+//	//Init View-adapters etc.
+//	makeSections();
 
 	/***
 	 * Extract database URLs from the web-page source code, given as the string text
@@ -159,7 +149,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	 * @param webview
 	 * @return
 	 */
-	public boolean setupWebDBs(WebView webview) {
+	public boolean setupWebDBs() {
 		if ( ! loaded ){
 			loaded=true;
 			String responseString;
@@ -194,7 +184,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		    }// for all web-locations with DBs on them
 		} // if not already loaded once before
 		return false;
-	} // setupDBs (called from init / from onCreate... Too slow?)
+	} // setupWebDBs (called from init / from onCreate... Too slow?)
 
 	@Override
 	protected void onResume() {
@@ -253,7 +243,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	private void showDownloadPage() {
 		if ( CityExplorer.isConnected(this) ){ //For downloading DBs
-			setupWebDBs( webview );
+			setupWebDBs();
 		}else{
 			webview.getSettings().setJavaScriptEnabled(true);
 			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
