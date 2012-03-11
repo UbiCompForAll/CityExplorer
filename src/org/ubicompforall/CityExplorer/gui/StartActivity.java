@@ -122,14 +122,13 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){ // Button EXPLORE CITY MAP
-			Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
-			try {
-				wait(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			setProgressBarVisibility(true);
+//			Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
+//			try {
+//				wait(500);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//			setProgressBarVisibility(true);
 			exploreCity();
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
