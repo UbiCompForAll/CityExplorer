@@ -245,11 +245,13 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			    	for (Poi p : trip.getPois()){
 						if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
 					}
+			    	//TODO: Denne bør returnere f.eks. 2, ikke -1 !!!
 			    	tripPoiIndex = trip.getPois().indexOf(poi);
 
 			    	//Add walking time:
-			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false)
+			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false){
 			    		return;
+			    	}
 
 			    	//Add poi calendar entry:
 			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
@@ -290,16 +292,18 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		poiTextView ptvBeforeOrNull = findPoiViewBefore(trip, hourViews, time);
 		poiTextView ptvAfterOrNull  = findPoiViewAfter(trip, hourViews, time);
 		
-		if((tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip())){ //no travel to the first POI
+		if( (tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip()) ){ //no travel to the first POI
     		
     		if(ptvAfterOrNull != null){ //there is another poi in the calendar after this one.
     			Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in cronological order.", Toast.LENGTH_LONG).show();
+    			debug(-1, "Which one" );
     			return false;
-    		}
+    		}//if first poi
     		
-    		if(!trip.isFreeTrip()){
+    		if( !trip.isFreeTrip() ){
     			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) ){
     				Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in numerical order.", Toast.LENGTH_LONG).show();
+        			debug(-1, "Which one calendarIsEmpty is "+calendarIsEmpty+", ptvBeforeOrNull is "+ptvBeforeOrNull+", tripPoiIndex is "+tripPoiIndex );
     				return false;
     			}// if empty, or bad order
     		}// if FixedTour
