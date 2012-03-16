@@ -32,7 +32,8 @@ any static strings associated with maps -->
     
 <!-- constants -->
 <string name="action_plan">.gui.ActivityPlan</string><string name="cancel">BACK</string>
-<string name="categoryLabel">Category:</string><string name="composeUbiServices">compose UbiServices</string>
+<string name="categoryLabel">Category:</string>
+<string name="composeUbiServices">compose UbiServices</string>
 <string name="constant_provider_authority">.provider.database</string>
 
 <!-- can be used to initiate Intent, but not in the manifest (why?)-->

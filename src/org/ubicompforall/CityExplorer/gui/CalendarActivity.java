@@ -440,10 +440,11 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 		} //clearCalendar
 
-		if(itemID == R.id.composePOIs){
-			ll.removeAllViews();
-			showComposerInWebView();
-		}// if Compose UbiServices
+		//Only used for UbiComposer Version
+//		if(itemID == R.id.composePOIs){
+//			ll.removeAllViews();
+//			showComposerInWebView();
+//		}// if Compose UbiServices
 
 		return true;
 	} // onOptionsItemSelected
@@ -452,7 +453,36 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		wantToGoBack = true; // Disable required double-press on back-key
 
 		//Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
-		String url = "http://129.241.200.195:8080/UbiComposer"; // make json
+		String url = "http://129.241.200.195:8080/UbiComposer?json=MY_JSON_OBJECT";
+		// make json
+		/*
+		Send JSON context:
+			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
+			List of Library-URI: Which Trigger/Building Block to load on invocation
+				Always include Generic.library in the list
+			
+		Implement ContentProvider
+			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
+			URI: cityExplorer/POI or cityExplorer/POI/14
+			COLS: Name ( always include hidden ID_COL, possibly null )
+			CONDITIONS: null
+			COND_VALUES: null
+			SORT: By name - Ascending
+
+		Other types of queries
+			Pick (Must provide its own User Interface)
+
+		Composition
+			Trigger:
+				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
+			Step:
+				Send SMS with
+					Text with name-reference from Trigger,
+					Phone Number from PhoneBook on the phone, use PICK/ContentProvider
+			Info:
+				Name of the POI,
+				Phone number from AddressBook
+		*/
 		
 //Testing how to launch a specific intent for the Firefox browser
 //		Intent intent = new Intent(Intent.ACTION_MAIN, null);
