@@ -49,7 +49,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * The Class MapsActivity.
@@ -60,7 +59,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	 * GLOBAL CONSTANTS
 	 */
 	MapActivity context;	// Where to show pop-up dialogs
-	boolean connection;		// Has connection been tested?
+	boolean connection, asked;		// Has connection been tested?
 	//private static final int DEBUG = CityExplorer.DEBUG;
 
 	/***
@@ -83,6 +82,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		final MapView mapView = (com.google.android.maps.MapView) findViewById(R.id.location_mapview);
 		context = this;
 		connection = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
+		asked = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
 		//private static final int DEBUG = CityExplorer.DEBUG;
 
 		List<Overlay> listOfOverlays = new ArrayList<Overlay>();
@@ -116,10 +116,8 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	class MapOverlay extends com.google.android.maps.Overlay{
 		@Override
 		public boolean onTouchEvent(MotionEvent e, MapView mapView){
-			if ( CityExplorer.ensureConnected( context ) ){
-				connection = true;
-			}
-			if ( connection ){ //For downloading DBs
+			connection = CityExplorer.ensureConnected( context );
+			if ( connection || asked ){ //For downloading DBs
 				if (e.getAction() == MotionEvent.ACTION_UP ){
 				    GeoPoint p = mapView.getMapCenter();
 					SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
@@ -134,11 +132,13 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 					tv.setText( Integer.toString( p.getLatitudeE6() ) );
 					tv = (TextView) findViewById(R.id.map_lng);
 					tv.setText( Integer.toString( p.getLongitudeE6() ) );
-					tv = (TextView) findViewById(R.id.map_name);
-					tv.setText( MyPreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
+					if (connection){
+						tv = (TextView) findViewById(R.id.map_name);
+						tv.setText( MyPreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
+					}
 				}
 			}else{
-				connection=true;
+				asked=true;
 				CityExplorer.showNoConnectionDialog( context );
 				//Toast.makeText( context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 			}
