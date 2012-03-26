@@ -97,7 +97,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		debug(0, "opening web-pages: "+webFolders );
 		
 		init(); //webview etc.
-		//webviewCache: two private dbopen() are automagically executed here (to create temp databases for this activity: webview.db and webviewCache.db)
+		//webviewCache: two private dbopen() are automagically executed here (Maybe to create temp databases for this activity: webview.db and webviewCache.db)
 	} // onCreate
 	
 	private static void debug( int level, String message ) {
@@ -113,6 +113,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
+			webview.getSettings().setJavaScriptEnabled(true);
 			showDownloadPage();
 		}// if webView found
 	}//init
@@ -151,7 +152,6 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	 */
 	public boolean setupWebDBs() {
 		if ( ! loaded ){
-			loaded=true;
 			String responseString;
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
@@ -168,8 +168,12 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	
 						String SERVER_URL = "http://"+(new URL(webURL).getHost());
 						String linkTerms = extractDBs( responseString, SERVER_URL );
-						debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
-						webview.loadData(linkTerms, "text/html", "utf-8" );
+						if (linkTerms.equals("") ){
+							webview.loadData( responseString, "text/html", "utf-8" );
+						}else{
+							debug(2, "searching host "+SERVER_URL+", extracted is "+linkTerms );
+							webview.loadData(linkTerms, "text/html", "utf-8" );
+						}
 						//webview.loadData( responseString, "text/html", "utf-8" );
 				    }else{
 						//Closes the connection on failure
@@ -182,6 +186,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 					e.printStackTrace();
 				} // try downloading db's from the Web, catch and print exceptions
 		    }// for all web-locations with DBs on them
+			loaded=true;
 		} // if not already loaded once before
 		return false;
 	} // setupWebDBs (called from init / from onCreate... Too slow?)
@@ -242,10 +247,10 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	}//On touch
 
 	private void showDownloadPage() {
-		if ( CityExplorer.isConnected(this) ){ //For downloading DBs
+		if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs
 			setupWebDBs();
 		}else{
-			webview.getSettings().setJavaScriptEnabled(true);
+			CityExplorer.showNoConnectionDialog( this );
 			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
 			webview.setOnTouchListener(this);
 		}

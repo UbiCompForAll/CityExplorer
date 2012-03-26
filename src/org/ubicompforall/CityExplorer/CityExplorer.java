@@ -142,17 +142,16 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 
 
-	public static boolean isConnected( Activity context ) {
-		ConnectivityManager connectivityManager = (ConnectivityManager)
-		    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	public static boolean ensureConnected( Activity context ) {
+		ConnectivityManager connectivityManager	= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = null;
 		if (connectivityManager != null) {
 		    networkInfo = connectivityManager.getActiveNetworkInfo();
 		}
 		if ( networkInfo == null ){
-			//Toast.makeText( context, R.string.no_connection, Toast.LENGTH_LONG).show();
 			return false; //Network is not enabled
 		}else{
+			//Toast.makeText( context, "Network state is "+networkInfo.getState(), Toast.LENGTH_LONG).show();
 			return networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
 		}
 	} // isConnected
@@ -160,7 +159,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	//Ping Google
     public static boolean pingConnection( Activity context, String url ) {
-    	boolean urlAvailable = isConnected(context);	// googleAvailable = false;
+    	boolean urlAvailable = ensureConnected(context);	// googleAvailable = false;
 		if ( ! urlAvailable ){
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
@@ -186,8 +185,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
 					Uri uri = Uri.parse( url );
 					context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
 					urlAvailable = true;
-
-					context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();

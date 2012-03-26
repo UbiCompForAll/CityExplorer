@@ -245,7 +245,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			    	for (Poi p : trip.getPois()){
 						if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
 					}
-			    	//TODO: Denne bør returnere f.eks. 2, ikke -1 !!!
 			    	tripPoiIndex = trip.getPois().indexOf(poi);
 
 			    	//Add walking time:
@@ -460,7 +459,9 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
 			List of Library-URI: Which Trigger/Building Block to load on invocation
 				Always include Generic.library in the list
-			
+				
+//TODO: http://developer.android.com/reference/android/content/ContentProvider.html
+
 		Implement ContentProvider
 			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
 			URI: cityExplorer/POI or cityExplorer/POI/14
@@ -500,7 +501,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
 			webview.getSettings().setJavaScriptEnabled(true);
-			if ( CityExplorer.isConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
+			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
 				webview.loadUrl(url);
 //Verifying that our Javascript Interface class "Android" works
 //				webview.loadData(""

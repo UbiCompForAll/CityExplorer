@@ -60,11 +60,13 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	Editor editor;	// Editor for changing the shared preferences
 	private EditText url_edit;
 	
+	/**
+	 * Initializes the activity screen etc.
+	 */
 	@Override
 	public void onCreate( Bundle savedInstanceState ){
 		super.onCreate( savedInstanceState );
 		debug(0, "create");
-
 
 		setContentView( R.layout.preferencesview );
 
@@ -72,10 +74,16 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		editor = settings.edit();	// Remember to commit changes->onPause etc.
 
 		url_edit = (EditText) findViewById( R.id.pref_url );
-
-		init();
+		initDbUrl();
 	}//onCreate
 
+	@Override
+	public void onResume(){
+		super.onResume();
+		debug(0, "resume");
+		initLocation();
+	} // onResume
+	
 	@Override
 	public void onPause(){
 		super.onPause();
@@ -84,39 +92,30 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		editor.putString( CityExplorer.URL, url );
 		editor.commit();
 		debug(2, "committed:"+url_edit.getText().toString() );
-	} // onResume
+	} // onPause
 	
-	@Override
-	public void onResume(){
-		super.onResume();
-		debug(0, "resume");
-		init();
-	} // onResume
-	
+
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 
 	
 	public static String getDbPath (Context context ){
-		//add DB URL to settings - if not yet set
+		String default_url = context.getResources().getString(R.string.default_url);
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		String url_db = settings.getString ( CityExplorer.URL, context.getResources().getString(R.string.default_url) );		
+		String url_db = settings.getString ( CityExplorer.URL, default_url );		
+		
+		//add DB URL to settings - if not yet set
 		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			
-		editor.putString(CityExplorer.URL, url_db);
+		if ( url_db.equals("") ){
+			editor.putString( CityExplorer.URL, default_url );
+		}else{
+			editor.putString( CityExplorer.URL, url_db );
+		}
 		editor.commit();
 
 		return url_db;
 	} // getDbPath
-
-	/**
-	 * Initializes the activity screen etc.
-	 */
-	private void init() {
-
-		initDbUrl();
-		initLocation();
-	}//init
 
 
 	private void initDbUrl() {
@@ -198,6 +197,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			}
 		} catch (IOException e) {
 			debug(0, "What's wrong with lat="+lat+", lng="+lng+", error is "+ e.getLocalizedMessage() );
+			e.printStackTrace();
 		}
 		return address;
 	} // getAddress

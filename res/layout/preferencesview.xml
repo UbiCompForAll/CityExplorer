@@ -60,7 +60,7 @@
 				android:id="@+id/pref_db"
 				android:text="Web URL" />
 			<TextView
-				android:text="(Type to change)" />
+				android:text="(Type to change, back to save)" />
 		</TableRow>
 		
 		<TableRow>
