@@ -51,7 +51,7 @@ public class ImportActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tablayout);
-		debug(1, "");
+		debug(2, "");
 		initTabs();
 	}//onCreate
 

@@ -49,7 +49,6 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,7 +73,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	private ArrayList<String> webFolders;
 
 	/*** Field containing this activity's context.*/
-	private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
+	//private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
 
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
@@ -90,14 +89,15 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.weblayout);
+		setContentView( R.layout.weblayout ); // A very simple, named WebView
 
 		//String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
 		webFolders = new ArrayList<String>();
 		webFolders.add("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
 		debug(0, "opening web-pages: "+webFolders );
-
-		init();
+		
+		init(); //webview etc.
+		//webviewCache: two private dbopen() are automagically executed here (Maybe to create temp databases for this activity: webview.db and webviewCache.db)
 	} // onCreate
 	
 	private static void debug( int level, String message ) {
@@ -109,45 +109,18 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	 * Initializes the activity.
 	 */
 	private void init() {
-		//setContext(this);
-		webview = (WebView) findViewById(R.id.webview);
+		webview = (WebView) findViewById(R.id.myWebView);
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
-			if ( initWifi() ){ //For downloading DBs
-				//OK...
-				setupWebDBs( webview );
-			}else{
-				webview.getSettings().setJavaScriptEnabled(true);
-				webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
-				webview.setOnTouchListener(this);
-			}
+			webview.getSettings().setJavaScriptEnabled(true);
+			showDownloadPage();
 		}// if webView found
-
-//		adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
-
-//		allDBs = getAllDBs();
-
-		getResources();
-
-		//Init View-adapters etc.
-//		makeSections();
-
-		//initGPS(); //For maps?
 	}//init
-
-	/***
-	 * Make sure WiFi or Data connection is enabled
-	 */
-	boolean initWifi(){
-		boolean connected = CityExplorer.isConnected(this);
-		if ( ! connected ){
-			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
-			CityExplorer.showNoConnectionDialog( this );
-			return false;
-		}
-		return true;
-	} //initWifi
+//	adapter = new SeparatedListAdapter(this, SeparatedListAdapter.LOCAL_DBS);
+//	allDBs = getAllDBs();
+//	//Init View-adapters etc.
+//	makeSections();
 
 	/***
 	 * Extract database URLs from the web-page source code, given as the string text
@@ -166,21 +139,24 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 			}
 			linkTerms.append( "<A HREF=\""+ URL +"\">"+m.group(3)+"</A><BR>\n" );
 		}
+
+		//linkTerms.append( "<BR><HR><BR>\n" );
+		//linkTerms.append( text );
+
 		return linkTerms.toString();
 	}//extractDBs
 
 	/***
-	 * 
 	 * @param webview
 	 * @return
 	 */
-	public boolean setupWebDBs(WebView webview) {
+	public boolean setupWebDBs() {
 		if ( ! loaded ){
-			loaded=true;
 			String responseString;
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 		    for (String webURL : webFolders){
+		    	debug(0, "Getting webFolder "+webURL);
 				try {
 					response = httpclient.execute( new HttpGet(webURL) );
 				    StatusLine statusLine = response.getStatusLine();
@@ -192,8 +168,13 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	
 						String SERVER_URL = "http://"+(new URL(webURL).getHost());
 						String linkTerms = extractDBs( responseString, SERVER_URL );
-						debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
-						webview.loadData(linkTerms, "text/hml", "utf-8" );
+						if (linkTerms.equals("") ){
+							webview.loadData( responseString, "text/html", "utf-8" );
+						}else{
+							debug(2, "searching host "+SERVER_URL+", extracted is "+linkTerms );
+							webview.loadData(linkTerms, "text/html", "utf-8" );
+						}
+						//webview.loadData( responseString, "text/html", "utf-8" );
 				    }else{
 						//Closes the connection on failure
 						response.getEntity().getContent().close();
@@ -205,32 +186,11 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 					e.printStackTrace();
 				} // try downloading db's from the Web, catch and print exceptions
 		    }// for all web-locations with DBs on them
+			loaded=true;
 		} // if not already loaded once before
 		return false;
-	} // setupDBs (called from init / from onCreate... Too slow?)
+	} // setupWebDBs (called from init / from onCreate... Too slow?)
 
-/**	private ArrayList<DB> getAllDBs() {
-		if (categoryFolders == null){
-			debug(0, "categoryFolders NOT FOUND!" );
-		}else{
-			categoryFolders.add( getFilesDir().getPath() );
-			for ( String path : categoryFolders ){
-				File dir = new File(path);
-				File[] files = dir.listFiles();
-				if (files == null){
-					debug(0, "No files found in "+dir.getPath() );
-				}else{
-					for ( int f=0; f<files.length ; f++ ){
-						File file = files[f];
-						allDBs.add( new DB( file.getName(), dir.getName() ) );
-					}// for each file
-				}// if not null-pointer path->files
-			} // for each folder
-		} // if not null-pointer
-		return allDBs;
-	}//getAllDBs
-**/
-	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -252,32 +212,6 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 //			((DBFileAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
 //		}
 //	}
-
-	/**
-	 * Updates the category sections in the list, e.g. after choosing filtering.
-	@SuppressWarnings("unused")
-	private void updateSections(){
-		allDBs = new FileSystemConnector().getAllDBs();
-		ArrayList<String> sectionsInUse = new ArrayList<String>(); 
-//		for (DB db : allDBs){
-//			sectionsInUse.add(db.getCategory());
-//			if(!adapter.getSectionNames().contains(db.getCategory())){
-//				ArrayList<DB> list = new ArrayList<DB>();
-//				list.add(db);
-//				DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
-//				adapter.addSection(db.getCategory(), testAdapter);
-//			}//if contains category
-//		}//for DBs
-//		ArrayList<String> ListSections = (ArrayList<String>) adapter.getSectionNames().clone();
-//		for(String sec : ListSections){
-//			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites")){	
-//				adapter.removeSection(sec);
-//			}
-//		}//for sections
-		//lv.setAdapter(adapter);
-	}//updateSections
-	 */
-
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -306,26 +240,21 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	} // onOptionsItemSelected( MenuItem )
 
 
-	public Context getContext() {
-		return context;
-	}
-
-	public void setContext(Context context) {
-		this.context = context;
-	}
-
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		if ( initWifi() ){ //For downloading DBs
-			//OK...
-			setupWebDBs( webview );
-		}else{
-			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
-			webview.setOnTouchListener(this);
-		}
+		showDownloadPage();
 		return false;
 	}//On touch
 
+	private void showDownloadPage() {
+		if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs
+			setupWebDBs();
+		}else{
+			CityExplorer.showNoConnectionDialog( this );
+			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
+			webview.setOnTouchListener(this);
+		}
+	}//showDownloadPage
 
 
 }//ImportLocalTab

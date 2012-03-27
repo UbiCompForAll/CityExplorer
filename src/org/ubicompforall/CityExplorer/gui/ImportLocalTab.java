@@ -100,7 +100,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		debug(1, "");
+		debug(2, "");
 
 		//INITIALIZE OWN FIELDS
 		allDBs = new ArrayList<DB>();

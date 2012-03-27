@@ -116,12 +116,20 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 	@Override
 	public void onClick(View v) {
-		debug(0, "Clicked: "+v );
+		debug(1, "Clicked: "+v );
 		if (v.getId() == R.id.startButton1){  // Button PLAN TOUR
 						
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){ // Button EXPLORE CITY MAP
+			//Starting the maps activity is too slooow! How to show a progress bar etc.?
+//			Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
+//			try {
+//				wait(500);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//			setProgressBarVisibility(true);
 			exploreCity();
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
@@ -151,7 +159,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
 	 */
 	private void exploreCity() {
-		debug(0, "Clicked: ExploreButton...");
+		debug(0, "Clicked ExploreMap Button...");
 		if (userLocation == null){
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 		}
@@ -179,7 +187,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		
 		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
 		startActivity(showInMap);
-	}//expolorCity
+	}//exploreCity
 
 	
 	public static Location verifyUserLocation( Location userLocation, Context context ) {

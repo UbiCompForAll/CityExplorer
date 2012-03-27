@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:id="@+id/saveCalendar" android:icon="@android:drawable/ic_menu_save"
+	<item
+	    android:id="@+id/saveCalendar"
+	    android:icon="@android:drawable/ic_menu_save"
 		android:title="@string/saveCalendar" />
 		
-	<item android:id="@+id/clearCalendar" 
+	<item
+	    android:id="@+id/clearCalendar" 
 		android:icon="@android:drawable/ic_menu_close_clear_cancel"
 		android:title="@string/clearCalendar" />
 
-	<item android:id="@+id/composePOIs" 
-		android:title="@string/composeUbiServices" android:icon="@drawable/compose"/>
+	<item
+	    android:id="@+id/composePOIs" 
+		android:title="@string/composeUbiServices"
+		android:icon="@drawable/compose"/>
 </menu>

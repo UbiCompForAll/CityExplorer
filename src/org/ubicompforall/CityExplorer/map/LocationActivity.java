@@ -54,7 +54,12 @@ import android.widget.TextView;
  * The Class MapsActivity.
  */
 public class LocationActivity extends MapActivity{ // implements LocationListener{
-	//GLOBAL CONSTANTS
+
+	/***
+	 * GLOBAL CONSTANTS
+	 */
+	MapActivity context;	// Where to show pop-up dialogs
+	boolean connection, asked;		// Has connection been tested?
 	//private static final int DEBUG = CityExplorer.DEBUG;
 
 	/***
@@ -75,6 +80,10 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		setContentView(R.layout.locationlayout);
 
 		final MapView mapView = (com.google.android.maps.MapView) findViewById(R.id.location_mapview);
+		context = this;
+		connection = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
+		asked = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
+		//private static final int DEBUG = CityExplorer.DEBUG;
 
 		List<Overlay> listOfOverlays = new ArrayList<Overlay>();
 		if (mapView==null){
@@ -107,22 +116,31 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	class MapOverlay extends com.google.android.maps.Overlay{
 		@Override
 		public boolean onTouchEvent(MotionEvent e, MapView mapView){
-			if (e.getAction() == MotionEvent.ACTION_UP ){
-			    GeoPoint p = mapView.getMapCenter();
-				SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-				Editor editor = settings.edit();
-				editor.putInt( CityExplorer.LAT, p.getLatitudeE6() );
-				editor.putInt( CityExplorer.LNG, p.getLongitudeE6() );
-				editor.commit();
-				debug(0, "committed: lat=" + Integer.toString( p.getLatitudeE6() ) + ", lng="+ Integer.toString( p.getLongitudeE6() ) );
-
-				//Update screen with new coordinates
-				TextView tv = (TextView) findViewById(R.id.map_lat);
-				tv.setText( Integer.toString( p.getLatitudeE6() ) );
-				tv = (TextView) findViewById(R.id.map_lng);
-				tv.setText( Integer.toString( p.getLongitudeE6() ) );
-				tv = (TextView) findViewById(R.id.map_name);
-				tv.setText( MyPreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
+			connection = CityExplorer.ensureConnected( context );
+			if ( connection || asked ){ //For downloading DBs
+				if (e.getAction() == MotionEvent.ACTION_UP ){
+				    GeoPoint p = mapView.getMapCenter();
+					SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+					Editor editor = settings.edit();
+					editor.putInt( CityExplorer.LAT, p.getLatitudeE6() );
+					editor.putInt( CityExplorer.LNG, p.getLongitudeE6() );
+					editor.commit();
+					debug(0, "committed: lat=" + Integer.toString( p.getLatitudeE6() ) + ", lng="+ Integer.toString( p.getLongitudeE6() ) );
+	
+					//Update screen with new coordinates
+					TextView tv = (TextView) findViewById(R.id.map_lat);
+					tv.setText( Integer.toString( p.getLatitudeE6() ) );
+					tv = (TextView) findViewById(R.id.map_lng);
+					tv.setText( Integer.toString( p.getLongitudeE6() ) );
+					if (connection){
+						tv = (TextView) findViewById(R.id.map_name);
+						tv.setText( MyPreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
+					}
+				}
+			}else{
+				asked=true;
+				CityExplorer.showNoConnectionDialog( context );
+				//Toast.makeText( context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 			}
 			return false;
 		} // onTouchEvent

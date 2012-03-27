@@ -55,8 +55,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
@@ -64,7 +66,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-public class CalendarActivity extends Activity {
+public class CalendarActivity extends Activity implements OnTouchListener{
 
 	/*** Field containing this activity's {@link WebView}.*/
 	private WebView webview;
@@ -125,34 +127,28 @@ public class CalendarActivity extends Activity {
 	}
 
 
-	private void addPoisWithTime()
-	{
+	private void addPoisWithTime()	{
 		if(trip.getFixedTimes() == null)
 			System.out.println("CalAct: fixed time == null");
 		
 		if(trip.getFixedTimes().keySet().containsAll(trip.getPois()) &&
-				trip.getPois().containsAll(trip.getFixedTimes().keySet()))//all pois have time.
-		{
-			for(Poi poi : trip.getPois())
-			{	
+				trip.getPois().containsAll(trip.getFixedTimes().keySet()))	{ //all pois have time.
+			for(Poi poi : trip.getPois()){	
 				System.out.println("CalAct: times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
 				
 				ViewDayHourItem time = null;
-				for(ViewDayHourItem t : hourViews)
-				{
-					if(t.GetHour() == trip.getFixedTimes().get(poi).hour)
-					{
+				for(ViewDayHourItem t : hourViews)	{
+					if(t.GetHour() == trip.getFixedTimes().get(poi).hour){
 						time = t;
 						break;
 					}
 				}
-				if(time == null)
+				if(time == null){
 					System.out.println("ERROR in addPoisWithTime");
-							
+				}
 				time.setMinutes(trip.getFixedTimes().get(poi).minute);
 				
-				if( !calendarIsEmpty)//not first entry. add walking time.
-				{
+				if( !calendarIsEmpty) { //not first entry. add walking time.
 					addWalkingTime(trip.getPois().indexOf(poi), time, trip.getFixedTimes().get(poi).minute, poi);
 				}
 				
@@ -252,8 +248,9 @@ public class CalendarActivity extends Activity {
 			    	tripPoiIndex = trip.getPois().indexOf(poi);
 
 			    	//Add walking time:
-			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false)
+			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false){
 			    		return;
+			    	}
 
 			    	//Add poi calendar entry:
 			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
@@ -294,16 +291,18 @@ public class CalendarActivity extends Activity {
 		poiTextView ptvBeforeOrNull = findPoiViewBefore(trip, hourViews, time);
 		poiTextView ptvAfterOrNull  = findPoiViewAfter(trip, hourViews, time);
 		
-		if((tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip())){ //no travel to the first POI
+		if( (tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip()) ){ //no travel to the first POI
     		
     		if(ptvAfterOrNull != null){ //there is another poi in the calendar after this one.
     			Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in cronological order.", Toast.LENGTH_LONG).show();
+    			debug(-1, "Which one" );
     			return false;
-    		}
+    		}//if first poi
     		
-    		if(!trip.isFreeTrip()){
+    		if( !trip.isFreeTrip() ){
     			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) ){
     				Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in numerical order.", Toast.LENGTH_LONG).show();
+        			debug(-1, "Which one calendarIsEmpty is "+calendarIsEmpty+", ptvBeforeOrNull is "+ptvBeforeOrNull+", tripPoiIndex is "+tripPoiIndex );
     				return false;
     			}// if empty, or bad order
     		}// if FixedTour
@@ -403,18 +402,6 @@ public class CalendarActivity extends Activity {
 		return dist;
 	}//getDistance
 	
-	/***
-	 * Make sure WiFi or Data connection is enabled
-	 */
-	boolean initWifi(){
-		boolean connected = CityExplorer.isConnected(this);
-		if ( ! connected ){
-			CityExplorer.showNoConnectionDialog( this );
-			return false;
-		}
-		return true;
-	} //initWifi
-
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
 		menu.clear();
@@ -452,63 +439,95 @@ public class CalendarActivity extends Activity {
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 		} //clearCalendar
 
-		if(itemID == R.id.composePOIs){
-			ll.removeAllViews();
-			//poiAdapter.clear();
-			//preparePoiList();
-			//trip.clearTimes();
-			Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
-
-			String url = "http://129.241.200.195:8080/UbiComposer"; // make json
-			
-// Testing how to launch a specific intent for the Firefox browser
-//			Intent intent = new Intent(Intent.ACTION_MAIN, null);
-//			intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//			intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-//			intent.setAction("org.mozilla.gecko.BOOKMARK");
-//			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//			intent.putExtra("args", "--url=" + url);
-//			intent.setData(Uri.parse(url));
-//			startActivity(intent);
-			
-			setContentView(R.layout.weblayout);
-			webview = (WebView) findViewById(R.id.webview);
-			if (webview == null){
-				debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
-			}else{
-				webview.getSettings().setJavaScriptEnabled(true);
-				if ( initWifi() ){ //For downloading DBs
-
-					webview.loadUrl(url);
-
-// Verifying that our Javascript Interface class "Android" works
-//					webview.loadData(""
-//							+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
-//							+"<script type=\"text/javascript\">"
-//							+"  function showAndroidToast(toast) {"
-//							+"		Android.showToast(toast);"
-//							+"	}"
-//							+"</script>"
-//
-//							+"Click a term in the list...", "text/hml", "utf-8");
-					webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
-					webview.setWebViewClient( new WebViewClient() );
-					webview.getSettings().setJavaScriptEnabled(true);
-					webview.getSettings().setBuiltInZoomControls(true);
-					
-					Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
-					//OK...
-					//setupWebDBs( webview );
-				}else{
-					webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
-					//webview.setOnTouchListener(this);
-				}
-			}// if webView found
-			
-		}// if Compose UbiServices
+		//Only used for UbiComposer Version
+//		if(itemID == R.id.composePOIs){
+//			ll.removeAllViews();
+//			showComposerInWebView();
+//		}// if Compose UbiServices
 
 		return true;
 	} // onOptionsItemSelected
+
+	private void showComposerInWebView() {
+		wantToGoBack = true; // Disable required double-press on back-key
+
+		//Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
+		String url = "http://129.241.200.195:8080/UbiComposer?json=MY_JSON_OBJECT";
+		// make json
+		/*
+		Send JSON context:
+			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
+			List of Library-URI: Which Trigger/Building Block to load on invocation
+				Always include Generic.library in the list
+				
+//TODO: http://developer.android.com/reference/android/content/ContentProvider.html
+
+		Implement ContentProvider
+			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
+			URI: cityExplorer/POI or cityExplorer/POI/14
+			COLS: Name ( always include hidden ID_COL, possibly null )
+			CONDITIONS: null
+			COND_VALUES: null
+			SORT: By name - Ascending
+
+		Other types of queries
+			Pick (Must provide its own User Interface)
+
+		Composition
+			Trigger:
+				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
+			Step:
+				Send SMS with
+					Text with name-reference from Trigger,
+					Phone Number from PhoneBook on the phone, use PICK/ContentProvider
+			Info:
+				Name of the POI,
+				Phone number from AddressBook
+		*/
+		
+//Testing how to launch a specific intent for the Firefox browser
+//		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+//		intent.setAction("org.mozilla.gecko.BOOKMARK");
+//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		intent.putExtra("args", "--url=" + url);
+//		intent.setData(Uri.parse(url));
+//		startActivity(intent);
+		
+		setContentView(R.layout.weblayout);
+		webview = (WebView) findViewById(R.id.myWebView);
+		if (webview == null){
+			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
+		}else{
+			webview.getSettings().setJavaScriptEnabled(true);
+			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
+				webview.loadUrl(url);
+//Verifying that our Javascript Interface class "Android" works
+//				webview.loadData(""
+//						+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
+//						+"<script type=\"text/javascript\">"
+//						+"  function showAndroidToast(toast) {"
+//						+"		Android.showToast(toast);"
+//						+"	}"
+//						+"</script>"
+//
+//						+"Click a term in the list...", "text/hml", "utf-8");
+				webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
+				webview.setWebViewClient( new WebViewClient() );
+				webview.getSettings().setJavaScriptEnabled(true);
+				webview.getSettings().setBuiltInZoomControls(true);
+				
+				Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+				//OK...
+				//setupWebDBs( webview );
+			}else{
+				webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
+				webview.setOnTouchListener(this);
+				CityExplorer.showNoConnectionDialog( this );
+			}
+		}// if webView found
+	}//showComposerInWebView
 
 	public OnClickListener ocl = new OnClickListener() {
 		
@@ -554,6 +573,12 @@ public class CalendarActivity extends Activity {
 	        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
 	    }//showToast
 	}//class JavaScriptInterface
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		showComposerInWebView();
+		return false;
+	}
 
 
 } //class CalendarActivity

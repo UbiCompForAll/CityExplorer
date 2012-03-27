@@ -412,7 +412,8 @@ final public class Poi extends IntentPassable {
 	 */
 	public String getTelephone(){
 		if (telephone.equals("0")) {
-			return "";
+			return ""; //Broke the adding of POIs to calendar fixed tour, because of comparison in line 480:
+			//			telephone.equals( cmprnd.getTelephone() )
 		}
 		return telephone;
 	}
@@ -474,18 +475,18 @@ final public class Poi extends IntentPassable {
 		}
 
 		boolean same = 
-			idGlobal	== cmprnd.getIdGlobal()			&&
-			idPrivate	== cmprnd.getIdPrivate()		&&
-			favourite	== cmprnd.isFavourite()			&&
-			telephone.	equals(cmprnd.getTelephone())	&&
-			label.		equals(cmprnd.getLabel())		&&
-			description.equals(cmprnd.getDescription())	&&
-			address.	equals(cmprnd.getAddress())		&&
-			category.	equals(cmprnd.getCategory())	&&
-			//categories.equals(cmprnd.getCategories())
-			openingHours.equals(cmprnd.getOpeningHours()) &&
-			imageURL.	equals(cmprnd.getImageURL())	&&
-			webPage.	equals(cmprnd.getWebPage());
+			idGlobal		== cmprnd.getIdGlobal()			&&
+			idPrivate		== cmprnd.getIdPrivate()		&&
+			favourite		== cmprnd.isFavourite()			&&
+			getTelephone()	.equals(cmprnd.getTelephone())	&&
+			label.			equals(cmprnd.getLabel())		&&
+			description.	equals(cmprnd.getDescription())	&&
+			address.		equals(cmprnd.getAddress())		&&
+			category.		equals(cmprnd.getCategory())	&&
+			//categories.	equals(cmprnd.getCategories())
+			openingHours.	equals(cmprnd.getOpeningHours()) &&
+			imageURL.		equals(cmprnd.getImageURL())	&&
+			webPage.		equals(cmprnd.getWebPage());
 
 		return same;
 	}
