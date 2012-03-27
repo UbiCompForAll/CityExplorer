@@ -158,7 +158,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		//String BASE_URL = "http://www.sintef.no";
 		StringBuffer linkTerms = new StringBuffer(); //E.g. "(End-user Development)|(EUD)"
 		// Find all the a href's
-		Matcher m = Pattern.compile("<a href=\"([^>]+(sqlite|db|db3))\">([^<]+)</a>", Pattern.CASE_INSENSITIVE).matcher(text);
+		Matcher m = Pattern.compile("<a.* href=\"([^>]+(sqlite|db|db3))\">([^<]+)</a>", Pattern.CASE_INSENSITIVE).matcher(text);
 		while (m.find()) {
 			String URL = m.group(1);	// group 0 is everything
 			if ( URL.charAt(0) == '/' ){

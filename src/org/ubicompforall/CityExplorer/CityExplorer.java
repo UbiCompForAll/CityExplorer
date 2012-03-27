@@ -154,41 +154,47 @@ public class CityExplorer extends Application{ // implements LocationListener //
 			boolean activated = networkInfo.getState() == NetworkInfo.State.CONNECTED ? true : false ;
 			if ( activated ){
 				//Ping Google
-				activated = verifyDataConnection( context );
+				activated = verifyGoogleConnection ( context );
 			}
 			return activated;
 		}
 	} // isConnected
 
 
-    private static boolean verifyDataConnection( Activity context ) {
-    	boolean verified = false;
+    private static boolean verifyGoogleConnection( Activity context ) {
+    	boolean googleAvailable = false;
 		if ( ! verifiedDataConnection ){
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 			try {
 				response = httpclient.execute( new HttpGet( googleURL ) );
 			    StatusLine statusLine = response.getStatusLine();
-			    if( statusLine.getStatusCode() == HttpStatus.SC_OK ){
-			    	verified = true;
-			    }else{
-					//Closes the connection on failure
-					response.getEntity().getContent().close();
-
-					//throw new IOException( statusLine.getReasonPhrase() );
-					Toast.makeText( context, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
-					Uri uri = Uri.parse( googleURL );
-					context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
-					verified = true;
-	                context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+// HTTP status is OK even if not logged in to NTNU
+			    if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
+			    	verifiedDataConnection = true;
+			    	if (true) {	// Connection to google should be checked. TODO
+			    		googleAvailable = true;
+			    	} else { // else if svar fra andre ->false
+						//Closes the connection on failure
+						response.getEntity().getContent().close();
+	
+						//throw new IOException( statusLine.getReasonPhrase() );
+						Toast.makeText( context, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
+						Uri uri = Uri.parse( googleURL );
+						context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
+						googleAvailable = true;
+				    }
+			    } else {
+			    	context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
 			    }
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} // try downloading db's from the Web, catch and print exceptions
+			// googleAvailable = false; //test TODO
 		} // if not already loaded once before
-		return verified;
+		return googleAvailable;
 	}// verifyDataConnection
 
 	/**

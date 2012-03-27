@@ -67,7 +67,6 @@ any static strings associated with maps -->
 <string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
 <string name="opensqlite">City Explorer</string><string name="plan">PLAN TOUR</string>
 <string name="poi_details_favourite">Favourite</string>
-<string name="poi_details_showOnMap">Show on Map</string>
 <string name="poiMenufavourite">Favourite</string>
 <string name="poiMenuMap">Show on Map</string><string name="preferences">PREFERENCES</string>
 <string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
