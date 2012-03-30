@@ -76,20 +76,18 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
-		debug(0, "Start" );
 
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
-		//Init userLocation
-		userLocation = verifyUserLocation( userLocation, this );
+		userLocation = verifyUserLocation( userLocation, this );		//Init userLocation
 
-
-		//FOR DEBUGGING
+		// ODO: FOR DEBUGGING
+		debug(0, "Start" );
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
+		//startActivity(new Intent( this, NewPoiActivity.class) );
 		//ImportWebTab.onTouch2(new View(this), null);
-
 
 	}//onCreate
 
@@ -116,7 +114,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 	@Override
 	public void onClick(View v) {
-		debug(1, "Clicked: "+v );
+		debug(2, "Clicked: "+v );
 		if (v.getId() == R.id.startButton1){  // Button PLAN TOUR
 						
 			startActivity(new Intent(StartActivity.this, PlanActivity.class));

@@ -31,24 +31,32 @@
 
 package org.ubicompforall.CityExplorer.map;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * The Class MapsActivity.
@@ -56,16 +64,21 @@ import android.widget.TextView;
 public class LocationActivity extends MapActivity{ // implements LocationListener{
 
 	/***
-	 * GLOBAL CONSTANTS
+	 * STATIC (GLOBAL) FIELDS
 	 */
-	MapActivity context;	// Where to show pop-up dialogs
-	boolean connection, asked;		// Has connection been tested?
-	//private static final int DEBUG = CityExplorer.DEBUG;
+	static Integer lat = 0;
+	static Integer lng = 0;
 
+	/***
+	 * FIELDS
+	 */
+	private MapActivity context;	// Where to show pop-up dialogs
+	private boolean connection;
+	
 	/***
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
-	private void debug(int level, String message) {
+	private static void debug(int level, String message) {
 		CityExplorer.debug(level, message);
 	}
 
@@ -73,7 +86,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	private MapController mapController;
 
 	
-	// MyMapActivity methods
+	// MyMapActivity OVERRIDE methods
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,9 +94,8 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 
 		final MapView mapView = (com.google.android.maps.MapView) findViewById(R.id.location_mapview);
 		context = this;
-		connection = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
-		asked = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
-		//private static final int DEBUG = CityExplorer.DEBUG;
+		connection = false;	// Assume connection is not present until tested. // Move to CityExplorer.DATACONNECTION_NOTIFIED is slightly different
+		//CityExplorer.DATACONNECTION_NOTIFIED = false;	// Assume connection has not been tested yet. // Move to CityExplorer.java?
 
 		List<Overlay> listOfOverlays = new ArrayList<Overlay>();
 		if (mapView==null){
@@ -106,6 +118,75 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	} // onCreate
 
 	@Override
+	public void onPause(){
+		super.onPause();
+		SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		Editor editor = settings.edit();
+		editor.putInt( CityExplorer.LAT, lat );
+		editor.putInt( CityExplorer.LNG, lng );
+		editor.commit();
+		debug(0, "committed: lat=" + Integer.toString( lat ) + ", lng="+ Integer.toString( lng ) );
+	}//onPause
+	
+	@Override
+	public void onBackPressed() {
+		Bundle bundle = new Bundle();
+	    bundle.putDoubleArray( "lat_lng", new double[]{lat,lng} );
+
+	    Intent mIntent = new Intent();
+	    mIntent.putExtras(bundle);
+	    debug(1, "lat, lng is "+lat+", "+lng );
+	    setResult(RESULT_OK, mIntent);
+	    super.onBackPressed();
+	    finish();
+	} // onBackPressed
+
+
+	public static Double[] runGetAddressFromLocation( Context context, String locName, final Handler handler ) {
+		Geocoder geocoder = new Geocoder(context, Locale.getDefault());   
+		try {
+			List<Address> adrList = geocoder.getFromLocationName( locName, 1);
+			if (adrList != null && adrList.size() > 0) {
+				Address address = adrList.get(0);
+				// sending back first address lat and longitude
+				lat	= (int)(address.getLatitude() * 1e6);
+				lng	= (int)(address.getLongitude() * 1e6);
+			}
+		} catch (IOException e) {
+			Toast.makeText( context, "Data connection needed for Geocoder to verify Address!", Toast.LENGTH_LONG).show();
+		} finally {
+			Message msg = Message.obtain();
+			msg.setTarget(handler);
+
+			Bundle bundle = new Bundle();
+			bundle.putDouble("lat", lat);
+			bundle.putDouble("lng", lng);
+			msg.setData(bundle);
+			//setResult( Activity.RESULT_OK );
+            msg.sendToTarget();
+        } // try - catch - finally
+		Double[] lat_lng = {lat/1e6, lng/1e6};	// Trondheim Torg: {63430396N, 10395041E};
+		return lat_lng;
+	}//runGetAddressFromLocation
+
+	// STATIC METHODS //
+	public static Double[] getAddressFromLocation( final Context context, final String locName, final Handler handler ) {
+		Double[] lat_lng = {lat/1e6, lng/1e6};	// Trondheim Torg: {63430396N, 10395041E};
+		Thread geocoderThread = new Thread() {
+			@Override public void run() {
+				runGetAddressFromLocation( context, locName, handler );
+	        } // run
+	    }; //Thread Class
+	    geocoderThread.start();
+	    
+	    debug(0, "lat_lng is "+lat+", "+lng );
+		return lat_lng;
+	}//getAddressFromLocation
+
+	// END STATIC METHODS //
+	
+	
+	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	} // isRouteDisplayed
@@ -117,16 +198,13 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		@Override
 		public boolean onTouchEvent(MotionEvent e, MapView mapView){
 			connection = CityExplorer.ensureConnected( context );
-			if ( connection || asked ){ //For downloading DBs
+			if ( connection || CityExplorer.DATACONNECTION_NOTIFIED ){ //For downloading DBs
 				if (e.getAction() == MotionEvent.ACTION_UP ){
 				    GeoPoint p = mapView.getMapCenter();
-					SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-					Editor editor = settings.edit();
-					editor.putInt( CityExplorer.LAT, p.getLatitudeE6() );
-					editor.putInt( CityExplorer.LNG, p.getLongitudeE6() );
-					editor.commit();
-					debug(0, "committed: lat=" + Integer.toString( p.getLatitudeE6() ) + ", lng="+ Integer.toString( p.getLongitudeE6() ) );
-	
+					lat = p.getLatitudeE6();
+					lng = p.getLongitudeE6();
+					debug(0, "updated: lat=" + lat + ", lng="+ lng );
+					
 					//Update screen with new coordinates
 					TextView tv = (TextView) findViewById(R.id.map_lat);
 					tv.setText( Integer.toString( p.getLatitudeE6() ) );
@@ -138,8 +216,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 					}
 				}
 			}else{
-				asked=true;
-				CityExplorer.showNoConnectionDialog( context );
+				CityExplorer.showNoConnectionDialog( context, "", "", null, 0 );
 				//Toast.makeText( context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 			}
 			return false;
@@ -257,17 +334,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 //	
 ////			public void onClick(View view){
 ////				//Latitude and longitude for current position
-////				double slon = getCurrentLocation().getLongitudeE6()/1E6;
+////				double slng = getCurrentLocation().getLongitudeE6()/1E6;
 ////				double slat = getCurrentLocation().getLatitudeE6()/1E6;
 ////			}
 //
-//	/* (non-Javadoc)
-//	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-//	 */
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-//		debug(0, "onActivityResults");
-//		mapController.animateTo( new GeoPoint(63000000, 96000000) );
-//	} //onActivityResults
-//
-

@@ -33,6 +33,8 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.data.DBFactory;
@@ -416,8 +418,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		int itemID = item.getItemId();
 		
 		if(itemID == R.id.saveCalendar){
-			if(trip.getFixedTimes().keySet().containsAll(trip.getPois()))
-			{
+			if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				//done
 				DBFactory.getInstance(this).addTimesToTrip(trip);
 				Intent resultIntent = new Intent();
@@ -452,8 +453,16 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		wantToGoBack = true; // Disable required double-press on back-key
 
 		//Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
-		String url = "http://129.241.200.195:8080/UbiComposer?json=MY_JSON_OBJECT";
 		// make json
+		String objectString = "{\"gutter_url\" : \"\",  \"sort_order\" : \"popularity\",  \"result\" : [ { \"afs\" : \"Y\", \"release_year\" : 1979, \"album_sort\" : \"Wall, The\" } ] }";
+		JSONObject parameters = null; 
+		try {
+			parameters = new JSONObject(objectString.trim());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
+		debug(0, "url is "+url );
 		/*
 		Send JSON context:
 			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
@@ -524,7 +533,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			}else{
 				webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
 				webview.setOnTouchListener(this);
-				CityExplorer.showNoConnectionDialog( this );
+				CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
 			}
 		}// if webView found
 	}//showComposerInWebView

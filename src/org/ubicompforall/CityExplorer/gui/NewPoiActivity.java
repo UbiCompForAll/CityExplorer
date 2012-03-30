@@ -33,14 +33,14 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.PoiAddress;
+import org.ubicompforall.CityExplorer.map.LocationActivity;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.view.View;
@@ -51,11 +51,12 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -72,7 +73,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The description view. */
 	private EditText descriptionView;
 	
-	/** The addr view. */
+	/** The adr view. */
 	private EditText addrView;
 	
 	/** The zip view. */
@@ -109,6 +110,9 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The city of the new poi. */
 	private String city;
 	
+	/** The latitude and longitude of the new poi **/
+	Double lat, lng;
+	
 	/** The telephone number of the new poi. */
 	private String tel;
 	
@@ -143,12 +147,38 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The arraylist containing all the category names. */
 	private ArrayList<String> category;
 
+	protected Context context;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		context = this;
 		setContentView(R.layout.newpoi);
 		init();
-	}
+		initDB();
+	}//onCreate
+
+	
+	private void initDB() {
+		new Thread(new Runnable(){
+			public void run(){
+				db = DBFactory.getInstance( context);
+				category = db.getCategoryNames();
+				debug(0, "Categories is "+category );
+				Collections.sort(category);
+				ArrayAdapter<String> categories = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item, category);
+				debug(0, "Categories is "+categories );
+
+				catView.setAdapter(categories);
+			}
+		} ).start();
+	}//initDB
+
+
+	private void debug(int i, String string) {
+		CityExplorer.debug(i, string);
+	}//debug
+
 
 	/**
 	 * Initializes the activity.
@@ -172,14 +202,25 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		choosePoiButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
 		savePoiButton.setOnClickListener(this);
+	}//init
 
-		db = DBFactory.getInstance(this);
-		category = db.getCategoryNames();
-		Collections.sort(category);
-		ArrayAdapter<String> categories = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, category);
-
-		catView.setAdapter(categories);
-	}
+	/**
+	 * Checks if a string contains only numbers.
+	 * 
+	 * @param s The string to be checked.
+	 * @return True if string contains only numbers, false otherwise.
+	 */
+	private boolean isNumbers(String s){
+		s = s.replaceAll("/[#+ ]/", "");
+		s = s.trim();
+		try{
+			Integer.parseInt(s);
+		}catch (NumberFormatException e) {
+			debug(0, "NotANumber: "+s );
+			return false;
+		}
+		return true;
+	}//isNumbers
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
@@ -212,16 +253,93 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			ne.printStackTrace();
 		}
 		return n;
-	}
+	}// stringToInt
+	
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		debug(1, "requestCode is "+requestCode );
+		if(resultCode==Activity.RESULT_CANCELED){
+			return;
+		}
+		switch (requestCode){
+		case CHOOSE_POI:
+			Poi p = (Poi) data.getParcelableExtra( IntentPassable.POI );
+			String name = p.getLabel();
+			String description = p.getDescription();
+			String cat = p.getCategory();
+			String street = p.getAddress().getStreet();
+			String city = p.getAddress().getCity();
+			String tel = p.getTelephone();
+			String openingHours = p.getOpeningHours(); 
+			String webPage = p.getWebPage();
+			String imageUrl = p.getImageURL();
+
+			nameView.setText(name);
+			descriptionView.setText(description);
+			addrView.setText(street);
+			cityView.setText(city);
+			telView.setText(tel);
+			openingHoursView.setText(openingHours);
+			webPageView.setText(webPage);
+			imageURLView.setText(imageUrl);
+
+			int pos = 0;
+			while( category == null ){
+				debug(0, "Just waiting..." );
+			}
+			debug(0, "Categories is "+category );
+			for (String c : category) {
+				if(!cat.equals(c)){
+					pos++;
+				}else {					
+					break;
+				}
+			}
+			catView.setSelection(pos);
+			break;
+		case CityExplorer.REQUEST_LOCATION:
+			double[] lat_lng = data.getDoubleArrayExtra("lat_lng");
+			lat = lat_lng[0];
+			lng = lat_lng[1];
+			//lng = data.getDoubleExtra( "lng", lng );
+			debug(0, "lat_lng is "+lat+", "+lng );
+			break;
+		default:
+			break;
+		}//switch case
+	}//onActivityResult
+	
+	@Override
+	public void onClick(View v) {
+		if(v == choosePoiButton){
+			Intent selectPoi = new Intent( this, PlanPoiTab.class );
+			selectPoi.putExtra("requestCode", CHOOSE_POI);
+			startActivityForResult( selectPoi, CHOOSE_POI );
+		}else if(v == savePoiButton){
+			savePoi();
+		}else if(v == searchButton){
+			String name = nameView.getText().toString();
+			name = name.replace(' ', '+');
+
+			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, 
+					Uri.parse("http://www.google.com/m/search?tbm=isch&hl=en&" +
+							"source=hp&biw=1037&bih=635&" +
+							"q="+name+"&gbv=2&aq=f&aqi=g2&aql=&oq="));
+			startActivity(launchBrowser);
+		}
+	}//onClick
+	
 	/**
 	 * Checks all the mandatory input fields and saves a location in the database.
 	 */
 	private void savePoi(){
-		boolean badAddress = false;
+		debug(0, "Save!");
 		name = nameView.getText().toString();
-		if(name.trim().equals(""))
-		{	
+		if( name.trim().equals("") ){
 			Toast.makeText(this, "Please enter a name", Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -236,154 +354,102 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		webPage = webPageView.getText().toString();
 		imageUrl = imageURLView.getText().toString();
 
-		if(street.trim().equals(""))
-		{	
+		if(street.trim().equals("")){
 			Toast.makeText(this, "Please enter an address", Toast.LENGTH_LONG).show();
 			return;
 		}
-		if(city.trim().equals(""))
-		{	
+		if( city != null && city.trim().equals("") ){
 			Toast.makeText(this, "Please enter a city", Toast.LENGTH_LONG).show();
 			return;
 		}
-		if(!tel.equals("") && !isNumbers(tel)){
-			Toast.makeText(this, "Invalid phone number", Toast.LENGTH_LONG).show();
+		if( ! ( tel.equals("") || isNumbers(tel) ) ){
+			Toast.makeText(this, "Invalid phone number: "+tel, Toast.LENGTH_LONG).show();
 			return;
 		}
 
 		// Gets the latitude and longitude of the poi, by giving the street, city and zip.
-		Geocoder coder = new Geocoder(this);
-		double lat = 0;
-		double lon = 0;
-		try {
-			StringBuilder searchString = new StringBuilder(street);
-			if( !city.trim().equals(""))
-				searchString.append(", "+city);
-// ZIP code removed 
-//			if(zip > 0)
-//				searchString.append(", "+zip);
-			List<Address> foundAdresses = coder.getFromLocationName(searchString.toString(), 1); //Search addresses
-
-			Address x = foundAdresses.get(0);
-			lat = x.getLatitude();
-			lon = x.getLongitude();
+		StringBuilder searchString = new StringBuilder(street);
+		if( city != null && ! city.trim().equals("") ){
+			searchString.append(", "+city);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			Toast.makeText(this, "Invalid address or city", Toast.LENGTH_LONG).show();
-			badAddress=true;
-		}
-		if(badAddress){
-			return;
-		}
+		debug(0, "Saving!");
+		if ( CityExplorer.pingConnection( this, "http://www.google.com" ) ){
+			debug(0, "Pinged...");
+			LocationActivity.getAddressFromLocation( this, searchString.toString(), new GeocoderHandler() ); //Ask online service
+			debug(0, "Got Address...");
+		}else if( ! CityExplorer.DATACONNECTION_NOTIFIED ){ //Ask to connect
+			CityExplorer.showNoConnectionDialog( this, "Data connection needed to get address location",
+					"Set Manually", new Intent( this, LocationActivity.class ), CityExplorer.REQUEST_LOCATION );
+		}else if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
+			debug(0, "Saving...");
+			storeToDB();	//Save!
+		}else{ //set lat and lng manually
+			//Toast.makeText( this, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
+			Toast.makeText( NewPoiActivity.this, "Set POI location", Toast.LENGTH_LONG).show();
+			Intent selectLatLng = new Intent( this, LocationActivity.class ); //startActivityForResult()...
+			startActivityForResult( selectLatLng, CityExplorer.REQUEST_LOCATION );
+			debug(0, "Not able to find location of address in city online by Google Maps" );
+		}// if web available - else not
 
-		PoiAddress.Builder ab = new PoiAddress.Builder
-		(city) 
-		.street(street)
-		.longitude(lon).latitude(lat);
+		// ZIP code removed
+	}// savePoi
 
-// ZIP code removed
-//		if (zip != -1) {
-//			ab.zipCode(zip);
-//		}
-
-		Poi p = new Poi.Builder(name, ab.build())
-		.description(description)
-		.category(cat)
-		.favourite(false)
-		.webPage(webPage)
-		.telephone(tel)
-		.openingHours(openingHours)
-		.imageURL(imageUrl).build(); 
-
-		db.newPoi(p);
-
-		finish();
-
-	}
-
-	/**
-	 * Checks if a string contains only numbers.
-	 * 
-	 * @param s The string to be checked.
-	 * @return True if string contains only numbers, false otherwise.
-	 */
-	private boolean isNumbers(String s){
-		s.trim();
-		try{
-			Integer.parseInt(s);
-		}catch (NumberFormatException e) {
+	// HELPER CLASS FOR savePoi
+	public boolean storeToDB(){
+		if ( lat != 0 && lng != 0 ) {
+			PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
+			.longitude(lng).latitude(lat);
+		
+			Poi p = new Poi.Builder( name, ab.build() )
+			.description(description)
+			.category(cat)
+			.favourite(false)
+			.webPage(webPage)
+			.telephone(tel)
+			.openingHours(openingHours)
+			.imageURL(imageUrl).build(); 
+		
+			debug(0, "poi is "+p );
+			db.newPoi(p);
+			finish();
+		}else{
+			Toast.makeText( NewPoiActivity.this, "Invalid address or city", Toast.LENGTH_LONG).show();
 			return false;
 		}
 		return true;
-	}
+	}//storeToDB
 
-	@Override
-	public void onClick(View v) {
-		if(v == choosePoiButton){
-			Intent selectPoi = new Intent(this, PlanPoiTab.class);
-			selectPoi.putExtra("requestCode", CHOOSE_POI);
-			startActivityForResult(selectPoi, CHOOSE_POI);
-		}
-		else if(v == savePoiButton){
-			savePoi();
-		}
-		else if(v == searchButton){
-			String name = nameView.getText().toString();
-			name = name.replace(' ', '+');
 
-			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, 
-					Uri.parse("http://www.google.com/m/search?tbm=isch&hl=en&" +
-							"source=hp&biw=1037&bih=635&" +
-							"q="+name+"&gbv=2&aq=f&aqi=g2&aql=&oq="));
-			startActivity(launchBrowser);
-		}
-	}
+	// HELPER CLASS FOR savePoi
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode==Activity.RESULT_CANCELED){
-			return;
-		}
-		switch (requestCode){
-		case CHOOSE_POI:
-			Poi p = (Poi) data.getParcelableExtra(IntentPassable.POI);
-			String name = p.getLabel();
-			String description = p.getDescription();
-			String cat = p.getCategory();
-			String street = p.getAddress().getStreet();
-			String city = p.getAddress().getCity();
-			String tel = p.getTelephone();
-			String openingHours = p.getOpeningHours(); 
-			String webPage = p.getWebPage();
-			String imageUrl = p.getImageURL();
-// ZIP code removed
-//			int zip = p.getAddress().getZipCode();
+	private class GeocoderHandler extends Handler {
+	    @Override
+	    public void handleMessage(Message message) {
+            Bundle bundle = message.getData();
+			lat = bundle.getDouble("lat");
+			lng = bundle.getDouble("lng");
+	        
+			if ( lat != 0 && lng != 0 ) {
+				debug(0, "City is "+city+", BUT WHY?!" );
+				PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
+				.longitude(lng).latitude(lat);
 
-			int pos = 0;
-			for (String c : category) {
-				if(!cat.equals(c)){
-					pos++;
-				}else {					
-					break;
-				}
+				Poi p = new Poi.Builder( name, ab.build() )
+				.description(description)
+				.category(cat)
+				.favourite(false)
+				.webPage(webPage)
+				.telephone(tel)
+				.openingHours(openingHours)
+				.imageURL(imageUrl).build(); 
+
+				db.newPoi(p);
+				finish();
+			}else{
+				Toast.makeText( NewPoiActivity.this, "Invalid address or city", Toast.LENGTH_LONG).show();
 			}
+	    }//handleMessage
+	}//GeocoderHandler
 
-			nameView.setText(name);
-			descriptionView.setText(description);
-			addrView.setText(street);
-// ZIP code removed
-//			zipView.setText(""+zip);
-			cityView.setText(city);
-			telView.setText(tel);
-			openingHoursView.setText(openingHours);
-			webPageView.setText(webPage);
-			imageURLView.setText(imageUrl);
-			catView.setSelection(pos);
 
-			break;
-		default:
-			break;
-		}
-	}
-}
+}//NewPoiActivity class

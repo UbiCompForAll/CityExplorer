@@ -237,13 +237,10 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 							entity = httpResponse.getEntity();
 
 							if (entity != null) {
-
 								//converting into bytemap and inserting into imageView
-
 								poiImage.post(new Runnable(){
 									public void run(){
 										byte[] imageBytes = new byte[0];
-
 										try {
 											imageBytes = EntityUtils.toByteArray(entity);
 										} catch (Throwable t){}
@@ -262,14 +259,14 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 
 					} catch (Exception e) {
 						debug(0, "Error fetching image");
-					}
-				}
-			}
+					}//try-catch
+				}//run
+			}//new Runnable class
 			).start();
 		}else {
 			poiImage.setImageBitmap(null);
-		}
-	}
+		}//if img, else blank
+	}//showPoiDetails
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){

@@ -250,7 +250,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs
 			setupWebDBs();
 		}else{
-			CityExplorer.showNoConnectionDialog( this );
+			CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
 			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
 			webview.setOnTouchListener(this);
 		}

@@ -450,7 +450,7 @@ final public class Poi extends IntentPassable {
 	 *
 	 * @return The geo point of a poi's address.
 	 */
-	public GeoPoint				getGeoPoint(){
+	public GeoPoint	getGeoPoint(){
 		GeoPoint gp = geoPoint;
 		if (gp == null){
 			int latE6 	= (int)(address.getLatitude() * 1e6);
@@ -483,7 +483,6 @@ final public class Poi extends IntentPassable {
 			description.	equals(cmprnd.getDescription())	&&
 			address.		equals(cmprnd.getAddress())		&&
 			category.		equals(cmprnd.getCategory())	&&
-			//categories.	equals(cmprnd.getCategories())
 			openingHours.	equals(cmprnd.getOpeningHours()) &&
 			imageURL.		equals(cmprnd.getImageURL())	&&
 			webPage.		equals(cmprnd.getWebPage());

@@ -228,7 +228,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		boolean verifiedConnection = CityExplorer.pingConnection( this, "http://www.google.com" );
 		if ( ! verifiedConnection ){
 			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
-			CityExplorer.showNoConnectionDialog( this );
+			CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
 		}
 	} //initWifi
 
@@ -317,31 +317,22 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 
 		Drawable	favIcon	= MapsActivity.this.getResources().getDrawable(android.R.drawable.ic_menu_info_details);
 		qa.addItem(favIcon,	"Details",	new OnClickListener(){
-
-			public void onClick(View view)
-			{
+			public void onClick(View view){
 				Intent details = new Intent(MapsActivity.this, PoiDetailsActivity.class);
 				
-				if(tripOverlay != null)//got trip
-				{
+				if(tripOverlay != null){ //got trip
 					details.putExtra("poi", tripOverlay.getTrip().getPoiAt(tripOverlay.getCurrentPoiIndex()));
 					details.putExtra("trip", tripOverlay.getTrip());
 					details.putExtra("poiNumber", tripOverlay.getCurrentPoiIndex());
 
 					startActivityForResult(details, PoiDetailsActivity.POI_TRIP_POS);
-				}
-				else
-				{
-					
+				}else{
 					details.putExtra("poi", icon.getPoi());
-
 					startActivity(details);
 				}
-				
-
 				qa.dismiss();
-			}
-		});
+			}//onClick
+		});// onClickListener class
 
 		Drawable	directIcon	= MapsActivity.this.getResources().getDrawable(android.R.drawable.ic_menu_directions);
 		qa.addItem(directIcon,	"Get directions",	new OnClickListener(){
@@ -415,26 +406,19 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		if(requestCode == PoiDetailsActivity.POI_TRIP_POS)
-		{
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if( requestCode == PoiDetailsActivity.POI_TRIP_POS ){
 			tripOverlay.setCurrentPoiIndex(resultCode);
 			mapController.animateTo(tripOverlay.getTrip().getPoiAt(tripOverlay.getCurrentPoiIndex()).getGeoPoint());//go to poi
 			
 			prevButton.setEnabled(true);
 			nextButton.setEnabled(true);
-			if(tripOverlay.getPois().size()-1 == tripOverlay.getCurrentPoiIndex())//last poi
-			{
+			if(tripOverlay.getPois().size()-1 == tripOverlay.getCurrentPoiIndex()){ //last poi
 				nextButton.setEnabled(false);
 				
-			}
-			if(tripOverlay.getCurrentPoiIndex() == 0)//first poi
-			{
+			}if(tripOverlay.getCurrentPoiIndex() == 0){ //first poi
 				prevButton.setEnabled(false);
-				
 			}
-		}
-	}
-	
-}
+		}//if requestCode == X
+	}//onActivityResult
+}//MapsActivity class

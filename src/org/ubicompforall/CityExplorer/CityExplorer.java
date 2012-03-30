@@ -47,12 +47,15 @@ import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -70,7 +73,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	public static final int DEBUG = 1;
 	public static final String C = "CityExplorer";
-	
+
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
 	public static final String URL = "Url";
@@ -81,10 +84,22 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//  Default URL moved to @string/default_url
 	//	public static final String RUNE_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
 	
+	//CONSTANTS for X
 	public static final int TYPE_ALL = 0;
 	public static final int TYPE_FREE = 1;
 	public static final int TYPE_FIXED = 2;
+
+	public static final int MSG_DOWNLOADED = 0;
 	
+	//CONSTANTS for result requests
+	public static final int REQUEST_LOCATION = 10;
+	
+	//Public flags
+	public static boolean DATACONNECTION_NOTIFIED = false;
+
+	//Other fields
+	private static ProgressDialog pd;
+
 	/***
 	 * The global current db connection
 	 */
@@ -110,6 +125,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	    // And what about DB-loading?  Initialize the single instance here :-)
 		db = DBFactory.getInstance(this);
 		
+		//Always warn about missing data connection after startup/restart
+		DATACONNECTION_NOTIFIED = false;
+		
 		//Verify that specific URLs on the web are available!
 		//verifiedDataConnection = false;
 	}//onCreate
@@ -133,12 +151,12 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		if (DEBUG >= d) {
 			StackTraceElement[] st = Thread.currentThread().getStackTrace();
 			int stackLevel = 2;
-			while ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().equals("access$0") ){
+			while ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().matches("access\\$\\d+") ){
 				stackLevel++;
 			}
 			StackTraceElement e = st[stackLevel];
 			Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
-		}
+		} // if verbose enough
 	} // debug
 
 
@@ -172,6 +190,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
     	boolean urlAvailable = false;
     	boolean connectionAvailable = ensureConnected(context);	// googleAvailable = false;
 		if ( connectionAvailable ){
+			showProgress( context );
 			HttpClient httpclient = new DefaultHttpClient();
 			try {
 			    HttpResponse response = httpclient.execute( new HttpGet( url ) );
@@ -211,38 +230,118 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		return urlAvailable;
 	}// pingConnection
 
+	public static void showProgress( Activity context, String... msg ){
+		String status = "Loading";
+		if ( ! (msg == null || msg[0].equals("") ) ){
+			status = msg[0];
+		}
+		pd = ProgressDialog.show( context, "", status+"...", true, false);
+//		new Thread() {
+//		    public void run() {
+//		        handler.sendEmptyMessage( CityExplorer.MSG_DOWNLOADED ); 
+//		    }
+//		}.start();
+	}// showProgress
+
+	@SuppressWarnings("unused")
+	private static Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case CityExplorer.MSG_DOWNLOADED:
+				pd.dismiss();
+				//Toast.makeText( context, "What to do when ready", Toast.LENGTH_LONG).show();
+				debug(0, "What to do when ready" );
+				break;
+	        }//switch - case
+	    }//handleMessage
+	}; // new Handler class
+	
 	/**
      * Display a dialog that user has no Internet connection
-     * @param ctx1
+	 * @param requestCode ID for the calling Activity
      *
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
      */
-    public static void showNoConnectionDialog(Context context) {
-        final Context ctx = context;	// Protect original context!
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setCancelable(true);
-        builder.setMessage( R.string.no_connection );
-        builder.setTitle( R.string.no_connection_title );
-        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                ctx.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                return;
-            }
-        });
+    public static void showNoConnectionDialog( final Activity context, final String strA, final String strB, final Intent intentB, int requestCode ) {
 
-        builder.show();
+    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setCancelable(true);
+		if ( strA == "" ){
+		    builder.setMessage( R.string.no_connection );
+		}else{
+		    builder.setMessage( strA );
+		}
+		builder.setTitle( R.string.no_connection_title );
+		builder.setPositiveButton( R.string.settings, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		        context.startActivity( new Intent(Settings.ACTION_WIRELESS_SETTINGS) );
+		    }
+		} );
+		
+		String cancelText = strB;
+		if ( cancelText == ""){
+			cancelText = context.getResources().getString( R.string.cancel );
+		}
+		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (intentB != null){
+					context.startActivityForResult( intentB, CityExplorer.REQUEST_LOCATION );
+					dialog.dismiss();
+		    	}
+				return;
+		    }
+		} );
+
+		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+		    public void onCancel(DialogInterface dialog) {
+				Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
+		        context.startActivity( intentB );
+		        return;
+		    }
+		});
+		
+		builder.show();
+		DATACONNECTION_NOTIFIED = true;
     } // showNoConnectionDialog
 
-/* Not valid for Application? Only for "implements LocationListener"
+    
+    // HELPER CLASSES //
+    
+//    public class LoadingScreen extends Activity{
+//        private LoadingScreen loadingScreen;
+//        Intent i = new Intent(this, HomeScreen.class);
+//         /** Called when the activity is first created. */
+//        @Override
+//            public void onCreate(Bundle savedInstanceState) {
+//                super.onCreate(savedInstanceState);
+//                setContentView(R.layout.loading);
+//
+//
+//                CountDownTimer timer = new CountDownTimer(10000, 1000) //10seceonds Timer
+//                {
+//                     @Override
+//                      public void onTick(long l) 
+//                      {
+//
+//                      }
+//
+//                      @Override
+//                      public void onFinish() 
+//                      {
+//
+//                          loadingScreen.finishActivity(0);
+//                          startActivity(i);
+//
+//                      };
+//                }.start();
+//        }
+//    }//end of class
+
+    // END HELPER CLASSES //
+
+    
+    /* Not valid for Application? Only for "implements LocationListener"
 	@Override
 	public void onLocationChanged(Location location) {
 		System.getProperty("java.version");

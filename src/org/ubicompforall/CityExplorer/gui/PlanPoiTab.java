@@ -67,6 +67,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -139,7 +140,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
-		debug(0, "PlanTabPoi~118 create");
+		debug(2, "PlanTabPoi~118 create");
 		init();
 	}
 
@@ -179,16 +180,13 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);		
 		}
 		res = getResources();
-		lv.setAdapter(adapter);
+
 		categories = DBFactory.getInstance(this).getUniqueCategoryNames();
 		Collections.sort(categories);
 		CheckedCategories.put("Favourites", true);
 		buildFilter();
-
 		makeSections();
-
 		lv.setAdapter(adapter);
-
 		initGPS();
 	}//init()
 
@@ -287,11 +285,9 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	/**
 	 * Builds the filter list.
 	 */
-	private void buildFilter()
-	{
+	private void buildFilter(){
 		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
-		for (String cat : categories)
-		{
+		for (String cat : categories){
 			boolean checked = settings.getBoolean(cat, true);
 			CheckedCategories.put(cat, checked);
 		}
@@ -346,6 +342,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
 			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);
+			CityExplorer.showProgress( this, "Making new POI");
 			startActivity(newPoi);
 		}
 
@@ -414,8 +411,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			}
 		}
 
-		if(item.getItemId() == R.id.planMenuAddPois)
-		{
+		if(item.getItemId() == R.id.planMenuAddPois){
 			if(requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
 				if (selectedPois==null){
 					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
@@ -433,10 +429,9 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 				setResult( Activity.RESULT_OK, resultIntent );
 				finish();
 			}
-		}
-
+		}//if AddPois
 		return true;
-	}
+	}//onOptionItemSelected
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
@@ -515,14 +510,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 //RS-120214: Don't implement different behavior for headings and single items. Suddenly seeing the map is confusing!
 //
-//				Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
-//				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
-//				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
-//				for (int i = 0; i < sectionAd.getCount(); i++){
-//					selectedPois.add((Poi) sectionAd.getItem(i));
-//				}
-//				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
-//				startActivity(showInMap);
+				Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
+				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
+				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
+				for (int i = 0; i < sectionAd.getCount(); i++){
+					selectedPois.add((Poi) sectionAd.getItem(i));
+				}
+				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
+				startActivity(showInMap);
 				return true;
 			}
 

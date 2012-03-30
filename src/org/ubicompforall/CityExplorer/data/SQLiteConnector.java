@@ -137,7 +137,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 //		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 //		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
 //		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
-		debug(0, "myPath is "+myPath );
+		debug(2, "myPath is "+myPath );
 //		debug(0, "DB_PATH IS "+DB_PATH );
 	}//SQLiteConnector CONSTRUCTOR
 
@@ -755,17 +755,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			categoryId = getCategoryId(poi.getCategory());
 		}
 
-		int AddressId = -1;
-		//does the address exist?
+		int AddressId = -1;		//does the address exist?
+		//debug(0, "0: .getStreet 1: getCity 2: getLatitude() 3: .getLongitude() from "+poi.getAddress() );
+		debug(0, poi.getAddress().getStreet()+ poi.getAddress().getCity()+ ""+poi.getAddress().getLatitude()+ ""+poi.getAddress().getLongitude() );
 		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
-// ZIP code removed
-//				"zipcode = ? AND " +
 				"city = ? AND " +
 				"lat = ? AND " +
 				"lon = ?",
-// ZIP code removed
-				new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
+				new String[]{ poi.getAddress().getStreet(), poi.getAddress().getCity(), ""+poi.getAddress().getLatitude(), ""+poi.getAddress().getLongitude() },
 				null, null, null);
 		if(c.moveToFirst())
 			AddressId = c.getInt(0);
@@ -773,8 +771,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		{//add the address
 			ContentValues values2 = new ContentValues();
 			values2.put("street_name", poi.getAddress().getStreet());
-// ZIP code removed
-//			values2.put("zipcode", poi.getAddress().getZipCode());
 			values2.put("city", poi.getAddress().getCity());
 			values2.put("lat", poi.getAddress().getLatitude());
 			values2.put("lon", poi.getAddress().getLongitude());
