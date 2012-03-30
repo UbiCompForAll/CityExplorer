@@ -32,7 +32,6 @@
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
@@ -165,7 +164,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 				db = DBFactory.getInstance( context);
 				category = db.getCategoryNames();
 				debug(0, "Categories is "+category );
-				Collections.sort(category);
+				//Collections.sort(category);
 				ArrayAdapter<String> categories = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item, category);
 				debug(0, "Categories is "+categories );
 

@@ -32,7 +32,6 @@
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 //import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
 import org.ubicompforall.CityExplorer.data.DB;
@@ -107,7 +106,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		fs = new FileSystemConnector( this );
 		categoryFolders = new ArrayList<String>();
 		categoryFolders.add( fs.getDatabasePath() );
-		Collections.sort(categoryFolders);
+		//Collections.sort(categoryFolders);
 		debug(0, "categoryFolders is "+categoryFolders );
 
 		init();		
@@ -186,7 +185,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		}//for DBs
 		ArrayList<String> ListSections = (ArrayList<String>) adapter.getSectionNames().clone();
 		for(String sec : ListSections){
-			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites")){	
+			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase(CityExplorer.FAVORITES)){	
 				adapter.removeSection(sec);
 			}
 		}//for sections
@@ -240,7 +239,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 //			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 //			alert.setTitle("Filter");
 //			ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-//			cat.add(0, "Favourites");
+//			cat.add(0, CityExplorer.FAVORITES);
 //
 //
 //			boolean[] CheckedCat = new boolean[cat.size()];
@@ -377,7 +376,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 //					FileSystemConnector.getInstance(ImportLocalTab.this).editdb(db);//update db;
 //					alldbs.remove(d);
 //					alldbs.add(db);
-					Toast.makeText(ImportLocalTab.this, db.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+					Toast.makeText(ImportLocalTab.this, db.getLabel() + " added to Favorites.", Toast.LENGTH_LONG).show();
 					adapter.notifyDataSetChanged();//update list
 					qa.dismiss();
 				}
@@ -412,7 +411,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	public void onClick( DialogInterface dialog, int which, boolean isChecked ){
 		@SuppressWarnings("unchecked")
 		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-		cat.add(0, "Favourites");
+		cat.add(0, CityExplorer.FAVORITES);
 	}
 
 	/**
@@ -423,14 +422,14 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	public void onClick(DialogInterface dialog, int which){
 
 		ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-		cat.add(0, "Favourites");
+		cat.add(0, CityExplorer.FAVORITES);
 
 		for (String title : cat){
 			//preferences:
 			ArrayList<DB> list = new ArrayList<DB>();
 
 			for (DB db : allDBs){
-				if (title.equals("Favourites") ){ //add to favorite section
+				if (title.equals(CityExplorer.FAVORITES) ){ //add to favorite section
 					list.add(db);
 				}else if(db.getCategory().equals(title)){
 					list.add(db);

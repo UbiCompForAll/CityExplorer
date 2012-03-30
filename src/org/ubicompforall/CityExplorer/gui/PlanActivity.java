@@ -46,11 +46,17 @@ public class PlanActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		debug(2, "PlanActivity~49 create");
+		debug(1, "PlanActivity create");
 		setContentView(R.layout.tablayout);
 
 		initTabs();
 	}//onCreate
+	
+//	@Override
+//	public void onStart(){
+//		super.onStart();
+//		debug(1, "Start");
+//	}//onStart
 
 	
 	private void debug( int level, String message ) {

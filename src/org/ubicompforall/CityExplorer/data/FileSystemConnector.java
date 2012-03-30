@@ -33,8 +33,6 @@ package org.ubicompforall.CityExplorer.data;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-
 import org.ubicompforall.CityExplorer.CityExplorer;
 
 import android.content.Context;
@@ -55,7 +53,7 @@ public class FileSystemConnector implements FileSystemInterface {
 		debug(0, "dbPath is "+dbPath );
 		categoryFolders = new ArrayList<String>();
 		categoryFolders.add( dbPath );
-		Collections.sort(categoryFolders);
+		//Collections.sort(categoryFolders);
 		debug(0, "categoryFolders is "+categoryFolders );
 
 		allDBs = getAllDBs();	// Find all DBs in categoryFolders

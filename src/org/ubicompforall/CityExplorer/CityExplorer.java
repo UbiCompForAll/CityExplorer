@@ -93,6 +93,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
+	public static final String ALL = "ALL";
+	public static final String FAVORITES = "Favorites";
 	
 	//Public flags
 	public static boolean DATACONNECTION_NOTIFIED = false;

@@ -257,14 +257,12 @@ public class ViewDayHourItem extends LinearLayout
 		}
 	}
 
-	public void addView(poiTextView child) 
-	{
+	public void addView(poiTextView child){
 		poiTextViews.add(child);
 		Collections.sort(poiTextViews);
 
 		super.removeAllViews();
-		for (poiTextView v : poiTextViews) 
-		{
+		for (poiTextView v : poiTextViews){
 			super.addView(v);
 		}
 	}

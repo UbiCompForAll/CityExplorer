@@ -32,8 +32,9 @@
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.TreeMap;
 
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
@@ -63,6 +64,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -98,14 +100,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	/*** Field containing the users current location.*/
 	private Location userLocation;
 
-	/*** Field containing an {@link ArrayList} of the categories.*/
-	private ArrayList<String> categories;
+	/*** Field containing an {@link LinkedList} of the categories.*/
+	private LinkedList<String> categories;
 
 	/*** Field containing this activity's context.*/
 	private Context context;
 
 	/*** Field containing a {@link HashMap} for the checked categories in the filter.*/
-	private HashMap<String, Boolean> CheckedCategories = new HashMap<String, Boolean>();
+	private TreeMap<String, Boolean> CheckedCategories = new TreeMap<String, Boolean>();
 
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
@@ -140,9 +142,32 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
-		debug(2, "PlanTabPoi~118 create");
+		debug(1, "PlanTabPoi create");
 		init();
-	}
+	} //onCreate
+
+	@Override
+	public void onStart(){
+		super.onStart();
+		debug(1, "PlanTabPoi Start");
+	}//onStart
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(requestCode != DOWNLOAD_POI){			
+			updateSections();
+			adapter.notifyDataSetChanged();
+		}
+		
+		//openOptionsMenu(); // Crashes
+		new Handler().postDelayed(new Runnable() {
+			public void run() {
+				openOptionsMenu();
+			}
+		}, 1000);
+	}//onResume
+
 
 	
 	private void debug( int level, String message ) {
@@ -182,13 +207,12 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		res = getResources();
 
 		categories = DBFactory.getInstance(this).getUniqueCategoryNames();
-		Collections.sort(categories);
-		CheckedCategories.put("Favourites", true);
+		//Collections.sort(categories);
 		buildFilter();
 		makeSections();
 		lv.setAdapter(adapter);
 		initGPS();
-	}//init()
+	}//init
 
 	/**
 	 * Initializes the GPS of the phone.
@@ -206,23 +230,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		userLocation = StartActivity.verifyUserLocation( userLocation, this );
 	}// initGPS
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if(requestCode != DOWNLOAD_POI){			
-			updateSections();
-			adapter.notifyDataSetChanged();
-		}
-	}
 
 	/**
 	 * Makes the category sections that is shown in the list. 
 	 */
-	private void makeSections()
-	{
+	private void makeSections(){
 		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
 		if(requestCode != DOWNLOAD_POI){			
-			adapter.addSection("Favourites", favouriteAdapter);
+			adapter.addSection(CityExplorer.FAVORITES, favouriteAdapter);
 		}
 		for (Poi poi : allPois)
 		{
@@ -242,100 +257,90 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			((PoiAdapter)adapter.getAdapter(poi.getCategory())).add(poi);//add to the correct section
 			((PoiAdapter)adapter.getAdapter(poi.getCategory())).notifyDataSetChanged();
 		}
-	}
+	}//makeSections
 
 	/**
 	 * Updates the category sections in the list, e.g. after choosing filtering.
 	 */
-	@SuppressWarnings("unchecked")
-	private void updateSections()
-	{
+	private void updateSections(){
+		debug(0, "UPDATE!" );
 		allPois = DBFactory.getInstance(this).getAllPois();
-		ArrayList<String> sectionsInUse = new ArrayList<String>(); 
-		for (Poi poi : allPois)
-		{
+		LinkedList<String> sectionsInUse = new LinkedList<String>(); 
+		for (Poi poi : allPois)		{
 			//ignore sections that are turned off:
-			if(CheckedCategories.keySet().contains(poi.getCategory()))
-			{
-				if( !CheckedCategories.get(poi.getCategory()))//this section is turned off:
-				{
+			if(CheckedCategories.keySet().contains(poi.getCategory()))			{
+				if( !CheckedCategories.get(poi.getCategory() ) ){ //this section is turned off:
 					continue;
 				}
 			}
 			sectionsInUse.add(poi.getCategory());
-			if(!adapter.getSectionNames().contains(poi.getCategory()))
-			{
+			if(!adapter.getSectionNames().contains(poi.getCategory() ) ){
 				ArrayList<Poi> list = new ArrayList<Poi>();
 				list.add(poi);
 				PoiAdapter testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(poi.getCategory(), testAdapter);
 			}//if contains category
 		}//for POIs
-		ArrayList<String> ListSections = (ArrayList<String>) adapter.getSectionNames().clone();
-		for(String sec : ListSections){
-			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase("Favourites"))
-			{
-				adapter.removeSection(sec);	
-
+		@SuppressWarnings("unchecked")
+		LinkedList<String> listSections = (LinkedList<String>) adapter.getSectionNames().clone();
+		//LinkedList<String> ListSections;// = (LinkedList<String>) adapter.getSectionNames().clone();
+		for( String sec : listSections ){
+			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase(CityExplorer.FAVORITES) && !sec.equalsIgnoreCase(CityExplorer.ALL) ){
+				adapter.removeSection(sec);
 			}
 		}//for sections
 		lv.setAdapter(adapter);
 	}//updateSections
 
+
 	/**
 	 * Builds the filter list.
 	 */
 	private void buildFilter(){
+		//Set checked or not for "CheckedCategories"
 		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
-		for (String cat : categories){
+		for ( String cat : categories ){
 			boolean checked = settings.getBoolean(cat, true);
-			CheckedCategories.put(cat, checked);
+			CheckedCategories.put( cat, checked );
 		}
-	}
+	}//buildFilter
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (requestCode == NewPoiActivity.CHOOSE_POI)
-		{	
+		debug(0, "REQUEST CODE is "+requestCode );
+		if (requestCode == NewPoiActivity.CHOOSE_POI){	
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
 			menu.removeItem(R.id.planMenuAddPois);
-		}
-		else if (requestCode == SHARE_POI)
-		{	
+		}else if (requestCode == SHARE_POI){	
 			menu.removeItem(R.id.planMenuAddPois);
 			menu.removeItem(R.id.planMenuNewPoi);
 			//menu.removeItem(R.id.planMenuUpdatePois);
-		}
-		else if(requestCode == DOWNLOAD_POI){
+		}else if(requestCode == DOWNLOAD_POI){
 			menu.removeItem(R.id.planMenuAddPois);
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			menu.removeItem(R.id.planMenuFilter);
-		}
-		else if(requestCode == PlanTripTab.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
+		}else if(requestCode == PlanTripTab.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
-		}
-		else
-		{
+		}else{
 			menu.removeItem(R.id.planMenuAddPois);
-		}
+		}//if - else - type of menu
 
 		return true;
-	}
+	}//onPrepareOptionsMenu
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 		super.onCreateOptionsMenu(menu);
 		menu.setGroupVisible(R.id.planMenuGroupTrip, false);
 		return true;
-	}
+	}//onCreateOptionsMenu
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
@@ -346,30 +351,29 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			startActivity(newPoi);
 		}
 
-		if(item.getItemId() == R.id.planMenuFilter)
-		{
+		if(item.getItemId() == R.id.planMenuFilter){
 			categories = DBFactory.getInstance(this).getUniqueCategoryNames();
-			Collections.sort(categories);
+			//Collections.sort(categories);
+			debug(0, "Categories are "+categories );
 
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle("Filter");
-			ArrayList<String> cat = (ArrayList<String>) categories.clone();
-			cat.add(0, "Favourites");
+//			@SuppressWarnings("unchecked")
+//			LinkedList<String> cat = (LinkedList<String>) categories.clone();
+//			cat.add(0, CityExplorer.FAVORITES);
 
 
-			boolean[] CheckedCat = new boolean[cat.size()];
-			for (String c : cat)
-			{
-				if(CheckedCategories.get(c) == null)
-				{
+			boolean[] CheckedCat = new boolean[categories.size()];
+			for (String c : categories){
+				if(CheckedCategories.get(c) == null){
 					CheckedCategories.put(c, true);
 				}
-				CheckedCat[cat.indexOf(c)] = CheckedCategories.get(c);
+				CheckedCat[categories.indexOf(c)] = CheckedCategories.get(c);
 			}
 
-			String[] array = new String[cat.size()];
-			cat.toArray(array);
-			alert.setMultiChoiceItems(array, CheckedCat, this);
+			String[] array = new String[categories.size()];
+			array = categories.toArray(array);
+			alert.setMultiChoiceItems( array, CheckedCat, this);
 			alert.setPositiveButton("OK", this);
 			alert.create();
 			alert.show();
@@ -592,7 +596,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 						DBFactory.getInstance(PlanPoiTab.this).editPoi(poi);//update poi;
 
 						adapter.notifyDataSetChanged();//update list
-						Toast.makeText(PlanPoiTab.this, poi.getLabel() + " removed from favourites.", Toast.LENGTH_LONG).show();
+						Toast.makeText(PlanPoiTab.this, poi.getLabel() + " removed from Favorites.", Toast.LENGTH_LONG).show();
 						qa.dismiss();
 					}
 				});
@@ -610,7 +614,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 						allPois.remove(p);
 						allPois.add(poi);
-						Toast.makeText(PlanPoiTab.this, poi.getLabel() + " added to favourites.", Toast.LENGTH_LONG).show();
+						Toast.makeText(PlanPoiTab.this, poi.getLabel() + " added to Favorites.", Toast.LENGTH_LONG).show();
 						adapter.notifyDataSetChanged();//update list
 						qa.dismiss();
 					}
@@ -705,10 +709,9 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked)
-	{
-		ArrayList<String> cat = (ArrayList<String>) categories.clone();
-		cat.add(0, "Favourites");
+	public void onClick(DialogInterface dialog, int which, boolean isChecked){
+		LinkedList<String> cat = (LinkedList<String>) categories.clone();
+		cat.add(0, CityExplorer.FAVORITES);
 
 		CheckedCategories.remove(cat.get(which));
 		CheckedCategories.put(cat.get(which), isChecked);
@@ -719,15 +722,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(DialogInterface dialog, int which)
-	{
+	public void onClick(DialogInterface dialog, int which){
 		//add selection to settings:
 		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		//editor.putBoolean("key", value);
 
-		ArrayList<String> cat = (ArrayList<String>) categories.clone();
-		cat.add(0, "Favourites");
+		LinkedList<String> cat = (LinkedList<String>) categories.clone();
+		cat.add(0, CityExplorer.FAVORITES);
 
 		for (String title : cat){
 			boolean isChecked = CheckedCategories.get(title);
@@ -742,7 +744,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 				ArrayList<Poi> list = new ArrayList<Poi>();
 
 				for (Poi poi : allPois){
-					if( title.equals("Favourites") && poi.isFavourite() ){ //add to favourite section
+					if( title.equals(CityExplorer.FAVORITES) && poi.isFavourite() ){ //add to favourite section
 						list.add(poi);
 					}else if(poi.getCategory().equals(title)){
 						list.add(poi);
@@ -751,7 +753,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 				PoiAdapter testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(title, testAdapter);
 
-				if(title.equals("Favourites"))
+				if(title.equals(CityExplorer.FAVORITES))
 					favouriteList = list;
 			} // if checked, include
 		} // for each category

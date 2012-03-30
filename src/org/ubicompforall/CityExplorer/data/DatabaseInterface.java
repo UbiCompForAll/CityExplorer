@@ -31,6 +31,8 @@ package org.ubicompforall.CityExplorer.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -168,7 +170,7 @@ public interface DatabaseInterface{
 	 * Interface method for fetching the unique names of all Categories in the database.
 	 * @return ArrayList containing all the names of categories.
 	 */
-	ArrayList<String> getUniqueCategoryNames();
+	LinkedList<String> getUniqueCategoryNames();
 	
 	/**
 	 * Interface method for fetching the names of all Categories with corresponding icons from the database.

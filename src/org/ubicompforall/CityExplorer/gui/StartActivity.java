@@ -82,11 +82,11 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		userLocation = verifyUserLocation( userLocation, this );		//Init userLocation
 
-		// ODO: FOR DEBUGGING
+		// TODO: FOR DEBUGGING
 		debug(0, "Start" );
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
-		//startActivity(new Intent( this, NewPoiActivity.class) );
+		startActivity(new Intent( this, PlanActivity.class) );
 		//ImportWebTab.onTouch2(new View(this), null);
 
 	}//onCreate
@@ -189,15 +189,16 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 	
 	public static Location verifyUserLocation( Location userLocation, Context context ) {
-		if( userLocation == null){
-			debug(0, "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
-			
-			userLocation = new Location("");
+		int[] lat_lng = MyPreferencesActivity.getLatLng ( context );
 
-			int[] lat_lng = MyPreferencesActivity.getLatLng ( context );
+		if( userLocation == null){
+			debug(2, "No GPS: Proceede with lastknown location (GSM/WiFi/GPS) from preferences");
+			userLocation = new Location("");
 			userLocation.setLatitude( lat_lng [0]/1E6 );	// Store current latitude location
 			userLocation.setLongitude( lat_lng [1]/1E6 );	// Store current longitude location
 		}//userLocation == null, Check out GPS setting in CityExplorer.java
+
+		debug(0, "lat_lng is "+ lat_lng[0] + ", "+ lat_lng[1] );
 		return userLocation;
 	}//verifyUserLocation
 

@@ -32,7 +32,7 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 
 import android.app.Activity;
 import android.view.View;
@@ -50,10 +50,10 @@ public class SeparatedListAdapter extends BaseAdapter {
 	private ArrayList<Section> sections = new ArrayList<Section>();
 	
 	/*** Field containing all the section names.*/
-	private ArrayList<String> sectionNames = new ArrayList<String>();
+	private LinkedList<String> sectionNames = new LinkedList<String>();
 	
 	/*** Field containing the favorite section.*/
-	public Section favouriteSection;
+	public Section Favoritesection;
 	
 	/*** Constant field describing a section header.*/
 	public final static int TYPE_SECTION_HEADER = 0;
@@ -105,19 +105,19 @@ public class SeparatedListAdapter extends BaseAdapter {
 		if(sectionNames.contains(section))
 			return;
 		
-		if(section.equalsIgnoreCase("Favourites")){
-			favouriteSection = new Section("Favourites", adapter);
-			sections.add(favouriteSection); 
+		if(section.equalsIgnoreCase(CityExplorer.FAVORITES)){
+			Favoritesection = new Section(CityExplorer.FAVORITES, adapter);
+			sections.add(Favoritesection); 
 		}else{
 			sections.add(new Section(section, adapter));
 		}
 		
-		Collections.sort(sections);
+		//Collections.sort(sections);
 		sectionNames.add(section);
 		
-		if(sectionNames.contains("Favourites")){
-			sections.remove(favouriteSection);//take out
-			sections.add(0, favouriteSection);//put inn at the top of the list.
+		if(sectionNames.contains(CityExplorer.FAVORITES)){
+			sections.remove(Favoritesection);//take out
+			sections.add(0, Favoritesection);//put inn at the top of the list.
 		}
 	} // addSection
 	
@@ -140,9 +140,9 @@ public class SeparatedListAdapter extends BaseAdapter {
 		if(removeSection != null)
 			this.sections.remove(removeSection);
 		
-		if(section.equalsIgnoreCase("Favourites"))
+		if(section.equalsIgnoreCase(CityExplorer.FAVORITES))
 		{
-			favouriteSection = null;
+			Favoritesection = null;
 		}
 		
 		sectionNames.remove(section);
@@ -175,8 +175,8 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * @return The Adapter with the specified name.
 	 */
 	public Adapter getAdapter(String section){
-		if(section.equalsIgnoreCase("Favourites")){
-			return favouriteSection.getAdapter();
+		if(section.equalsIgnoreCase(CityExplorer.FAVORITES)){
+			return Favoritesection.getAdapter();
 		}else{
 			for (Section sec : sections){
 				if(sec.getCaption().equalsIgnoreCase(section))
@@ -190,7 +190,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * Get the names of the section. 
 	 * @return Arraylist containing the section names.
 	 */
-    public ArrayList<String> getSectionNames(){
+    public LinkedList<String> getSectionNames(){
     	return sectionNames;
     }
   
@@ -299,9 +299,9 @@ public class SeparatedListAdapter extends BaseAdapter {
 		if(listType == POI_LIST){
 			DatabaseInterface db = DBFactory.getInstance(ctx);
 			for (Section s : sections){
-	    		if(s.getCaption().equalsIgnoreCase("Favourites")){
-	    			((PoiAdapter)favouriteSection.getAdapter()).replaceAll( db.getAllPois(true) );
-	    			s = favouriteSection;
+	    		if(s.getCaption().equalsIgnoreCase(CityExplorer.FAVORITES)){
+	    			((PoiAdapter)Favoritesection.getAdapter()).replaceAll( db.getAllPois(true) );
+	    			s = Favoritesection;
 	    		}else{
 	    			((PoiAdapter)s.getAdapter()).replaceAll( db.getAllPois(s.getCaption()) );
 				}

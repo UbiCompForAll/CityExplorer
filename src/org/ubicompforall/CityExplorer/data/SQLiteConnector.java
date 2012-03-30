@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
@@ -666,10 +667,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 
 	@Override
-	public ArrayList<String>
+	public LinkedList<String>
 	 getUniqueCategoryNames() {
+		//Collect all category names in order in "categories",
+		LinkedList<String> categories = new LinkedList<String>();
 
-		ArrayList<String> categories = new ArrayList<String>();
+		// add ALL and Favorites to categories first
+		categories.add( CityExplorer.ALL );
+		categories.add( CityExplorer.FAVORITES );
+
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
 		while (c.moveToNext()) {
 			categories.add(c.getString(0));
