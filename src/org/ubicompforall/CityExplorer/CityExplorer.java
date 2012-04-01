@@ -43,7 +43,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -93,8 +92,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
-	public static final String ALL = "ALL";
-	public static final String FAVORITES = "Favorites";
+	//public static final String ALL = "ALL";
+	public static final String FAVORITES = "FAVORITES";
 	
 	//Public flags
 	public static boolean DATACONNECTION_NOTIFIED = false;
@@ -180,9 +179,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 			}
 */
 			//Toast.makeText( context, "Network state is "+networkInfo.getState(), Toast.LENGTH_LONG).show();
-
 			return activated;
-
 		}
 	} // isConnected
 
