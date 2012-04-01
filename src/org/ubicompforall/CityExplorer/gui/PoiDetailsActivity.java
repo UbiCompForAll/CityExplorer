@@ -273,7 +273,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		menu.clear();
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.poi_menu, menu);
-		if(poi.isFavourite()){
+		if(poi.isFavorite()){
 			menu.findItem(R.id.poiMenufavourite).setIcon(R.drawable.favstar_on);
 		}else{
 			menu.findItem(R.id.poiMenufavourite).setIcon(R.drawable.favstar_off);
@@ -289,7 +289,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		int mapID = R.id.poiMenuMap;
 		if(itemID==favID){
 
-			if(poi.isFavourite()){
+			if(poi.isFavorite()){
 				poi  = new Poi( poi.modify().favourite(false) );
 
 				DBFactory.getInstance(this).editPoi(poi);

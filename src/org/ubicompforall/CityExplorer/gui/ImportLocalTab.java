@@ -54,7 +54,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Adapter;
@@ -226,99 +225,6 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		menu.setGroupVisible(R.id.planMenuGroupTrip, false);
 		return true;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-
-//		if(item.getItemId() == R.id.planMenuFilter)
-//		{
-//			categoryFolders = FileSystemConnector.getInstance(this).getUniqueCategoryNames();
-//			Collections.sort(categoryFolders);
-//
-//			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-//			alert.setTitle("Filter");
-//			ArrayList<String> cat = (ArrayList<String>) categoryFolders.clone();
-//			cat.add(0, CityExplorer.FAVORITES);
-//
-//
-//			boolean[] CheckedCat = new boolean[cat.size()];
-//			for (String c : cat)
-//			{
-//				if(CheckedcategoryFolders.get(c) == null)
-//				{
-//					CheckedcategoryFolders.put(c, true);
-//				}
-//				CheckedCat[cat.indexOf(c)] = CheckedcategoryFolders.get(c);
-//			}
-//
-//			String[] array = new String[cat.size()];
-//			cat.toArray(array);
-//			alert.setMultiChoiceItems(array, CheckedCat, this);
-//			alert.setPositiveButton("OK", this);
-//			alert.create();
-//			alert.show();
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuUpdateDBs)
-//		{
-//			if(requestCode == DOWNLOAD_DB){
-//				if (downloadedDBs==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					int[] res = du.storeDBs(downloadedDBs);
-//					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-//				}
-//				finish();
-//			}else {				
-//				Intent downloadDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
-//				downloadDB.putExtra("requestCode", DOWNLOAD_DB);
-//				startActivityForResult(downloadDB, DOWNLOAD_DB);
-//			}
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuShareDBs)
-//		{
-//			if(requestCode == SHARE_DB){
-//				if (shareDBs==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					Sharing.send(this, shareDBs);
-//					shareDBs = null;
-//				}
-//				finish();
-//			}else {
-//				Intent shareDB= new Intent(ImportLocalTab.this, ImportLocalTab.class);
-//				shareDB.putExtra("requestCode", SHARE_DB);
-//				startActivityForResult(shareDB, SHARE_DB);
-//			}
-//		}
-//
-//		if(item.getItemId() == R.id.planMenuAddDBs)
-//		{
-//			if(requestCode == PlanTabTrip.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
-//				if (selectedDBs==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					for (DB p : selectedDBs) {
-//						trip.addDB(p);
-//						FileSystemConnector.getInstance(this).addDBToTrip(trip, p);						
-//					}
-//					Toast.makeText(this, selectedDBs.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
-//					selectedDBs = null;
-//				}
-//				Intent resultIntent = new Intent();
-//				resultIntent.putExtra(IntentPassable.TRIP, trip);
-//				setResult( Activity.RESULT_OK, resultIntent );
-//				finish();
-//			}
-//		}
-
-		return true;
-	} // onOptionsItemSelected( MenuItem )
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {

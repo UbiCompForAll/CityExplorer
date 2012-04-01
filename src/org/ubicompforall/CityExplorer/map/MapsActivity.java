@@ -353,11 +353,9 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				navigate.putExtra("dlat", dlat);
 				MapsActivity.this.startActivity(navigate);
 
-
 				qa.dismiss();
-
-			}
-		});
+			}//onclick
+		}); //onPress
 
 		qa.show();
 	} // onPress

@@ -672,8 +672,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		//Collect all category names in order in "categories",
 		LinkedList<String> categories = new LinkedList<String>();
 
-		// add ALL and Favorites to categories first
-		categories.add( CityExplorer.ALL );
+		// add Favorites to categories first
 		categories.add( CityExplorer.FAVORITES );
 
 		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
@@ -806,7 +805,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		values3.put("title", poi.getLabel());
 		values3.put("description", poi.getDescription());
 		values3.put("category_id", categoryId);
-		values3.put("favourite", poi.isFavourite());
+		values3.put("favourite", poi.isFavorite());
 		values3.put("address_id", AddressId);
 		values3.put("web_page", poi.getWebPage());
 		values3.put("openingHours", poi.getOpeningHours());
@@ -955,7 +954,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		int poiID = poi.getIdPrivate();
 		if(poi.getIdGlobal() != -1) poiValues.put("global_id", poi.getIdGlobal());
-		poiValues.put("favourite", poi.isFavourite());
+		poiValues.put("favourite", poi.isFavorite());
 		poiValues.put("description", poi.getDescription());
 		poiValues.put("title", poi.getLabel());
 		poiValues.put("telephone", poi.getTelephone());

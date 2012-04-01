@@ -333,7 +333,7 @@ final public class Poi extends IntentPassable {
 		temp.description(this.getDescription());
 		temp.idGlobal(this.getIdGlobal());
 		temp.idPrivate(this.getIdPrivate());
-		temp.favourite(this.isFavourite());
+		temp.favourite(this.isFavorite());
 		temp.category(this.getCategory());
 		temp.openingHours(this.getOpeningHours());
 		temp.webPage(this.getWebPage());
@@ -392,7 +392,7 @@ final public class Poi extends IntentPassable {
 	 *
 	 * @return True if the poi is a favourite, false otherwise.
 	 */
-	public boolean isFavourite(){
+	public boolean isFavorite(){
 		return	favourite;
 	}
 
@@ -477,7 +477,7 @@ final public class Poi extends IntentPassable {
 		boolean same = 
 			idGlobal		== cmprnd.getIdGlobal()			&&
 			idPrivate		== cmprnd.getIdPrivate()		&&
-			favourite		== cmprnd.isFavourite()			&&
+			favourite		== cmprnd.isFavorite()			&&
 			getTelephone()	.equals(cmprnd.getTelephone())	&&
 			label.			equals(cmprnd.getLabel())		&&
 			description.	equals(cmprnd.getDescription())	&&

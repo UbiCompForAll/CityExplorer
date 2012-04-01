@@ -51,6 +51,7 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -71,10 +72,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
+public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener, OnItemSelectedListener{
 
 	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
@@ -160,7 +162,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			adapter.notifyDataSetChanged();
 		}
 		
-		//openOptionsMenu(); // Crashes
+		//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
 		new Handler().postDelayed(new Runnable() {
 			public void run() {
 				openOptionsMenu();
@@ -169,7 +171,6 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	}//onResume
 
 
-	
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
@@ -205,7 +206,6 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);		
 		}
 		res = getResources();
-
 		categories = DBFactory.getInstance(this).getUniqueCategoryNames();
 		//Collections.sort(categories);
 		buildFilter();
@@ -235,19 +235,17 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 * Makes the category sections that is shown in the list. 
 	 */
 	private void makeSections(){
+		debug(0, "make sections" );
 		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
 		if(requestCode != DOWNLOAD_POI){			
 			adapter.addSection(CityExplorer.FAVORITES, favouriteAdapter);
 		}
-		for (Poi poi : allPois)
-		{
-			if(poi.isFavourite())//add to favourite section
-			{
+		for (Poi poi : allPois){
+			if(poi.isFavorite()){ //add to favorite section
 				favouriteList.add(poi);
 				favouriteAdapter.notifyDataSetChanged();
 			}
-			if( !adapter.getSectionNames().contains(poi.getCategory()))//category does not exist, create it.
-			{
+			if( !adapter.getSectionNames().contains(poi.getCategory() ) ){ //category does not exist, create it.
 				ArrayList<Poi> list = new ArrayList<Poi>();
 
 				PoiAdapter testAdapter;
@@ -285,7 +283,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		LinkedList<String> listSections = (LinkedList<String>) adapter.getSectionNames().clone();
 		//LinkedList<String> ListSections;// = (LinkedList<String>) adapter.getSectionNames().clone();
 		for( String sec : listSections ){
-			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase(CityExplorer.FAVORITES) && !sec.equalsIgnoreCase(CityExplorer.ALL) ){
+			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase(CityExplorer.FAVORITES) ) {//&& !sec.equalsIgnoreCase(CityExplorer.ALL) ){
 				adapter.removeSection(sec);
 			}
 		}//for sections
@@ -341,9 +339,13 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		return true;
 	}//onCreateOptionsMenu
 
+	/***
+	 * Selection in the options menu?
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
+		debug(1, "item is "+item );
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
 			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);
@@ -353,16 +355,10 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 		if(item.getItemId() == R.id.planMenuFilter){
 			categories = DBFactory.getInstance(this).getUniqueCategoryNames();
-			//Collections.sort(categories);
-			debug(0, "Categories are "+categories );
+			//debug(1, "Categories are "+categories );
 
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle("Filter");
-//			@SuppressWarnings("unchecked")
-//			LinkedList<String> cat = (LinkedList<String>) categories.clone();
-//			cat.add(0, CityExplorer.FAVORITES);
-
-
 			boolean[] CheckedCat = new boolean[categories.size()];
 			for (String c : categories){
 				if(CheckedCategories.get(c) == null){
@@ -373,29 +369,15 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 			String[] array = new String[categories.size()];
 			array = categories.toArray(array);
+			
+			alert.setOnItemSelectedListener( this );
 			alert.setMultiChoiceItems( array, CheckedCat, this);
-			alert.setPositiveButton("OK", this);
+			alert.setPositiveButton( R.string.label_all, this);
+			alert.setNeutralButton(R.string.label_select, this);
+			alert.setNegativeButton( R.string.label_none, this );
 			alert.create();
 			alert.show();
-		}
-
-//		if(item.getItemId() == R.id.planMenuUpdatePois)
-//		{
-//			if(requestCode == DOWNLOAD_POI){
-//				if (downloadedPois==null){
-//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					int[] res = du.storePois(downloadedPois);
-//					Toast.makeText(context, res[0]+" locations added, "+res[1]+" locations updated", Toast.LENGTH_LONG).show();
-//				}
-//				finish();
-//			}else {				
-//				Intent downloadPoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
-//				downloadPoi.putExtra("requestCode", DOWNLOAD_POI);
-//				startActivityForResult(downloadPoi, DOWNLOAD_POI);
-//			}
-//		}
+		}//onOptionsItemSelected
 
 		if(item.getItemId() == R.id.planMenuSharePois)
 		{
@@ -439,8 +421,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
-		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
-		{
+		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 			//Pressing a header			
 			return;
 		}
@@ -583,12 +564,11 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			});
 
 			// 3: Favourite
-			if(p.isFavourite()){ // this POI is a favourite, add an option to not make it a favourite
+			if(p.isFavorite()){ // this POI is a favourite, add an option to not make it a favourite
 				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_on);
 				qa.addItem(favIcon,	"",	new OnClickListener(){
 
-					public void onClick(View view)
-					{
+					public void onClick(View view){
 						//set favourite off
 						Poi poi = p;
 
@@ -604,8 +584,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 				Drawable	favIcon	= res.getDrawable(R.drawable.favstar_off);
 				qa.addItem(favIcon,	"",	new OnClickListener(){
 
-					public void onClick(View view)
-					{
+					public void onClick(View view){
 						//set as favourite
 						Poi poi = p;
 
@@ -705,46 +684,54 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	}
 
 	/**
-	 * Handles click events in the filter dialog.
+	 * Handles click events in the filter dialog. Check/unCheck
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(DialogInterface dialog, int which, boolean isChecked){
-		LinkedList<String> cat = (LinkedList<String>) categories.clone();
-		cat.add(0, CityExplorer.FAVORITES);
-
+	public void onClick( DialogInterface dialog, int which, boolean isChecked ){
+		debug(1, "FILTER "+which );
+		@SuppressWarnings("unchecked")
+		LinkedList<String> cat = (LinkedList<String>) categories.clone(); // clone to avoid concurrent read/write
+		//cat.add(0, CityExplorer.FAVORITES); //Moved to getCategories() somewhere...
 		CheckedCategories.remove(cat.get(which));
 		CheckedCategories.put(cat.get(which), isChecked);
-	}
+		debug(0, "Categories are "+CheckedCategories.values() );
+	}// onClick
 
 	/**
-	 * Handles the buttons in the filter dialog. 
+	 * Handles the buttons in the filter dialog. Positive/Neutral/Negative Buttons: "ALL", "SELECT", "NONE"
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public void onClick(DialogInterface dialog, int which){
+	public void onClick( DialogInterface dialog, int which ){
+		debug(1, "CLICKED BUTTON "+which );
+
 		//add selection to settings:
 		SharedPreferences settings = getSharedPreferences(CATEGORY_SETTINGS, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		//editor.putBoolean("key", value);
 
+		@SuppressWarnings("unchecked")
 		LinkedList<String> cat = (LinkedList<String>) categories.clone();
-		cat.add(0, CityExplorer.FAVORITES);
-
 		for (String title : cat){
 			boolean isChecked = CheckedCategories.get(title);
-
-			//preferences:
+			if ( which == Dialog.BUTTON_POSITIVE ){
+				isChecked = true;
+			}else if ( which == Dialog.BUTTON_NEGATIVE ){
+				isChecked = false;
+			}
+			//Update CheckedCategories If ALL or NONE was checked: Set all to the same!
+			CheckedCategories.remove( title );
+			CheckedCategories.put( title, isChecked );
+			
+			//Update preferences:
 			editor.putBoolean(title, isChecked);
-
 			if( !isChecked){
-				if(adapter.getSectionNames().contains(title))
+				if(adapter.getSectionNames().contains(title)){
 					adapter.removeSection(title);
+				}
 			} else {
 				ArrayList<Poi> list = new ArrayList<Poi>();
 
 				for (Poi poi : allPois){
-					if( title.equals(CityExplorer.FAVORITES) && poi.isFavourite() ){ //add to favourite section
+					if( title.equals(CityExplorer.FAVORITES) && poi.isFavorite() ){ //add to favourite section
 						list.add(poi);
 					}else if(poi.getCategory().equals(title)){
 						list.add(poi);
@@ -761,5 +748,23 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		// Commit the edits!
 		editor.commit();
 		lv.setAdapter(adapter);
-	} // onClick ( in filter dialog)
+	} // onClick ( "OK" button, in filter dialog)
+
+	/***
+	 * setOnItemSelectedListener. To Listen for clicks in the category-filter list
+	 */
+	@Override
+	public void onItemSelected(AdapterView<?> categoryDialog, View clickedCheckbox, int pos, long id) {
+		debug(0, "HEAR I AM!!!");
+		DialogInterface filter = (DialogInterface) categoryDialog;
+		if ( pos==0 ){ // ALL categories selected: Dismiss so the list is updated
+			filter.dismiss();
+		}
+	}//onItemSelected
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		debug(0, "HERE I AM!!!");
+	}
+	
 } // class PlanPoiTab

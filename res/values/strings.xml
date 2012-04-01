@@ -87,6 +87,9 @@ any static strings associated with maps -->
 
 <string name="zipLabel">Zip:</string>
 <string name="add_from_menu">Add items from the menu</string>
+<string name="label_all">ALL</string>
+<string name="label_none">NONE</string>
+<string name="label_select">SELECT</string>
 
 
 
