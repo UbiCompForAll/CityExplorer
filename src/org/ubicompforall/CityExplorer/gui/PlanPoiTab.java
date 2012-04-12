@@ -163,6 +163,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		}
 		
 		//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
+		debug(1, "requestCode is "+requestCode );
 		new Handler().postDelayed(new Runnable() {
 			public void run() {
 				openOptionsMenu();
@@ -379,8 +380,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			alert.show();
 		}//onOptionsItemSelected
 
-		if(item.getItemId() == R.id.planMenuSharePois)
-		{
+		if(item.getItemId() == R.id.planMenuSharePois){
 			if(requestCode == SHARE_POI){
 				if (sharePois==null){
 					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
@@ -712,15 +712,16 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		LinkedList<String> cat = (LinkedList<String>) categories.clone();
 		for (String title : cat){
 			boolean isChecked = CheckedCategories.get(title);
-			if ( which == Dialog.BUTTON_POSITIVE ){
+			//If ALL or NONE was checked: Set all to the same!
+			if ( which == Dialog.BUTTON_POSITIVE ){ //ALL
 				isChecked = true;
-			}else if ( which == Dialog.BUTTON_NEGATIVE ){
+			}else if ( which == Dialog.BUTTON_NEGATIVE ){ //NONE
 				isChecked = false;
 			}
-			//Update CheckedCategories If ALL or NONE was checked: Set all to the same!
+			//Update CheckedCategories
 			CheckedCategories.remove( title );
 			CheckedCategories.put( title, isChecked );
-			
+
 			//Update preferences:
 			editor.putBoolean(title, isChecked);
 			if( !isChecked){

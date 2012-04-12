@@ -3,43 +3,47 @@
 	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
 	android:background="#EBF2FA">
 
-	<RelativeLayout android:layout_width="fill_parent"
-		android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
-		<TextView android:id="@+id/editheader" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="@string/activity_plan_menu_newPoi"
-			android:textStyle="bold" android:textSize="20dip" android:background="#4556A6"
-			android:textColor="#EBF2FA" android:paddingLeft="5dip"
-			android:paddingTop="2dip" android:paddingBottom="2dip" />
+	<!--  -->RelativeLayout android:layout_width="fill_parent" -->
 
-		<TableLayout android:id="@+id/newPoiTable"
-			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:layout_below="@+id/editheader" xmlns:android="http://schemas.android.com/apk/res/android">
+   	<LinearLayout
+   	    xmlns:android="http://schemas.android.com/apk/res/android"
+   	    android:orientation="vertical"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="218dp" >
 
-			<TableRow android:layout_span="2">
-				<!-- TextView android:id="@+id/editfromexistingPoi"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/editfromexistingPoiLabel" android:layout_below="@id/newPoiBottomInfo"
-					android:textColor="#000000" android:paddingLeft="2dip"
-					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:textStyle="bold" />
-				 RS 120123 Redundant
-				 -->
-				<Button android:text="@string/editfromexistingPoiLabel" android:id="@+id/choosePoiButton"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-				/>
+			<TextView
+			    android:id="@+id/editheader"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:background="#4556A6"
+			    android:paddingBottom="2dip"
+			    android:paddingLeft="5dip"
+			    android:paddingTop="2dip"
+			    android:text="@string/activity_plan_menu_newPoi"
+			    android:textColor="#EBF2FA"
+			    android:textSize="20dip"
+			    android:textStyle="bold" />
 
-				<Button
-				    android:id="@+id/savePoiButton"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:text="@string/savePoi" />
+   	    	<LinearLayout
+		    android:id="@+id/linearLayout1"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal" >
 
-			</TableRow>
+			<Button
+			    android:id="@+id/choosePoiButton"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/editfromexistingPoiLabel" />
 
-			<TableRow>
-			</TableRow>
+			<Button
+			    android:id="@+id/savePoiButton"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/savePoi" />
 
-			<TableRow>
+		</LinearLayout>
+
 				<TextView android:id="@+id/editnameLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/editnameLabel" android:textColor="#000000"
@@ -47,15 +51,14 @@
 					android:paddingTop="2dip" android:paddingBottom="2dip"
 					android:textStyle="bold" android:width="140dp" />
 
-				<EditText android:id="@+id/editname" android:layout_width="fill_parent"
+				<EditText android:id="@+id/editname" android:layout_width="wrap_content"
 					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
+					android:nextFocusDown="@+id/editdescription"
 					android:layout_toRightOf="@id/editnameLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:width="140dp"
-					android:maxWidth="140dp" android:hint="Name" />
-			</TableRow>
+					android:maxWidth="140dp" android:hint="Name..." />
 
-			<TableRow>
 				<TextView android:id="@+id/editdescriptionLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/editdescriptionLabel" android:layout_below="@id/editnameLabel"
@@ -64,15 +67,13 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editdescription"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editdescriptionLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
 					android:paddingTop="2dip" android:paddingBottom="2dip"
-					android:hint="Description" />
-			</TableRow>
+					android:hint="Description..." />
 
-			<TableRow>
 				<TextView android:id="@+id/editcategoryLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/editcategoryLabel" android:layout_below="@id/editdescriptionLabel"
@@ -80,12 +81,9 @@
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:textStyle="bold" />
 				<Spinner android:id="@+id/editcategory"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:prompt="@string/activity_newpoi_spinner_prompt" />
 
-			</TableRow>
-
-			<TableRow>
 				<TextView android:id="@+id/editaddressLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/editaddressLabel" android:layout_below="@id/editcategoryLabel"
@@ -94,44 +92,25 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editaddress"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editaddressLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:hint="Address" />
-			</TableRow>
+					android:paddingBottom="2dip" android:hint="Address..." />
 
-			<TableRow>
-				<TextView android:id="@+id/editzipLabel"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/editzipLabel" android:layout_below="@id/editaddressLabel"
-					android:textColor="#000000" android:paddingLeft="2dip"
-					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:textStyle="bold" />
-
-				<EditText android:id="@+id/editzip" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
-					android:layout_toRightOf="@id/editzipLabel" android:textColor="#000000"
-					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:hint="Zip code" />
-			</TableRow>
-
-			<TableRow>
 				<TextView android:id="@+id/editcityLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/editcityLabel" android:layout_below="@id/editzipLabel"
+					android:text="@string/editcityLabel" android:layout_below="@+id/editaddress"
 					android:textColor="#000000" android:paddingLeft="2dip"
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
-				<EditText android:id="@+id/editcity" android:layout_width="fill_parent"
+				<EditText android:id="@+id/editcity" android:layout_width="wrap_content"
 					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editcityLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:hint="City" />
-			</TableRow>
+					android:paddingBottom="2dip" android:hint="City..." />
 
-			<TableRow>
 				<TextView android:id="@+id/edittelephoneLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/telephoneLabel" android:layout_below="@id/editcityLabel"
@@ -140,15 +119,13 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/edittelephone"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/edittelephoneLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
 					android:paddingTop="2dip" android:paddingBottom="2dip"
-					android:hint="Telephone" />
-			</TableRow>
+					android:hint="Telephone..." />
 
-			<TableRow>
 				<TextView android:id="@+id/editopeningHoursLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/openingHoursLabel" android:layout_below="@id/edittelephoneLabel"
@@ -157,15 +134,13 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editopeningHours"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editopeningHoursLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
 					android:paddingTop="2dip" android:paddingBottom="2dip"
-					android:hint="Open hours" />
-			</TableRow>
+					android:hint="Open hours..." />
 
-			<TableRow>
 				<TextView android:id="@+id/editwebpageLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/webPageLabel" android:layout_below="@id/editopeningHoursLabel"
@@ -174,15 +149,12 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editwebpage"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editwebpageLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:hint="Web page" />
-			</TableRow>
+					android:paddingBottom="2dip" android:hint="Web page..." />
 
-
-			<TableRow>
 				<TextView android:id="@+id/editImageLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:text="@string/imageLabel" android:layout_below="@id/editwebpageLabel"
@@ -190,7 +162,7 @@
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
-				<TableLayout android:layout_width="fill_parent"
+				<TableLayout android:layout_width="wrap_content"
 					android:layout_height="wrap_content" android:layout_below="@+id/editheader"
 					xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -201,24 +173,20 @@
 						</ImageButton>
 
 						<EditText android:id="@+id/editImage"
-							android:layout_width="fill_parent" android:layout_height="fill_parent"
+							android:layout_width="wrap_content" android:layout_height="wrap_content"
 							android:background="@android:drawable/editbox_background"
 							android:layout_toRightOf="@id/editImageLabel" android:textColor="#000000"
 							android:paddingRight="2dip" android:paddingTop="0dip"
-							android:paddingBottom="2dip" android:hint="Image URL" />
+							android:paddingBottom="2dip" android:hint="Image URL..." />
 
 					</TableRow>
 				</TableLayout>
 
-			</TableRow>
-
-		</TableLayout>
-
 		<TextView android:id="@+id/newPoiBottomInfo"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:layout_below="@id/newPoiTable" android:text="@string/requiredFields"
+			android:text="@string/requiredFields"
 			android:textSize="14dip" android:textColor="#000000"
 		/>
 
-	</RelativeLayout>
+	</LinearLayout>
 </ScrollView>
