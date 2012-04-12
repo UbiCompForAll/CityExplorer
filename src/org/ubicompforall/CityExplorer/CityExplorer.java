@@ -92,8 +92,10 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
+	public static final int REQUEST_KILL_BROWSER = 11;
 	//public static final String ALL = "ALL";
 	public static final String FAVORITES = "FAVORITES";
+	public static final String MAGIC_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/launchApp.html";
 	
 	//Public flags
 	public static boolean DATACONNECTION_NOTIFIED = false;
@@ -184,46 +186,57 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	} // isConnected
 
 
-	//Ping Google
+	/***
+	 * Ping Google
+	 * Start a browser if the page contains a (log-in) "redirect="
+	 */
     public static boolean pingConnection( Activity context, String url ) {
     	boolean urlAvailable = false;
-    	boolean connectionAvailable = ensureConnected(context);	// googleAvailable = false;
-		if ( connectionAvailable ){
+		if ( ensureConnected(context) ){
+			debug(0, "Pinging magic url: "+url );
 			showProgress( context );
 			HttpClient httpclient = new DefaultHttpClient();
 			try {
 			    HttpResponse response = httpclient.execute( new HttpGet( url ) );
 				StatusLine statusLine = response.getStatusLine();
-				debug(0, "statusLine is "+statusLine );
+				debug(2, "statusLine is "+statusLine );
 
 				// HTTP status is OK even if not logged in to NTNU
-				Toast.makeText( context, "Status-line is "+statusLine, Toast.LENGTH_LONG).show();
+				//Toast.makeText( context, "Status-line is "+statusLine, Toast.LENGTH_LONG).show();
 				if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					response.getEntity().writeTo(out);
 					out.close();
 					String responseString = out.toString();
-					if ( responseString.matches( url ) ) {	// Connection to url should be checked. TODO
+					if ( responseString.contains( "redirect=" ) ) {	// Connection to url should be checked.
+						debug(0, "Redirect detected for url: "+url );
+						//Toast.makeText( context, "Mismatched url: "+url, Toast.LENGTH_LONG).show();
+					}else{
 						urlAvailable = true;
-					}
-				} else {
-					//Closes the connection on failure
+					}// if redirect page, else probably OK
+				}else{//if status OK, else: Closes the connection on failure
 					response.getEntity().getContent().close();
-			
-					//throw new IOException( statusLine.getReasonPhrase() );
-					Toast.makeText( context, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
+				}//if httpStatus OK, else close
 
-					Uri uri = Uri.parse( url );
-					context.startActivity( new Intent(Intent.ACTION_VIEW, uri) );
-					connectionAvailable = true;
+				//Start browser to log in
+				if ( ! urlAvailable ) {
+					//throw new IOException( statusLine.getReasonPhrase() );
+
+					//String activity = Thread.currentThread().getStackTrace()[3].getClassName();
+					Toast.makeText( context, "Web access needed! Are you logged in?", Toast.LENGTH_LONG).show();
+					Uri uri = Uri.parse( url +"#"+ context.getClass().getCanonicalName() );
+					debug(0, " Need the web for uri: "+uri );
+					context.startActivityForResult( new Intent(Intent.ACTION_VIEW, uri ), REQUEST_KILL_BROWSER );
+					urlAvailable=true;
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IllegalStateException e){	// Caused by bad url for example, missing http:// etc. Can still use cached maps...
-				connectionAvailable=false;
+				urlAvailable=false;
 				debug(0, "Missing http:// in "+url+" ?" );
 			} catch (IOException e) { // e.g. UnknownHostException // try downloading db's from the Web, catch (and print) exceptions
-				connectionAvailable=false;
+				e.printStackTrace();
+				urlAvailable=false;
 			}
 		} // if not already loaded once before
 		return urlAvailable;
@@ -231,7 +244,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	public static void showProgress( Activity context, String... msg ){
 		String status = "Loading";
-		if ( ! (msg == null || msg[0].equals("") ) ){
+		if ( ! (msg == null || msg.length==0 || msg[0].equals("") ) ){
 			status = msg[0];
 		}
 		pd = ProgressDialog.show( context, "", status+"...", true, false);
@@ -317,9 +330,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		DATACONNECTION_NOTIFIED = true;
     } // showNoConnectionDialog
 
-    
-    // HELPER CLASSES //
-    
+
+// HELPER CLASSES //
 //    public class LoadingScreen extends Activity{
 //        private LoadingScreen loadingScreen;
 //        Intent i = new Intent(this, HomeScreen.class);
@@ -349,28 +361,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //                }.start();
 //        }
 //    }//end of class
-
-    // END HELPER CLASSES //
-
-    
-    /* Not valid for Application? Only for "implements LocationListener"
-	@Override
-	public void onLocationChanged(Location location) {
-		System.getProperty("java.version");
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
-*/
+// END HELPER CLASSES //
 
 }//CityExplorer
 

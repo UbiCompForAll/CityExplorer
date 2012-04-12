@@ -84,7 +84,8 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 				<Spinner android:id="@+id/editcategory"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:prompt="@string/activity_newpoi_spinner_prompt" />
+					android:prompt="@string/activity_newpoi_spinner_prompt"
+					android:hint="Category..." />
 
 				<TextView android:id="@+id/editaddressLabel"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -145,7 +146,7 @@
 					android:layout_toRightOf="@id/editopeningHoursLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
 					android:paddingTop="2dip" android:paddingBottom="2dip"
-					android:hint="Open hours..." />
+					android:hint="Opening hours..." />
 
 				<TextView android:id="@+id/editwebpageLabel"
 					android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -163,19 +164,18 @@
 					android:paddingBottom="2dip" android:hint="Web page..." />
 
 				<TextView android:id="@+id/editImageLabel"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:singleLine="true"
 					android:text="@string/imageLabel" android:layout_below="@id/editwebpageLabel"
 					android:textColor="#000000" android:paddingLeft="2dip"
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
-				<TableLayout android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:layout_below="@+id/editheader"
-					xmlns:android="http://schemas.android.com/apk/res/android">
-
-					<TableRow>
-						<ImageButton android:id="@+id/browserButton"
+				<LinearLayout android:orientation="horizontal"
+				    android:layout_width="fill_parent"
+		    		android:layout_height="wrap_content"
+				    >
+				    	<ImageButton android:id="@+id/browserButton"
 							android:layout_width="40dip" android:layout_height="40dip"
 							android:src="@android:drawable/ic_search_category_default">
 						</ImageButton>
@@ -187,9 +187,7 @@
 							android:layout_toRightOf="@id/editImageLabel" android:textColor="#000000"
 							android:paddingRight="2dip" android:paddingTop="0dip"
 							android:paddingBottom="2dip" android:hint="Image URL..." />
-
-					</TableRow>
-				</TableLayout>
+				</LinearLayout>
 
 		<TextView android:id="@+id/newPoiBottomInfo"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"

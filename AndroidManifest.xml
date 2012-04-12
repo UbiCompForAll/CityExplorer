@@ -37,15 +37,18 @@
 <!-- 			<category android:name="android.intent.category.BROWSABLE" />
 				<data android:scheme="file" android:mimeType="*/*" android:pathPattern=".*\\.sqlite" />
  -->
- 		</intent-filter>
+ 			</intent-filter>
 		</activity>
 
-		    		<activity android:name=".gui.CalendarActivity" android:theme="@android:style/Theme.NoTitleBar"></activity><activity android:name=".gui.CalendarActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name=".gui.CalendarActivity"   android:theme="@android:style/Theme.NoTitleBar">
+		</activity>
+		<activity android:name=".gui.CalendarActivity"   android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name=".gui.CalendarActivity" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+		
 		<activity android:name=".gui.ImportActivity" android:theme="@style/TabTheme"></activity>
 		<activity android:name=".gui.ImportLocalTab"></activity>
 		<activity android:name=".gui.NavigateFrom" android:theme="@android:style/Theme.NoTitleBar"></activity>
@@ -64,12 +67,6 @@
 		
 	
 		<activity android:launchMode="standard" android:name=".gui.PlanActivity" android:theme="@style/TabTheme"><!-- singleTop? -->
-			<activity android:launchMode="standard" android:name=".gui.PlanActivity"  android:theme="@android:style/Theme.NoTitleBar"><!-- singleTop? -->
-				<intent-filter>
-					<action android:name=".gui.ActivityPlan" />
-					<category android:name="android.intent.category.DEFAULT" />
-				</intent-filter>
-			</activity>
 			<intent-filter>
 					<action android:name=".gui.ActivityPlan" />
 					<category android:name="android.intent.category.DEFAULT" />
@@ -94,31 +91,22 @@
 		
 
 		<activity android:name=".gui.PlanPoiTab" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="org.ubicompforall.CityExplorer.gui.PlanPoiTab" />
+	            <category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+	        </intent-filter>
+		    
 		</activity>
-		<activity android:name=".gui.PlanTripTab" android:theme="@android:style/Theme.NoTitleBar">
-		</activity>
+		<activity android:name=".gui.PlanTripTab" android:theme="@android:style/Theme.NoTitleBar"></activity>
 	
 	<!-- android:tabStripEnabled="false"  -->
 	
-		
-	
-		<activity android:name=".gui.PlanActivityTab" android:theme="@android:style/Theme.NoTitleBar"></activity>
-		
-		
+		<activity android:name=".gui.PlanActivityTab" android:theme="@android:style/Theme.NoTitleBar"></activity>		
 		
 		<activity android:name=".gui.TripListActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 		
-		<activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
-				<activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
-				<intent-filter>
-					<action android:name=".map.MapsActivity" />
-					<category android:name="android.intent.category.DEFAULT" />
-				</intent-filter>
-			</activity><intent-filter>
-					<action android:name=".map.MapsActivity" />
-					<category android:name="android.intent.category.DEFAULT" />
-				</intent-filter>
-			</activity>
+		<activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar"/>
 		<activity android:name=".map.LocationActivity" android:label="@string/default_location"></activity>
 		<activity android:label="@string/preferences" android:name=".gui.MyPreferencesActivity"></activity>
 		<activity android:name=".gui.ImportWebTab" android:label="Import DB from Web"></activity>

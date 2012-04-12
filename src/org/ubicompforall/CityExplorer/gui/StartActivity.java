@@ -77,13 +77,20 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
-		debug(0, "Start" );
+		debug(0, "Start!" );
+
+		
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
 		//startActivity(new Intent( this, PlanActivity.class) );
+		//startActivity(new Intent( this, NewPoiActivity.class) );
 		//ImportWebTab.onTouch2(new View(this), null);
 
+//		//Testing how to launch a specific intent for our CityExplorer App (from the phone Browser)
+//		//intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);	//intent.putExtra("args", "--url=" + "http://google");
+//		debug(0, "INTENT: "+intent.toUri(Intent.URI_INTENT_SCHEME) );
+		// TODO: FOR DEBUGGING
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		userLocation = verifyUserLocation( userLocation, this );		//Init userLocation
@@ -216,7 +223,9 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 
-	//Moved to CityExplorer.java common Application settings
+	// TODO Auto-generated method stub
+	// TODO Try to run slow methods in background Threads!
+	//Moving to CityExplorer.java common Application settings?
 	@Override
 	public void onLocationChanged(Location location) {
 		this.userLocation = location;
@@ -224,17 +233,14 @@ public class StartActivity extends Activity implements OnClickListener, Location
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
 	}
 }//class
 

@@ -65,7 +65,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -106,7 +105,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	private LinkedList<String> categories;
 
 	/*** Field containing this activity's context.*/
-	private Context context;
+	private Activity context;
 
 	/*** Field containing a {@link HashMap} for the checked categories in the filter.*/
 	private TreeMap<String, Boolean> CheckedCategories = new TreeMap<String, Boolean>();
@@ -141,10 +140,13 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	/*** Field containing a single trip.*/
 	private Trip trip;
 
+	//private boolean menu_shown;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
 		debug(1, "PlanTabPoi create");
+		//menu_shown = false;
 		init();
 	} //onCreate
 
@@ -162,15 +164,15 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			adapter.notifyDataSetChanged();
 		}
 		
-		if ( requestCode == 0 ){ //Main menu
-			//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
-			debug(1, "requestCode is "+requestCode );
-			new Handler().postDelayed(new Runnable() {
-				public void run() {
-					openOptionsMenu();
-				}
-			}, 1000);
-		}
+//		if ( requestCode == 0 && ! menu_shown ){ //Main menu // Default OFF now
+//			//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
+//			debug(1, "requestCode is "+requestCode );
+//			new Handler().postDelayed(new Runnable() {
+//				public void run() {
+//					openOptionsMenu();
+//				}
+//			}, 1000);
+//		}
 	}//onResume
 
 
@@ -238,7 +240,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 * Makes the category sections that is shown in the list. 
 	 */
 	private void makeSections(){
-		debug(0, "make sections" );
+		debug(2, "make sections" );
 		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
 		if(requestCode != DOWNLOAD_POI){			
 			adapter.addSection(CityExplorer.FAVORITES, favouriteAdapter);
@@ -264,7 +266,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 * Updates the category sections in the list, e.g. after choosing filtering.
 	 */
 	private void updateSections(){
-		debug(0, "UPDATE!" );
+		//debug(1, "UPDATE!" );
 		allPois = DBFactory.getInstance(this).getAllPois();
 		LinkedList<String> sectionsInUse = new LinkedList<String>(); 
 		for (Poi poi : allPois)		{
@@ -309,7 +311,8 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		debug(0, "REQUEST CODE is "+requestCode );
+		//menu_shown = true;
+		debug(2, "REQUEST CODE is "+requestCode );
 		if (requestCode == NewPoiActivity.CHOOSE_POI){	
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
@@ -533,12 +536,13 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
 
 				public void onClick(View view){
+					qa.dismiss();
+					CityExplorer.showProgress(context, "Launching Map" );
 					Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
 					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 					selectedPois.add(p);
 					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
 					startActivity(showInMap);
-					qa.dismiss();
 				}
 			});
 

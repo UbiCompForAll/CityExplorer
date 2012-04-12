@@ -85,7 +85,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 	public SeparatedListAdapter(Activity context, int listType) {  
 	    ctx = context;
 	    this.listType = listType;
-	    debug(0, "SeparatedListAdapter~86: I'm listType: "+ CONSTANTS[listType] );
+	    debug(2, "SeparatedListAdapter~86: I'm listType: "+ CONSTANTS[listType] );
 	} // CONSTRUCTOR
 	
 	

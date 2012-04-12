@@ -53,6 +53,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
+//import android.os.Looper; //Necessary? Bug?
 import android.os.Message;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -66,8 +67,8 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	/***
 	 * STATIC (GLOBAL) FIELDS
 	 */
-	static Integer lat = 0;
-	static Integer lng = 0;
+	static Integer latE6 = 0;
+	static Integer lngE6 = 0;
 
 	/***
 	 * FIELDS
@@ -122,20 +123,20 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 		super.onPause();
 		SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		Editor editor = settings.edit();
-		editor.putInt( CityExplorer.LAT, lat );
-		editor.putInt( CityExplorer.LNG, lng );
+		editor.putInt( CityExplorer.LAT, latE6 );
+		editor.putInt( CityExplorer.LNG, lngE6 );
 		editor.commit();
-		debug(0, "committed: lat=" + Integer.toString( lat ) + ", lng="+ Integer.toString( lng ) );
+		debug(0, "committed: lat=" + Integer.toString( latE6 ) + ", lng="+ Integer.toString( lngE6 ) );
 	}//onPause
 	
 	@Override
 	public void onBackPressed() {
 		Bundle bundle = new Bundle();
-	    bundle.putDoubleArray( "lat_lng", new double[]{lat,lng} );
+	    bundle.putDoubleArray( "lat_lng", new double[]{latE6/1e6,lngE6/1e6} );
 
 	    Intent mIntent = new Intent();
 	    mIntent.putExtras(bundle);
-	    debug(1, "lat, lng is "+lat+", "+lng );
+	    debug(1, "lat, lng is "+latE6+", "+lngE6 );
 	    setResult(RESULT_OK, mIntent);
 	    super.onBackPressed();
 	    finish();
@@ -143,14 +144,15 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 
 
 	public static Double[] runGetAddressFromLocation( Context context, String locName, final Handler handler ) {
+		//Looper.prepare();	// Necessary?
 		Geocoder geocoder = new Geocoder(context, Locale.getDefault());   
 		try {
 			List<Address> adrList = geocoder.getFromLocationName( locName, 1);
 			if (adrList != null && adrList.size() > 0) {
 				Address address = adrList.get(0);
 				// sending back first address lat and longitude
-				lat	= (int)(address.getLatitude() * 1e6);
-				lng	= (int)(address.getLongitude() * 1e6);
+				latE6	= (int)(address.getLatitude()*1e6);
+				lngE6	= (int)(address.getLongitude()*1e6);
 			}
 		} catch (IOException e) {
 			Toast.makeText( context, "Data connection needed for Geocoder to verify Address!", Toast.LENGTH_LONG).show();
@@ -159,19 +161,19 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 			msg.setTarget(handler);
 
 			Bundle bundle = new Bundle();
-			bundle.putDouble("lat", lat);
-			bundle.putDouble("lng", lng);
+			bundle.putDouble("lat", latE6/1e6);
+			bundle.putDouble("lng", lngE6/1e6);
 			msg.setData(bundle);
 			//setResult( Activity.RESULT_OK );
             msg.sendToTarget();
         } // try - catch - finally
-		Double[] lat_lng = {lat/1e6, lng/1e6};	// Trondheim Torg: {63430396N, 10395041E};
+		Double[] lat_lng = {latE6/1e6, lngE6/1e6};	// Trondheim Torg: {63430396N, 10395041E};
 		return lat_lng;
 	}//runGetAddressFromLocation
 
 	// STATIC METHODS //
 	public static Double[] getAddressFromLocation( final Context context, final String locName, final Handler handler ) {
-		Double[] lat_lng = {lat/1e6, lng/1e6};	// Trondheim Torg: {63430396N, 10395041E};
+		Double[] lat_lng = {latE6/1e6, lngE6/1e6};	// Trondheim Torg: {63430396N, 10395041E};
 		Thread geocoderThread = new Thread() {
 			@Override public void run() {
 				runGetAddressFromLocation( context, locName, handler );
@@ -179,7 +181,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	    }; //Thread Class
 	    geocoderThread.start();
 	    
-	    debug(0, "lat_lng is "+lat+", "+lng );
+	    debug(0, "lat_lng is "+latE6+", "+lngE6 );
 		return lat_lng;
 	}//getAddressFromLocation
 
@@ -201,9 +203,9 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 			if ( connection || CityExplorer.DATACONNECTION_NOTIFIED ){ //For downloading DBs
 				if (e.getAction() == MotionEvent.ACTION_UP ){
 				    GeoPoint p = mapView.getMapCenter();
-					lat = p.getLatitudeE6();
-					lng = p.getLongitudeE6();
-					debug(0, "updated: lat=" + lat + ", lng="+ lng );
+					latE6 = p.getLatitudeE6();
+					lngE6 = p.getLongitudeE6();
+					debug(0, "updated: lat=" + latE6 + ", lng="+ lngE6 );
 					
 					//Update screen with new coordinates
 					TextView tv = (TextView) findViewById(R.id.map_lat);

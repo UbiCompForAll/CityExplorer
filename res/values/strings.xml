@@ -69,7 +69,7 @@ any static strings associated with maps -->
 <string name="navigateFromPoi">Navigate from another location</string>
 <string name="navigateFrom">Get Directions</string>
 <string name="navigateButton">Navigate</string>
-<string name="no_connection">Please enable data connection to use Web, Map or Download.</string>
+<string name="no_connection">Please enable data connection to use Web, Map, Download...</string>
 <string name="no_connection_title">Data connection needed!</string>
 <string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
 <string name="opensqlite">City Explorer</string><string name="plan">PLAN TOUR</string>

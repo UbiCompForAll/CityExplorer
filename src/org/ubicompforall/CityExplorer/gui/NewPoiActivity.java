@@ -148,6 +148,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 
 	protected Context context;
 
+    boolean wantToGoBack = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -166,7 +168,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 				debug(0, "Categories is "+category );
 				//Collections.sort(category);
 				ArrayAdapter<String> categories = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item, category);
-				debug(0, "Categories is "+categories );
+				//debug(0, "Categories is "+categories );	//android.widget.ArrayAdapter
 
 				catView.setAdapter(categories);
 			}
@@ -260,7 +262,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		debug(1, "requestCode is "+requestCode );
+		debug(1, "requestCode is "+requestCode+". CHOOSE_POI is "+CHOOSE_POI );
 		if(resultCode==Activity.RESULT_CANCELED){
 			return;
 		}
@@ -276,7 +278,12 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			String openingHours = p.getOpeningHours(); 
 			String webPage = p.getWebPage();
 			String imageUrl = p.getImageURL();
+			//update lat and lng
+			lat = p.getGeoPoint().getLatitudeE6()/1E6;
+			lng = p.getGeoPoint().getLongitudeE6()/1E6;
+			debug( 0, "Now lat, lng is "+lat+", "+lng );
 
+			//Put received values into the layout
 			nameView.setText(name);
 			descriptionView.setText(description);
 			addrView.setText(street);
@@ -285,7 +292,6 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			openingHoursView.setText(openingHours);
 			webPageView.setText(webPage);
 			imageURLView.setText(imageUrl);
-
 			int pos = 0;
 			while( category == null ){
 				debug(0, "Just waiting..." );
@@ -336,7 +342,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	 * Checks all the mandatory input fields and saves a location in the database.
 	 */
 	private void savePoi(){
-		debug(0, "Save!");
+		debug(2, "Save! FIRST lat is "+lat+" and lng is "+lng );
 		name = nameView.getText().toString();
 		if( name.trim().equals("") ){
 			Toast.makeText(this, "Please enter a name", Toast.LENGTH_LONG).show();
@@ -371,19 +377,21 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		if( city != null && ! city.trim().equals("") ){
 			searchString.append(", "+city);
 		}
-		debug(0, "Saving!");
-		if ( CityExplorer.pingConnection( this, "http://www.google.com" ) ){
-			debug(0, "Pinged...");
-			LocationActivity.getAddressFromLocation( this, searchString.toString(), new GeocoderHandler() ); //Ask online service
-			debug(0, "Got Address...");
+		debug(0, "Save! lat is "+lat+" and lng is "+lng );
+		if ( CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL ) ){
+			//Double[] lat_lng = LocationActivity.getAddressFromLocation( this, searchString.toString(), new GeocoderHandler() ); //Ask online service
+			Double[] lat_lng = LocationActivity.runGetAddressFromLocation( context, searchString.toString(), new GeocoderHandler() );
+			Toast.makeText( context, "Verifying Address", Toast.LENGTH_LONG).show();
+
+			lat = lat_lng[0]; lng = lat_lng[1];
+			debug(0, "Got Address: "+lat+", "+lng );
 		}else if( ! CityExplorer.DATACONNECTION_NOTIFIED ){ //Ask to connect
-			CityExplorer.showNoConnectionDialog( this, "Data connection needed to get address location",
+			CityExplorer.showNoConnectionDialog( this, "Data connection needed to verify address location",
 					"Set Manually", new Intent( this, LocationActivity.class ), CityExplorer.REQUEST_LOCATION );
 		}else if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
-			debug(0, "Saving...");
+			debug(0, "Save! NEXT lat is "+lat+" and lng is "+lng );
 			storeToDB();	//Save!
 		}else{ //set lat and lng manually
-			//Toast.makeText( this, "Cannot connect to the Web... Are you logged in?", Toast.LENGTH_LONG).show();
 			Toast.makeText( NewPoiActivity.this, "Set POI location", Toast.LENGTH_LONG).show();
 			Intent selectLatLng = new Intent( this, LocationActivity.class ); //startActivityForResult()...
 			startActivityForResult( selectLatLng, CityExplorer.REQUEST_LOCATION );
@@ -430,6 +438,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	        
 			if ( lat != 0 && lng != 0 ) {
 				debug(0, "City is "+city+", BUT WHY?!" );
+				debug(0, "lat,lng is "+lat+", "+lng );
 				PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
 				.longitude(lng).latitude(lat);
 
@@ -450,5 +459,19 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	    }//handleMessage
 	}//GeocoderHandler
 
+	// LISTENERS
+	
+	@Override
+	public void onBackPressed() {
+		// do something on back.
+		if (wantToGoBack){
+			super.onBackPressed();
+		}else{
+			Toast.makeText( this, "Remember to save! Press again to discard", Toast.LENGTH_LONG).show();
+			wantToGoBack = true;
+			debug(0, "back pressed!" );
+		}
+		return;
+	} //onBackPressed
 
 }//NewPoiActivity class

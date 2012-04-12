@@ -16,7 +16,7 @@
 		android:layout_height="66dp"
 		android:layout_alignParentTop="true"
 		android:layout_centerHorizontal="true"
-		android:text="Move and Zoom" />
+		android:text="Move/Zoom &amp; Go back" />
 
 	<TextView
 	     android:id="@+id/map_lng"

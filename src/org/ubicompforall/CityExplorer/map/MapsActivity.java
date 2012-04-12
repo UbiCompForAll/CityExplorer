@@ -180,9 +180,11 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if present
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
-			//System.out.println(pois);
+			//debug(2, pois.toString() );
 			for (Parcelable parcelable : pois){
 				Poi poi = (Poi) parcelable;
+				//debug(0, "lat,lng is "+poi.getAddress() );
+				debug(2, "lat, lng is "+poi.getGeoPoint() );
 
 				MapIconOverlay poiOverlay = new MapIconOverlay(this, R.drawable.favstar_on, poi.getGeoPoint());
 				poiOverlay.setPoi(poi);
@@ -192,9 +194,9 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 
 				poiOverlays.add(poiOverlay);
 				overlays.add(poiOverlay);
-			}
+			}//for each POI to draw
 			if ( poiOverlays.size() >0 ){
-				debug(0, "poiOverlays is "+poiOverlays );
+				//debug(0, "poiOverlays is "+poiOverlays );
 				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
 			}else{
 				debug(0, "Could NOT find the POI overlays!!!" );
@@ -219,13 +221,13 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
+	}//initGPS
 	
 	/***
 	 * Make sure WiFi or Data connection is enabled
 	 */
 	void initWifi(){
-		boolean verifiedConnection = CityExplorer.pingConnection( this, "http://www.google.com" );
+		boolean verifiedConnection = CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL );
 		if ( ! verifiedConnection ){
 			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
 			CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
@@ -405,6 +407,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		debug(0, "HEI :_) RequestCode is " + requestCode );
 		if( requestCode == PoiDetailsActivity.POI_TRIP_POS ){
 			tripOverlay.setCurrentPoiIndex(resultCode);
 			mapController.animateTo(tripOverlay.getTrip().getPoiAt(tripOverlay.getCurrentPoiIndex()).getGeoPoint());//go to poi
@@ -417,6 +420,8 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 			}if(tripOverlay.getCurrentPoiIndex() == 0){ //first poi
 				prevButton.setEnabled(false);
 			}
+		}else if( requestCode == CityExplorer.REQUEST_KILL_BROWSER ){
+			finishActivity( requestCode );
 		}//if requestCode == X
 	}//onActivityResult
 }//MapsActivity class

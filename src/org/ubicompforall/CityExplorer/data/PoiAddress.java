@@ -112,7 +112,7 @@ final public class PoiAddress {
 		 */
 		public Builder latitude(double la){
 			//debug(0, "PoiAddress.latitude~112 is "+la);
-			this.latitude = la;
+			latitude = la;
 			return this;
 		}
 
@@ -177,8 +177,8 @@ final public class PoiAddress {
 		temp.street(this.getStreet());
 // ZIP code removed
 //		temp.zipCode(this.getZipCode());
-		temp.latitude(this.getLatitude());
-		temp.longitude(this.getLongitude());
+		temp.latitude( getLatitude() );
+		temp.longitude( getLongitude() );
 		return temp;
 	}
 

@@ -265,7 +265,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	public void deleteFromTrip(Trip trip, Poi poi){
 		myDataBase.delete("trip_poi", "poi_id = ? AND trip_id = ?", new String[]{""+poi.getIdPrivate(), ""+trip.getIdPrivate()});
 		Toast.makeText(myContext, poi.getLabel() + " deleted from tour.", Toast.LENGTH_LONG).show();
-	}
+	}//deleteFromTrip
 
 	@Override
 	public void deleteTrip(Trip trip){
@@ -762,18 +762,19 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		int AddressId = -1;		//does the address exist?
 		//debug(0, "0: .getStreet 1: getCity 2: getLatitude() 3: .getLongitude() from "+poi.getAddress() );
-		debug(0, poi.getAddress().getStreet()+ poi.getAddress().getCity()+ ""+poi.getAddress().getLatitude()+ ""+poi.getAddress().getLongitude() );
+		//debug(0, poi.getAddress().getStreet()+ poi.getAddress().getCity()+ ""+poi.getAddress().getLatitude()+ ""+poi.getAddress().getLongitude() );
+		debug(0, poi.getAddress().toString() );
 		Cursor c = myDataBase.query("address", new String[]{"_id"},
 				"street_name = ? AND " +
 				"city = ? AND " +
 				"lat = ? AND " +
 				"lon = ?",
 				new String[]{ poi.getAddress().getStreet(), poi.getAddress().getCity(), ""+poi.getAddress().getLatitude(), ""+poi.getAddress().getLongitude() },
-				null, null, null);
-		if(c.moveToFirst())
+				null, null, null );
+		if( c.moveToFirst() ){
 			AddressId = c.getInt(0);
-		else
-		{//add the address
+			debug(0, "AddressId is "+AddressId );
+		}else{//add the address
 			ContentValues values2 = new ContentValues();
 			values2.put("street_name", poi.getAddress().getStreet());
 			values2.put("city", poi.getAddress().getCity());
@@ -790,15 +791,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					"lat = ? AND " +
 					"lon = ?",
 // ZIP code removed
-					new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
-					null, null, null);
-			if(c.moveToFirst())
+					new String[]{ poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,
+						poi.getAddress().getCity(), ""+poi.getAddress().getLatitude(), ""+poi.getAddress().getLongitude() },
+					null, null, null );
+			if( c.moveToFirst() ){
 				AddressId = c.getInt(0);
+			}
+			debug(0, "AddressId is "+AddressId );
+		}//if existing address, else new adr
+
+		if(AddressId == -1){
+			System.err.println("Error getting the address_id");
+			debug(0, "Error getting the address_id" );
+			Toast.makeText(myContext, poi.getLabel() + " Error getting the address_id", Toast.LENGTH_LONG).show();
 		}
-
-		if(AddressId == -1)
-			System.out.println("Error getting the address_id");
-
+		
 		//POI:
 		ContentValues values3= new ContentValues();
 		if(poi.getIdGlobal() != -1) values3.put("global_id", poi.getIdGlobal());
