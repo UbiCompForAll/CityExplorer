@@ -46,6 +46,7 @@ import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,7 +55,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -235,6 +235,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 			status = msg[0];
 		}
 		pd = ProgressDialog.show( context, "", status+"...", true, false);
+		timerDelayRemoveDialog(1000, pd);
 //		new Thread() {
 //		    public void run() {
 //		        handler.sendEmptyMessage( CityExplorer.MSG_DOWNLOADED ); 
@@ -242,19 +243,31 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //		}.start();
 	}// showProgress
 
-	@SuppressWarnings("unused")
-	private static Handler handler = new Handler(){
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case CityExplorer.MSG_DOWNLOADED:
-				pd.dismiss();
-				//Toast.makeText( context, "What to do when ready", Toast.LENGTH_LONG).show();
-				debug(0, "What to do when ready" );
-				break;
-	        }//switch - case
-	    }//handleMessage
-	}; // new Handler class
+//	private static Handler handler = new Handler(){
+//		@Override
+//		public void handleMessage(Message msg) {
+//			switch (msg.what) {
+//			case CityExplorer.MSG_DOWNLOADED:
+//				pd.dismiss();
+//				//Toast.makeText( context, "What to do when ready", Toast.LENGTH_LONG).show();
+//				debug(0, "What to do when ready" );
+//				break;
+//	        }//switch - case
+//	    }//handleMessage
+//	}; // new Handler class
+
+	/***
+	 * 
+	 * @param time	In milliseconds
+	 * @param d
+	 */
+	public static void timerDelayRemoveDialog(long time, final Dialog d){
+	    new Handler().postDelayed(new Runnable() {
+	        public void run() {                
+	            d.dismiss();         
+	        }
+	    }, time); 
+	}
 	
 	/**
      * Display a dialog that user has no Internet connection

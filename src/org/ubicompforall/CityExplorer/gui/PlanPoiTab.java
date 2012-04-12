@@ -162,13 +162,15 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			adapter.notifyDataSetChanged();
 		}
 		
-		//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
-		debug(1, "requestCode is "+requestCode );
-		new Handler().postDelayed(new Runnable() {
-			public void run() {
-				openOptionsMenu();
-			}
-		}, 1000);
+		if ( requestCode == 0 ){ //Main menu
+			//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
+			debug(1, "requestCode is "+requestCode );
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					openOptionsMenu();
+				}
+			}, 1000);
+		}
 	}//onResume
 
 
