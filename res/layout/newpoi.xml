@@ -51,8 +51,10 @@
 					android:paddingTop="2dip" android:paddingBottom="2dip"
 					android:textStyle="bold" android:width="140dp" />
 
-				<EditText android:id="@+id/editname" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
+				<EditText android:id="@+id/editname"
+				    android:background="@android:drawable/editbox_background"
+					android:layout_width="fill_parent" android:layout_height="wrap_content" 
+					android:singleLine="true"
 					android:nextFocusDown="@+id/editdescription"
 					android:layout_toRightOf="@id/editnameLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
@@ -67,7 +69,7 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editdescription"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editdescriptionLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
@@ -92,7 +94,7 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editaddress"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editaddressLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
@@ -105,8 +107,10 @@
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
-				<EditText android:id="@+id/editcity" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
+				<EditText android:id="@+id/editcity"
+				    android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editcityLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:hint="City..." />
@@ -119,7 +123,8 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/edittelephone"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:singleLine="true"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/edittelephoneLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
@@ -134,7 +139,8 @@
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editopeningHours"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:singleLine="true"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editopeningHoursLabel"
 					android:textColor="#000000" android:paddingRight="2dip"
@@ -142,21 +148,23 @@
 					android:hint="Open hours..." />
 
 				<TextView android:id="@+id/editwebpageLabel"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:singleLine="true"
 					android:text="@string/webPageLabel" android:layout_below="@id/editopeningHoursLabel"
 					android:textColor="#000000" android:paddingLeft="2dip"
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:textStyle="bold" />
 
 				<EditText android:id="@+id/editwebpage"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"
 					android:layout_toRightOf="@id/editwebpageLabel" android:textColor="#000000"
 					android:paddingRight="2dip" android:paddingTop="2dip"
 					android:paddingBottom="2dip" android:hint="Web page..." />
 
 				<TextView android:id="@+id/editImageLabel"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:singleLine="true"
 					android:text="@string/imageLabel" android:layout_below="@id/editwebpageLabel"
 					android:textColor="#000000" android:paddingLeft="2dip"
 					android:paddingRight="2dip" android:paddingTop="2dip"
@@ -173,7 +181,8 @@
 						</ImageButton>
 
 						<EditText android:id="@+id/editImage"
-							android:layout_width="wrap_content" android:layout_height="wrap_content"
+							android:layout_width="fill_parent" android:layout_height="wrap_content"
+							android:singleLine="true"
 							android:background="@android:drawable/editbox_background"
 							android:layout_toRightOf="@id/editImageLabel" android:textColor="#000000"
 							android:paddingRight="2dip" android:paddingTop="0dip"
