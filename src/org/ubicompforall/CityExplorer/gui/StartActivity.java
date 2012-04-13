@@ -83,7 +83,8 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
-		startActivity(new Intent( this, PlanActivity.class) ); // --> startActivity(new Intent( this, TripListActivity.class) );
+		//startActivity(new Intent( this, PlanActivity.class) );
+		//startActivity(new Intent( this, PlanTripTab.class) );
 		//startActivity(new Intent( this, NewPoiActivity.class) );
 		//ImportWebTab.onTouch2(new View(this), null);
 

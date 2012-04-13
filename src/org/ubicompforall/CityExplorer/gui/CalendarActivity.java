@@ -462,8 +462,8 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		//String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
-		String url = "http://78.91.26.243:8080/UbiComposer/UbiComposer.html?library=Test.ubicompdescriptor";
+		String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
+		//String url = "http://78.91.26.243:8080/UbiComposer/UbiComposer.html?library=Test.ubicompdescriptor"; // Mohammad's laptop
 		debug(0, "url is "+url );
 		/*
 		Send JSON context:
@@ -511,9 +511,9 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 // For Android WebView
 //		setContentView(R.layout.weblayout);
 		webview = (WebView) findViewById(R.id.myWebView);
-//		if (webview == null){
-//			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
-//		}else{
+		if (webview == null){
+			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
+		}else{
 //			webview.getSettings().setJavaScriptEnabled(true);
 //			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
 //				webview.loadUrl(url);
@@ -537,10 +537,10 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				//OK...
 				//setupWebDBs( webview );
 
-		webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
-		webview.setOnTouchListener(this);
-		CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
-//		}// if webView found
+			webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
+			webview.setOnTouchListener(this);
+			CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
+		}// if webView found
 	}//showComposerInWebView
 
 	public OnClickListener ocl = new OnClickListener() {
