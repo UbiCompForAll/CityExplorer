@@ -48,6 +48,7 @@ import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -62,7 +63,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+//import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -441,10 +442,10 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		} //clearCalendar
 
 		//Only used for UbiComposer Version
-//		if(itemID == R.id.composePOIs){
-//			ll.removeAllViews();
-//			showComposerInWebView();
-//		}// if Compose UbiServices
+		if(itemID == R.id.composePOIs){
+			ll.removeAllViews();
+			showComposerInWebView();
+		}// if Compose UbiServices
 
 		return true;
 	} // onOptionsItemSelected
@@ -461,7 +462,8 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
+		//String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
+		String url = "http://78.91.26.243:8080/UbiComposer/UbiComposer.html?library=Test.ubicompdescriptor";
 		debug(0, "url is "+url );
 		/*
 		Send JSON context:
@@ -494,48 +496,51 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				Phone number from AddressBook
 		*/
 		
+		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+
 //Testing how to launch a specific intent for the Firefox browser
-//		Intent intent = new Intent(Intent.ACTION_MAIN, null);
-//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-//		intent.setAction("org.mozilla.gecko.BOOKMARK");
-//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		intent.putExtra("args", "--url=" + url);
-//		intent.setData(Uri.parse(url));
-//		startActivity(intent);
-		
-		setContentView(R.layout.weblayout);
+		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+		intent.setAction("org.mozilla.gecko.BOOKMARK");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra("args", "--url=" + url);
+		intent.setData(Uri.parse(url));
+		startActivity(intent);
+
+// For Android WebView
+//		setContentView(R.layout.weblayout);
 		webview = (WebView) findViewById(R.id.myWebView);
-		if (webview == null){
-			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
-		}else{
-			webview.getSettings().setJavaScriptEnabled(true);
-			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
-				webview.loadUrl(url);
-//Verifying that our Javascript Interface class "Android" works
-//				webview.loadData(""
-//						+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
-//						+"<script type=\"text/javascript\">"
-//						+"  function showAndroidToast(toast) {"
-//						+"		Android.showToast(toast);"
-//						+"	}"
-//						+"</script>"
+//		if (webview == null){
+//			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
+//		}else{
+//			webview.getSettings().setJavaScriptEnabled(true);
+//			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
+//				webview.loadUrl(url);
 //
-//						+"Click a term in the list...", "text/hml", "utf-8");
-				webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
-				webview.setWebViewClient( new WebViewClient() );
-				webview.getSettings().setJavaScriptEnabled(true);
-				webview.getSettings().setBuiltInZoomControls(true);
-				
-				Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+//				webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
+//				webview.setWebViewClient( new WebViewClient() );
+//				webview.getSettings().setJavaScriptEnabled(true);
+//				webview.getSettings().setBuiltInZoomControls(true);
+
+		//Verifying that our Javascript Interface class "Android" works
+//		webview.loadData(""
+//				+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
+//				+"<script type=\"text/javascript\">"
+//				+"  function showAndroidToast(toast) {"
+//				+"		Android.showToast(toast);"
+//				+"	}"
+//				+"</script>"
+//
+//				+"Click a term in the list...", "text/hml", "utf-8");
+
 				//OK...
 				//setupWebDBs( webview );
-			}else{
-				webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
-				webview.setOnTouchListener(this);
-				CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
-			}
-		}// if webView found
+
+		webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
+		webview.setOnTouchListener(this);
+		CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
+//		}// if webView found
 	}//showComposerInWebView
 
 	public OnClickListener ocl = new OnClickListener() {
@@ -585,9 +590,10 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		debug(0, "Go External!" );
 		showComposerInWebView();
 		return false;
-	}
+	}//
 
 
 } //class CalendarActivity

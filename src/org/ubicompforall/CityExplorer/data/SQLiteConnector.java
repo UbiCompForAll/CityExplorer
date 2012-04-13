@@ -380,7 +380,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		Trip trip = new Trip.Builder("").build();
 		while(c.moveToNext()){
 			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
+				//debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
 				if(currentTripId != -1) { //next trip on the list
 					trips.add(trip);
 				}
@@ -715,7 +715,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}
 			categories.put(c.getString(0), bmp);
 		}//while more categories
-		debug(1, "Got bmp for "+categories.size()+" categories" );
+		debug(2, "Got bmp for "+categories.size()+" categories" );
 		c.close();
 		return categories;
 	}//getUniqueCategoryNamesAndIcons

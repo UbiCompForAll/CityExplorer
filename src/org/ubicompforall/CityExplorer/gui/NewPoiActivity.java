@@ -223,120 +223,21 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		return true;
 	}//isNumbers
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu){
-		menu.clear();
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.new_poi_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getItemId() == R.id.savePoi){
-			savePoi();			
-		}
-		return true;
-	}
-
 	/**
 	 * Converts a String to an int.
 	 * 
 	 * @param text The input text, containing only numbers.
 	 * @return An int that is converted successfully from a String.
 	 */
-	@SuppressWarnings("unused")
-	private int stringToInt(String text){
-		int n=-1;
-		try {
-			n=  Integer.parseInt(text);
-		} catch ( NumberFormatException ne){
-			ne.printStackTrace();
-		}
-		return n;
-	}// stringToInt
-	
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		debug(1, "requestCode is "+requestCode+". CHOOSE_POI is "+CHOOSE_POI );
-		if(resultCode==Activity.RESULT_CANCELED){
-			return;
-		}
-		switch (requestCode){
-		case CHOOSE_POI:
-			Poi p = (Poi) data.getParcelableExtra( IntentPassable.POI );
-			String name = p.getLabel();
-			String description = p.getDescription();
-			String cat = p.getCategory();
-			String street = p.getAddress().getStreet();
-			String city = p.getAddress().getCity();
-			String tel = p.getTelephone();
-			String openingHours = p.getOpeningHours(); 
-			String webPage = p.getWebPage();
-			String imageUrl = p.getImageURL();
-			//update lat and lng
-			lat = p.getGeoPoint().getLatitudeE6()/1E6;
-			lng = p.getGeoPoint().getLongitudeE6()/1E6;
-			debug( 0, "Now lat, lng is "+lat+", "+lng );
-
-			//Put received values into the layout
-			nameView.setText(name);
-			descriptionView.setText(description);
-			addrView.setText(street);
-			cityView.setText(city);
-			telView.setText(tel);
-			openingHoursView.setText(openingHours);
-			webPageView.setText(webPage);
-			imageURLView.setText(imageUrl);
-			int pos = 0;
-			while( category == null ){
-				debug(0, "Just waiting..." );
-			}
-			debug(0, "Categories is "+category );
-			for (String c : category) {
-				if(!cat.equals(c)){
-					pos++;
-				}else {					
-					break;
-				}
-			}
-			catView.setSelection(pos);
-			break;
-		case CityExplorer.REQUEST_LOCATION:
-			double[] lat_lng = data.getDoubleArrayExtra("lat_lng");
-			lat = lat_lng[0];
-			lng = lat_lng[1];
-			//lng = data.getDoubleExtra( "lng", lng );
-			debug(0, "lat_lng is "+lat+", "+lng );
-			break;
-		default:
-			break;
-		}//switch case
-	}//onActivityResult
-	
-	@Override
-	public void onClick(View v) {
-		if(v == choosePoiButton){
-			Intent selectPoi = new Intent( this, PlanPoiTab.class );
-			selectPoi.putExtra("requestCode", CHOOSE_POI);
-			startActivityForResult( selectPoi, CHOOSE_POI );
-		}else if(v == savePoiButton){
-			savePoi();
-		}else if(v == searchButton){
-			String name = nameView.getText().toString();
-			name = name.replace(' ', '+');
-
-			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, 
-					Uri.parse("http://www.google.com/m/search?tbm=isch&hl=en&" +
-							"source=hp&biw=1037&bih=635&" +
-							"q="+name+"&gbv=2&aq=f&aqi=g2&aql=&oq="));
-			startActivity(launchBrowser);
-		}
-	}//onClick
+//	private int stringToInt(String text){
+//		int n=-1;
+//		try {
+//			n=  Integer.parseInt(text);
+//		} catch ( NumberFormatException ne){
+//			ne.printStackTrace();
+//		}
+//		return n;
+//	}// stringToInt
 	
 	/**
 	 * Checks all the mandatory input fields and saves a location in the database.
@@ -377,19 +278,18 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		if( city != null && ! city.trim().equals("") ){
 			searchString.append(", "+city);
 		}
-		debug(0, "Save! lat is "+lat+" and lng is "+lng );
+		//debug(0, "Save! lat is "+lat+" and lng is "+lng );
 		if ( CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL ) ){
 			//Double[] lat_lng = LocationActivity.getAddressFromLocation( this, searchString.toString(), new GeocoderHandler() ); //Ask online service
 			Double[] lat_lng = LocationActivity.runGetAddressFromLocation( context, searchString.toString(), new GeocoderHandler() );
 			Toast.makeText( context, "Verifying Address", Toast.LENGTH_LONG).show();
-
 			lat = lat_lng[0]; lng = lat_lng[1];
-			debug(0, "Got Address: "+lat+", "+lng );
+			debug(2, "Got Address: "+lat+", "+lng );
 		}else if( ! CityExplorer.DATACONNECTION_NOTIFIED ){ //Ask to connect
 			CityExplorer.showNoConnectionDialog( this, "Data connection needed to verify address location",
 					"Set Manually", new Intent( this, LocationActivity.class ), CityExplorer.REQUEST_LOCATION );
 		}else if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
-			debug(0, "Save! NEXT lat is "+lat+" and lng is "+lng );
+			debug(1, "Save! lat is "+lat+" and lng is "+lng );
 			storeToDB();	//Save!
 		}else{ //set lat and lng manually
 			Toast.makeText( NewPoiActivity.this, "Set POI location", Toast.LENGTH_LONG).show();
@@ -437,8 +337,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			lng = bundle.getDouble("lng");
 	        
 			if ( lat != 0 && lng != 0 ) {
-				debug(0, "City is "+city+", BUT WHY?!" );
-				debug(0, "lat,lng is "+lat+", "+lng );
+				debug(2, "City is "+city+", BUT WHY?!" );
+				debug(2, "lat,lng is "+lat+", "+lng );
 				PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
 				.longitude(lng).latitude(lat);
 
@@ -459,8 +359,112 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	    }//handleMessage
 	}//GeocoderHandler
 
-	// LISTENERS
+	// LISTENERS / OVERRIDE METHODS
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		menu.clear();
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.new_poi_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.savePoi){
+			savePoi();			
+		}
+		return true;
+	}//onOptionsItemSelected
+
+	@Override
+	public void onClick(View v) {
+		if(v == choosePoiButton){
+			Intent selectPoi = new Intent( this, PlanPoiTab.class );
+			selectPoi.putExtra("requestCode", CHOOSE_POI);
+			startActivityForResult( selectPoi, CHOOSE_POI );
+		}else if(v == savePoiButton){
+			savePoi();
+		}else if(v == searchButton){
+			String name = nameView.getText().toString();
+			name = name.replace(' ', '+');
+
+			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, 
+					Uri.parse("http://www.google.com/m/search?tbm=isch&hl=en&" +
+							"source=hp&biw=1037&bih=635&" +
+							"q="+name+"&gbv=2&aq=f&aqi=g2&aql=&oq="));
+			startActivity(launchBrowser);
+		}
+	}//onClick
+	
+	/***
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		debug(2, "resultCode is "+resultCode+". Activity.RESULT_CANCELED is "+Activity.RESULT_CANCELED );
+		debug(1, "requestCode is "+requestCode+". CHOOSE_POI is "+CHOOSE_POI );
+		if( resultCode == Activity.RESULT_CANCELED ){
+			return;
+		}
+
+		switch (requestCode){
+		case CHOOSE_POI:
+			Poi p = (Poi) data.getParcelableExtra( IntentPassable.POI );
+			String name = p.getLabel();
+			String description = p.getDescription();
+			String cat = p.getCategory();
+			String street = p.getAddress().getStreet();
+			String city = p.getAddress().getCity();
+			String tel = p.getTelephone();
+			String openingHours = p.getOpeningHours(); 
+			String webPage = p.getWebPage();
+			String imageUrl = p.getImageURL();
+			//update lat and lng
+			lat = p.getGeoPoint().getLatitudeE6()/1E6;
+			lng = p.getGeoPoint().getLongitudeE6()/1E6;
+			debug( 0, "Now lat, lng is "+lat+", "+lng );
+
+			//Put received values into the layout
+			nameView.setText(name);
+			descriptionView.setText(description);
+			addrView.setText(street);
+			cityView.setText(city);
+			telView.setText(tel);
+			openingHoursView.setText(openingHours);
+			webPageView.setText(webPage);
+			imageURLView.setText(imageUrl);
+			int pos = 0;
+			while( category == null ){
+				debug(0, "Just waiting..." );
+			}
+			debug(0, "Categories is "+category );
+			for (String c : category) {
+				if(!cat.equals(c)){
+					pos++;
+				}else {					
+					break;
+				}
+			}
+			catView.setSelection(pos);
+			break;
+		case CityExplorer.REQUEST_LOCATION:
+			double[] lat_lng = data.getDoubleArrayExtra("lat_lng");
+			lat = lat_lng[0];
+			lng = lat_lng[1];
+			//lng = data.getDoubleExtra( "lng", lng );
+			debug(0, "lat_lng is "+lat+", "+lng );
+			break;
+		case CityExplorer.REQUEST_KILL_BROWSER:
+			debug(0, "Killing the login-browser..." );
+			finishActivity( requestCode );
+			break;
+		default:
+			break;
+		}//switch case
+	}//onActivityResult
+	
+
 	@Override
 	public void onBackPressed() {
 		// do something on back.

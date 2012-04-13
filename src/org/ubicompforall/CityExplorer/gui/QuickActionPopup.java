@@ -132,8 +132,8 @@ public class QuickActionPopup extends PopupWindow implements KeyEvent.Callback {
 
 		setWidth(mScreenWidth + mShadowHoriz + mShadowHoriz);
 
-		debug(0, "setWidth("+mScreenWidth +"+"+ mShadowHoriz +"+"+ mShadowHoriz+");");
-		debug(0, "pView is "+pView+" and Rect is "+rect );
+		debug(2, "setWidth("+mScreenWidth +"+"+ mShadowHoriz +"+"+ mShadowHoriz+");");
+		//debug(0, "pView is "+pView+" and Rect is "+rect );
 
 		setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 

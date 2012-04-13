@@ -153,7 +153,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public void onStart(){
 		super.onStart();
-		debug(1, "PlanTabPoi Start");
+		debug(2, "PlanTabPoi Start");
 	}//onStart
 	
 	@Override

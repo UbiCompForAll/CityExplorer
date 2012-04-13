@@ -83,7 +83,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
-		//startActivity(new Intent( this, PlanActivity.class) );
+		startActivity(new Intent( this, PlanActivity.class) ); // --> startActivity(new Intent( this, TripListActivity.class) );
 		//startActivity(new Intent( this, NewPoiActivity.class) );
 		//ImportWebTab.onTouch2(new View(this), null);
 
@@ -203,7 +203,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			userLocation.setLongitude( lat_lng [1]/1E6 );	// Store current longitude location
 		}//userLocation == null, Check out GPS setting in CityExplorer.java
 
-		debug(0, "lat_lng is "+ lat_lng[0] + ", "+ lat_lng[1] );
+		debug(2, "lat_lng is "+ lat_lng[0] + ", "+ lat_lng[1] );
 		return userLocation;
 	}//verifyUserLocation
 

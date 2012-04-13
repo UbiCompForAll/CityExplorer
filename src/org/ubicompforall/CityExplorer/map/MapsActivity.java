@@ -106,13 +106,14 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	/** The poi clicked. */
 	boolean poiClicked = false;
 
+	
 	/**
 	 * Called when the activity is first created.
-	 *
 	 * @param savedInstanceState the saved instance state
 	 */
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		debug(0, "" );
 		setContentView(R.layout.maplayout);
 
 		poiClicked		= false;
@@ -230,7 +231,8 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		boolean verifiedConnection = CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL );
 		if ( ! verifiedConnection ){
 			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
-			CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
+			CityExplorer.showNoConnectionDialog( this, "", "Use Cache", null, 0 );
+			//verifiedConnection = true;
 		}
 	} //initWifi
 
@@ -274,8 +276,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * @see android.location.LocationListener#onProviderEnabled(java.lang.String)
 	 */
 	@Override
-	public void onProviderEnabled(String provider) 
-	{}
+	public void onProviderEnabled(String provider){}
 
 
 	/* (non-Javadoc)
@@ -290,8 +291,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 *
 	 * @return the current location
 	 */
-	public GeoPoint getCurrentLocation()
-	{
+	public GeoPoint getCurrentLocation(){
 		return currentGeoPoint;
 	}
 	
@@ -301,8 +301,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * 
 	 * @param i icon overlay
 	 */
-	public void onPress(MapIconOverlay i)
-	{
+	public void onPress(MapIconOverlay i){
 		final MapIconOverlay icon = i;
 		
 		//Toast.makeText(context, "Press incoming..."+poi.getLabel(), Toast.LENGTH_SHORT).show();
@@ -367,47 +366,42 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
 	@Override
-	public void onClick(View v)
-	{
-		if(tripOverlay == null)
+	public void onClick(View v)	{
+		if(tripOverlay == null){
 			return;
+		}
 		
-		if(v.getId() == nextButton.getId())
-		{
+		if(v.getId() == nextButton.getId()){
 			System.out.println("Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
-			if(tripOverlay.getPois().size()-1 >= tripOverlay.getCurrentPoiIndex()+1)
-			{
+			if(tripOverlay.getPois().size()-1 >= tripOverlay.getCurrentPoiIndex()+1){
 				prevButton.setEnabled(true);
 				tripOverlay.setCurrentPoiIndex(tripOverlay.getCurrentPoiIndex()+1);
 				mapController.animateTo(tripOverlay.getTrip().getPoiAt(tripOverlay.getCurrentPoiIndex()).getGeoPoint());//go to next poi
 			}
-			if(tripOverlay.getPois().size()-1 == tripOverlay.getCurrentPoiIndex())//last poi
-			{
+			if(tripOverlay.getPois().size()-1 == tripOverlay.getCurrentPoiIndex())	{ //last poi
 				nextButton.setEnabled(false);
 			}
-		}
-		else if(v.getId() == prevButton.getId())
-		{
+		}else if(v.getId() == prevButton.getId()){
 			System.out.println("Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
-			if(tripOverlay.getCurrentPoiIndex() > 0)
-			{
+			if(tripOverlay.getCurrentPoiIndex() > 0){
 				nextButton.setEnabled(true);
 				tripOverlay.setCurrentPoiIndex(tripOverlay.getCurrentPoiIndex()-1);
 				mapController.animateTo(tripOverlay.getTrip().getPoiAt(tripOverlay.getCurrentPoiIndex()).getGeoPoint());//go to prev poi
 			}
-			if(tripOverlay.getCurrentPoiIndex() == 0)//first poi
-			{
+			if(tripOverlay.getCurrentPoiIndex() == 0){ //first poi
 				prevButton.setEnabled(false);
-			}
-		}
-	}
+			}// if first poi
+		}//if next, else if prev
+	} //onClick
 
-	/* (non-Javadoc)
+	/***
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		debug(0, "HEI :_) RequestCode is " + requestCode );
+		debug(1, "HEI :-) RequestCode is " + requestCode 
+			+ ". PoiDetailsActivity.POI_TRIP_POS is "+ PoiDetailsActivity.POI_TRIP_POS 
+			+ ".  CityExplorer.REQUEST_KILL_BROWSER is "+ CityExplorer.REQUEST_KILL_BROWSER );
 		if( requestCode == PoiDetailsActivity.POI_TRIP_POS ){
 			tripOverlay.setCurrentPoiIndex(resultCode);
 			mapController.animateTo(tripOverlay.getTrip().getPoiAt(tripOverlay.getCurrentPoiIndex()).getGeoPoint());//go to poi

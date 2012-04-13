@@ -122,6 +122,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	public void onPause(){
 		super.onPause();
 		SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		Toast.makeText( context, "Updating Latitude/Longitude...", Toast.LENGTH_LONG).show();
 		Editor editor = settings.edit();
 		editor.putInt( CityExplorer.LAT, latE6 );
 		editor.putInt( CityExplorer.LNG, lngE6 );
@@ -155,7 +156,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 				lngE6	= (int)(address.getLongitude()*1e6);
 			}
 		} catch (IOException e) {
-			Toast.makeText( context, "Data connection needed for Geocoder to verify Address!", Toast.LENGTH_LONG).show();
+			Toast.makeText( context, "Data connection needed for GeoCoder to verify Address!", Toast.LENGTH_LONG).show();
 		} finally {
 			Message msg = Message.obtain();
 			msg.setTarget(handler);

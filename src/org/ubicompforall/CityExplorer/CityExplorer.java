@@ -193,7 +193,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
     public static boolean pingConnection( Activity context, String url ) {
     	boolean urlAvailable = false;
 		if ( ensureConnected(context) ){
-			debug(0, "Pinging magic url: "+url );
 			showProgress( context );
 			HttpClient httpclient = new DefaultHttpClient();
 			try {
@@ -209,7 +208,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 					out.close();
 					String responseString = out.toString();
 					if ( responseString.contains( "redirect=" ) ) {	// Connection to url should be checked.
-						debug(0, "Redirect detected for url: "+url );
+						debug(2, "Redirect detected for url: "+url );
 						//Toast.makeText( context, "Mismatched url: "+url, Toast.LENGTH_LONG).show();
 					}else{
 						urlAvailable = true;
@@ -224,10 +223,12 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 					//String activity = Thread.currentThread().getStackTrace()[3].getClassName();
 					Toast.makeText( context, "Web access needed! Are you logged in?", Toast.LENGTH_LONG).show();
-					Uri uri = Uri.parse( url +"#"+ context.getClass().getCanonicalName() );
-					debug(0, " Need the web for uri: "+uri );
+					//Uri uri = Uri.parse( url +"#"+ context.getClass().getCanonicalName() );
+					Uri uri = Uri.parse( url +"?activity="+ context.getClass().getCanonicalName() );
+					debug(0, "Pinging magic url: "+uri );
+					//debug(0, " Need the web for uri: "+uri );
 					context.startActivityForResult( new Intent(Intent.ACTION_VIEW, uri ), REQUEST_KILL_BROWSER );
-					urlAvailable=true;
+					//urlAvailable=true;
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -276,7 +277,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 */
 	public static void timerDelayRemoveDialog(long time, final Dialog d){
 	    new Handler().postDelayed(new Runnable() {
-	        public void run() {                
+	        public void run(){
+	        	debug(2, "d is "+d );
 	            d.dismiss();         
 	        }
 	    }, time); 
@@ -289,7 +291,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
      */
     public static void showNoConnectionDialog( final Activity context, final String strA, final String strB, final Intent intentB, int requestCode ) {
-
     	AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setCancelable(true);
 		if ( strA == "" ){
@@ -310,7 +311,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		}
 		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				if (intentB != null){
+				if ( intentB != null ){
 					context.startActivityForResult( intentB, CityExplorer.REQUEST_LOCATION );
 					dialog.dismiss();
 		    	}
@@ -320,11 +321,17 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
 		    public void onCancel(DialogInterface dialog) {
-				Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
-		        context.startActivity( intentB );
+		    	if ( context == null ){
+		    		debug(0, "OOOPS!");
+		    	}else{
+		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
+					if (intentB != null){
+						context.startActivity( intentB );
+					}
+		    	}
 		        return;
 		    }
-		});
+		} );
 		
 		builder.show();
 		DATACONNECTION_NOTIFIED = true;
