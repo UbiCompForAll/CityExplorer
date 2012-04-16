@@ -114,7 +114,7 @@ public class ImportDB extends Activity{
 		OutputStreamWriter osw;
 		try
 		{
-			FileOutputStream fOut = c.openFileOutput("cityexplorer.txt",
+			FileOutputStream fOut = c.openFileOutput(CityExplorer.SHARED_FILE,
 					MODE_WORLD_READABLE);
 			osw = new OutputStreamWriter(fOut); 
 			// Write the string to the file
@@ -163,7 +163,7 @@ public class ImportDB extends Activity{
 			System.out.println("IO error: "+e.getMessage());
 		}
 		
-		File F = c.getFileStreamPath("cityexplorer.txt");
+		File F = c.getFileStreamPath(CityExplorer.SHARED_FILE);
         Uri U = Uri.fromFile(F);
 
 		

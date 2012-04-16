@@ -34,6 +34,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+
+import org.ubicompforall.CityExplorer.CityExplorer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -61,7 +64,7 @@ public class Sharing extends Activity
 		    // open the file for reading
 			File f = new File(uri.getPath());
 		    InputStream instream = new FileInputStream(f);
-			//InputStream instream = openFileInput("cityexplorer.txt");
+			//InputStream instream = openFileInput(CityExplorer.SHARED_FILE);
 		    
 		    handleInputStream(instream);
 		   
@@ -128,8 +131,7 @@ public class Sharing extends Activity
 		OutputStreamWriter osw;
 		try
 		{
-			FileOutputStream fOut = c.openFileOutput("cityexplorer.txt",
-					MODE_WORLD_READABLE);
+			FileOutputStream fOut = c.openFileOutput(CityExplorer.SHARED_FILE, MODE_WORLD_READABLE);
 			osw = new OutputStreamWriter(fOut); 
 			// Write the string to the file
 			for (Poi poi : pois)
@@ -179,15 +181,15 @@ public class Sharing extends Activity
 			System.out.println("IO error: "+e.getMessage());
 		}
 		
-		File F = c.getFileStreamPath("cityexplorer.txt");
+		File F = c.getFileStreamPath (CityExplorer.SHARED_FILE);
         Uri U = Uri.fromFile(F);
-
+        U = Uri.parse(CityExplorer.SHARED_FILE_PATH + U.getPath());
+        
 		
 		Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
-		//sharingIntent.setData(U);
 		sharingIntent.putExtra(Intent.EXTRA_STREAM, U);
-		//sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "This is a test");
+		// sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "This is a test");
 		c.startActivity(Intent.createChooser(sharingIntent,"Share ce file using"));
 	}
 	
