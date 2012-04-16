@@ -93,6 +93,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
 	public static final int REQUEST_KILL_BROWSER = 11;
+
 	//public static final String ALL = "ALL";
 	public static final String FAVORITES = "FAVORITES";
 	public static final String MAGIC_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/launchApp.html";
@@ -103,6 +104,11 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//Other fields
 	private static ProgressDialog pd;
 
+	// CONSTANTS for sharing
+	public static final String SHARED_FILE = "cityexplorer.txt";
+	public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
+
+	
 	/***
 	 * The global current db connection
 	 */
@@ -278,8 +284,10 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static void timerDelayRemoveDialog(long time, final Dialog d){
 	    new Handler().postDelayed(new Runnable() {
 	        public void run(){
-	        	debug(2, "d is "+d );
-	            d.dismiss();         
+	        	if (d!= null){
+	        		debug(2, "d is "+ d );
+	        		d.dismiss();  
+	        	}
 	        }
 	    }, time); 
 	}
@@ -337,7 +345,15 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		DATACONNECTION_NOTIFIED = true;
     } // showNoConnectionDialog
 
-
+	/**
+     * Return the URI of the file used when sharing PoI
+	 * @param context of the calling Activity
+     * 
+     */   
+//    public static String getSharedFileName (Context c) {
+//    	return SHARED_FILE_PATH + c.getFilesDir() +"/"+ SHARED_FILE;
+//    }
+    
 // HELPER CLASSES //
 //    public class LoadingScreen extends Activity{
 //        private LoadingScreen loadingScreen;
