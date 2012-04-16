@@ -183,12 +183,13 @@ public class Sharing extends Activity
 		
 		File F = c.getFileStreamPath (CityExplorer.SHARED_FILE);
         Uri U = Uri.fromFile(F);
-        U = Uri.parse(CityExplorer.SHARED_FILE_PATH + U.getPath());
+//        U = Uri.parse("file://" + U.getPath());
         
 		
 		Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
 		sharingIntent.putExtra(Intent.EXTRA_STREAM, U);
+		sharingIntent.setFlags (Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		// sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "This is a test");
 		c.startActivity(Intent.createChooser(sharingIntent,"Share ce file using"));
 	}
