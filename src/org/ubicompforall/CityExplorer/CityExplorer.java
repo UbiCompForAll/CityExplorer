@@ -54,6 +54,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -298,7 +299,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
      *
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
      */
-    public static void showNoConnectionDialog( final Activity context, final String strA, final String strB, final Intent intentB, int requestCode ) {
+	public static void showNoConnectionDialog( final Activity context, final String strA, final String strB, final Intent intentB, int requestCode ) {
     	AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setCancelable(true);
 		if ( strA == "" ){
@@ -343,16 +344,16 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		
 		builder.show();
 		DATACONNECTION_NOTIFIED = true;
-    } // showNoConnectionDialog
+	} // showNoConnectionDialog
 
 	/**
-     * Return the URI of the file used when sharing PoI
+	 * Return the URI of the file used when sharing PoI
 	 * @param context of the calling Activity
-     * 
-     */   
-//    public static String getSharedFileName (Context c) {
-//    	return SHARED_FILE_PATH + c.getFilesDir() +"/"+ SHARED_FILE;
-//    }
+     */
+	public static String getSharedFileName (Context c) {
+    	//return SHARED_FILE_PATH + c.getFilesDir() +"/"+ SHARED_FILE;
+    	return Environment.getExternalStorageDirectory() + CityExplorer.SHARED_FILE;
+	}
     
 // HELPER CLASSES //
 //    public class LoadingScreen extends Activity{
