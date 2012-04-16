@@ -105,18 +105,6 @@ public class ExportImport extends Activity{
 	 *
 	 * @param c The context.
 	 * @param pois The pois you want to send.
-	 */
-	public static void send(Context c, ArrayList<Poi> pois)
-	{
-		OutputStreamWriter osw;
-		try
-		{
-			FileOutputStream fOut = c.openFileOutput(CityExplorer.SHARED_FILE,
-					MODE_WORLD_READABLE);
-			osw = new OutputStreamWriter(fOut); 
-			// Write the string to the file
-			for (Poi poi : pois){
-				/*
 				 * 0  global_id;
 				 * 1  title;
 				 * 2  description;
@@ -132,7 +120,15 @@ public class ExportImport extends Activity{
 				 * 9 openingHours;
 				 * 10 telephone;
 				 * 11 image_url
-				*/
+	 */
+	public static void send(Context c, ArrayList<Poi> pois){
+		OutputStreamWriter osw;
+		try{
+			//FileOutputStream fOut = c.openFileOutput(CityExplorer.SHARED_FILE, MODE_WORLD_READABLE);
+			FileOutputStream fOut = new FileOutputStream( CityExplorer.getSharedFileName(c) );
+			osw = new OutputStreamWriter(fOut);
+			// Write the string to the file
+			for (Poi poi : pois){
 				osw.write(
 						poi.getIdGlobal()	+";"+
 						poi.getLabel()		+";"+
@@ -160,7 +156,7 @@ public class ExportImport extends Activity{
 			System.out.println("IO error: "+e.getMessage());
 		}
 		
-		File F = c.getFileStreamPath(CityExplorer.SHARED_FILE);
+		File F = c.getFileStreamPath( CityExplorer.getSharedFileName(c) );
         Uri U = Uri.fromFile(F);
 
 		
