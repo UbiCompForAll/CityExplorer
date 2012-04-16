@@ -173,6 +173,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 						}else{
 							debug(2, "searching host "+SERVER_URL+", extracted is "+linkTerms );
 							webview.loadData(linkTerms, "text/html", "utf-8" );
+							loaded=true;
 						}
 						//webview.loadData( responseString, "text/html", "utf-8" );
 				    }else{
@@ -185,8 +186,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 				} catch (IOException e) {
 					e.printStackTrace();
 				} // try downloading db's from the Web, catch and print exceptions
-		    }// for all web-locations with DBs on them
-			loaded=true;
+		    }// for all web-locations with DBs on them	
 		} // if not already loaded once before
 		return false;
 	} // setupWebDBs (called from init / from onCreate... Too slow?)

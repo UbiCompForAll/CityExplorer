@@ -376,7 +376,8 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		if(v.getId() == prevPoi.getId()){
 			nextPoi.setEnabled(true);
 			poiNumber--;
-			showPoiDetails(trip.getPoiAt(poiNumber));
+			poi=trip.getPoiAt(poiNumber);
+			showPoiDetails(poi);
 			if(poiNumber==0){
 				prevPoi.setEnabled(false);
 			}else {
@@ -386,7 +387,9 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		if(v.getId() == nextPoi.getId()){
 			prevPoi.setEnabled(true);
 			poiNumber++;
-			showPoiDetails(trip.getPoiAt(poiNumber));
+			poi=trip.getPoiAt(poiNumber);
+			showPoiDetails(poi);
+//			showPoiDetails(trip.getPoiAt(poiNumber));
 			if(poiNumber==pois.size()-1){
 				nextPoi.setEnabled(false);
 			}else {

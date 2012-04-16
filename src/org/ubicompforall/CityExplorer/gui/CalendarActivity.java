@@ -407,9 +407,10 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
-		menu.clear();
+		super.onPrepareOptionsMenu (menu);
+	//	menu.clear();
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.calendar, menu);
+		inflater.inflate(R.menu.calendar_menu, menu);
 
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -442,11 +443,11 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		} //clearCalendar
 
 		//Only used for UbiComposer Version
-		if(itemID == R.id.composePOIs){
-			ll.removeAllViews();
-			showComposerInWebView();
-		}// if Compose UbiServices
-
+//		if(itemID == R.id.composePOIs){
+//			ll.removeAllViews();
+//			showComposerInWebView();
+//		}// if Compose UbiServices
+//
 		return true;
 	} // onOptionsItemSelected
 

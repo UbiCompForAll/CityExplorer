@@ -278,8 +278,10 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static void timerDelayRemoveDialog(long time, final Dialog d){
 	    new Handler().postDelayed(new Runnable() {
 	        public void run(){
-	        	debug(2, "d is "+d );
-	            d.dismiss();         
+	        	if (d!= null){
+	        		debug(2, "d is "+ d );
+	        		d.dismiss();  
+	        	}
 	        }
 	    }, time); 
 	}

@@ -212,10 +212,10 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	 * @return True if string contains only numbers, false otherwise.
 	 */
 	private boolean isNumbers(String s){
-		s = s.replaceAll("/[#+ ]/", "");
-		s = s.trim();
+		s = s.replaceAll("[#+ ]", "");
+		// s = s.trim();
 		try{
-			Integer.parseInt(s);
+			Long.parseLong(s);
 		}catch (NumberFormatException e) {
 			debug(0, "NotANumber: "+s );
 			return false;
@@ -268,7 +268,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			Toast.makeText(this, "Please enter a city", Toast.LENGTH_LONG).show();
 			return;
 		}
-		if( ! ( tel.equals("") || isNumbers(tel) ) ){
+		if( !tel.equals("") && !isNumbers(tel) ){
 			Toast.makeText(this, "Invalid phone number: "+tel, Toast.LENGTH_LONG).show();
 			return;
 		}
