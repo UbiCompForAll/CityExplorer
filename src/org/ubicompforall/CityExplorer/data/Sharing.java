@@ -51,8 +51,7 @@ public class Sharing extends Activity
 	Context context;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		
 		Uri uri = getIntent().getData();
@@ -125,18 +124,6 @@ public class Sharing extends Activity
 	 *
 	 * @param c The context.
 	 * @param pois The pois you want to send.
-	 */
-	public static void send(Context c, ArrayList<Poi> pois)
-	{
-		OutputStreamWriter osw;
-		try
-		{
-			FileOutputStream fOut = c.openFileOutput(CityExplorer.SHARED_FILE, MODE_WORLD_READABLE);
-			osw = new OutputStreamWriter(fOut); 
-			// Write the string to the file
-			for (Poi poi : pois)
-			{
-				/*
 				 * 0  global_id;
 				 * 1  title;
 				 * 2  description;
@@ -152,38 +139,45 @@ public class Sharing extends Activity
 				 * 10 openingHours;
 				 * 11 telephone;
 				 * 12 image_url
-				*/
-				osw.write(
-						poi.getIdGlobal()	+";"+
-						poi.getLabel()		+";"+
-						poi.getDescription().replaceAll("\n", "%EOL")+";"+
-						poi.getAddress().getStreet()+";"+
-// ZIP code removed
-//						poi.getAddress().getZipCode()+";"+
-						poi.getAddress().getCity()+";"+
-						poi.getAddress().getLatitude()+";"+
-						poi.getAddress().getLongitude()+";"+
-						poi.getCategory()+";"+
-						poi.getWebPage()+";"+
-						poi.getOpeningHours().replaceAll("\n", "%EOL")+";"+
-						poi.getTelephone()+";"+
-						poi.getImageURL()+"\n"
-						);
-			}
+	 */
+	public static void send(Context c, ArrayList<Poi> pois){
+		OutputStreamWriter osw;
+		try{
+			FileOutputStream fOut = new FileOutputStream( CityExplorer.getSharedFileName(c) );
+			CityExplorer.debug(0, "Storing pois to "+fOut );
+			osw = new OutputStreamWriter(fOut); 
+			// Write the string to the file
+			for (Poi poi : pois){
+				String outputStr = 
+					poi.getIdGlobal()	+";"+
+					poi.getLabel()		+";"+
+					poi.getDescription().replaceAll("\n", "%EOL")+";"+
+					poi.getAddress().getStreet()+";"+
+					poi.getAddress().getCity()+";"+
+					poi.getAddress().getLatitude()+";"+
+					poi.getAddress().getLongitude()+";"+
+					poi.getCategory()+";"+
+					poi.getWebPage()+";"+
+					poi.getOpeningHours().replaceAll("\n", "%EOL")+";"+
+					poi.getTelephone()+";"+
+					poi.getImageURL()+"\n";
+				CityExplorer.debug(0, "outputstring is "+ outputStr );
+				osw.write( outputStr );
+				//	poi.getAddress().getZipCode()+";"+	// ZIP code removed
+				
+			}//for each poi
 			
 			/* ensure that everything is
 			 * really written out and close */
 			osw.flush();
 			osw.close();
-		} 
-		catch (IOException e)
-		{
+		}catch (IOException e){
 			System.out.println("IO error: "+e.getMessage());
 		}
 		
 		File F = c.getFileStreamPath (CityExplorer.SHARED_FILE);
         Uri U = Uri.fromFile(F);
-        U = Uri.parse(CityExplorer.SHARED_FILE_PATH + U.getPath());
+        //U = Uri.parse(CityExplorer.SHARED_FILE_PATH + U.getPath());
         
 		
 		Intent sharingIntent = new Intent(Intent.ACTION_SEND);
