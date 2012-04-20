@@ -130,21 +130,21 @@ public class ExportImport extends Activity{
 			// Write the string to the file
 			for (Poi poi : pois){
 				osw.write(
-						poi.getIdGlobal()	+";"+
-						poi.getLabel()		+";"+
-						poi.getDescription().replaceAll("\n", "%EOL")+";"+
-						poi.getAddress().getStreet()+";"+
+					poi.getIdGlobal()	+";"+
+					poi.getLabel()		+";"+
+					poi.getDescription().replaceAll("\n", "%EOL")+";"+
+					poi.getAddress().getStreet()+";"+
 // ZIP code removed
-//						poi.getAddress().getZipCode()+";"+
-						poi.getAddress().getCity()+";"+
-						poi.getAddress().getLatitude()+";"+
-						poi.getAddress().getLongitude()+";"+
-						poi.getCategory()+";"+
-						poi.getWebPage()+";"+
-						poi.getOpeningHours().replaceAll("\n", "%EOL")+";"+
-						poi.getTelephone()+";"+
-						poi.getImageURL()+"\n"
-						);
+//					poi.getAddress().getZipCode()+";"+
+					poi.getAddress().getCity()+";"+
+					poi.getAddress().getLatitude()+";"+
+					poi.getAddress().getLongitude()+";"+
+					poi.getCategory()+";"+
+					poi.getWebPage()+";"+
+					poi.getOpeningHours().replaceAll("\n", "%EOL")+";"+
+					poi.getTelephone()+";"+
+					poi.getImageURL()+"\n"
+				);
 			}
 			
 			/* ensure that everything is
@@ -162,8 +162,8 @@ public class ExportImport extends Activity{
 		
 		Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
-		//sharingIntent.setData(U);
 		sharingIntent.putExtra(Intent.EXTRA_STREAM, U);
+		CityExplorer.debug(0, "Sending file "+U.getPath() );
 		//sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "This is a test");
 		c.startActivity(Intent.createChooser(sharingIntent,"Share ce file using"));
 	}//send

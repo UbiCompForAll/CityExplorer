@@ -77,8 +77,8 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
-		debug(0, "Start!" );
-
+		//debug(0, "Start!" );
+		debug(0, "Download folder is "+CityExplorer.SHARED_FILE_PATH );
 		
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
@@ -137,9 +137,6 @@ public class StartActivity extends Activity implements OnClickListener, Location
 			exploreCity();
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
-
-			MyPreferencesActivity.getDbPath(this);
-
 			Intent locationActivity = new Intent(StartActivity.this, SettingsActivity.class);
 			locationActivity.putParcelableArrayListExtra(IntentPassable.POILIST, new ArrayList<Poi>() );
 			startActivity( locationActivity );

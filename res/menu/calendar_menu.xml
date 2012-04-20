@@ -10,10 +10,11 @@
 		android:icon="@android:drawable/ic_menu_close_clear_cancel"
 		android:title="@string/clearCalendar" />
 
-<!-- Composition removed in menu  
+<!-- Composition removed in menu, unless ubiCompose==true
+-->
 	<item
 	    android:id="@+id/composePOIs" 
 		android:title="@string/composeUbiServices"
 		android:icon="@drawable/compose"/>
--->
+
 </menu>

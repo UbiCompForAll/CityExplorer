@@ -46,16 +46,22 @@ public class FileSystemConnector implements FileSystemInterface {
 	ArrayList<DB> allDBs = null;
 
 	private String dbPath = null;	// remembering the default path for locals DBs
+	
+	private Context ctx = null;	//context for display etc.
 
 	public FileSystemConnector( Context context ){
 		//INITIALIZE OWN FIELDS
-		dbPath  = context.getDatabasePath( SQLiteConnector.DB_NAME ).getParent();
-		debug(0, "dbPath is "+dbPath );
-		categoryFolders = new ArrayList<String>();
-		categoryFolders.add( dbPath );
-		//Collections.sort(categoryFolders);
+		ctx = context;
+		dbPath  = getDatabasePath();
+		if (dbPath.equals("") ){
+			debug(0, "What!? No dbPath given!");
+		}else{
+			debug(0, "dbPath is "+dbPath );
+			categoryFolders = new ArrayList<String>();
+			categoryFolders.add( dbPath );
+			//Collections.sort(categoryFolders);
+		}
 		debug(0, "categoryFolders is "+categoryFolders );
-
 		allDBs = getAllDBs();	// Find all DBs in categoryFolders
 		debug(0, "allDBs.size is "+allDBs.size() );
 	} // CONSTRUCTOR
@@ -96,7 +102,7 @@ public class FileSystemConnector implements FileSystemInterface {
 				if ( file.getName().matches( ".*webview(Cache)?.db" ) ){
 					file.delete();
 				}else{
-					debug(0, "Keep "+file );
+					debug(1, "Keep "+file );
 				}
 				foundDBs.add( new DB( file.getName(), dir.getName() ) );
 			}// for each file
@@ -117,6 +123,9 @@ public class FileSystemConnector implements FileSystemInterface {
 	}//deleteDB
 
 	public String getDatabasePath() {
+		if (dbPath == null || dbPath.equals("") ){
+			dbPath = ctx.getDatabasePath("dummy").getParent();
+		}
 		return dbPath;
 	} // return the default db-path
 

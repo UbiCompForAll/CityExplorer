@@ -73,10 +73,14 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	public static final int DEBUG = 1;
 	public static final String C = "CityExplorer";
+	
+	//SWITCH FOR UBICOMPOSER CONNECTIVITY
+	public static final boolean ubiCompose = true;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
-	public static final String URL = "Url";
+	public static final String SETTINGS_NAME = "Name";
+	public static final String SETTINGS_URL = "Url";
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
 	
@@ -107,7 +111,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	// CONSTANTS for sharing
 	public static final String SHARED_FILE = "cityexplorer.txt";
-	public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
+	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
+	public static final String SHARED_FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
 
 	
 	/***

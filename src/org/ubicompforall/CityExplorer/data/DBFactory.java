@@ -31,18 +31,31 @@
 
 package org.ubicompforall.CityExplorer.data;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
+
 import android.content.Context;
 
 public class DBFactory{
 	/**
-	 * The Enum DBType.
+	 * The enum DBType.
 	 */
 	public enum DBType{
 		SQLITE;
 	}
+
+	//public static final String DB_NAME = "CityExplorer.sqlite";
+
 	
 	/** The DataBase connector instance. */
 	private static DatabaseInterface dbConnectorInstance;
+	private static File currentDbFile = null; // Cannot move to dbConnectorInstance?
 	
 	/** The database type. */
 	private static DBType databaseType = DBType.SQLITE; //change this to change the database type
@@ -53,17 +66,58 @@ public class DBFactory{
 	 * @param context The context, that will be current from now to next getInstance
 	 * @return Single instance of DBFactory
 	 */
-	public static DatabaseInterface changeInstance( Context context, String new_DB_NAME ){
+	public static DatabaseInterface changeInstance( Context context, String dbName ){
 		if( dbConnectorInstance != null && dbConnectorInstance.isOpen() == true ){
 			dbConnectorInstance.close();
 		}
 		if(databaseType == DBType.SQLITE){
-			dbConnectorInstance = new SQLiteConnector( context, new_DB_NAME );
+			currentDbFile = new File( context.getDatabasePath(dbName).getAbsolutePath() );
+			dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 		} // if right type
-		dbConnectorInstance.open();
+		dbConnectorInstance.open( currentDbFile );
 		dbConnectorInstance.setContext(context);
 		return dbConnectorInstance;
 	}//changeInstance
+
+	/**
+	 * Creates an empty database on the data/data/project-folder and rewrites it with your own database.
+	 *
+	 * @throws IOException when the asset database file can not be read,
+	 * or the database-destination file can not be written to,
+	 * or when parent directories to the database-destination file do not exist.
+	 */
+ 	public static void createDataBase( Context myContext, File dbFile ) throws IOException {
+		OutputStream 	osDbPath;
+		InputStream 	isAssetDb 	= myContext.getAssets().open( dbFile.getName() );
+		byte[] 			buffer 		= new byte[1024 * 64];
+		int 			bytesRead;
+
+		CityExplorer.debug(0, "Make copy of default "+dbFile+" to "+dbFile.getParent() );
+		try {
+			osDbPath = new FileOutputStream( dbFile.getParent() );
+
+			while ((bytesRead = isAssetDb.read(buffer))>0){
+				try {
+					osDbPath.write(buffer, 0, bytesRead);
+				} catch (IOException io) {
+					CityExplorer.debug(0, "Failed to write to " + dbFile.getParent() );
+					io.printStackTrace();
+				}
+				CityExplorer.debug(0, "copyDataBase(): wrote " + bytesRead + " bytes");
+			}//while more bytes to copy
+			osDbPath.flush();
+			osDbPath.close();
+			buffer = null;
+			CityExplorer.debug(0, dbFile+" successufully copied");
+
+			//myDataBase = this.getReadableDatabase(); // Moved back to SQLiteConnector
+		} catch (IOException io) {
+			CityExplorer.debug(0, "Failed to copy "+ dbFile + " to " + dbFile.getParent());
+			io.printStackTrace();
+		}//try catch (making copy)
+		return;
+	}//createDataBase
+
 
 	/**
 	 * Gets the single instance of DBFactory.
@@ -72,11 +126,21 @@ public class DBFactory{
 	 * @return Single instance of DBFactory
 	 */
 	public static DatabaseInterface getInstance( Context context ){
+		//CityExplorer.debug(0, "currentDbFile is "+currentDbFile);
+		if ( currentDbFile == null || currentDbFile.equals("") ){
+			String currentDbName = MyPreferencesActivity.getCurrentDbName( context );
+			String currentDbFileUri = context.getDatabasePath(currentDbName).getAbsolutePath();
+			if ( ! currentDbFileUri.matches( ".*"+currentDbName ) ){
+				currentDbFileUri += "/" + currentDbName;
+			}
+			currentDbFile = new File( currentDbFileUri );
+			CityExplorer.debug(0, "currentDbFile is " + currentDbFile );
+		}
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
-				dbConnectorInstance = new SQLiteConnector(context);
+				dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 			} // if right type
-			dbConnectorInstance.open();
+			dbConnectorInstance.open( currentDbFile );
 		} // if DB not already open
 		dbConnectorInstance.setContext(context);
 		return dbConnectorInstance;

@@ -74,6 +74,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		editor = settings.edit();	// Remember to commit changes->onPause etc.
 
 		url_edit = (EditText) findViewById( R.id.pref_url );
+		initDbName();
 		initDbUrl();
 	}//onCreate
 
@@ -89,7 +90,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		super.onPause();
 		String url = url_edit.getText().toString();
 		debug(2, "pause with "+url+", editor is "+editor );
-		editor.putString( CityExplorer.URL, url );
+		editor.putString( CityExplorer.SETTINGS_URL, url );
 		editor.commit();
 		debug(2, "committed:"+url_edit.getText().toString() );
 	} // onPause
@@ -100,26 +101,48 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	} //debug
 
 	
-	public static String getDbPath (Context context ){
-		String default_url = context.getResources().getString(R.string.default_url);
-		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		String url_db = settings.getString ( CityExplorer.URL, default_url );		
+	public static String getCurrentDbName ( Context context ){
+		String defaultDbName = context.getResources().getString( R.string.default_dbName );
 		
-		//add DB URL to settings - if not yet set
+		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		String settings_dbName = settings.getString ( CityExplorer.SETTINGS_NAME, defaultDbName );
+
+		//update DB NAME in setting - in case not yet set
 		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			
-		if ( url_db.equals("") ){
-			editor.putString( CityExplorer.URL, default_url );
-		}else{
-			editor.putString( CityExplorer.URL, url_db );
+		//add the default name to settings - if settings was set to blank
+		if ( settings_dbName.equals("") ){
+			settings_dbName = defaultDbName;
 		}
+		editor.putString( CityExplorer.SETTINGS_URL, settings_dbName );
 		editor.commit();
 
-		return url_db;
-	} // getDbPath
+		return settings_dbName;
+	} // getCurrentDbFile	// Used to be: getDbPath
 
+	public static String getCurrentDbDownloadURL ( Context context ){
+		String defaultDbDownloadURL = context.getResources().getString( R.string.default_dbDownloadURL );
+		
+		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		String settings_dbDownloadURL = settings.getString ( CityExplorer.SETTINGS_URL, defaultDbDownloadURL );
+
+		//update DB DOWNLOAD URL in setting - in case not yet set
+		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			
+		//add the default downloadURL to settings - in case settings was set to blank
+		if ( settings_dbDownloadURL.equals("") ){
+			settings_dbDownloadURL = defaultDbDownloadURL;
+		}
+		editor.putString( CityExplorer.SETTINGS_URL, settings_dbDownloadURL );
+		editor.commit();
+
+		return settings_dbDownloadURL;
+	} // getCurrentDbDownloadPath	// Used to be: getDbPath
+
+	private void initDbName() {
+		url_edit.setText( getCurrentDbName( this ) );
+	} // initDbUrl
 
 	private void initDbUrl() {
-		url_edit.setText( getDbPath (this) );
+		url_edit.setText( getCurrentDbDownloadURL(this) );
 	} // initDbUrl
 
 	public static int [] getLatLng (Context context ){

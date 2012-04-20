@@ -64,11 +64,26 @@
 		</TableRow>
 		
 		<TableRow>
+		    <ImageButton android:id="@+id/URLBrowserButton"
+				android:layout_width="20dip" android:layout_height="40dip"
+				android:src="@android:drawable/ic_search_category_default"
+			/>
 			<EditText
 				android:id="@+id/pref_url"
 				android:layout_width="wrap_content"
-				android:layout_span="2"
-				android:text="@string/default_url"
+				android:text="@string/default_dbDownloadURL"
+			/>
+		</TableRow>
+		
+   		<TableRow>
+		    <ImageButton android:id="@+id/DbBrowserButton"
+				android:layout_width="20dip" android:layout_height="40dip"
+				android:src="@android:drawable/ic_search_category_default"
+			/>
+			<EditText
+				android:id="@+id/pref_url"
+				android:layout_width="wrap_content"
+				android:text="@string/default_dbName"
 			/>
 		</TableRow>
 		
@@ -82,6 +97,13 @@
 		<TableRow>
 		</TableRow>
 	</TableLayout>
+
+	<LinearLayout
+	    android:id="@+id/linearLayout1"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	</LinearLayout>
+
 </LinearLayout>
 
 <!--

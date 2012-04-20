@@ -45,7 +45,6 @@ import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
@@ -83,7 +82,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	private ListView lv;
 
 	/*** Field containing this activity's context.*/
-	private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
+	//private Context context;  // What context? Context is the activity itself: for drawing output, storing folders etc.
 
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
@@ -102,6 +101,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 
 		//INITIALIZE OWN FIELDS
 		allDBs = new ArrayList<DB>();
+		//fs = new FileSystemConnector( this, db.getParent() );
 		fs = new FileSystemConnector( this );
 		categoryFolders = new ArrayList<String>();
 		categoryFolders.add( fs.getDatabasePath() );
@@ -122,7 +122,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	 * Initializes the activity.
 	 */
 	private void init() {
-		setContext(this);
+		//setContext(this); //Using ImportLocalTab.this below instead
 		requestCode = getIntent().getIntExtra("requestCode",0);
 		lv = getListView();
 		lv.setOnItemLongClickListener(new DrawPopup());
@@ -150,7 +150,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	 * Makes the category sections that is shown in the list. 
 	 */
 	private void makeSections(){
-		for (DB db : new FileSystemConnector( context ).getAllDBs() ){
+		for (DB db : new FileSystemConnector( this ).getAllDBs() ){
 			if( !adapter.getSectionNames().contains(db.getCategory())){ //category does not exist, create it.
 				ArrayList<DB> list = new ArrayList<DB>();
 
@@ -168,7 +168,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	 */
 	@SuppressWarnings("unchecked")
 	private void updateSections(){
-		allDBs = new FileSystemConnector( context ).getAllDBs();
+		allDBs = new FileSystemConnector( this ).getAllDBs();
 		debug(0, "allDBs.size is "+allDBs.size() );
 
 		ArrayList<String> sectionsInUse = new ArrayList<String>();
@@ -233,10 +233,10 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 			debug(0, "Pressed a header... Dummy!");
 			return;
 		}
-		DB dbObject = (DB) l.getAdapter().getItem(pos);
+		DB selectedDb = (DB) l.getAdapter().getItem(pos);
 		debug(1, "requestCode is "+ requestCode );
-		debug(0, "I just found DB "+dbObject.getLabel() );
-		DBFactory.changeInstance( this, dbObject.getLabel() );
+		debug(0, "I just found DB "+selectedDb.getLabel() );
+		DBFactory.changeInstance( this, selectedDb.getLabel() );
 		startActivity( new Intent( this, PlanActivity.class) );
 	} // onListItemClick
 
@@ -291,7 +291,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
 				public void onClick(View view){
-					new FileSystemConnector( context ).deleteDB(d);
+					new FileSystemConnector( ImportLocalTab.this ).deleteDB(d);
 					updateSections();
 					((SeparatedListAdapter)par.getAdapter()).notifyDataSetChanged();
 					qa.dismiss();
@@ -348,11 +348,14 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		lv.setAdapter(adapter);
 	}//onClick
 
-	public Context getContext() {
-		return context;
-	}
+	/***
+	 * ImportLocalTab context, for the helper classes
+	 */
+//	public Context getContext() {
+//		return context;
+//	}
 
-	public void setContext(Context context) {
-		this.context = context;
-	}
+//	public void setContext(Context context) {
+//		this.context = context;
+//	}
 }//ImportLocalTab

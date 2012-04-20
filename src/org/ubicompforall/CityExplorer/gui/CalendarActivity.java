@@ -48,7 +48,6 @@ import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -63,6 +62,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 //import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -350,7 +350,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	} // addWalkingTime
 	
 	private poiTextView findPoiViewBefore(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
-		//XXX
 		
 		//find the poi before this one.
 		for(int i = hourViews.indexOf(newView); i >= 0; i--){//start here and work backwards.
@@ -367,7 +366,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	}//findPoiViewBefore
 	
 	private poiTextView findPoiViewAfter(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
-		//XXX
 		
 		//find the poi after this one.
 		for(int i = hourViews.indexOf(newView); i < hourViews.size(); i++)//start here and work forwards.
@@ -408,10 +406,12 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
 		super.onPrepareOptionsMenu (menu);
-	//	menu.clear();
+		menu.clear();	// Rebuild the menu every time? // Or move this to on-create?
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.calendar_menu, menu);
-
+		if ( ! CityExplorer.ubiCompose){
+			menu.removeItem( R.id.composePOIs );
+		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -442,30 +442,33 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 		} //clearCalendar
 
-		//Only used for UbiComposer Version
-//		if(itemID == R.id.composePOIs){
-//			ll.removeAllViews();
-//			showComposerInWebView();
-//		}// if Compose UbiServices
-//
+		//Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
+		if(itemID == R.id.composePOIs){
+			ll.removeAllViews();
+			showComposerInWebView();
+		}// if Compose UbiServices
+
 		return true;
 	} // onOptionsItemSelected
 
 	private void showComposerInWebView() {
 		wantToGoBack = true; // Disable required double-press on back-key
 
+		//String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
+		JSONObject parameters = null; 
+		String url = "http://129.241.200.195:8080/UbiComposerTest/UbiComposer.html" +
+				"?library=TestDescriptor.ubicompdescriptor&json=" + parameters;
+			//String url = "http://78.91.26.243:8080/UbiComposer/UbiComposer.html?library=Test.ubicompdescriptor"; // Mohammad's laptop
+		debug(0, "url is "+url );
+
 		//Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
 		// make json
 		String objectString = "{\"gutter_url\" : \"\",  \"sort_order\" : \"popularity\",  \"result\" : [ { \"afs\" : \"Y\", \"release_year\" : 1979, \"album_sort\" : \"Wall, The\" } ] }";
-		JSONObject parameters = null; 
 		try {
 			parameters = new JSONObject(objectString.trim());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
-		//String url = "http://78.91.26.243:8080/UbiComposer/UbiComposer.html?library=Test.ubicompdescriptor"; // Mohammad's laptop
-		debug(0, "url is "+url );
 		/*
 		Send JSON context:
 			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
@@ -499,32 +502,32 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		
 		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
 
-//Testing how to launch a specific intent for the Firefox browser
-		Intent intent = new Intent(Intent.ACTION_MAIN, null);
-		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-		intent.setAction("org.mozilla.gecko.BOOKMARK");
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra("args", "--url=" + url);
-		intent.setData(Uri.parse(url));
-		startActivity(intent);
+//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
+//		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//		//intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+//		//intent.setAction("org.mozilla.gecko.BOOKMARK");
+//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		intent.putExtra("args", "--url=" + url);
+//		intent.setData(Uri.parse(url));
+//		startActivity(intent);
 
 // For Android WebView
-//		setContentView(R.layout.weblayout);
+		setContentView(R.layout.weblayout);	//What happens here
 		webview = (WebView) findViewById(R.id.myWebView);
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
-//			webview.getSettings().setJavaScriptEnabled(true);
-//			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
-//				webview.loadUrl(url);
-//
-//				webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
-//				webview.setWebViewClient( new WebViewClient() );
-//				webview.getSettings().setJavaScriptEnabled(true);
-//				webview.getSettings().setBuiltInZoomControls(true);
+			webview.getSettings().setJavaScriptEnabled(true);
+			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
+				webview.loadUrl(url);
 
-		//Verifying that our Javascript Interface class "Android" works
+				webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
+				webview.setWebViewClient( new WebViewClient() );
+				webview.getSettings().setJavaScriptEnabled(true);
+				webview.getSettings().setBuiltInZoomControls(true);
+
+//Verifying that our Javascript Interface class "Android" works
 //		webview.loadData(""
 //				+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
 //				+"<script type=\"text/javascript\">"
@@ -537,10 +540,11 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 				//OK...
 				//setupWebDBs( webview );
-
-			webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
-			webview.setOnTouchListener(this);
-			CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
+			}else{
+				webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
+				webview.setOnTouchListener(this);
+				CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
+			}//If connected, else wait for connection and click
 		}// if webView found
 	}//showComposerInWebView
 

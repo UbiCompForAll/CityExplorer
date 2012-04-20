@@ -29,6 +29,7 @@
 
 package org.ubicompforall.CityExplorer.data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -210,7 +211,7 @@ public interface DatabaseInterface{
 	 * Interface method for opening the database connection.
 	 * @return Boolean for successful opening or not
 	 */
-	public boolean	open();
+	public boolean	open( File currentDbFile );
 	
 
 	/**

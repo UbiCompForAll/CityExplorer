@@ -32,10 +32,8 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -67,23 +65,23 @@ import android.widget.Toast;
  */
 public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
-
 	// private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android default value for DBs
-	private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
-
+	//private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
 	/** The Constant DB_NAME, which is our database name. */
-	//private static final String	DB_NAME = "CityExplorer.backup.db";
-	public static String	DB_NAME = "CityExplorer.sqlite";
+	//private static final String	DB_NAME = "CityExplorer.backup.db"; // Moved to DBFactory
 
+	/** The whole path to our database. */
+	//private String				myPath;
+
+	/** The current/local/private database file. */
+	private File dbFile;
+	//private File dbFilePath;
 
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase		myDataBase;
 
 	/** The context. */
 	private Context				myContext;
-
-	/** The whole path to our database. */
-	private String				myPath;
 
 	private static final String POI_TABLE = "poi";
 	//private static final String COUNT_ALL_POIS = "SELECT Count(*) FROM "+POI_TABLE;
@@ -115,9 +113,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 *
 	 * @param context The context
 	 */
-	public SQLiteConnector( Context context ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
-		this( context, DB_NAME );
-	}//SQLiteConnector CONSTRUCTOR
+//	public SQLiteConnector( Context context ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
+//		this( context, DB_NAME );
+//	}//SQLiteConnector CONSTRUCTOR
 
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
@@ -125,21 +123,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 *
 	 * @param context The context
 	 */
-	public SQLiteConnector( Context context, String charSequence ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
-		super(context, charSequence, null, 2);
-		DB_NAME = charSequence;
-		this.myContext = context;
+	public SQLiteConnector( Context context, File dbFile ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
+		super(context, dbFile.getName(), null, 2);
+		debug(1, "dbFile is "+dbFile );
+		myContext = context;
+		//dbFilePath = context.getDatabasePath( dbName );
+		//debug(0, "myPath is "+dbFilePath.getParent() );
 
+		//DB_NAME = db_URI;
 		//code from students: myPath = DB_PATH + DB_NAME;
-		File dbName = context.getDatabasePath(DB_NAME);
-		DB_PATH = dbName.getParent();
-		myPath = dbName.toString();
-
-//		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-//		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
-//		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
-		debug(2, "myPath is "+myPath );
-//		debug(0, "DB_PATH IS "+DB_PATH );
+		//DB_PATH = dbFile.getParent();
+		//myPath = dbFile.toString();
+		//		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		//		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
+		//		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
+		//		debug(0, "DB_PATH IS "+DB_PATH );
 	}//SQLiteConnector CONSTRUCTOR
 
 	
@@ -221,46 +219,6 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		super.close();
 	}//close
 
-	/**
-	 * Creates an empty database on the data/data/project-folder and rewrites it with your own database.
-	 *
-	 * @throws IOException when the asset database file can not be read,
-	 * or the database-destination file can not be written to,
-	 * or when parent directories to the database-destination file do not exist.
-	 */
- 	public void createDataBase() throws IOException {
-
-		OutputStream 	osDbPath;
-		InputStream 	isAssetDb 	= myContext.getAssets().open(DB_NAME);
-		byte[] 			buffer 		= new byte[1024 * 64];
-		int 			bytesRead;
-
-		debug(0, "Make copy of default "+DB_NAME+" to "+myPath);
-		try {
-			osDbPath = new FileOutputStream(myPath);
-
-			while ((bytesRead = isAssetDb.read(buffer))>0){
-				try {
-					osDbPath.write(buffer, 0, bytesRead);
-				} catch (IOException io) {
-					debug(0, "Failed to write to " + DB_PATH);
-					io.printStackTrace();
-				}
-				debug(0, "copyDataBase(): wrote " + bytesRead + " bytes");
-			}//while more bytes to copy
-			osDbPath.flush();
-			osDbPath.close();
-			buffer = null;
-			debug(0, DB_NAME+" successufully copied");
-
-			myDataBase = this.getReadableDatabase();
-		} catch (IOException io) {
-			debug(0, "Failed to copy "+ DB_NAME + " to " + DB_PATH);
-			io.printStackTrace();
-		}//try catch (making copy)
-		return;
-	}//createDataBase
-
 	@Override
 	public void deleteFromTrip(Trip trip, Poi poi){
 		myDataBase.delete("trip_poi", "poi_id = ? AND trip_id = ?", new String[]{""+poi.getIdPrivate(), ""+trip.getIdPrivate()});
@@ -279,8 +237,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		//Check if the poi is in a trip first.
 		Cursor c = myDataBase.query("trip_poi", new String[]{"trip_id"}, "poi_id = ?", new String[]{""+poi.getIdPrivate()}, null, null, null);
 
-		if(c.getCount() > 0)
-		{
+		if(c.getCount() > 0){
 			//the poi is in a trip. abort!
 			StringBuilder trips = new StringBuilder();
 			while(c.moveToNext()) //make a list of all the trips this poi is in.
@@ -295,14 +252,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			return false;
 		}
 
-		if(myDataBase.delete("poi", "_id = ?", new String[]{""+poi.getIdPrivate()}) > 0)
-		{
+		if(myDataBase.delete("poi", "_id = ?", new String[]{""+poi.getIdPrivate()}) > 0){
 			//poi deleted
 			Toast.makeText(myContext, poi.getLabel() + " deleted", Toast.LENGTH_LONG).show();
 			return true;
-		}
-		else
-		{
+		}else{
 			//the poi is not found
 			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is not found", Toast.LENGTH_LONG).show();
 			return false;
@@ -312,8 +266,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	@Override
 	public ArrayList<Poi> getAllPois() {
-		return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
-	}
+		if (myDataBase == null){
+			debug(-1, "myDatabase is null!!");
+		}else{
+			return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
+		}
+		return null;
+	}// getAllPois
 
 	@Override
 	public ArrayList<Poi> getAllPois(String category) {
@@ -348,13 +307,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		//CONSTANT key-index mappings
 		final String[] columns = {
-				"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
-				"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
-				"POI.global_id",	"POI.telephone",
-				"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
-				"ADDR.city",		"ADDR.lat",		"ADDR.lon",
-				"CAT.title",
-				"TP.poi_number",	"TP.hour",		"TP.minute"
+			"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
+			"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
+			"POI.global_id",	"POI.telephone",
+			"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
+			"ADDR.city",		"ADDR.lat",		"ADDR.lon",
+			"CAT.title",
+			"TP.poi_number",	"TP.hour",		"TP.minute"
 		};
 		
 		final Map<String,Integer> key = //new HashMap<String,Integer>(); 		getKeys( key, columns );
@@ -375,7 +334,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
 		}//if ALL
 		
-		debug(0, "TRIPS: " + c.getCount() );
+		debug(1, "TRIPS: " + c.getCount() );
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
 		while(c.moveToNext()){
@@ -1001,31 +960,38 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * so the map can show immediately!
 	 */
 	@Override
-	public boolean open(){
+	public boolean open( File currentDbFile ){
 		try{
-			myDataBase = openDataBase();
+			debug(0, "Trying to open db "+ currentDbFile );
+			myDataBase = openDataBase( currentDbFile );
 		}catch (SQLException e){
-			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+ DB_PATH);
+			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+ currentDbFile);
+			e.printStackTrace();
 			myDataBase=null;
 		}
 		long poiCount = 0;
-		try{
-			poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
-		}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
-		}
-		debug(0, "poi-count is "+poiCount );
-		//JF: ZIP code removed
-		if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen
-			debug(0, "close myDataBase, before re-open");
-			myDataBase.close();
+		if ( myDataBase == null ){
+			debug(1, "OOOPS! Couldn't open " + currentDbFile );
+		}else{
 			try{
-				debug(0, DB_NAME+" was missing... now copying");
-				createDataBase();
-			}catch (IOException e){
-				e.printStackTrace();
-				return false;
+				poiCount = DatabaseUtils.queryNumEntries( myDataBase, POI_TABLE );
+			}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
 			}
-		}// if empty database, copy from assets
+			debug(0, "poi-count is "+poiCount );
+			//JF: ZIP code removed
+			if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen
+				debug(0, "close myDataBase, before re-open");
+				myDataBase.close();
+				try{
+					debug(0, currentDbFile+" was missing... now copying");
+					DBFactory.createDataBase( myContext, dbFile );
+					myDataBase = getReadableDatabase();
+				}catch (IOException e){
+					e.printStackTrace();
+					return false;
+				}
+			}// if empty database, copy from assets
+		}
 		return (myDataBase == null) ? false : true;
 	}//open
 
@@ -1036,17 +1002,23 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @throws SQLException if the database cannot be opened.
 	 * @return The SQLite database that has been opened.
 	 */
-	public SQLiteDatabase openDataBase() throws SQLException {
-		// (Re-) create DB folder in case it has been removed by the system, or for first time runs
-		File catalog = new File (DB_PATH);
-		if ( !catalog.isDirectory() ){
-			debug(0, "Making Catalog is "+catalog);
-			catalog.mkdir();
-			debug(0, "made folder for: "+myPath);
+	public SQLiteDatabase openDataBase( File currentDbFile ) throws SQLException {
+		if ( currentDbFile == null || currentDbFile.getName().equals("") ){
+			return null;
+		}else{
+			debug(1, "update SQLiteConnector dbFile to "+currentDbFile );
+			dbFile = currentDbFile;
+		}
+		// (Re-) create local DB folder in case it has been removed by the system, or for first time runs
+		File folder = new File ( currentDbFile.getParent() );
+		if ( ! folder.isDirectory() ){
+			debug(0, "Making Catalog is "+folder );
+			folder.mkdir();
+			debug(0, "made folder for: "+currentDbFile);
 		}//if folder missing
 
-		debug(0, "opening db: "+myPath);
-		myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE+SQLiteDatabase.CREATE_IF_NECESSARY);
+		debug(2, "opening db: "+currentDbFile);
+		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE+SQLiteDatabase.CREATE_IF_NECESSARY);
 
 		return myDataBase;
 	}//openDataBase
