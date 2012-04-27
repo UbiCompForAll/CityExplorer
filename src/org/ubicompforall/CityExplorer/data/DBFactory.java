@@ -41,6 +41,7 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import android.content.Context;
+import android.widget.Toast;
 
 public class DBFactory{
 	/**
@@ -87,20 +88,22 @@ public class DBFactory{
 	 * or when parent directories to the database-destination file do not exist.
 	 */
  	public static void createDataBase( Context myContext, File dbFile ) throws IOException {
-		OutputStream 	osDbPath;
-		InputStream 	isAssetDb 	= myContext.getAssets().open( dbFile.getName() );
+ 		String dbFileName = dbFile.getName();
+ 		OutputStream 	osDbPath;
+		InputStream 	isAssetDb 	= myContext.getAssets().open( dbFileName );
 		byte[] 			buffer 		= new byte[1024 * 64];
 		int 			bytesRead;
 
-		CityExplorer.debug(0, "Make copy of default "+dbFile+" to "+dbFile.getParent() );
+		CityExplorer.debug(-1, "Make copy of default assets/"+dbFileName+" to "+dbFile.getParent() );
+		//CityExplorer.debug(0, "HERE" );
 		try {
-			osDbPath = new FileOutputStream( dbFile.getParent() );
+			osDbPath = new FileOutputStream( dbFile );
 
 			while ((bytesRead = isAssetDb.read(buffer))>0){
 				try {
 					osDbPath.write(buffer, 0, bytesRead);
 				} catch (IOException io) {
-					CityExplorer.debug(0, "Failed to write to " + dbFile.getParent() );
+					CityExplorer.debug(0, "Failed to write to " + dbFile );
 					io.printStackTrace();
 				}
 				CityExplorer.debug(0, "copyDataBase(): wrote " + bytesRead + " bytes");
@@ -108,11 +111,12 @@ public class DBFactory{
 			osDbPath.flush();
 			osDbPath.close();
 			buffer = null;
-			CityExplorer.debug(0, dbFile+" successufully copied");
+			CityExplorer.debug(0, dbFileName+" successufully copied");
+			Toast.makeText(myContext, "Local DB-file was missing, made a new copy from assets/"+dbFileName, Toast.LENGTH_LONG);
 
 			//myDataBase = this.getReadableDatabase(); // Moved back to SQLiteConnector
 		} catch (IOException io) {
-			CityExplorer.debug(0, "Failed to copy "+ dbFile + " to " + dbFile.getParent());
+			CityExplorer.debug(0, "Failed to copy "+ dbFileName + " to " + dbFile.getParent());
 			io.printStackTrace();
 		}//try catch (making copy)
 		return;

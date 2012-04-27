@@ -269,6 +269,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		if (myDataBase == null){
 			debug(-1, "myDatabase is null!!");
 		}else{
+			debug(0, "myDataBase is "+ myDataBase );
 			return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
 		}
 		return null;
@@ -962,7 +963,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	@Override
 	public boolean open( File currentDbFile ){
 		try{
-			debug(0, "Trying to open db "+ currentDbFile );
+			debug(2, "Trying to open db "+ currentDbFile );
 			myDataBase = openDataBase( currentDbFile );
 		}catch (SQLException e){
 			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+ currentDbFile);
@@ -975,7 +976,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}else{
 			try{
 				poiCount = DatabaseUtils.queryNumEntries( myDataBase, POI_TABLE );
-			}catch (SQLiteException e){ //No such table: poi (if just create blank DB)
+			}catch (SQLiteException e){ //No such table: poi (if just created blank DB)
+				debug(0, "There was a minor SQLiteException "+e.getMessage() );
 			}
 			debug(0, "poi-count is "+poiCount );
 			//JF: ZIP code removed
@@ -983,7 +985,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				debug(0, "close myDataBase, before re-open");
 				myDataBase.close();
 				try{
-					debug(0, currentDbFile+" was missing... now copying");
+					debug(0, currentDbFile+" was missing... now copying from assets");
 					DBFactory.createDataBase( myContext, dbFile );
 					myDataBase = getReadableDatabase();
 				}catch (IOException e){
@@ -991,7 +993,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					return false;
 				}
 			}// if empty database, copy from assets
-		}
+		}//if myDataBase == null, else open it 
 		return (myDataBase == null) ? false : true;
 	}//open
 
@@ -1006,15 +1008,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		if ( currentDbFile == null || currentDbFile.getName().equals("") ){
 			return null;
 		}else{
-			debug(1, "update SQLiteConnector dbFile to "+currentDbFile );
+			debug(2, "update SQLiteConnector dbFile to "+currentDbFile );
 			dbFile = currentDbFile;
 		}
 		// (Re-) create local DB folder in case it has been removed by the system, or for first time runs
 		File folder = new File ( currentDbFile.getParent() );
 		if ( ! folder.isDirectory() ){
-			debug(0, "Making Catalog is "+folder );
+			debug(0, "Making folder "+folder );
 			folder.mkdir();
-			debug(0, "made folder for: "+currentDbFile);
+			//debug(2, "made folder for: "+currentDbFile);
 		}//if folder missing
 
 		debug(2, "opening db: "+currentDbFile);
