@@ -355,7 +355,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
 			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);
-			CityExplorer.showProgress( this, "Making new POI");
+			CityExplorer.showProgressDialog( this, "Making new POI");
 			startActivity(newPoi);
 		}
 
@@ -537,7 +537,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 
 				public void onClick(View view){
 					qa.dismiss();
-					CityExplorer.showProgress(context, "Launching Map" );
+					CityExplorer.showProgressDialog(context, "Launching Map" );
 					Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
 					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 					selectedPois.add(p);

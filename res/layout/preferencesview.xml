@@ -42,78 +42,71 @@
 				android:padding="3dip" />
 			<TextView
 			    android:id="@+id/pref_lng"
+				android:text="set at launch"
 				android:padding="3dip" />	    	    
-		</TableRow>
-
-
-
-		<View
-			android:layout_height="2dip"
-			android:layout_width="fill_parent"
-			android:background="#FF909090"
-		/>
-
-
-
-		<TableRow>
-			<TextView
-				android:id="@+id/pref_db"
-				android:text="Web URL" />
-			<TextView
-				android:text="(Type to change, back to save)" />
-		</TableRow>
-		
-		<TableRow>
-		    <ImageButton android:id="@+id/URLBrowserButton"
-				android:layout_width="20dip" android:layout_height="40dip"
-				android:src="@android:drawable/ic_search_category_default"
-			/>
-			<EditText
-				android:id="@+id/pref_url"
-				android:layout_width="wrap_content"
-				android:text="@string/default_dbDownloadURL"
-			/>
-		</TableRow>
-		
-   		<TableRow>
-		    <ImageButton android:id="@+id/DbBrowserButton"
-				android:layout_width="20dip" android:layout_height="40dip"
-				android:src="@android:drawable/ic_search_category_default"
-			/>
-			<EditText
-				android:id="@+id/pref_url"
-				android:layout_width="wrap_content"
-				android:text="@string/default_dbName"
-			/>
-		</TableRow>
-		
-		<View
-		    android:layout_height="2dip"
-		    android:background="#FF909090" />
-		
-		<TableRow>
-		</TableRow>
-		    
-		<TableRow>
 		</TableRow>
 	</TableLayout>
 
-	<LinearLayout
-	    android:id="@+id/linearLayout1"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" >
+	<!-- Makes a white line to separate the entries -->
+	<View
+		android:layout_height="2dip"
+		android:layout_width="fill_parent"
+		android:background="#FF909090"
+	/>
+
+   	    
+	<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="wrap_content"	 android:layout_height="wrap_content"	 android:orientation="horizontal"
+	 >
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:text="Web URL" />
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:text="(Type to change, back to save)" />
 	</LinearLayout>
 
+	<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="wrap_content"	 android:layout_height="wrap_content" android:orientation="horizontal"
+	 >
+	    <ImageButton android:id="@+id/URLBrowserButton"
+			android:layout_width="35dip" android:layout_height="40dip"
+			android:src="@android:drawable/ic_search_category_default"
+		/>
+		<EditText
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:id="@+id/pref_url"
+			android:text="@string/default_dbDownloadURL"
+		/>
+	</LinearLayout>
+		
+	<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	 	android:layout_width="wrap_content"	 android:layout_height="wrap_content" android:orientation="horizontal"
+	 >
+		<ImageButton android:id="@+id/DbBrowserButton"
+			android:layout_width="35dip" android:layout_height="40dip"
+			android:src="@android:drawable/ic_search_category_default"
+		/>
+		<EditText
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:id="@+id/pref_db"
+			android:text="@string/default_dbName"
+		/>
+	</LinearLayout>
+		
+	<!--
+	<View
+	    android:layout_height="2dip"
+	    android:background="#FF909090" />
+		
+	<LinearLayout
+	    android:id="@+id/linearLayout1"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content" >
+	</LinearLayout>
+	 -->	    
 </LinearLayout>
-
-<!--
-<RelativeLayout android:id="@+id/ImportlistTop"
-	android:layout_width="wrap_content" android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android">
-
-	<TextView android:id="@+id/importTV"
-		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:background="#EBF2FA" android:text="No data" />
-
-</RelativeLayout>
--->

@@ -49,11 +49,10 @@ import android.view.View.OnClickListener;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-public class StartActivity extends Activity implements OnClickListener, LocationListener{
+public class StartActivity extends Activity implements OnClickListener{
 	//RS-111122, "implements LocationListener{" move to CityExplorer.java (Application
 	
 	/***
@@ -77,20 +76,11 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
-		//debug(0, "Start!" );
 		debug(0, "Download folder is "+CityExplorer.SHARED_FILE_PATH );
 		
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
-		//startActivity(new Intent( this, PlanActivity.class) );
-		//startActivity(new Intent( this, PlanTripTab.class) );
-		//startActivity(new Intent( this, NewPoiActivity.class) );
-		//ImportWebTab.onTouch2(new View(this), null);
-
-//		//Testing how to launch a specific intent for our CityExplorer App (from the phone Browser)
-//		//intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);	//intent.putExtra("args", "--url=" + "http://google");
-//		debug(0, "INTENT: "+intent.toUri(Intent.URI_INTENT_SCHEME) );
 		// TODO: FOR DEBUGGING
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
@@ -116,7 +106,7 @@ public class StartActivity extends Activity implements OnClickListener, Location
 		}else{
 			debug(0, "StartActivity.java: Mismatch between buttons[] and buttonsIds[]");
 		}
-	}//setStartButtons
+	}//setButtonListeners
 
 	@Override
 	public void onClick(View v) {
@@ -209,36 +199,24 @@ public class StartActivity extends Activity implements OnClickListener, Location
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
 	 * Initializes the GPS on the device.
-	 * */
+	 **/
 	void initGPS(){
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//TODO: change to gps
-		onLocationChanged(lastKnownLocation);
-
+		//Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		//onLocationChanged(lastKnownLocation);
 		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
+		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+	}//initGPS
 
-	// TODO Auto-generated method stub
+	/* TODO Auto-generated method stub
 	// TODO Try to run slow methods in background Threads!
 	//Moving to CityExplorer.java common Application settings?
 	@Override
 	public void onLocationChanged(Location location) {
 		this.userLocation = location;
 	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
+	*/
 }//class
 

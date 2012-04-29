@@ -38,34 +38,17 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 
-public class SettingsActivity extends StartActivity implements OnClickListener, LocationListener{
-	
-
-	//RS-111122, "implements LocationListener{" moved to CityExplorer.java
-
-	/**
-	 * The buttons in this activity. Inherited from StartActivity
-	private static final Button[] STARTBUTTONS = new Button[3];
-	private static final int[] 	STARTBUTTON_IDS = new int[]{R.id.startButton1, R.id.startButton2, R.id.startButton3};
-	 */
-	/**
-	 * The user's current location. Inherited from StartActivity
-	private Location userLocation;
-	 */
-
+public class SettingsActivity extends Activity implements OnClickListener{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 
-		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
+		setButtonListeners( StartActivity.STARTBUTTONS, StartActivity.STARTBUTTON_IDS);
 		RelativeLayout start = (RelativeLayout) findViewById(R.id.startView);
 		//(Re-) Set button functionality
 		if (start != null){
@@ -90,14 +73,27 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 		CityExplorer.debug( level, message );		
 	} //debug
 
-
+	public void setButtonListeners(Button[] buttons, int[] buttonIds) {
+		if (buttons.length == buttonIds.length){
+			for(Integer b=0; b<buttonIds.length; b++){
+				buttons[b] = (Button) findViewById(buttonIds[b]);
+				if (buttons[b] != null){
+					buttons[b].setOnClickListener(this);
+				}else{
+					debug(0, "BUTTON["+(b+1)+"] was NULL for "+buttons);
+				}//if button not found
+			}//for each startButton
+		}else{
+			debug(0, "Mismatch between buttons[] and buttonsIds[]");
+		}
+	}//setStartButtons
 
 	/***
 	 * Settings Menu Buttons: 1) Import, 2) Set Location 3) ?
 	 */
 	@Override
 	public void onClick(View v) {
-		//debug(0, "Clicked: "+v);
+		debug(2, "Clicked: "+v);
 		if (v.getId() == R.id.startButton1){
 			startActivity( new Intent( this, ImportActivity.class));
 
@@ -114,21 +110,6 @@ public class SettingsActivity extends StartActivity implements OnClickListener, 
 
 
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
-	/**
-	 * Initializes the GPS on the device.
-	 * */
-	void initGPS()
-	{
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//TODO: change to gps
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
-
 }//class
 
 

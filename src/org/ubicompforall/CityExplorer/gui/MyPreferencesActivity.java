@@ -31,6 +31,7 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +59,21 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	//Activity fields
 	SharedPreferences settings;	// common settings for all the activities in the whole application
 	Editor editor;	// Editor for changing the shared preferences
-	private EditText url_edit;
+	private EditText db_edit, url_edit;
+	
+	private static void debug( int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+	
+	public static void storeDbNameSetting( Context context, File dbFile ){
+		Editor editor = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0).edit();
+		debug(2, "committing db:"+dbFile.getName() );
+		editor.putString( CityExplorer.SETTINGS_DB_NAME, dbFile.getName() );
+		editor.commit();
+	}//storeDbSettings
+
+	// END STATIC METHODS
+	/////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Initializes the activity screen etc.
@@ -73,6 +88,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		editor = settings.edit();	// Remember to commit changes->onPause etc.
 
+		db_edit = (EditText) findViewById( R.id.pref_db );
 		url_edit = (EditText) findViewById( R.id.pref_url );
 		initDbName();
 		initDbUrl();
@@ -81,64 +97,89 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	@Override
 	public void onResume(){
 		super.onResume();
-		debug(0, "resume");
+		debug(2, "resume");
 		initLocation();
 	} // onResume
 	
 	@Override
 	public void onPause(){
 		super.onPause();
+		String db = db_edit.getText().toString();
 		String url = url_edit.getText().toString();
-		debug(2, "pause with "+url+", editor is "+editor );
-		editor.putString( CityExplorer.SETTINGS_URL, url );
+		//storeDbNameSetting( this, new File( url+"/"+db ) );
+		editor.putString( CityExplorer.SETTINGS_DB_NAME, db );
+		editor.putString( CityExplorer.SETTINGS_DB_URL, url );
 		editor.commit();
-		debug(2, "committed:"+url_edit.getText().toString() );
+		debug(1, "committed sync url: "+url+db );
 	} // onPause
 	
 
-	private static void debug( int level, String message ) {
-		CityExplorer.debug( level, message );		
-	} //debug
+	/***
+	 * Get address for a given lat/lng pair
+	 * @param lat
+	 * @param lng
+	 * @return The best reversed geo-coding guess as a string
+	 */
+	public static String getAddress(int lat, int lng, Context context) {
+		String address="";
+		try {
+			Geocoder geocoder = new Geocoder( context, Locale.getDefault());
+			List<Address> addresses = geocoder.getFromLocation(lat/1E6, lng/1E6, 1);
+			if ( addresses.size() > 0 && addresses.get(0).getSubAdminArea() != null ){
+				address += addresses.get(0).getSubAdminArea() + " - ";
+			}
+			if ( addresses.size() > 0 && addresses.get(0).getAdminArea() != null ){
+				address += addresses.get(0).getAdminArea();
+			}
+		} catch (IOException e) {
+			debug(0, "What's wrong with lat="+lat+", lng="+lng+", error is "+ e.getLocalizedMessage() );
+			e.printStackTrace();
+		}
+		return address;
+	} // getAddress
 
-	
 	public static String getCurrentDbName ( Context context ){
 		String defaultDbName = context.getResources().getString( R.string.default_dbName );
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		String settings_dbName = settings.getString ( CityExplorer.SETTINGS_NAME, defaultDbName );
+		String settingsDbName = settings.getString ( CityExplorer.SETTINGS_DB_NAME, defaultDbName );
+		CityExplorer.debug(0, "settingsDbName is "+settingsDbName);
 
 		//update DB NAME in setting - in case not yet set
 		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			
 		//add the default name to settings - if settings was set to blank
-		if ( settings_dbName.equals("") ){
-			settings_dbName = defaultDbName;
+		if ( settingsDbName.equals("") ){
+			settingsDbName = defaultDbName;
+			CityExplorer.debug(0, "settingsDbName is "+settingsDbName);
 		}
-		editor.putString( CityExplorer.SETTINGS_URL, settings_dbName );
+		editor.putString( CityExplorer.SETTINGS_DB_NAME, settingsDbName );
 		editor.commit();
 
-		return settings_dbName;
+		return settingsDbName;
 	} // getCurrentDbFile	// Used to be: getDbPath
 
 	public static String getCurrentDbDownloadURL ( Context context ){
 		String defaultDbDownloadURL = context.getResources().getString( R.string.default_dbDownloadURL );
-		
+		//debug(0, "Setting default_dbDownloadURL: "+ defaultDbDownloadURL );
+
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		String settings_dbDownloadURL = settings.getString ( CityExplorer.SETTINGS_URL, defaultDbDownloadURL );
+		SharedPreferences.Editor editor = settings.edit();
+		String settings_dbDownloadURL = settings.getString ( CityExplorer.SETTINGS_DB_URL, defaultDbDownloadURL );
+		//String settings_dbDownloadURL = "";
 
 		//update DB DOWNLOAD URL in setting - in case not yet set
-		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			
 		//add the default downloadURL to settings - in case settings was set to blank
 		if ( settings_dbDownloadURL.equals("") ){
 			settings_dbDownloadURL = defaultDbDownloadURL;
 		}
-		editor.putString( CityExplorer.SETTINGS_URL, settings_dbDownloadURL );
+		debug(0, "Setting settings_dbDownloadURL: "+ settings_dbDownloadURL );
+		editor.putString( CityExplorer.SETTINGS_DB_URL, settings_dbDownloadURL );
 		editor.commit();
-
 		return settings_dbDownloadURL;
 	} // getCurrentDbDownloadPath	// Used to be: getDbPath
 
 	private void initDbName() {
-		url_edit.setText( getCurrentDbName( this ) );
+		db_edit.setText( getCurrentDbName( this ) );
 	} // initDbUrl
 
 	private void initDbUrl() {
@@ -201,35 +242,11 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	} // initLocation
 
 
-	/***
-	 * Get address for a given lat/lng pair
-	 * @param lat
-	 * @param lng
-	 * @return The best reversed geo-coding guess as a string
-	 */
-	public static String getAddress(int lat, int lng, Context context) {
-		String address="";
-		try {
-			Geocoder geocoder = new Geocoder( context, Locale.getDefault());
-			List<Address> addresses = geocoder.getFromLocation(lat/1E6, lng/1E6, 1);
-			if ( addresses.size() > 0 && addresses.get(0).getSubAdminArea() != null ){
-				address += addresses.get(0).getSubAdminArea() + " - ";
-			}
-			if ( addresses.size() > 0 && addresses.get(0).getAdminArea() != null ){
-				address += addresses.get(0).getAdminArea();
-			}
-		} catch (IOException e) {
-			debug(0, "What's wrong with lat="+lat+", lng="+lng+", error is "+ e.getLocalizedMessage() );
-			e.printStackTrace();
-		}
-		return address;
-	} // getAddress
-
-
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.pref_location){
 			debug(0, "view clicked was LOCATION");
+			CityExplorer.showProgressDialog( v.getContext(), "Loading Map" );
 			startActivity( new Intent( this, LocationActivity.class));
 			// if location was clicked
 			
@@ -238,5 +255,15 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			
 		}// Switch on different key-press events
 	} //onClick
+
+	
+	public void setDbName(String newDbName) {
+		db_edit.setText( newDbName );
+	} // initDbUrl
+
+	public void setDbUrl(String newDbUrl) {
+		url_edit.setText( newDbUrl );
+	} // initDbUrl
+
 
 }//class

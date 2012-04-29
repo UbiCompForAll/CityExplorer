@@ -41,12 +41,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 //import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
-//import android.content.SharedPreferences;
-//import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
@@ -123,21 +122,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 *
 	 * @param context The context
 	 */
-	public SQLiteConnector( Context context, File dbFile ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
+	public SQLiteConnector( Context context, File dbFile ) { // extends SQLiteOpenHelper, implements DatabaseInterface
 		super(context, dbFile.getName(), null, 2);
-		debug(1, "dbFile is "+dbFile );
 		myContext = context;
+		debug(2, "dbFile is "+dbFile );
 		//dbFilePath = context.getDatabasePath( dbName );
 		//debug(0, "myPath is "+dbFilePath.getParent() );
 
-		//DB_NAME = db_URI;
-		//code from students: myPath = DB_PATH + DB_NAME;
-		//DB_PATH = dbFile.getParent();
-		//myPath = dbFile.toString();
-		//		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		//		DB_PATH = MyPreferencesActivity.getDbPath( settings ); JF: is set to Web URL if the user has not chosen settings
-		//		debug(0, "WEB_DB_PATH IS "+ WEB_DB_PATH );
-		//		debug(0, "DB_PATH IS "+DB_PATH );
+		//SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		MyPreferencesActivity.storeDbNameSetting(context, dbFile ); //JF: is set to Web URL if the user has not chosen settings
 	}//SQLiteConnector CONSTRUCTOR
 
 	
@@ -269,14 +262,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		if (myDataBase == null){
 			debug(-1, "myDatabase is null!!");
 		}else{
-			debug(0, "myDataBase is "+ myDataBase );
+			debug(1, "myDataBase is "+ myDataBase.getPath() );
 			return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
 		}
 		return null;
 	}// getAllPois
 
 	@Override
-	public ArrayList<Poi> getAllPois(String category) {
+	public ArrayList<Poi>
+	 getAllPois(String category) {
 		return getPoisFromCursor(
 				myDataBase.rawQuery(
 						SELECT_ALL_POIS + " AND CAT.title = ?",
@@ -286,7 +280,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	}//getAllPois(category)
 
 	@Override
-	public ArrayList<Poi> getAllPois(Boolean favourite){
+	public ArrayList<Poi>
+	 getAllPois(Boolean favourite){
 		return 	getPoisFromCursor(
 				myDataBase.rawQuery(
 						SELECT_ALL_POIS + " AND POI.favourite = ?",
@@ -456,6 +451,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			);
 		}//while more pois
 		c.close();
+		//debug(0, "pois.size is "+pois.size() );
 		return pois;
 	}//getPoisFromCursor
 

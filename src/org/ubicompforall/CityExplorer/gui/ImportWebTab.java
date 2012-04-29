@@ -80,22 +80,14 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	private boolean loaded = false;	// Flag to make sure setupWebDB is only done once
 
-	/*** Field containing a single DB.*/
-	//private POI poi;
-	//private DB db;
-
-	/*** Field giving access to databaseUpdater methods.*/
-	//private DatabaseUpdater du;
-
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView( R.layout.weblayout ); // A very simple, named WebView
 
-		//String URL = "http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/";
 		webFolders = new ArrayList<String>();
-		webFolders.add("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
+		//webFolders.add("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
+		webFolders.add( MyPreferencesActivity.getCurrentDbDownloadURL( this ) );
 		debug(0, "opening web-pages: "+webFolders );
-		
 		init(); //webview etc.
 		//webviewCache: two private dbopen() are automagically executed here (Maybe to create temp databases for this activity: webview.db and webviewCache.db)
 	} // onCreate
@@ -171,7 +163,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 						if (linkTerms.equals("") ){
 							webview.loadData( responseString, "text/html", "utf-8" );
 						}else{
-							debug(2, "searching host "+SERVER_URL+", extracted is "+linkTerms );
+							debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
 							webview.loadData(linkTerms, "text/html", "utf-8" );
 							loaded=true;
 						}

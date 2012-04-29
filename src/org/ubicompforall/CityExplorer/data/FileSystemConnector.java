@@ -56,14 +56,14 @@ public class FileSystemConnector implements FileSystemInterface {
 		if (dbPath.equals("") ){
 			debug(0, "What!? No dbPath given!");
 		}else{
-			debug(0, "dbPath is "+dbPath );
+			debug(2, "dbPath is "+dbPath );
 			categoryFolders = new ArrayList<String>();
 			categoryFolders.add( dbPath );
 			//Collections.sort(categoryFolders);
 		}
-		debug(0, "categoryFolders is "+categoryFolders );
+		debug(2, "categoryFolders is "+categoryFolders );
 		allDBs = getAllDBs();	// Find all DBs in categoryFolders
-		debug(0, "allDBs.size is "+allDBs.size() );
+		debug(2, "allDBs.size is "+allDBs.size() );
 	} // CONSTRUCTOR
 
 	private void debug( int level, String message ) {
@@ -102,7 +102,7 @@ public class FileSystemConnector implements FileSystemInterface {
 				if ( file.getName().matches( ".*webview(Cache)?.db" ) ){
 					file.delete();
 				}else{
-					debug(1, "Keep "+file );
+					debug(2, "Keep "+file );
 				}
 				foundDBs.add( new DB( file.getName(), dir.getName() ) );
 			}// for each file

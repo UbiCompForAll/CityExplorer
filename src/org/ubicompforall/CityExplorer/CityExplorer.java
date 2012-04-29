@@ -79,8 +79,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
-	public static final String SETTINGS_NAME = "Name";
-	public static final String SETTINGS_URL = "Url";
+	public static final String SETTINGS_DB_NAME = "Name";
+	public static final String SETTINGS_DB_URL = "Url";
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
 	
@@ -205,7 +205,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
     public static boolean pingConnection( Activity context, String url ) {
     	boolean urlAvailable = false;
 		if ( ensureConnected(context) ){
-			showProgress( context );
+			showProgressDialog( context );
 			HttpClient httpclient = new DefaultHttpClient();
 			try {
 			    HttpResponse response = httpclient.execute( new HttpGet( url ) );
@@ -255,7 +255,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		return urlAvailable;
 	}// pingConnection
 
-	public static void showProgress( Activity context, String... msg ){
+	public static void showProgressDialog( Context context, String... msg ){
 		String status = "Loading";
 		if ( ! (msg == null || msg.length==0 || msg[0].equals("") ) ){
 			status = msg[0];

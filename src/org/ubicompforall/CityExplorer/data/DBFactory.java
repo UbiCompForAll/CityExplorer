@@ -56,7 +56,7 @@ public class DBFactory{
 	
 	/** The DataBase connector instance. */
 	private static DatabaseInterface dbConnectorInstance;
-	private static File currentDbFile = null; // Cannot move to dbConnectorInstance?
+	private static File currentDbFile = null; // Cannot move to SQLiteConnector dbConnectorInstance?
 	
 	/** The database type. */
 	private static DBType databaseType = DBType.SQLITE; //change this to change the database type
@@ -73,10 +73,12 @@ public class DBFactory{
 		}
 		if(databaseType == DBType.SQLITE){
 			currentDbFile = new File( context.getDatabasePath(dbName).getAbsolutePath() );
+			CityExplorer.debug(0, "currentDbFile is "+currentDbFile);
 			dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 		} // if right type
 		dbConnectorInstance.open( currentDbFile );
 		dbConnectorInstance.setContext(context);
+		MyPreferencesActivity.storeDbNameSetting(context, currentDbFile );
 		return dbConnectorInstance;
 	}//changeInstance
 
@@ -130,7 +132,6 @@ public class DBFactory{
 	 * @return Single instance of DBFactory
 	 */
 	public static DatabaseInterface getInstance( Context context ){
-		//CityExplorer.debug(0, "currentDbFile is "+currentDbFile);
 		if ( currentDbFile == null || currentDbFile.equals("") ){
 			String currentDbName = MyPreferencesActivity.getCurrentDbName( context );
 			String currentDbFileUri = context.getDatabasePath(currentDbName).getAbsolutePath();
@@ -138,10 +139,11 @@ public class DBFactory{
 				currentDbFileUri += "/" + currentDbName;
 			}
 			currentDbFile = new File( currentDbFileUri );
-			CityExplorer.debug(0, "currentDbFile is " + currentDbFile );
+			CityExplorer.debug(2, "currentDbFile was set to " + currentDbFile );
 		}
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
+				CityExplorer.debug(0, "currentDbFile is "+currentDbFile);
 				dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 			} // if right type
 			dbConnectorInstance.open( currentDbFile );

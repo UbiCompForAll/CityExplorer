@@ -33,8 +33,6 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.data.DBFactory;
@@ -48,6 +46,7 @@ import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,18 +60,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-//import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class CalendarActivity extends Activity implements OnTouchListener{
-
-	/*** Field containing this activity's {@link WebView}.*/
-	private WebView webview;
 
 	Paint mpt = new Paint();
 	int iTextHeight = ViewDayHourItem.GetTextHeight(mpt);
@@ -212,16 +205,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		}
 		return;
 	} //onBackPressed
-
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-//	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-//			Toast.makeText( context, "Don't you want to save your times!?!", Toast.LENGTH_LONG).show();
-//			debug(0, "back pressed!" );
-//	        return true;
-//	    }
-//	    return super.onKeyDown(keyCode, event);
-//	} // onKeyDown
 
 	//appointment click listener
 	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick(){
@@ -452,31 +435,24 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	} // onOptionsItemSelected
 
 	private void showComposerInWebView() {
-		wantToGoBack = true; // Disable required double-press on back-key
+		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+		//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
+		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+		intent.setAction("org.mozilla.gecko.BOOKMARK");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		//intent.putExtra("args", "--url=" + url);
+		//intent.setData(Uri.parse(url));
+		startActivity(intent);
 
-		//String url = "http://129.241.200.195:8080/UbiComposer?json="+parameters;
-		JSONObject parameters = null; 
-		String url = "http://129.241.200.195:8080/UbiComposerTest/UbiComposer.html" +
-				"?library=TestDescriptor.ubicompdescriptor&json=" + parameters;
-			//String url = "http://78.91.26.243:8080/UbiComposer/UbiComposer.html?library=Test.ubicompdescriptor"; // Mohammad's laptop
-		debug(0, "url is "+url );
-
-		//Toast.makeText(this, "Going to WebView", Toast.LENGTH_SHORT).show();
-		// make json
-		String objectString = "{\"gutter_url\" : \"\",  \"sort_order\" : \"popularity\",  \"result\" : [ { \"afs\" : \"Y\", \"release_year\" : 1979, \"album_sort\" : \"Wall, The\" } ] }";
-		try {
-			parameters = new JSONObject(objectString.trim());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		/*
-		Send JSON context:
+		Send (JSON) context:
 			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
 			List of Library-URI: Which Trigger/Building Block to load on invocation
 				Always include Generic.library in the list
-				
-//TODO: http://developer.android.com/reference/android/content/ContentProvider.html
-
+		OR:
+		 http://developer.android.com/reference/android/content/ContentProvider.html
 		Implement ContentProvider
 			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
 			URI: cityExplorer/POI or cityExplorer/POI/14
@@ -484,10 +460,8 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			CONDITIONS: null
 			COND_VALUES: null
 			SORT: By name - Ascending
-
 		Other types of queries
 			Pick (Must provide its own User Interface)
-
 		Composition
 			Trigger:
 				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
@@ -499,53 +473,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				Name of the POI,
 				Phone number from AddressBook
 		*/
-		
-		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
-
-//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
-//		Intent intent = new Intent(Intent.ACTION_MAIN, null);
-//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//		//intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-//		//intent.setAction("org.mozilla.gecko.BOOKMARK");
-//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		intent.putExtra("args", "--url=" + url);
-//		intent.setData(Uri.parse(url));
-//		startActivity(intent);
-
-// For Android WebView
-		setContentView(R.layout.weblayout);	//What happens here
-		webview = (WebView) findViewById(R.id.myWebView);
-		if (webview == null){
-			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
-		}else{
-			webview.getSettings().setJavaScriptEnabled(true);
-			if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs //Make sure WiFi or Data connection is enabled
-				webview.loadUrl(url);
-
-				webview.addJavascriptInterface(new JavaScriptInterface(this), "Android");
-				webview.setWebViewClient( new WebViewClient() );
-				webview.getSettings().setJavaScriptEnabled(true);
-				webview.getSettings().setBuiltInZoomControls(true);
-
-//Verifying that our Javascript Interface class "Android" works
-//		webview.loadData(""
-//				+"<INPUT type=button onClick=\"showAndroidToast('Hello Android!')\" name\"NAME\"></INPUT>"
-//				+"<script type=\"text/javascript\">"
-//				+"  function showAndroidToast(toast) {"
-//				+"		Android.showToast(toast);"
-//				+"	}"
-//				+"</script>"
-//
-//				+"Click a term in the list...", "text/hml", "utf-8");
-
-				//OK...
-				//setupWebDBs( webview );
-			}else{
-				webview.loadData("Click to activate composer<BR>", "text/html", "utf-8");
-				webview.setOnTouchListener(this);
-				CityExplorer.showNoConnectionDialog( this, "", "", null, 0 );
-			}//If connected, else wait for connection and click
-		}// if webView found
 	}//showComposerInWebView
 
 	public OnClickListener ocl = new OnClickListener() {

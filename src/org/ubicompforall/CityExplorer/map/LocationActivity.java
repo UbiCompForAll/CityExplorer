@@ -121,13 +121,17 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	@Override
 	public void onPause(){
 		super.onPause();
-		SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		Toast.makeText( context, "Updating Latitude/Longitude...", Toast.LENGTH_LONG).show();
-		Editor editor = settings.edit();
-		editor.putInt( CityExplorer.LAT, latE6 );
-		editor.putInt( CityExplorer.LNG, lngE6 );
-		editor.commit();
-		debug(0, "committed: lat=" + Integer.toString( latE6 ) + ", lng="+ Integer.toString( lngE6 ) );
+		if ( latE6 ==0 && lngE6 ==0 ){
+			debug(0, "lat/lng was still 0" );
+		}else{
+			SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+			//Toast.makeText( context, "Updating Latitude/Longitude...", Toast.LENGTH_LONG).show();
+			Editor editor = settings.edit();
+			editor.putInt( CityExplorer.LAT, latE6 );
+			editor.putInt( CityExplorer.LNG, lngE6 );
+			editor.commit();
+			debug(0, "committed: lat=" + Integer.toString( latE6 ) + ", lng="+ Integer.toString( lngE6 ) );
+		}//if lat/lng not set
 	}//onPause
 	
 	@Override
@@ -137,7 +141,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 
 	    Intent mIntent = new Intent();
 	    mIntent.putExtras(bundle);
-	    debug(1, "lat, lng is "+latE6+", "+lngE6 );
+	    debug(2, "lat, lng is "+latE6+", "+lngE6 );
 	    setResult(RESULT_OK, mIntent);
 	    super.onBackPressed();
 	    finish();
@@ -206,7 +210,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 				    GeoPoint p = mapView.getMapCenter();
 					latE6 = p.getLatitudeE6();
 					lngE6 = p.getLongitudeE6();
-					debug(0, "updated: lat=" + latE6 + ", lng="+ lngE6 );
+					//debug(0, "updated: lat=" + latE6 + ", lng="+ lngE6 ); //Constantly called
 					
 					//Update screen with new coordinates
 					TextView tv = (TextView) findViewById(R.id.map_lat);
@@ -225,119 +229,8 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 			return false;
 		} // onTouchEvent
 
-//		/* (non-Javadoc)
-//		 * @see android.view.View.OnClickListener#onClick(android.view.View)
-//		 */
-//		@Override
-//		public void onClick(View v){
-//			debug(0, "onClick");
-//			mapController.animateTo( new GeoPoint(63000000, 10000000) );
-//		} // onClick
-
 	} // class MapOverlay
 
 
 } // LocationActivity
 
-
-//public class LocationActivity extends MapActivity implements LocationListener, OnClickListener{
-//
-//	private static final String GENERAL_SETTINGS = CityExplorer.GENERAL_SETTINGS;
-//
-//	// DEFAULT GEO-POINT for first map view
-//	private static final String LAT = CityExplorer.LAT;
-//	private static final String LNG = CityExplorer.LNG;
-//	private static final int TRONDHEIM_LAT = CityExplorer.TRONDHEIM_LAT;	//63°25′36″N ;
-//	private static final int TRONDHEIM_LNG = CityExplorer.TRONDHEIM_LNG;	//10°23′48″E ;
-//
-//
-//	/**
-//	 * Init the GPS
-//	 */
-//	void initGPS(){
-//		// Acquire a reference to the system Location Manager
-//		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//		onLocationChanged(lastKnownLocation);
-//
-//		//Register the listener with the Location Manager to receive location updates
-//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//	}
-//
-//	
-//
-//
-//	/* (non-Javadoc)
-//	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
-//	 */
-//	@Override
-//	public void onLocationChanged(Location location){ //new location received from the GPS
-//		debug(0, "location changed" );
-//		if(location==null){
-//			return;
-//		}
-//		currentGeoPoint = new GeoPoint((int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
-//		if (mapController == null){
-//			debug(0, "OOps, mapcontroller was NULL!");
-//		}else{
-//			mapController.animateTo(currentGeoPoint);	//move map to the new location
-//		}// if mapController found
-//
-//		if (locationIcon == null){
-//			debug(0, "locationIcon was NOT set!! Remember new ..." );
-//		}else{
-//			locationIcon.updatePos(currentGeoPoint);	//update the position of the icon.
-//		} // if locationIcon found
-//	} // onLocationChanged
-//
-//
-//	/**
-//	 * called by an icon overlay when it is pressed.
-//	 * @param i icon overlay
-//	 */
-//	public void onPress(MapTargetOverlay i){
-//		debug(0, "Pressed!" );
-//	} // onPress
-//
-//	/***
-//	 * Make sure GPS is enabled, or
-//	 * Store the last known location as the default location
-//	 * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
-//	 */
-//	@Override
-//	public void onProviderDisabled(String provider){
-//		Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-//	} // onProviderDisabled
-//
-//
-//	/* (non-Javadoc)
-//	 * @see android.location.LocationListener#onProviderEnabled(java.lang.String)
-//	 */
-//	@Override
-//	public void onProviderEnabled(String provider){
-//	}
-//
-//
-//	/* (non-Javadoc)
-//	 * @see android.location.LocationListener#onStatusChanged(java.lang.String, int, android.os.Bundle)
-//	 */
-//	@Override
-//	public void onStatusChanged(String provider, int status, Bundle extras){}	
-//
-//
-//	/**
-//	 * Gets the current location.
-//	 * @return the current location
-//	 */
-//	public GeoPoint getCurrentLocation(){
-//		return currentGeoPoint;
-//	} // getCurrentLocation
-//
-//	
-////			public void onClick(View view){
-////				//Latitude and longitude for current position
-////				double slng = getCurrentLocation().getLongitudeE6()/1E6;
-////				double slat = getCurrentLocation().getLatitudeE6()/1E6;
-////			}
-//
