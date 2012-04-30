@@ -76,11 +76,12 @@ public class StartActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
-		debug(1, "Download folder is "+CityExplorer.SHARED_FILE_PATH );
+		debug(2, "Download folder is "+CityExplorer.SHARED_FILE_PATH );
 		
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
+		startActivity(new Intent( this, PlanActivity.class) );
 		// TODO: FOR DEBUGGING
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
@@ -158,6 +159,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
 
 		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
+		debug(0, "Getting all POIs..." );
 		ArrayList<Poi> poiList = db.getAllPois();
 		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
 

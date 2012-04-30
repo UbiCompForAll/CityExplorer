@@ -87,13 +87,21 @@
 					android:prompt="@string/activity_newpoi_spinner_prompt"
 					android:hint="Category..." />
 
-				<TextView android:id="@+id/editaddressLabel"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:text="@string/editaddressLabel" android:layout_below="@id/editcategoryLabel"
-					android:textColor="#000000" android:paddingLeft="2dip"
-					android:paddingRight="2dip" android:paddingTop="2dip"
-					android:paddingBottom="2dip" android:textStyle="bold" />
-
+				<LinearLayout android:orientation="horizontal"
+				    android:layout_width="wrap_content" android:layout_height="wrap_content"
+				    >
+					<TextView android:id="@+id/editaddressLabel"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="@string/editaddressLabel" android:layout_below="@id/editcategoryLabel"
+						android:textColor="#000000" android:paddingLeft="2dip"
+						android:paddingRight="2dip" android:paddingTop="2dip"
+						android:paddingBottom="2dip" android:textStyle="bold" />
+					<ImageButton android:id="@+id/adrBrowserButton"
+						android:layout_width="40dip" android:layout_height="40dip"
+						android:src="@android:drawable/ic_search_category_default"
+					/>
+				</LinearLayout>
+				
 				<EditText android:id="@+id/editaddress"
 					android:layout_width="fill_parent" android:layout_height="wrap_content"
 					android:background="@android:drawable/editbox_background"

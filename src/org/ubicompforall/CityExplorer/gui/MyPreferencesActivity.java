@@ -33,11 +33,11 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
+import org.ubicompforall.CityExplorer.data.PoiAddress;
 import org.ubicompforall.CityExplorer.map.LocationActivity;
 
 import android.app.Activity;
@@ -125,23 +125,23 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	 * @param lng
 	 * @return The best reversed geo-coding guess as a string
 	 */
-	public static String getAddress(int lat, int lng, Context context) {
-		String address="";
-		try {
-			Geocoder geocoder = new Geocoder( context, Locale.getDefault());
-			List<Address> addresses = geocoder.getFromLocation(lat/1E6, lng/1E6, 1);
-			if ( addresses.size() > 0 && addresses.get(0).getSubAdminArea() != null ){
-				address += addresses.get(0).getSubAdminArea() + " - ";
-			}
-			if ( addresses.size() > 0 && addresses.get(0).getAdminArea() != null ){
-				address += addresses.get(0).getAdminArea();
-			}
-		} catch (IOException e) {
-			debug(0, "What's wrong with lat="+lat+", lng="+lng+", error is "+ e.getLocalizedMessage() );
-			e.printStackTrace();
-		}
-		return address;
-	} // getAddress
+//	public static String getAddressArea(int lat, int lng, Context context) {
+//		String address="";
+//		try {
+//			Geocoder geocoder = new Geocoder( context, Locale.getDefault());
+//			List<Address> addresses = geocoder.getFromLocation(lat/1E6, lng/1E6, 1);
+//			if ( addresses.size() > 0 && addresses.get(0).getSubAdminArea() != null ){
+//				address += addresses.get(0).getSubAdminArea() + " - ";
+//			}
+//			if ( addresses.size() > 0 && addresses.get(0).getAdminArea() != null ){
+//				address += addresses.get(0).getAdminArea();
+//			}
+//		} catch (IOException e) {
+//			debug(0, "What's wrong with lat="+lat+", lng="+lng+", error is "+ e.getLocalizedMessage() );
+//			e.printStackTrace();
+//		}
+//		return address;
+//	} // getAddressArea
 
 	public static String getCurrentDbName ( Context context ){
 		String defaultDbName = context.getResources().getString( R.string.default_dbName );
@@ -211,9 +211,9 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		int[] lat_lng = getLatLng (this);
 
 		debug(2, "lat is "+lat_lng [0]+", lng is "+ lat_lng [1] );
-		String address = getAddress( lat_lng [0], lat_lng [1], this );
+		//String address = getCurrentAddress( lat_lng [0], lat_lng [1], this );
+		PoiAddress address = getCurrentAddress( this, lat_lng );
 
-		
 		//Print prefs, and register click-listener(this)
 		TableLayout tl = (TableLayout) findViewById(R.id.pref_location);
 		tl.setOnClickListener( this );
@@ -232,9 +232,10 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		}
 		//Place-name
 		tv = (TextView) findViewById(R.id.pref_loc);
-		if (tv==null){	debug(0, "where is tv?" );
+		if (tv==null){
+			debug(0, "where is tv?" );
 		}else{
-			tv.setText( address );
+			tv.setText( address.toString() );
 		}
 	} // initLocation
 
@@ -264,6 +265,25 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	public void setDbUrl(String newDbUrl) {
 		url_edit.setText( newDbUrl );
 	} // initDbUrl
+
+	//public static PoiAddress getCurrentAddress(Context context, ) {
+	public static PoiAddress getCurrentAddress(Context context, int[] latLng ){ // = getLatLng(context);
+		Geocoder geocoder = new Geocoder( context, Locale.getDefault());
+		PoiAddress adr = null;
+		try {
+			Address address = geocoder.getFromLocation(latLng[0]/1E6, latLng[1]/1E6, 1).get(0);
+			//debug(1, "Adr(0) is "+address );
+			adr = new PoiAddress.Builder( address.getLocality() )
+			 .street( address.getAddressLine(0) )
+			 .latitude( latLng[0]/1E6 )
+			 .longitude( latLng[1]/1E6 )
+			 //.zipCode(c.getInt( key.get("ADDR.zipcode") ))	// ZIP code removed, but needed for Google Maps
+			.build();
+		} catch (IOException e) {
+			debug(0, "Couldn't get address for latLng "+latLng+", "+ e.getMessage() );
+		}
+		return adr;
+	}//getCurrentAddress
 
 
 }//class

@@ -143,7 +143,7 @@ public class DBFactory{
 		}
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
-				CityExplorer.debug(0, "currentDbFile is "+currentDbFile);
+				CityExplorer.debug(2, "currentDbFile is "+currentDbFile);
 				dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 			} // if right type
 			dbConnectorInstance.open( currentDbFile );

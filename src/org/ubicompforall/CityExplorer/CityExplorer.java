@@ -98,6 +98,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
 	public static final int REQUEST_KILL_BROWSER = 11;
+	//public static final int REQUEST_LOCATION = 12;
 
 	//public static final String ALL = "ALL";
 	public static final String FAVORITES = "FAVORITES";
@@ -166,7 +167,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		if (DEBUG >= d) {
 			StackTraceElement[] st = Thread.currentThread().getStackTrace();
 			int stackLevel = 2;
-			while ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().matches("access\\$\\d+") ){
+			while ( stackLevel < st.length-1
+			 && ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().matches("access\\$\\d+") ) ){
+				//|| st[stackLevel].getMethodName().matches("run")
 				stackLevel++;
 			}
 			StackTraceElement e = st[stackLevel];
@@ -238,7 +241,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 					//Uri uri = Uri.parse( url +"#"+ context.getClass().getCanonicalName() );
 					Uri uri = Uri.parse( url +"?activity="+ context.getClass().getCanonicalName() );
 					debug(0, "Pinging magic url: "+uri );
-					//debug(0, " Need the web for uri: "+uri );
+					debug(0, " Need the web for uri: "+uri );
 					context.startActivityForResult( new Intent(Intent.ACTION_VIEW, uri ), REQUEST_KILL_BROWSER );
 					//urlAvailable=true;
 				}

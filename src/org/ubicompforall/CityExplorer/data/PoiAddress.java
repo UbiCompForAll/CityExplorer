@@ -90,7 +90,7 @@ final public class PoiAddress {
 		 * @param place The name of a place.
 		 */
 		public Builder(String place){
-			this.place = place;;
+			this.place = place;
 		}
 
 		/**
@@ -151,21 +151,32 @@ final public class PoiAddress {
 
 	/**
 	 * Constructor that builds and address object.
-	 *
-	 * @param b The builder.
+	 * @param b The builder. //TODO: Describe it!
 	 */
 	public PoiAddress(Builder b){
 //		if (b.street == null){
-//			debug(0, "Why was builder b.stree==null?!");
-//			this.street="";
+//			debug(0, "Why was builder b.street==null?!");
+//			street="";
 //		}else{
-		this.street		= b.street;
-		this.place		= b.place;
-// ZIP code removed
-//		this.zipCode	= b.zipCode;
-		this.latitude	= b.latitude;
-		this.longitude	= b.longitude;
-	}
+		
+		//Set street
+		if ( b.street==null || b.street.equals("") ){
+			street = b.place;
+		}else{
+			street = b.street;
+		}
+		
+		//Set place
+		if ( b.place == null || b.place.equals("") ){
+			place = b.street;
+		}else{
+			place		= b.place;
+		}
+		
+//		zipCode	= b.zipCode; // ZIP code removed
+		latitude	= b.latitude;
+		longitude	= b.longitude;
+	}//CONSTRUCTOR PoiAddress(builder)
 
 	/**
 	 * Method for being able to modify a PoiAddress object.
@@ -180,7 +191,7 @@ final public class PoiAddress {
 		temp.latitude( getLatitude() );
 		temp.longitude( getLongitude() );
 		return temp;
-	}
+	}//CONSTRUCTOR Builder
 
 	/**
 	 * Method for getting the street of the address.
@@ -265,15 +276,26 @@ final public class PoiAddress {
 		return result;
 	}
 
+//	@Override
+//	public String toString(){
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("place("		+place+		")");
+//// ZIP code removed
+////		sb.append("zipCode("	+zipCode+	")");
+//		sb.append("street("		+street+	")");
+//		sb.append("longitude("	+longitude+	")");
+//		sb.append("latitude("	+latitude+	")");
+//		return sb.toString();
+//	}//toString
+
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("place("		+place+		")");
-// ZIP code removed
-//		sb.append("zipCode("	+zipCode+	")");
-		sb.append("street("		+street+	")");
-		sb.append("longitude("	+longitude+	")");
-		sb.append("latitude("	+latitude+	")");
+		sb.append( street+ ", "+place );
+		if ( sb.equals("") ){
+			sb.append("longitude("	+longitude+	")");
+			sb.append("latitude("	+latitude+	")");
+		}
 		return sb.toString();
 	}//toString
 }//PoiAddress

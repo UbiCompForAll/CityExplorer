@@ -258,11 +258,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 
 	@Override
-	public ArrayList<Poi> getAllPois() {
+	public ArrayList<Poi>
+	 getAllPois() {
 		if (myDataBase == null){
 			debug(-1, "myDatabase is null!!");
 		}else{
-			debug(1, "myDataBase is "+ myDataBase.getPath() );
+			debug(2, "myDataBase is "+ myDataBase.getPath() );
 			return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
 		}
 		return null;
@@ -349,19 +350,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}//if not current trip - Make new
 
 			Poi poi = new Poi.Builder( c.getString( key.get("POI.title") ),
-				new PoiAddress.Builder( c.getString( key.get("ADDR.city") )
-				)
+				new PoiAddress.Builder( c.getString( key.get("ADDR.city") )	)
 //				.zipCode(c.getInt( key.get("ADDR.zipcode") ))	// ZIP code removed, but needed for Google Maps
 				.street(c.getString( key.get("ADDR.street_name") ))
-				.longitude(c.getDouble( key.get("ADDR.lon") )).latitude(c.getDouble( key.get("ADDR.lat") ))
+				.longitude(c.getDouble( key.get("ADDR.lon") ))
+				.latitude(c.getDouble( key.get("ADDR.lat") ))
 				.build()
-			).description(c.getString( key.get("POI.description") ))
+			)
+			.description(c.getString( key.get("POI.description") ))
 			.category(c.getString( key.get("CAT.title") ))
 			.favourite((1==c.getInt( key.get("POI.favourite") )))
 			.imageURL(c.getString( key.get("POI.image_url") ))
 			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
 			.idPrivate(c.getInt( key.get("POI._id") ))
-			.idGlobal(c.getInt( key.get("POI.global_id") )).build();
+			.idGlobal(c.getInt( key.get("POI.global_id") ))
+			.build();
 			trip.addPoi(poi);
 			if(c.getInt( key.get("TP.hour") ) != -1 && c.getInt( key.get("TP.minute") ) != -1)//add time if it is not -1
 				trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
@@ -530,13 +533,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 					.build();
 					currentTripId = trip.getIdPrivate();
 				}
-				Poi poi = new Poi.Builder(c.getString(4/*"POI.title"*/),new PoiAddress.Builder
-						(c.getString(8/*"ADDR.city"*/))
-// ZIP code removed
-//				.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
-				.street(c.getString(6/*"ADDR.street_name"*/))
-				.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
-				.build()
+				Poi poi = new Poi.Builder( c.getString(4/*"POI.title"*/),
+				 new PoiAddress.Builder( c.getString(8/*"ADDR.city"*/) )
+					// ZIP code removed
+					//.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+					.street(c.getString(6/*"ADDR.street_name"*/))
+					.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
+					.build()
 				).description(c.getString(5/*"POI.description"*/))
 				.category(c.getString(11/*"CAT.title"*/))
 				.favourite((1==c.getInt(12/*"POI.favourite"*/)))
@@ -777,6 +780,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		try {
 			myDataBase.insertOrThrow("poi", null, values3);
+			debug(0, "Remember to update the PlanPoiTab" );
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -975,7 +979,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}catch (SQLiteException e){ //No such table: poi (if just created blank DB)
 				debug(0, "There was a minor SQLiteException "+e.getMessage() );
 			}
-			debug(0, "poi-count is "+poiCount+", context is "+myContext );
+			//debug(1, "poi-count is "+poiCount+", context is "+myContext );
 			Toast.makeText(myContext, "Imported "+poiCount +" POIs", Toast.LENGTH_SHORT ).show();
 			//JF: ZIP code removed
 			if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen

@@ -4,6 +4,15 @@
     android:layout_height="fill_parent" >
 
 	<TextView
+		android:id="@+id/map_name"
+		android:layout_width="wrap_content"
+		android:layout_height="66dp"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:text="Move/Zoom &amp; Go back" />
+
+<!-- Lat / Lng
+	<TextView
 		android:id="@+id/map_lat"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -11,21 +20,13 @@
 		android:text="Latitude" />
 	
 	<TextView
-		android:id="@+id/map_name"
-		android:layout_width="wrap_content"
-		android:layout_height="66dp"
-		android:layout_alignParentTop="true"
-		android:layout_centerHorizontal="true"
-		android:text="Move/Zoom &amp; Go back" />
-
-	<TextView
 	     android:id="@+id/map_lng"
 	     android:layout_width="wrap_content"
 	     android:layout_height="36dp"
 	     android:layout_alignParentRight="true"
 	     android:layout_alignParentTop="true"
 	     android:text="Longitude" />
-	
+ -->	
 	<!--
         Obtain Your Own Debug Google Map API key from here. Or BETTER: use our debug-key from Git
 		http://code.google.com/intl/no/android/add-ons/google-apis/maps-api-signup.html

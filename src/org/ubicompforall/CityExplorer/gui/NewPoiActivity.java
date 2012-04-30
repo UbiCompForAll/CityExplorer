@@ -135,7 +135,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	private Button choosePoiButton;
 	
 	/** The search button, for opening the browser in Google image search. */
-	private ImageButton searchButton;
+	private ImageButton searchButton, adrButton;
 	
 	/** The category spinner item. */
 	private Spinner catView;
@@ -165,11 +165,9 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			public void run(){
 				db = DBFactory.getInstance( context);
 				category = db.getCategoryNames();
-				debug(0, "Categories is "+category );
+				//debug(0, "NewPoiActiity.java:168 Categories is "+category );
 				//Collections.sort(category);
 				ArrayAdapter<String> categories = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item, category);
-				//debug(0, "Categories is "+categories );	//android.widget.ArrayAdapter
-
 				catView.setAdapter(categories);
 			}
 		} ).start();
@@ -189,8 +187,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		descriptionView = (EditText)findViewById(R.id.editdescription);
 		catView = (Spinner)findViewById(R.id.editcategory);
 		addrView = (EditText)findViewById(R.id.editaddress);
-//	ZIP code removed
-//		zipView = (EditText)findViewById(R.id.editzip);
+		adrButton = (ImageButton) findViewById(R.id.adrBrowserButton);
+		//zipView = (EditText)findViewById(R.id.editzip); //ZIP code removed
 		cityView = (EditText)findViewById(R.id.editcity);
 		telView = (EditText)findViewById(R.id.edittelephone);
 		openingHoursView = (EditText)findViewById(R.id.editopeningHours);
@@ -202,6 +200,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 
 		choosePoiButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
+		adrButton.setOnClickListener(this);
 		savePoiButton.setOnClickListener(this);
 	}//init
 
@@ -385,6 +384,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			startActivityForResult( selectPoi, CHOOSE_POI );
 		}else if(v == savePoiButton){
 			savePoi();
+
 		}else if(v == searchButton){
 			String name = nameView.getText().toString();
 			name = name.replace(' ', '+');
@@ -394,15 +394,19 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 							"source=hp&biw=1037&bih=635&" +
 							"q="+name+"&gbv=2&aq=f&aqi=g2&aql=&oq="));
 			startActivity(launchBrowser);
-		}
+		
+		}else if(v == adrButton){
+			CityExplorer.showProgressDialog( v.getContext(), "Loading Map" );
+			startActivityForResult( new Intent( this, LocationActivity.class), CityExplorer.REQUEST_LOCATION);
+		}//if this, else that button
 	}//onClick
 	
 	/***
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		debug(2, "resultCode is "+resultCode+". Activity.RESULT_CANCELED is "+Activity.RESULT_CANCELED );
+	protected void onActivityResult( int requestCode, int resultCode, Intent data) {
+		//debug(1, "resultCode is "+resultCode+". Activity.RESULT_CANCELED is "+Activity.RESULT_CANCELED );
 		debug(1, "requestCode is "+requestCode+". CHOOSE_POI is "+CHOOSE_POI );
 		if( resultCode == Activity.RESULT_CANCELED ){
 			return;
@@ -449,12 +453,21 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			catView.setSelection(pos);
 			break;
 		case CityExplorer.REQUEST_LOCATION:
-			double[] lat_lng = data.getDoubleArrayExtra("lat_lng");
-			lat = lat_lng[0];
-			lng = lat_lng[1];
-			//lng = data.getDoubleExtra( "lng", lng );
+			int[] lat_lngE6 = data.getIntArrayExtra("lat_lng");
+			lat = lat_lngE6[0]/1E6;
+			lng = lat_lngE6[1]/1E6;
 			debug(0, "lat_lng is "+lat+", "+lng );
+
+			//Testing... Merged...
+			PoiAddress adr = MyPreferencesActivity.getCurrentAddress( this, lat_lngE6 );
+			addrView.setText( adr.getStreet() );
+			cityView.setText( adr.getCity() );
 			break;
+//		case CityExplorer.REQUEST_MAP_ADDRESS:
+//			PoiAddress adr = MyPreferencesActivity.getCurrentAddress( this, latLngE6 );
+//			debug(0, "Found Adr: "+adr );
+//			addrView.setText( adr.getStreet() );
+//			cityView.setText( adr.getCity() );
 		case CityExplorer.REQUEST_KILL_BROWSER:
 			debug(0, "Killing the login-browser..." );
 			finishActivity( requestCode );

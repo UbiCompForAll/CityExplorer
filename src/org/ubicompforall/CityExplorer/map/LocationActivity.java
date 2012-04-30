@@ -137,7 +137,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 	@Override
 	public void onBackPressed() {
 		Bundle bundle = new Bundle();
-	    bundle.putDoubleArray( "lat_lng", new double[]{latE6/1e6,lngE6/1e6} );
+	    bundle.putIntArray( "lat_lng", new int[]{latE6,lngE6} );
 
 	    Intent mIntent = new Intent();
 	    mIntent.putExtras(bundle);
@@ -210,16 +210,17 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 				    GeoPoint p = mapView.getMapCenter();
 					latE6 = p.getLatitudeE6();
 					lngE6 = p.getLongitudeE6();
+					int[] latLng = new int[]{ latE6, lngE6 };
 					//debug(0, "updated: lat=" + latE6 + ", lng="+ lngE6 ); //Constantly called
 					
-					//Update screen with new coordinates
-					TextView tv = (TextView) findViewById(R.id.map_lat);
-					tv.setText( Integer.toString( p.getLatitudeE6() ) );
-					tv = (TextView) findViewById(R.id.map_lng);
-					tv.setText( Integer.toString( p.getLongitudeE6() ) );
 					if (connection){
-						tv = (TextView) findViewById(R.id.map_name);
-						tv.setText( MyPreferencesActivity.getAddress( p.getLatitudeE6(), p.getLongitudeE6(), LocationActivity.this) );
+						TextView tv = (TextView) findViewById(R.id.map_name);
+						tv.setText( MyPreferencesActivity.getCurrentAddress( LocationActivity.this, latLng ).toString() );
+					}else{
+						//Update screen with new coordinates
+						//tv = (TextView) findViewById(R.id.map_lng);
+						TextView tv = (TextView) findViewById(R.id.map_name);
+						tv.setText( Integer.toString( p.getLatitudeE6() ) +"/"+ Integer.toString( p.getLongitudeE6() ) );
 					}
 				}
 			}else{

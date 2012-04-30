@@ -145,7 +145,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
-		debug(1, "PlanTabPoi create");
+		debug(2, "PlanTabPoi create");
 		//menu_shown = false;
 		init();
 	} //onCreate
@@ -266,8 +266,10 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 * Updates the category sections in the list, e.g. after choosing filtering.
 	 */
 	private void updateSections(){
-		//debug(1, "UPDATE!" );
-		allPois = DBFactory.getInstance(this).getAllPois();
+		debug(2, "UPDATE Sections" );
+		if (allPois == null){
+			allPois = DBFactory.getInstance(this).getAllPois();
+		}
 		LinkedList<String> sectionsInUse = new LinkedList<String>(); 
 		for (Poi poi : allPois)		{
 			//ignore sections that are turned off:
@@ -351,7 +353,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
-		debug(1, "item is "+item );
+		debug(2, "item is "+item );
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
 			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);
