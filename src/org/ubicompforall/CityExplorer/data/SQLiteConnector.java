@@ -975,7 +975,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			}catch (SQLiteException e){ //No such table: poi (if just created blank DB)
 				debug(0, "There was a minor SQLiteException "+e.getMessage() );
 			}
-			debug(0, "poi-count is "+poiCount );
+			debug(0, "poi-count is "+poiCount+", context is "+myContext );
+			Toast.makeText(myContext, "Imported "+poiCount +" POIs", Toast.LENGTH_SHORT ).show();
 			//JF: ZIP code removed
 			if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen
 				debug(0, "close myDataBase, before re-open");

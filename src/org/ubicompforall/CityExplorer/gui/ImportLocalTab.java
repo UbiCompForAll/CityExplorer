@@ -105,7 +105,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		categoryFolders = new ArrayList<String>();
 		categoryFolders.add( fs.getDatabasePath() );
 		//Collections.sort(categoryFolders);
-		debug(1, "localeDbFolder is "+categoryFolders );
+		debug(2, "localeDbFolder is "+categoryFolders );
 
 		init();		
 	} // onCreate
@@ -230,13 +230,14 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 			//Pressing a header
 			debug(0, "Pressed a header... Dummy!");
-			return;
-		}
-		DB selectedDb = (DB) l.getAdapter().getItem(pos);
-		debug(2, "requestCode is "+ requestCode ); //RequestCode == 0
-		debug(1, "I just found DB "+selectedDb.getLabel() );
-		DBFactory.changeInstance( this, selectedDb.getLabel() );
-		startActivity( new Intent( this, PlanActivity.class) );
+		}else{
+			DB selectedDb = (DB) l.getAdapter().getItem(pos);
+			debug(2, "requestCode is "+ requestCode ); //RequestCode == 0
+			debug(2, "I just found DB "+selectedDb.getLabel() );
+			DBFactory.changeInstance( this, selectedDb.getLabel() );
+			//startActivity( new Intent( this, PlanActivity.class) );
+			finish();
+		}//if header: skip, else select and finish
 	} // onListItemClick
 
 	/**

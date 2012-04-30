@@ -59,7 +59,8 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	//Activity fields
 	SharedPreferences settings;	// common settings for all the activities in the whole application
 	Editor editor;	// Editor for changing the shared preferences
-	private EditText db_edit, url_edit;
+	private TextView dbName_text;
+	private EditText url_edit;
 	
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
@@ -84,27 +85,31 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		debug(0, "create");
 
 		setContentView( R.layout.preferencesview );
-
-		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		editor = settings.edit();	// Remember to commit changes->onPause etc.
-
-		db_edit = (EditText) findViewById( R.id.pref_db );
-		url_edit = (EditText) findViewById( R.id.pref_url );
-		initDbName();
-		initDbUrl();
 	}//onCreate
 
 	@Override
 	public void onResume(){
 		super.onResume();
-		debug(2, "resume");
+		debug(1, "resume");
+
 		initLocation();
+
+		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
+		editor = settings.edit();	// Remember to commit changes->onPause etc.
+
+		dbName_text = (TextView) findViewById( R.id.pref_db );
+		dbName_text.setText( getCurrentDbName( this ) );
+		findViewById(R.id.DbBrowserButton).setOnClickListener(this);
+
+		url_edit = (EditText) findViewById( R.id.pref_url );
+		url_edit.setText( getCurrentDbDownloadURL(this) );
+		findViewById(R.id.UrlBrowserButton).setOnClickListener(this);
 	} // onResume
 	
 	@Override
 	public void onPause(){
 		super.onPause();
-		String db = db_edit.getText().toString();
+		String db = dbName_text.getText().toString();
 		String url = url_edit.getText().toString();
 		//storeDbNameSetting( this, new File( url+"/"+db ) );
 		editor.putString( CityExplorer.SETTINGS_DB_NAME, db );
@@ -178,14 +183,6 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		return settings_dbDownloadURL;
 	} // getCurrentDbDownloadPath	// Used to be: getDbPath
 
-	private void initDbName() {
-		db_edit.setText( getCurrentDbName( this ) );
-	} // initDbUrl
-
-	private void initDbUrl() {
-		url_edit.setText( getCurrentDbDownloadURL(this) );
-	} // initDbUrl
-
 	public static int [] getLatLng (Context context ){
 		//add Lat and Lng to settings - if not yet set
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
@@ -252,13 +249,16 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			
 		}else if ( v.getId() == R.id.pref_db ){ 
 			debug(0, "view clicked was set DB_PATH automatically" );
-			
+		}else if (v.getId() == R.id.DbBrowserButton){
+			startActivity( new Intent( this, ImportActivity.class ) );
+		}else{
+			debug(0, "Clicked v.getId: "+v.getId() );
 		}// Switch on different key-press events
 	} //onClick
 
 	
 	public void setDbName(String newDbName) {
-		db_edit.setText( newDbName );
+		dbName_text.setText( newDbName );
 	} // initDbUrl
 
 	public void setDbUrl(String newDbUrl) {

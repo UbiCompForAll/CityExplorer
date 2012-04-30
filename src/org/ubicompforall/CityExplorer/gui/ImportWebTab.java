@@ -161,7 +161,9 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 						String SERVER_URL = "http://"+(new URL(webURL).getHost());
 						String linkTerms = extractDBs( responseString, SERVER_URL );
 						if (linkTerms.equals("") ){
-							webview.loadData( responseString, "text/html", "utf-8" );
+							//webview.loadData( responseString, "text/html", "utf-8" );
+							webview.loadData( "Loading page...", "text/html", "utf-8" );
+							webview.loadUrl( webURL );
 						}else{
 							debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
 							webview.loadData(linkTerms, "text/html", "utf-8" );

@@ -43,6 +43,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 public class SettingsActivity extends Activity implements OnClickListener{
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,10 +63,9 @@ public class SettingsActivity extends Activity implements OnClickListener{
 			Button b3 = (Button) findViewById( R.id.startButton3 );
 			b3.setText( getResources().getString( R.string.preferences ) );
 		}else{
-			debug(0, "Couldn't find the startview in SettingsActivity~75");
+			debug(0, "Couldn't find the startview");
 		}
-		//initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
-		//startActivity(new Intent(StartActivity.this, ImportActivity.class));
+		//SearchButton-listeners
 	}//onCreate
 
 	
@@ -102,7 +102,6 @@ public class SettingsActivity extends Activity implements OnClickListener{
 
 		}else if (v.getId() == R.id.startButton3){
 			startActivity( new Intent( this, MyPreferencesActivity.class));
-
 		}else{
 			debug(0, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import

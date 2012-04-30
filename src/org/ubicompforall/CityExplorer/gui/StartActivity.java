@@ -76,7 +76,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
-		debug(0, "Download folder is "+CityExplorer.SHARED_FILE_PATH );
+		debug(1, "Download folder is "+CityExplorer.SHARED_FILE_PATH );
 		
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
