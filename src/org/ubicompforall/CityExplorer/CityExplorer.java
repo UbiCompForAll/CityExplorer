@@ -132,11 +132,11 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	    //initGPS(); //RS-120501 Use only when needed (E.g. Maps)
 	    // And what about DB-loading?  Initialize the single instance here :-)
-		db = DBFactory.getInstance(this);
+		//db = DBFactory.getInstance(this); //Delay?
 		
 		//Always warn about missing data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
-	    debug(0, "Started CityExplorer.java" );
+	    //debug(0, "Started CityExplorer.java" );
 	}//onCreate
 
     @Override

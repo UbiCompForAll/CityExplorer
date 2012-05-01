@@ -148,7 +148,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		String settingsDbName = settings.getString ( CityExplorer.SETTINGS_DB_NAME, defaultDbName );
-		CityExplorer.debug(0, "settingsDbName is "+settingsDbName);
+		CityExplorer.debug(1, "settingsDbName is "+settingsDbName);
 
 		//update DB NAME in setting - in case not yet set
 		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			

@@ -296,7 +296,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 	
 	@Override
 	public void notifyDataSetChanged() {
-		debug(0,"");
+		debug(0,"ListType is "+ CONSTANTS[listType] );
 		if(listType == POI_LIST){
 			DatabaseInterface db = DBFactory.getInstance(ctx);
 			for (Section s : sections){

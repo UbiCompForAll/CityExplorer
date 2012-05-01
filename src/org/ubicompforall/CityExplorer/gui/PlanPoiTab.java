@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import org.ubicompforall.CityExplorer.data.DBFactory;
+import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
@@ -187,13 +188,13 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	private void init() {
 		context = this;
 		requestCode = getIntent().getIntExtra("requestCode",0);
+		DatabaseInterface dbInstance = DBFactory.getInstance(this);
 		lv = getListView();
 		if (requestCode == NewPoiActivity.CHOOSE_POI || 
 				requestCode == PlanTripTab.ADD_TO_TRIP || 
 				requestCode == TripListActivity.ADD_TO_TRIP ||
 				requestCode == SHARE_POI ||
-				requestCode == DOWNLOAD_POI)
-		{
+				requestCode == DOWNLOAD_POI){
 			lv.setOnItemLongClickListener(null);
 		}else {			
 			lv.setOnItemLongClickListener(new DrawPopup());
@@ -203,14 +204,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			allPois = du.getInternetPois();
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.INTERNET_POIS);
 		}else {			
-			allPois = DBFactory.getInstance(this).getAllPois();
+			allPois = dbInstance.getAllPois();
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.POI_LIST);
 		}
 		if(requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){		
 			trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);		
 		}
 		res = getResources();
-		categories = DBFactory.getInstance(this).getUniqueCategoryNames();
+		categories = dbInstance.getUniqueCategoryNames();
 		//Collections.sort(categories);
 		buildFilter();
 		makeSections();
