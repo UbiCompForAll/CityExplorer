@@ -30,6 +30,7 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -96,13 +97,12 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 
 			if (label != null) {
 				String lbl = "";
-				if ( context instanceof TripListActivity ){
-					Trip trip = ((TripListActivity)context).getTrip();
-					if ( ! trip.isFreeTrip() ){
-						lbl = (pos+1)+": ";
-					}//if fixed trip
-				}//If TripListActivity
-				lbl += p.getLabel();
+				if ( context instanceof TripListActivity && ! ((TripListActivity)context).getTrip().isFreeTrip() ){ //if fixed trip
+					HashMap<Poi, Time> times = ((TripListActivity)context).getTrip().getFixedTimes();
+					lbl = (pos+1)+": "+p.getLabel()+" ("+ String.format("%02d", times.get(p).hour) +":"+ String.format("%02d", times.get(p).minute) +")";
+				}else{ //If TripListActivity - Free trip
+					lbl = p.getLabel();
+				}
 				label.setText( lbl );
 			}//if label
 			if (descr != null) {

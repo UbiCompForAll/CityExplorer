@@ -23,12 +23,6 @@
  * 
  */
 
-/**
- * @description:
- * 
- * Common Adapter for all list-types, e.g. POIs, Trips, and DBFiles, Both Local and Online/Internet/Web
- */
-
 package org.ubicompforall.CityExplorer.data;
 
 import java.util.ArrayList;
@@ -43,6 +37,12 @@ import android.widget.TextView;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
+
+/**
+ * @description:
+ * 
+ * Common Adapter for all list-types, e.g. POIs, Trips, and DBFiles, Both Local and Online/Internet/Web
+ */
 
 public class SeparatedListAdapter extends BaseAdapter {  
 	
@@ -296,6 +296,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 	
 	@Override
 	public void notifyDataSetChanged() {
+		debug(0,"");
 		if(listType == POI_LIST){
 			DatabaseInterface db = DBFactory.getInstance(ctx);
 			for (Section s : sections){

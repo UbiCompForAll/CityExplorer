@@ -23,12 +23,6 @@
  * 
  */
 
-/**
- * @description:
- *
- * 
- */
-
 package org.ubicompforall.CityExplorer.data;
 
 import java.util.HashMap;
@@ -38,6 +32,12 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+/**
+ * @description:
+ *
+ * 
+ */
 
 final public class Trip extends IntentPassable {
 
@@ -269,7 +269,8 @@ final public class Trip extends IntentPassable {
 	 *
 	 * @return The fixed times.
 	 */
-	public HashMap<Poi, Time> getFixedTimes(){
+	public HashMap<Poi, Time>
+	 getFixedTimes(){
 		return fixedTimes;
 	}
 
