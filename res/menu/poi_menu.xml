@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 		<item android:id="@+id/poiMenuMap" android:icon="@android:drawable/ic_menu_mapmode"
-			android:title="@string/poiMenuMap" />
+			android:title="@string/activity_triplist_menu_showOnMap" />
 		<item android:id="@+id/poiMenuDirections" android:icon="@android:drawable/ic_menu_directions"
 			android:title="@string/navigateFrom" />
 		<item android:id="@+id/poiMenufavourite" android:icon="@drawable/favstar_on"

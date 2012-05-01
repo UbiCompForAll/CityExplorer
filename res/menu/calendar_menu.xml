@@ -12,9 +12,10 @@
 
 <!-- Composition removed in menu, unless ubiCompose==true
 -->
-	<item
+	<item android:id="@+id/menuShowMap" android:icon="@android:drawable/ic_menu_mapmode" android:title="@string/activity_triplist_menu_showOnMap" /><item
 	    android:id="@+id/composePOIs" 
 		android:title="@string/composeUbiServices"
 		android:icon="@drawable/compose"/>
+	
 
 </menu>
