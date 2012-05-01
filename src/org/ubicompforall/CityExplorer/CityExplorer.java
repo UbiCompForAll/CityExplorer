@@ -120,32 +120,23 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 * The global current db connection
 	 */
 	public static DatabaseInterface db;
-	//private static boolean verifiedDataConnection;
-	//private static String googleURL = "http://www.google.com";
 	
 	@Override
 	public void onCreate() {
+	    debug(0, "Start CityExplorer.java" );
 	    /*
 	     * This populates the default values from the preferences XML file. See
 	     * {@link DefaultValues} for more details.
 	     */
 	    PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
-	
-	    //Local debug (stacktrace level = 3)
-	    //StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
-		//Log.d(C, ste.getFileName().replace("java", "")+ste.getLineNumber()+'~'+ste.getMethodName()+'~'+"Start CityExplorer.java" );
-	    debug(0, "Start CityExplorer.java" );
-	
-		//initGPS(); //RS-111122 Move to CityExplorer.java Application (Common for all activities) ? When?
-	
+
+	    //initGPS(); //RS-120501 Use only when needed (E.g. Maps)
 	    // And what about DB-loading?  Initialize the single instance here :-)
 		db = DBFactory.getInstance(this);
 		
 		//Always warn about missing data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
-		
-		//Verify that specific URLs on the web are available!
-		//verifiedDataConnection = false;
+	    debug(0, "Started CityExplorer.java" );
 	}//onCreate
 
     @Override
@@ -157,10 +148,10 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Save the preferences now?");
     }//onTerminate
 
-
+////////////////////////////////////////////////////////////////////////////
 // STATIC METHODS
 
-	/*
+	/***
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
 	public static void debug(int d, String msg) {
@@ -176,7 +167,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
 			Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
 		} // if verbose enough
 	} // debug
-
 
 
 	public static boolean ensureConnected( Activity context ) {

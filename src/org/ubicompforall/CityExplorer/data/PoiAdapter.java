@@ -39,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.ubicompforall.CityExplorer.R;
+import org.ubicompforall.CityExplorer.gui.TripListActivity;
 
 /**
  * This class handles the poi adapters.
@@ -61,27 +62,25 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 	 * @param textViewResourceId The text view resource id.
 	 * @param items The items to add to the adapter.
 	 */
-	public PoiAdapter(Context context, int textViewResourceId, ArrayList<Poi> items) {
+	public PoiAdapter( Context context, int textViewResourceId, ArrayList<Poi> items ) {
 		super(context, textViewResourceId, items);
 		this.items = items;
 		this.context = context;
 		this.textViewResourceId = textViewResourceId;
-	}
+	}//PoiAdapter
 
 	/**
 	 * Replace all pois in the list of pois.
-	 *
 	 * @param pois The pois.
 	 */
-	public void replaceAll(ArrayList<Poi> pois)
-	{
+	public void replaceAll(ArrayList<Poi> pois){
 		items.clear();
 		items.addAll(pois);
 		this.notifyDataSetChanged();
-	}
+	}//replaceAll
 
 	@Override
-	public View getView(int pos, View convertView, ViewGroup parent) {
+	public View getView( int pos, View convertView, ViewGroup parent ){
 		View v = convertView;
 		LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -95,9 +94,21 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 			TextView label = (TextView) v.findViewById(R.id.label);
 			TextView descr = (TextView) v.findViewById(R.id.description);
 
-			if (label != null) { label.setText(p.getLabel()); }
-			if (descr != null) { descr.setText(p.getDescription()); }
+			if (label != null) {
+				String lbl = "";
+				if ( context instanceof TripListActivity ){
+					Trip trip = ((TripListActivity)context).getTrip();
+					if ( ! trip.isFreeTrip() ){
+						lbl = (pos+1)+": ";
+					}//if fixed trip
+				}//If TripListActivity
+				lbl += p.getLabel();
+				label.setText( lbl );
+			}//if label
+			if (descr != null) {
+				descr.setText(p.getDescription());
+			}
 		}
 		return v;
-	}
-}
+	}//getView
+}//PoiAdapter

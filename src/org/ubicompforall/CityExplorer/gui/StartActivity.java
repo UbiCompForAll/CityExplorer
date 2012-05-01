@@ -73,6 +73,7 @@ public class StartActivity extends Activity implements OnClickListener{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+	    debug(3, "Go!" );
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startlayout);
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
@@ -114,7 +115,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		debug(2, "Clicked: "+v );
 		if (v.getId() == R.id.startButton1){  // Button PLAN TOUR
 						
-			startActivity(new Intent(StartActivity.this, PlanActivity.class));
+			startActivity(new Intent( this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){ // Button EXPLORE CITY MAP
 			//Starting the maps activity is too slooow! How to show a progress bar etc.?

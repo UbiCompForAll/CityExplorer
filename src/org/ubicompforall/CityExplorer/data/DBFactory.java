@@ -132,6 +132,7 @@ public class DBFactory{
 	 * @return Single instance of DBFactory
 	 */
 	public static DatabaseInterface getInstance( Context context ){
+		CityExplorer.debug(1, "currentDbFile is "+currentDbFile);
 		if ( currentDbFile == null || currentDbFile.equals("") ){
 			String currentDbName = MyPreferencesActivity.getCurrentDbName( context );
 			String currentDbFileUri = context.getDatabasePath(currentDbName).getAbsolutePath();
@@ -143,7 +144,7 @@ public class DBFactory{
 		}
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
-				CityExplorer.debug(2, "currentDbFile is "+currentDbFile);
+				CityExplorer.debug(1, "currentDbFile is "+currentDbFile);
 				dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 			} // if right type
 			dbConnectorInstance.open( currentDbFile );

@@ -45,10 +45,8 @@ import org.ubicompforall.CityExplorer.map.route.GoogleKML;
 import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -75,14 +73,14 @@ public class CalendarActivity extends Activity implements OnTouchListener{
     ScrollView sv;
     LinearLayout ll;
     private static boolean USE24HOURS = true;
-    AlertDialog alert;
+    //AlertDialog alert;
     
     Trip trip;
     ArrayAdapter<String> poiAdapter;
     ArrayList<ViewDayHourItem> hourViews = new ArrayList<ViewDayHourItem>();
     boolean calendarIsEmpty = true;
 	
-    boolean wantToGoBack = false;
+    boolean tryToGoBack = false;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +89,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 		//trip = DBFactory.getInstance(this).getAllTrips(false).get(0);
 		trip = this.getIntent().getParcelableExtra("trip");
-		System.out.println("CalAct: free:"+trip.isFreeTrip());
+		debug(0, "free:"+trip.isFreeTrip() );
 		poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>());
 		
 		
@@ -106,16 +104,15 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		sv.addView(ll);
 		setContentView(sv);
 		
-		//add pois that already has times:
+		//add pois that already has times: //HEAVY! Run on a different Thread!
 		addPoisWithTime();
 		
-		if( !trip.getFixedTimes().keySet().containsAll(trip.getPois()) ||
-				!trip.getPois().containsAll(trip.getFixedTimes().keySet()))
-		{
+		if( !trip.getFixedTimes().keySet().containsAll(trip.getPois())
+		 ||	!trip.getPois().containsAll(trip.getFixedTimes().keySet()) ){
 			//pois have not been added.
 			preparePoiList();
 		}
-	}
+	}//onCreate
 	
 
 	private void debug(int i, String string) {
@@ -125,12 +122,12 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 	private void addPoisWithTime()	{
 		if(trip.getFixedTimes() == null)
-			System.out.println("CalAct: fixed time == null");
+			debug(0,"fixed time == null" );
 		
 		if(trip.getFixedTimes().keySet().containsAll(trip.getPois()) &&
 				trip.getPois().containsAll(trip.getFixedTimes().keySet()))	{ //all pois have time.
 			for(Poi poi : trip.getPois()){	
-				System.out.println("CalAct: times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
+				//debug(0, "times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
 				
 				ViewDayHourItem time = null;
 				for(ViewDayHourItem t : hourViews)	{
@@ -169,15 +166,16 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		ArrayList<String> poiList = new ArrayList<String>();
 		
 		//pois have not been added.
-		for(Poi poi : trip.getPois())
-		{
+		for(Poi poi : trip.getPois()){
 			//System.out.println("Poi: "+poi.getLabel()+" added");
-			if(!trip.isFreeTrip()) 	poiList.add((trip.getPois().indexOf(poi)+1)+" "+poi.getLabel());
-			else 					poiList.add(poi.getLabel());
+			if( trip.isFreeTrip() ){
+				poiList.add(poi.getLabel());
+			}else{
+				poiList.add( (trip.getPois().indexOf(poi)+1)+" "+poi.getLabel() );
+			}
 		}
-		
 		poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, poiList);
-	}
+	}//preparePoiList
 
 	/***
 	 * Add the calendar view
@@ -196,12 +194,13 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	@Override
 	public void onBackPressed() {
 		// do something on back.
-		if (wantToGoBack){
+		if (tryToGoBack){
 			super.onBackPressed();
 		}else{
-			Toast.makeText( this, "Save your times in Menu first! Press back again to go back", Toast.LENGTH_LONG).show();
-			wantToGoBack = true;
-			debug(0, "back pressed!" );
+			Toast.makeText( this, "Save your times first! Try again to discard", Toast.LENGTH_LONG).show();
+			tryToGoBack = true;
+			openOptionsMenu();	// Show menu
+			debug(2, "back pressed!" );
 		}
 		return;
 	} //onBackPressed
@@ -209,57 +208,80 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	//appointment click listener
 	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick(){
 		public void OnClick(ViewDayHourItem item){
-			//System.out.println("you clicked "+item.GetHour()+item.GetMinutes());
+			debug(0, "you clicked "+item.GetHour()+item.GetMinutes() );
 			
 			//create poi picker:
-			
 			final ViewDayHourItem time = item;
-			
-			AlertDialog.Builder builder = new AlertDialog.Builder(CalendarActivity.this);
-			builder.setTitle("Pick a PoI");
-			
-			builder.setAdapter(poiAdapter, new DialogInterface.OnClickListener() {
-			    public void onClick(DialogInterface dialog, int poiIndex) {	
-			    	//find the poi:
-			    	int tripPoiIndex = 0;
-			    	String s = poiAdapter.getItem(poiIndex);
-			    	//the index is in the title formated like this: 1 Trondheim Torg if it is not a free trip
-			    	//and just Trondheim Torg if it is not
-			    	String tripPoiName = ((!trip.isFreeTrip()) ? s.substring(s.indexOf(" ")):s);
-			    	
-			    	Poi poi = null;
-			    	for (Poi p : trip.getPois()){
-						if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
-					}
-			    	tripPoiIndex = trip.getPois().indexOf(poi);
+//			AlertDialog.Builder builder = new AlertDialog.Builder(CalendarActivity.this);
+//			builder.setTitle("Pick next PoI");
+//			builder.setAdapter(poiAdapter, new DialogInterface.OnClickListener() {
+//			    public void onClick(DialogInterface dialog, int poiIndex) {	
+//			    	//find the poi:
+//			    	int tripPoiIndex = 0;
+//			    	String s = poiAdapter.getItem(poiIndex);
+//			    	//the index is in the title formated like this: 1 Trondheim Torg if it is not a free trip
+//			    	//and just Trondheim Torg if it is not
+//			    	String tripPoiName = ((!trip.isFreeTrip()) ? s.substring(s.indexOf(" ")):s);
+//			    	
+//			    	Poi poi = null;
+//			    	for (Poi p : trip.getPois()){
+//						if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
+//					}
+//			    	tripPoiIndex = trip.getPois().indexOf(poi);
+//
+//			    	//Add walking time:
+//			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false){
+//			    		return;
+//			    	}
+//
+//			    	//Add poi calendar entry:
+//			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
+//					tv.setMinutes(time.GetMinutes());
+//					tv.setPoi(poi);
+//					tv.setClickable(true);
+//					tv.setOnClickListener(ocl);
+//					tv.setAsWalkingEntry(false);
+//					time.addView(tv);
+//					time.UpdateHeight();
+//					
+//					setTripTime(poi, new Time(time.GetHour(), time.GetMinutes()));
+//					
+//					calendarIsEmpty = false;
+//					alert.hide();
+//					poiAdapter.remove(poiAdapter.getItem(poiIndex));
+//			    } // onClick
+//			}); // new OnclickListener class
+//			alert = builder.create();
+//			alert.show();
 
-			    	//Add walking time:
-			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false){
-			    		return;
-			    	}
+			//find next poi
+			Poi poi = null;
+			int poiIndex = trip.getPois().size() - poiAdapter.getCount();
+			if ( poiIndex < trip.getPois().size() ){
+		    	poi = trip.getPois().get(poiIndex);
+			}
+			debug(0, "poiIndex is "+ poiIndex );
 
-			    	//Add poi calendar entry:
-			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
-					tv.setMinutes(time.GetMinutes());
-					tv.setPoi(poi);
-					tv.setClickable(true);
-					tv.setOnClickListener(ocl);
-					tv.setAsWalkingEntry(false);
-					time.addView(tv);
-					time.UpdateHeight();
-					
-					setTripTime(poi, new Time(time.GetHour(), time.GetMinutes()));
-					
-					calendarIsEmpty = false;
-					alert.hide();
-					poiAdapter.remove(poiAdapter.getItem(poiIndex));
-			    } // onClick
-			}); // new OnclickListener class
+			//Add walking time:
+			if( poiIndex >= trip.getPois().size() || addWalkingTime( poiIndex, time, time.GetMinutes(), poi ) == false){
+				return;
+	    	}//if no poi left, or no walking time
+
+	    	//Add poi calendar entry:
+	    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
+			tv.setMinutes(time.GetMinutes());
+			tv.setPoi(poi);
+			tv.setClickable(true);
+			tv.setOnClickListener(ocl);
+			tv.setAsWalkingEntry(false);
+			time.addView(tv);
+			time.UpdateHeight();
 			
-			alert = builder.create();
-
-			alert.show();
-		}
+			setTripTime(poi, new Time(time.GetHour(), time.GetMinutes()));
+			
+			calendarIsEmpty = false;
+			poiAdapter.remove(poiAdapter.getItem(0));
+		}//onClick
 	}; //OnNewApptItemClick: OnItemClick class
 	
 	private void setTripTime(Poi poi, Time time){
@@ -273,9 +295,11 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	 * @return success
 	 */
 	private boolean addWalkingTime(int tripPoiIndex, ViewDayHourItem time,int minutes, Poi poi){
+		debug(0, "tripPoiIndex is "+tripPoiIndex );
 		//find the previous poi entry
 		poiTextView ptvBeforeOrNull = findPoiViewBefore(trip, hourViews, time);
 		poiTextView ptvAfterOrNull  = findPoiViewAfter(trip, hourViews, time);
+		debug(0, "before="+ptvBeforeOrNull+", after="+ptvAfterOrNull );
 		
 		if( (tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip()) ){ //no travel to the first POI
     		
@@ -311,9 +335,8 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				ViewDayHourItem Hour = hourViews.get(hourViews.indexOf(time)-numbHoursBack);
 				
 				//check if the entry is before the prev poi. abort if it is.
-				if((Hour.GetHour() < prevHour) || ((Hour.GetHour() == prevHour)&&((int)(numbHoursBack*60+(minutes-timeNeededInMin)) < prevMinutes)))
-				{
-					//omg there is no time to walk to this poi
+				if( (Hour.GetHour() < prevHour) || ((Hour.GetHour() == prevHour)&&((int)(numbHoursBack*60+(minutes-timeNeededInMin)) < prevMinutes)) ){
+					//OMG there is no time to walk to this poi
 					Toast.makeText(CalendarActivity.this, "You will not have time to walk between this and the previous PoI.", Toast.LENGTH_LONG).show();
 					return false;
 				}
@@ -368,6 +391,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	
 	private double getDistance(Poi startPoi, Poi endPoi){
 		double dist = 0;
+		//debug(0, "Start, end is "+startPoi+", "+endPoi );
 		
 		/*if we are offline, use straight line to calculate distance: 
         Location.distanceBetween(

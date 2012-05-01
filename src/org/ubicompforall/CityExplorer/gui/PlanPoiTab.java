@@ -163,7 +163,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			updateSections();
 			adapter.notifyDataSetChanged();
 		}
-		
+
 //		if ( requestCode == 0 && ! menu_shown ){ //Main menu // Default OFF now
 //			//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
 //			debug(1, "requestCode is "+requestCode );
@@ -282,7 +282,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			if(!adapter.getSectionNames().contains(poi.getCategory() ) ){
 				ArrayList<Poi> list = new ArrayList<Poi>();
 				list.add(poi);
-				PoiAdapter testAdapter = new PoiAdapter(this, R.layout.plan_listitem, list);
+				PoiAdapter testAdapter = new PoiAdapter( this, R.layout.plan_listitem, list);
 				adapter.addSection(poi.getCategory(), testAdapter);
 			}//if contains category
 		}//for POIs

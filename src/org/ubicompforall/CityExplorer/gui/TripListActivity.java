@@ -120,14 +120,23 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.triplist);
 		init();
-		debug(0, "THis activity!" );
-	}
+
+		initGPS();
+		poiAdapter.notifyDataSetChanged();
+		userLocation = StartActivity.verifyUserLocation( userLocation, this );
+
+		debug(2, "FreeTrip="+trip.isFreeTrip() );
+	}//onCreate
 
 	
 	private void debug(int i, String string) {
 		CityExplorer.debug(i, string);
 	}
 
+
+	public Trip getTrip() {
+		return trip;
+	}//getTrip
 
 	/**
 	 * Initializes the activity.
@@ -136,29 +145,23 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		db = DBFactory.getInstance(context);
 		res = getResources();
 
-		if(getIntent().getParcelableExtra("trip") != null)
-		{
+		if(getIntent().getParcelableExtra("trip") != null){
 			trip = (Trip) getIntent().getParcelableExtra("trip");
 			title = (TextView)findViewById(R.id.triplabel);
 			title.setText(trip.getLabel());
-		} 
-		else{
+		}else{
 			System.out.println("No trip supplied.. exit activity");
 			this.finish();
 		}
 
 		lv = getListView();
 		lv.setOnItemLongClickListener(new DrawPopup());
-		poiAdapter = new PoiAdapter(this, R.layout.plan_listitem, pois);
+		poiAdapter = new PoiAdapter( this, R.layout.plan_listitem, pois );
 		lv.setAdapter(poiAdapter);
 
 		for (Poi p : trip.getPois()) {
 			pois.add(p);
 		}
-		initGPS();
-		poiAdapter.notifyDataSetChanged();
-
-		userLocation = StartActivity.verifyUserLocation( userLocation, this );
 	}// init
 
 	@Override
@@ -171,7 +174,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		}
 
 		return true;
-	}
+	}//onCreateOptionsMenu
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -201,7 +204,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			break;
 		}
 		return true;
-	}
+	}//onOptionsItemSelected
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -222,7 +225,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		default:
 			break;
 		}
-	}
+	}//onActivityResult
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
@@ -235,7 +238,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		details.putExtra("poiNumber", pos);
 
 		startActivity(details);
-	}
+	}//onListItemClick
 
 	/**
 	 * Show quick actions when the user long-presses an item 
@@ -315,8 +318,8 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			qa.show();
 
 			return true;
-		}
-	}
+		}//onItemLongClick
+	}//DrawPoput Class
 
 	@Override
 	public void onLocationChanged(Location location) {
@@ -326,8 +329,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 	/**
 	 * Initializes the GPS on the telephone.
 	 */
-	void initGPS()
-	{
+	void initGPS(){
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -341,18 +343,16 @@ public class TripListActivity extends ListActivity implements LocationListener{
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-
 	}
-}
+
+}//TripListActivity

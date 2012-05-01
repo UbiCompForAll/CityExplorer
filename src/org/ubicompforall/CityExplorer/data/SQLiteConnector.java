@@ -331,7 +331,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
 		}//if ALL
 		
-		debug(1, "TRIPS: " + c.getCount() );
+		debug(2, "TRIPS: " + c.getCount() );
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
 		while(c.moveToNext()){
@@ -781,6 +781,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		try {
 			myDataBase.insertOrThrow("poi", null, values3);
 			debug(0, "Remember to update the PlanPoiTab" );
+			Toast.makeText(myContext, "Remember to update the PlanPoiTab-list", Toast.LENGTH_SHORT ).show();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
