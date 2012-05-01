@@ -78,7 +78,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
     Trip trip;
     ArrayAdapter<String> poiAdapter;
     ArrayList<ViewDayHourItem> hourViews = new ArrayList<ViewDayHourItem>();
-    boolean calendarIsEmpty = true;
+    public boolean calendarIsEmpty = true;
 	
     boolean tryToGoBack = false;
     
@@ -355,7 +355,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		return true;
 	} // addWalkingTime
 	
-	private poiTextView findPoiViewBefore(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
+	public poiTextView findPoiViewBefore(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
 		
 		//find the poi before this one.
 		for(int i = hourViews.indexOf(newView); i >= 0; i--){//start here and work backwards.
@@ -371,7 +371,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		return null;
 	}//findPoiViewBefore
 	
-	private poiTextView findPoiViewAfter(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
+	public poiTextView findPoiViewAfter(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
 		
 		//find the poi after this one.
 		for(int i = hourViews.indexOf(newView); i < hourViews.size(); i++)//start here and work forwards.
@@ -389,7 +389,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		return null;
 	}//findPoiViewAfter
 	
-	private double getDistance(Poi startPoi, Poi endPoi){
+	public double getDistance(Poi startPoi, Poi endPoi){
 		double dist = 0;
 		//debug(0, "Start, end is "+startPoi+", "+endPoi );
 		
@@ -550,6 +550,11 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		showComposerInWebView();
 		return false;
 	}//
+
+
+	public Trip getTrip() {
+		return trip;
+	}//getTrip
 
 
 } //class CalendarActivity

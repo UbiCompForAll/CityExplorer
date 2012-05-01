@@ -23,12 +23,6 @@
  * 
  */
 
-/**
- * @description:
- * This class shows a single trip in a list.
- * 
- */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -57,6 +51,11 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+/**
+ * @description:
+ * This class shows a single trip in a list.
+ */
 
 public class TripListActivity extends ListActivity implements LocationListener{
 
@@ -132,7 +131,6 @@ public class TripListActivity extends ListActivity implements LocationListener{
 	private void debug(int i, String string) {
 		CityExplorer.debug(i, string);
 	}
-
 
 	public Trip getTrip() {
 		return trip;

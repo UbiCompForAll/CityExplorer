@@ -23,12 +23,6 @@
  * 
  */
 
-/**
- * @description:
- * This class handles all the action going on in the locations tab.
- * 
- */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -74,6 +68,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.Toast;
+
+/**
+ * @description:
+ * This class handles all the action going on in the locations tab.
+ */
 
 public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener, OnItemSelectedListener{
 
@@ -240,7 +239,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	 * Makes the category sections that is shown in the list. 
 	 */
 	private void makeSections(){
-		debug(2, "make sections" );
+		debug(1, "make sections" );
 		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
 		if(requestCode != DOWNLOAD_POI){			
 			adapter.addSection(CityExplorer.FAVORITES, favouriteAdapter);
@@ -606,7 +605,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 						qa.dismiss();
 					}
 				});
-			}
+			}//onItemLongClick
 
 			// 4: Edit 
 			// 5: 

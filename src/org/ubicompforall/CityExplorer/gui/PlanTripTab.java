@@ -149,13 +149,10 @@ public class PlanTripTab extends PlanActivityTab{
 		}else {			
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.TRIP_LIST);
 		}
-		
 		res = getResources();
-
-		adapter.notifyDataSetChanged();
-		lv.setAdapter(adapter); 
-
-	}
+		//adapter.notifyDataSetChanged(); //Moved to onResume?
+		lv.setAdapter(adapter);
+	}//init
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
@@ -227,7 +224,7 @@ public class PlanTripTab extends PlanActivityTab{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		adapter.notifyDataSetChanged();		
+		//adapter.notifyDataSetChanged();		
 
 		if(existingPois != null){
 			int nrOfPoIs = existingPois.size();
@@ -240,8 +237,7 @@ public class PlanTripTab extends PlanActivityTab{
 					nrOfPoIs + " location(s) added to " + tripName + ".", Toast.LENGTH_LONG).show();
 		}
 		adapter.notifyDataSetChanged();
-
-	}
+	}// onResume
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -253,7 +249,7 @@ public class PlanTripTab extends PlanActivityTab{
 			menu.removeItem(R.id.planMenuNewTrip);
 		}
 		return true;
-	}
+	}//onPrepareOptionsMenu
 
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
