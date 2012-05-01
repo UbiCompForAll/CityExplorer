@@ -82,7 +82,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		// TODO: FOR DEBUGGING
 		//startActivity(new Intent( this, LocationActivity.class) );
 		//startActivity(new Intent( this, ImportDB.class) );
-		startActivity(new Intent( this, PlanActivity.class) );
+		//startActivity(new Intent( this, PlanActivity.class) );
 		// TODO: FOR DEBUGGING
 
 		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
