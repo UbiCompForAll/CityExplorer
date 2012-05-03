@@ -41,7 +41,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import android.app.Activity;
 import android.app.AlertDialog;

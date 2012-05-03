@@ -153,19 +153,15 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.details_poi_layout);
 
-		if(getIntent().getParcelableExtra("poi") != null)
-		{
+		if(getIntent().getParcelableExtra("poi") != null){
 			poi = (Poi) getIntent().getParcelableExtra("poi");
-		}
-		else
-		{
+		}else{
 			System.out.println("No poi supplied.. exit activity");
 			this.finish();
 		}
 
-		if(getIntent().getParcelableExtra("trip") != null)
-		{
-			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);	// POI MSUT BE UPDATED WHEN TEH ARROW ARE USED TODO 
+		if(getIntent().getParcelableExtra("trip") != null){
+			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);	// POI MUST BE UPDATED WHEN THE ARROW ARE USED TODO 
 			nextPoi = (ImageButton) findViewById(R.id.nextPoiButton);
 			prevPoi.setVisibility(0);
 			nextPoi.setVisibility(0);
@@ -212,8 +208,8 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	private void showPoiDetails(Poi poi) {
 		title.setText(		poi.getLabel());
 		description.setText(poi.getDescription());
-// ZIP code removed
-//		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getZipCode() + "\n" + poi.getAddress().getCity());
+//		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getZipCode() + "\n" + poi.getAddress().getCity()); // ZIP code removed
+
 		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getCity());
 		category.setText(poi.getCategory());
 		telephone.setText(poi.getTelephone());
@@ -227,7 +223,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 				public void run(){
 
 					DefaultHttpClient	httpClient = new DefaultHttpClient();
-					HttpGet			httpGet = new HttpGet(imageURL); //have user-inserted url
+					HttpGet	httpGet = new HttpGet(imageURL); //have user-inserted url
 					HttpResponse		httpResponse;
 					final HttpEntity	entity;
 
@@ -238,7 +234,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 
 							if (entity != null) {
 								//converting into bytemap and inserting into imageView
-								poiImage.post(new Runnable(){
+								poiImage.post( new Runnable(){
 									public void run(){
 										byte[] imageBytes = new byte[0];
 										try {

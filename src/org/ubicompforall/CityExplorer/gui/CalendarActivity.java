@@ -23,12 +23,6 @@
  * 
  */
 
-/**
- * @description:
- *
- * 
- */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -63,6 +57,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+/**
+ * @description:
+ *
+ */
 public class CalendarActivity extends Activity implements OnTouchListener{
 
 	Paint mpt = new Paint();
@@ -81,6 +79,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
     public boolean calendarIsEmpty = true;
 	
     boolean tryToGoBack = false;
+	private boolean saved = true;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +136,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 					}
 				}
 				if(time == null){
-					System.out.println("ERROR in addPoisWithTime");
+					debug(0, "ERROR in addPoisWithTime");
 				}
 				time.setMinutes(trip.getFixedTimes().get(poi).minute);
 				
@@ -167,7 +166,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		
 		//pois have not been added.
 		for(Poi poi : trip.getPois()){
-			//System.out.println("Poi: "+poi.getLabel()+" added");
+			//debug(0, "Poi: "+poi.getLabel()+" added");
 			if( trip.isFreeTrip() ){
 				poiList.add(poi.getLabel());
 			}else{
@@ -194,7 +193,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	@Override
 	public void onBackPressed() {
 		// do something on back.
-		if (tryToGoBack){
+		if ( tryToGoBack || saved  ){
 			super.onBackPressed();
 		}else{
 			Toast.makeText( this, "Save your times first! Try again to discard", Toast.LENGTH_LONG).show();
@@ -210,50 +209,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		public void OnClick(ViewDayHourItem item){
 			debug(0, "you clicked "+item.GetHour()+item.GetMinutes() );
 			
-			//create poi picker:
 			final ViewDayHourItem time = item;
-//			AlertDialog.Builder builder = new AlertDialog.Builder(CalendarActivity.this);
-//			builder.setTitle("Pick next PoI");
-//			builder.setAdapter(poiAdapter, new DialogInterface.OnClickListener() {
-//			    public void onClick(DialogInterface dialog, int poiIndex) {	
-//			    	//find the poi:
-//			    	int tripPoiIndex = 0;
-//			    	String s = poiAdapter.getItem(poiIndex);
-//			    	//the index is in the title formated like this: 1 Trondheim Torg if it is not a free trip
-//			    	//and just Trondheim Torg if it is not
-//			    	String tripPoiName = ((!trip.isFreeTrip()) ? s.substring(s.indexOf(" ")):s);
-//			    	
-//			    	Poi poi = null;
-//			    	for (Poi p : trip.getPois()){
-//						if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
-//					}
-//			    	tripPoiIndex = trip.getPois().indexOf(poi);
-//
-//			    	//Add walking time:
-//			    	if( addWalkingTime(tripPoiIndex, time, time.GetMinutes(), poi) == false){
-//			    		return;
-//			    	}
-//
-//			    	//Add poi calendar entry:
-//			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
-//					tv.setMinutes(time.GetMinutes());
-//					tv.setPoi(poi);
-//					tv.setClickable(true);
-//					tv.setOnClickListener(ocl);
-//					tv.setAsWalkingEntry(false);
-//					time.addView(tv);
-//					time.UpdateHeight();
-//					
-//					setTripTime(poi, new Time(time.GetHour(), time.GetMinutes()));
-//					
-//					calendarIsEmpty = false;
-//					alert.hide();
-//					poiAdapter.remove(poiAdapter.getItem(poiIndex));
-//			    } // onClick
-//			}); // new OnclickListener class
-//			alert = builder.create();
-//			alert.show();
-
 			//find next poi
 			Poi poi = null;
 			int poiIndex = trip.getPois().size() - poiAdapter.getCount();
@@ -281,8 +237,34 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			
 			calendarIsEmpty = false;
 			poiAdapter.remove(poiAdapter.getItem(0));
+			saved = false;
 		}//onClick
 	}; //OnNewApptItemClick: OnItemClick class
+	
+	//create poi picker:
+//	AlertDialog.Builder builder = new AlertDialog.Builder(CalendarActivity.this);
+//	builder.setTitle("Pick next PoI");
+//	builder.setAdapter(poiAdapter, new DialogInterface.OnClickListener() {
+//	    public void onClick(DialogInterface dialog, int poiIndex) {	
+//	    	//find the poi:
+//	    	int tripPoiIndex = 0;
+//	    	String s = poiAdapter.getItem(poiIndex);
+//	    	//the index is in the title formated like this: 1 Trondheim Torg if it is not a free trip
+//	    	//and just Trondheim Torg if it is not
+//	    	String tripPoiName = ((!trip.isFreeTrip()) ? s.substring(s.indexOf(" ")):s);
+//	    	
+//	    	Poi poi = null;
+//	    	for (Poi p : trip.getPois()){
+//				if(p.getLabel().trim().equals(tripPoiName.trim())) poi = p;
+//			}
+//	    	tripPoiIndex = trip.getPois().indexOf(poi);
+//
+//			alert.hide();
+//			poiAdapter.remove(poiAdapter.getItem(poiIndex));
+//	    } // onClick
+//	}); // new OnclickListener class
+//	alert = builder.create();
+//	alert.show();
 	
 	private void setTripTime(Poi poi, Time time){
 		trip.setTime(poi, time);
@@ -376,7 +358,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		//find the poi after this one.
 		for(int i = hourViews.indexOf(newView); i < hourViews.size(); i++)//start here and work forwards.
 		{
-			//System.out.println("test hours: "+hourViews.get(i).GetHour());
+			//debug(0, "test hours: "+hourViews.get(i).GetHour());
 			for (int j = 0; j < hourViews.get(i).getPoiTextViews().size(); j++) 
 			{
 				poiTextView tv = hourViews.get(i).getPoiTextViews().get(j);
@@ -433,6 +415,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				Intent resultIntent = new Intent();
 				resultIntent.putExtra(IntentPassable.TRIP, trip);
 				setResult( Activity.RESULT_OK, resultIntent );
+				saved=true;
 				finish();
 			}else{
 				Toast.makeText(this, "All locations are not added", Toast.LENGTH_LONG).show();
@@ -447,6 +430,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			
 			trip.clearTimes();
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
+			saved=false;
 		} //clearCalendar
 
 		//Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
@@ -519,7 +503,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 					return;
 				}//if walking
 				
-				System.out.println("Clicked: "+tv.getPoi().getLabel());
+				debug(0, "Clicked: "+tv.getPoi().getLabel());
 				Intent details = new Intent(CalendarActivity.this, PoiDetailsActivity.class);
 				details.putExtra("poi", tv.getPoi());
 				details.putExtra("trip", trip);

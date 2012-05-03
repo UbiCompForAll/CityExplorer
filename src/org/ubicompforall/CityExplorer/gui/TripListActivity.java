@@ -215,7 +215,8 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			pois = trip.getPois();
 			poiAdapter.replaceAll(pois);
 			poiAdapter.notifyDataSetChanged();
-//			lv.setAdapter(poiAdapter);
+			lv.setAdapter(poiAdapter);
+			debug(0, "WHY?!" );
 			break;
 		case CALENDAR:
 			this.trip = data.getParcelableExtra(IntentPassable.TRIP);

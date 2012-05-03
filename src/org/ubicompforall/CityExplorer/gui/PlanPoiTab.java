@@ -162,24 +162,23 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		if(requestCode != DOWNLOAD_POI){			
 			updateSections();
 			adapter.notifyDataSetChanged();
-		}
-
-//		if ( requestCode == 0 && ! menu_shown ){ //Main menu // Default OFF now
-//			//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
-//			debug(1, "requestCode is "+requestCode );
-//			new Handler().postDelayed(new Runnable() {
-//				public void run() {
-//					openOptionsMenu();
-//				}
-//			}, 1000);
-//		}
+		}//if not download-mode
 	}//onResume
 
+//	if ( requestCode == 0 && ! menu_shown ){ //Main menu // Default OFF now
+//	//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
+//	debug(1, "requestCode is "+requestCode );
+//	new Handler().postDelayed(new Runnable() {
+//		public void run() {
+//			openOptionsMenu();
+//		}
+//	}, 1000);
+//}
 
+	
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
-
 
 
 	/**
