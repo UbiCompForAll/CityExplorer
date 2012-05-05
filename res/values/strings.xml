@@ -63,7 +63,7 @@
 	<string name="cityLabel">City:</string>
 	
 	<string name="clearCalendar">Clear Times</string>
-	<string name="chooseTrip">Choose Tour</string>
+	<string name="chooseTrip">Copy from an old tour</string>
 	<string name="choosePoi">Choose Location</string>
 	<string name="default_values">Default Values</string>
 	<string name="default_location">SET MANUAL LOCATION</string>
@@ -79,7 +79,8 @@
 	<string name="editcategoryLabel">* Category:</string>
 	<string name="editaddressLabel">* Address:</string>
 	<string name="editdescriptionLabel">Description:</string>
-	<string name="editnameLabel">* Name:</string><string name="fromexistingLabel">Create new tour from:</string>
+	<string name="editnameLabel">* Name:</string>
+	<string name="fromexistingLabel">Create new tour from existing tour:</string>
 	<string name="freeTrip">Free Tour</string>
 	<string name="fixedTrip">Fixed Tour</string><string name="imageLabel">Image URL:</string>
 	<string name="importdata">IMPORT DATA</string><string name="manageDB">Manage Databases</string>
@@ -97,7 +98,8 @@
 	<string name="poi_details_favourite">Favourite</string>
 	<string name="poiMenufavourite">Favourite</string>
 	<string name="preferences">PREFERENCES</string>
-	<string name="requiredFields">* required fields</string><string name="saveTrip">Save Tour</string>
+	<string name="requiredFields">* required fields</string>
+	<string name="saveTrip">Save Tour</string>
 	<string name="savePoi">Save</string>
 	<string name="saveCalendar">Save Times</string>
 	
@@ -111,5 +113,6 @@
 	<string name="label_all">ALL</string>
 	<string name="label_none">NONE</string>
 	<string name="label_select">DONE</string>
+	<string name="yes">Yes</string>
 	
 </resources>

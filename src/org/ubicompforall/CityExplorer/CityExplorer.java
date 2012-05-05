@@ -292,17 +292,15 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	/**
      * Display a dialog that user has no Internet connection
-	 * @param requestCode ID for the calling Activity
-     *
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
      */
-	public static void showNoConnectionDialog( final Activity context, final String strA, final String strB, final Intent intentB, int requestCode ) {
+	public static void showNoConnectionDialog( final Activity context, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
     	AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setCancelable(true);
-		if ( strA == "" ){
+		if ( msg == "" ){
 		    builder.setMessage( R.string.no_connection );
 		}else{
-		    builder.setMessage( strA );
+		    builder.setMessage( msg );
 		}
 		builder.setTitle( R.string.no_connection_title );
 		builder.setPositiveButton( R.string.settings, new DialogInterface.OnClickListener() {
@@ -311,14 +309,14 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		    }
 		} );
 		
-		String cancelText = strB;
+		String cancelText = cancelButtonStr;
 		if ( cancelText == ""){
 			cancelText = context.getResources().getString( R.string.cancel );
 		}
 		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				if ( intentB != null ){
-					context.startActivityForResult( intentB, CityExplorer.REQUEST_LOCATION );
+				if ( cancelIntent != null ){
+					context.startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
 					dialog.dismiss();
 		    	}
 				return;
@@ -331,8 +329,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		    		debug(0, "OOOPS!");
 		    	}else{
 		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
-					if (intentB != null){
-						context.startActivity( intentB );
+					if (cancelIntent != null){
+						context.startActivity( cancelIntent );
 					}
 		    	}
 		        return;

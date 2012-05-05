@@ -231,7 +231,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		boolean verifiedConnection = CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL );
 		if ( ! verifiedConnection ){
 			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
-			CityExplorer.showNoConnectionDialog( this, "", "Use Cache", null, 0 );
+			CityExplorer.showNoConnectionDialog( this, "", "Use Cache", null );
 			//verifiedConnection = true;
 		}
 	} //initWifi

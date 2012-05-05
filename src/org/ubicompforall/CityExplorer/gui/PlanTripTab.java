@@ -154,26 +154,38 @@ public class PlanTripTab extends PlanActivityTab{
 		lv.setAdapter(adapter);
 	}//init
 
+	/**
+	 * Checks if the given trip is empty.
+	 * @param t The trip you want to check.
+	 * @return True if the trip is empty, false otherwise.
+	 */
+	private boolean isEmptyTrip(Trip t) {
+		if(t.getPois().size() > 0){
+			return false;
+		}else {
+			return true;
+		}
+	}//isEmptyTrip
+
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
-		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
-		{
+		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 			//Pressing a section header.
 			return;
 		}
 		trip = (Trip) l.getAdapter().getItem(pos);
 
-//		if(requestCode == NewTripActivity.ADD_TO_TRIP){
-////			if(!isEmptyTrip(trip)){
-//				Intent resultIntent = new Intent();
-//				resultIntent.putExtra(IntentPassable.TRIP, trip);
-//				setResult( Activity.RESULT_OK, resultIntent );
-//				finish();
-////			}else {
-////				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
-////			}
-//			return;
-//		} // NewTrip->ADD_TO_TRIP
+		if(requestCode == NewTripActivity.ADD_TO_TRIP){	//In case PlanTripTab was called only to select a trip (e.g. one to copy into a new trip).
+			if(!isEmptyTrip(trip)){
+				Intent resultIntent = new Intent();
+				resultIntent.putExtra(IntentPassable.TRIP, trip);
+				setResult( Activity.RESULT_OK, resultIntent );
+				finish();
+			}else {
+				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
+			}
+			return;
+		} // NewTrip->ADD_TO_TRIP
 
 		if (requestCode == PlanPoiTab.ADD_TO_TRIP){
 			Intent resultIntent = new Intent();
@@ -198,34 +210,14 @@ public class PlanTripTab extends PlanActivityTab{
 			return;
 		} // if download trip
 
-//		if (!isEmptyTrip(trip)) {
-			Intent details = new Intent( this, TripListActivity.class );
-			details.putExtra("trip", trip);
-			startActivity(details);
-//		} else {
-//			Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
-//		}
+		Intent details = new Intent( this, TripListActivity.class );
+		details.putExtra("trip", trip);
+		startActivity(details);
 	} // onListItemClick
-
-	/**
-	 * Checks if the given trip is empty.
-	 * 
-	 * @param t The trip you want to check.
-	 * @return True if the trip is empty, false otherwise.
-	 */
-//	private boolean isEmptyTrip(Trip t) {
-//		if(t.getPois().size() > 0){
-//			return false;
-//		}else {
-//			return true;
-//		}
-//	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//adapter.notifyDataSetChanged();		
-
 		if(existingPois != null){
 			int nrOfPoIs = existingPois.size();
 			for (Poi p : existingPois) {

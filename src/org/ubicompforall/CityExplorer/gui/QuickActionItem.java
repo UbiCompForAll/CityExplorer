@@ -39,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 public class QuickActionItem extends LinearLayout implements Checkable {
@@ -75,6 +76,7 @@ public class QuickActionItem extends LinearLayout implements Checkable {
 
     @Override
     public void toggle() {
+    	CityExplorer.debug(0,"");
         setChecked(!mChecked);
     }
 

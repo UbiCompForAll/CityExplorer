@@ -224,7 +224,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 					}
 				}
 			}else{
-				CityExplorer.showNoConnectionDialog( context, "", "", null, 0 );
+				CityExplorer.showNoConnectionDialog( context, "", "", null );
 				//Toast.makeText( context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 			}
 			return false;

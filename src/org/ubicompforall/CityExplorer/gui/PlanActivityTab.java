@@ -44,7 +44,7 @@ public class PlanActivityTab extends ListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		debug(2, "PlanTabActivity~47 create");
+		debug(2, "create");
 		setContentView(R.layout.trippoi);
 	}
 	

@@ -286,7 +286,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			debug(2, "Got Address: "+lat+", "+lng );
 		}else if( ! CityExplorer.DATACONNECTION_NOTIFIED ){ //Ask to connect
 			CityExplorer.showNoConnectionDialog( this, "Data connection needed to verify address location",
-					"Set Manually", new Intent( this, LocationActivity.class ), CityExplorer.REQUEST_LOCATION );
+					"Set Manually", new Intent( this, LocationActivity.class ) ); //, CityExplorer.REQUEST_LOCATION ) );
 		}else if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
 			debug(1, "Save! lat is "+lat+" and lng is "+lng );
 			storeToDB();	//Save!
