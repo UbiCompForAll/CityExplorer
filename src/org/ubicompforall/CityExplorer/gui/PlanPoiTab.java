@@ -163,6 +163,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	
 	@Override
 	protected void onResume() {
+		debug(0,"");
 		super.onResume();
 		if(requestCode != DOWNLOAD_POI){			
 			updateSections();
@@ -547,12 +548,9 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
 			Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
 
-
 			// Declare quick actions 
-
 			// 1: Show on Map
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
-
 				public void onClick(View view){
 					qa.dismiss();
 					CityExplorer.showProgressDialog(context, "Launching Map" );

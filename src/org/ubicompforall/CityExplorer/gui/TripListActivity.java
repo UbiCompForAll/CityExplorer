@@ -206,6 +206,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		debug(0,"requestCode="+requestCode+", ADD_TO_TRIP="+ADD_TO_TRIP+", CALENDER="+CALENDAR+", etc...");
 		if(resultCode==Activity.RESULT_CANCELED){
 			return;
 		}
@@ -214,14 +215,16 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			trip = data.getParcelableExtra(IntentPassable.TRIP);
 			pois = trip.getPois();
 			poiAdapter.replaceAll(pois);
-			poiAdapter.notifyDataSetChanged();
 			lv.setAdapter(poiAdapter);
-			debug(0, "WHY?!" );
+			debug(0, "Returned pois to add to trip!" ); //From using PoiList to select new POIs to add to trip
+			poiAdapter.notifyDataSetChanged();
 			break;
 		case CALENDAR:
 			this.trip = data.getParcelableExtra(IntentPassable.TRIP);
+			poiAdapter.notifyDataSetChanged();
 			break;
 		default:
+			debug(0,"No handler for result="+resultCode );
 			break;
 		}
 	}//onActivityResult
@@ -278,9 +281,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			});
 
 			qa.addItem(mapviewIcon,	"Show on map",		new OnClickListener(){
-
 				public void onClick(View view){
-
 					Intent showInMap = new Intent(TripListActivity.this, MapsActivity.class);
 					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 					selectedPois.add(p);
@@ -292,9 +293,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			});
 
 			qa.addItem(directIcon,	"Get directions",	new OnClickListener(){
-
 				public void onClick(View view){
-
 					//Latitude and longitude for current position
 					double slon = userLocation.getLongitude();
 					double slat = userLocation.getLatitude();

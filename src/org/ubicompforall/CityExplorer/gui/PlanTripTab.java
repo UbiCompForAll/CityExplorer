@@ -217,6 +217,7 @@ public class PlanTripTab extends PlanActivityTab{
 
 	@Override
 	protected void onResume() {
+		debug(0,"");
 		super.onResume();
 		if(existingPois != null){
 			int nrOfPoIs = existingPois.size();

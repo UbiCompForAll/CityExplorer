@@ -177,13 +177,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 		try	{
 			myDataBase.insertOrThrow("trip_poi", null, values);
-			System.out.println("POI added to DB: "+
+			debug(0, "POI added to DB: "+
 					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
 			return true;
 		} catch (Exception e) {
-			System.out.println("ERROR in SQL: "+e.getMessage()+" SQL values: "+
+			debug(0, "ERROR in SQL: "+e.getMessage()+" SQL values: "+
 					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
-			e.printStackTrace();
+			//e.printStackTrace();
+			debug(0, "This poi was already added before?" );
 			return false;
 		}
 	}//addPoiToTrip
@@ -915,7 +916,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 
 		if(categoryId == -1){
-			System.out.println("Error getting the category_id");
+			debug(0, "Error getting the category_id");
 		}
 
 		int poiID = poi.getIdPrivate();

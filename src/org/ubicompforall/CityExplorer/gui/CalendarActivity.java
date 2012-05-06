@@ -35,6 +35,7 @@ import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.Time;
 import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.gui.ViewDayHourItem.poiTextView;
+import org.ubicompforall.CityExplorer.map.MapsActivity;
 import org.ubicompforall.CityExplorer.map.route.GoogleKML;
 import org.ubicompforall.CityExplorer.map.route.Road;
 
@@ -133,7 +134,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			//	trip.getPois().containsAll(trip.getFixedTimes().keySet()))	{ //all pois have time.
 			for(Poi poi : trip.getPois()){
 				if ( allDone && trip.getFixedTimes().containsKey(poi) ){
-					debug(0, "times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
+					//debug(0, "times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
 				
 					ViewDayHourItem time = null;
 					for(ViewDayHourItem t : hourViews)	{
@@ -215,7 +216,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	//appointment click listener
 	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick(){
 		public void OnClick(ViewDayHourItem item){
-			debug(0, "you clicked "+item.getTag() );//.GetHour()+item.GetMinutes() );
+			debug(0, "you clicked "+item );//.GetHour()+item.GetMinutes() );
 			
 			final ViewDayHourItem time = item;
 			//find next poi
@@ -224,7 +225,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			if ( poiIndex < trip.getPois().size() ){
 		    	poi = trip.getPois().get(poiIndex);
 			}
-			debug(0, "poiIndex is "+ poiIndex );
+			debug(2, "poiIndex is "+ poiIndex );
 
 			//Add walking time:
 			if( poiIndex >= trip.getPois().size() || addWalkingTime( poiIndex, time, time.GetMinutes(), poi ) == false){
@@ -244,7 +245,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			setTripTime(poi, new Time(time.GetHour(), time.GetMinutes()));
 			
 			calendarIsEmpty = false;
-			//poiAdapter.remove(poiAdapter.getItem(0));	//Remove already placed entries
+			//poiAdapter.remove(poiAdapter.getItem(0));	//Remove already placed entries // Moved to ???
 			saved = false;
 		}//onClick
 	}; //OnNewApptItemClick: OnItemClick class
@@ -285,7 +286,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	 * @return success
 	 */
 	private boolean addWalkingTime(int tripPoiIndex, ViewDayHourItem time,int minutes, Poi poi){
-		debug(1, "tripPoiIndex is "+tripPoiIndex );
+		//debug(1, "tripPoiIndex is "+tripPoiIndex );
 		//find the previous poi entry
 		poiTextView ptvBeforeOrNull = findPoiViewBefore(trip, hourViews, time);
 		poiTextView ptvAfterOrNull  = findPoiViewAfter(trip, hourViews, time);
@@ -409,7 +410,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
-		super.onPrepareOptionsMenu (menu);
+		super.onPrepareOptionsMenu( menu );
 		menu.clear();	// Rebuild the menu every time? // Or move this to on-create?
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.calendar_menu, menu);
@@ -417,13 +418,16 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			menu.removeItem( R.id.composePOIs );
 		}
 		return super.onPrepareOptionsMenu(menu);
-	}
+	}//onPrepareOptionsMenu
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
+	public boolean onOptionsItemSelected( MenuItem item ){
+		debug(0, "Selected: "+item );
 		int itemID = item.getItemId();
 		
-		if(itemID == R.id.saveCalendar){
+		switch (itemID){
+		case R.id.saveCalendar:
+			debug(0,"");
 			//if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				//done
 				DBFactory.getInstance(this).addTimesToTrip(trip);
@@ -436,9 +440,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				Toast.makeText(this, "Some locations still without time", Toast.LENGTH_LONG).show();
 			}
-		} // saveCalendar
-
-		if(itemID == R.id.clearCalendar){
+		case R.id.clearCalendar:
 			ll.removeAllViews();
 			addViews(); //Add the calendar view
 			poiAdapter.clear();
@@ -447,14 +449,16 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			trip.clearTimes();
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 			saved=false;
-		} //clearCalendar
-
-		//Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
-		if(itemID == R.id.composePOIs){
+		case R.id.menuShowMap:
+			Intent showInMap = new Intent( this, MapsActivity.class );
+			showInMap.putExtra(IntentPassable.TRIP, trip);
+			startActivity(showInMap);
+		case R.id.composePOIs:	//Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
 			ll.removeAllViews();
 			showComposerInWebView();
-		}// if Compose UbiServices
-
+		default:
+			break;
+		}
 		return true;
 	} // onOptionsItemSelected
 
