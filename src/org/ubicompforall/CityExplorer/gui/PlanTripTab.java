@@ -367,7 +367,7 @@ public class PlanTripTab extends PlanActivityTab{
 			trip.addPoi(poi);
 			Toast.makeText(this, poi.getLabel() + " added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
 			DBFactory.getInstance(this).addPoiToTrip(trip, poi);
-			break;
+		break;
 		case NEW_TRIP:
 			existingPois = data.getParcelableArrayListExtra(IntentPassable.POILIST);
 			trip = data.getParcelableExtra(IntentPassable.TRIP);
@@ -378,9 +378,9 @@ public class PlanTripTab extends PlanActivityTab{
 			if(trip==null){
 				break;
 			}
-			break;
+		break;
 		default:
 			break;
 		}
 	}
-}
+}//PlanTripTab

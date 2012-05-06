@@ -109,7 +109,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			poiAdapter = preparePoiList();
 		}else{//if some (fixed time) entries have not been given a time yet
 			poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
-			debug(0, "no Time on resume" );
+			debug(1, "no Time on resume" );
 		}
 		debug(2, "poiAdapter.size is "+poiAdapter.getCount() );
 		//add pois that already has times: //HEAVY! Run on a different Thread!
@@ -426,20 +426,22 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		
 		switch (itemID){
 		case R.id.saveCalendar:
-			debug(0,"");
+			debug(0,"itemID is "+itemID);
+			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
+				Toast.makeText(this, "Some locations still without time", Toast.LENGTH_LONG).show();
+			}
 			//if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				//done
 				DBFactory.getInstance(this).addTimesToTrip(trip);
 				Intent resultIntent = new Intent();
-				resultIntent.putExtra(IntentPassable.TRIP, trip);
+				resultIntent.putExtra( IntentPassable.TRIP, trip );
 				setResult( Activity.RESULT_OK, resultIntent );
 				saved=true;
 				finish();
 			//}else{
-			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
-				Toast.makeText(this, "Some locations still without time", Toast.LENGTH_LONG).show();
-			}
+		break;
 		case R.id.clearCalendar:
+			debug(0,"itemID is "+itemID);
 			ll.removeAllViews();
 			addViews(); //Add the calendar view
 			poiAdapter.clear();
@@ -448,13 +450,12 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			trip.clearTimes();
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 			saved=false;
-//		case R.id.menuShowMap:
-//			Intent showInMap = new Intent( this, MapsActivity.class );
-//			showInMap.putExtra(IntentPassable.TRIP, trip);
-//			startActivity(showInMap);
-		case R.id.composePOIs:	//Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
-			ll.removeAllViews();
+		break;
+		case R.id.composePOIs:
+			debug(0,"itemID is "+itemID);
+			ll.removeAllViews(); //Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
 			showComposerInWebView();
+		break;
 		default:
 			break;
 		}

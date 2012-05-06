@@ -780,11 +780,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		try {
 			myDataBase.insertOrThrow("poi", null, values3);
 			debug(0, "Remember to update the PlanPoiTab" );
-			Toast.makeText(myContext, "Remember to update the PlanPoiTab-list", Toast.LENGTH_SHORT ).show();
+			//Toast.makeText(myContext, "Remember to update the PlanPoiTab-list", Toast.LENGTH_SHORT ).show();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
-		}
+		}//try DB insert - catch SQL error
 
 		c.close();
 		return 1;
