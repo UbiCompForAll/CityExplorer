@@ -113,7 +113,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 */
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		debug(0, "" );
+		debug(2, "" );
 		setContentView(R.layout.maplayout);
 
 		poiClicked		= false;
@@ -136,7 +136,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		overlays.add(locationIcon);
 		
 		initWifi();
-		initGPS();
+		initGPS( this );
 		drawOverlays();
 	}//onCreate
 
@@ -212,16 +212,17 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	/**
 	 * Init the GPS.
 	 */
-	void initGPS(){
-		debug(0, "InitGPS now..." );
+	public static void initGPS( Context context ){
+		CityExplorer.debug(0, "InitGPS now..." );
 		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
 		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged( lastKnownLocation );
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		if ( context instanceof MapsActivity ){
+			((MapsActivity) context).onLocationChanged( lastKnownLocation );
+			// Register the listener with the Location Manager to receive location updates
+			locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) context );
+		}
 	}//initGPS
 	
 	/***

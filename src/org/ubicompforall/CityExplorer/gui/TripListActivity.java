@@ -42,7 +42,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -120,7 +119,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		setContentView(R.layout.triplist);
 		init();
 
-		initGPS();
+		//initGPS();
 		poiAdapter.notifyDataSetChanged();
 		userLocation = StartActivity.verifyUserLocation( userLocation, this );
 
@@ -212,11 +211,11 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		}
 		switch (requestCode){
 		case ADD_TO_TRIP:
+			debug(2, "Returned pois to add to trip!" ); //From using PoiList to select new POIs to add to trip
 			trip = data.getParcelableExtra(IntentPassable.TRIP);
 			pois = trip.getPois();
 			poiAdapter.replaceAll(pois);
 			lv.setAdapter(poiAdapter);
-			debug(0, "Returned pois to add to trip!" ); //From using PoiList to select new POIs to add to trip
 			poiAdapter.notifyDataSetChanged();
 			break;
 		case CALENDAR:
@@ -324,19 +323,19 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		userLocation = location;
 	}
 
-	/**
-	 * Initializes the GPS on the telephone.
-	 */
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
+//	/**
+//	 * Initializes the GPS on the telephone.	//Move to MapsActivity
+//	 */
+//	void initGPS(){
+//		// Acquire a reference to the system Location Manager
+//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//
+//		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		onLocationChanged(lastKnownLocation);
+//
+//		// Register the listener with the Location Manager to receive location updates
+//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//	}
 
 	@Override
 	public void onProviderDisabled(String provider) {

@@ -47,7 +47,6 @@ import org.ubicompforall.CityExplorer.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
@@ -58,7 +57,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -152,7 +150,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		saved = true;
 		//menu_shown = false;
 		init();
-		initGPS();
+		//initGPS();
 	} //onCreate
 
 	@Override
@@ -163,7 +161,7 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	
 	@Override
 	protected void onResume() {
-		debug(0,"");
+		debug(2,"");
 		super.onResume();
 		if(requestCode != DOWNLOAD_POI){			
 			updateSections();
@@ -224,18 +222,18 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	}//init
 
 	/**
-	 * Initializes the GPS of the phone.
+	 * Initializes the GPS of the phone.	//Move to MapsActivity
 	 */
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-		userLocation = StartActivity.verifyUserLocation( userLocation, this );
-	}// initGPS
+//	void initGPS(){
+//		// Acquire a reference to the system Location Manager
+//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		onLocationChanged(lastKnownLocation);
+//
+//		// Register the listener with the Location Manager to receive location updates
+//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//		userLocation = StartActivity.verifyUserLocation( userLocation, this );
+//	}// initGPS
 
 
 	/**
@@ -697,56 +695,6 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		return;
 	} //onBackPressed
 	
-	/**
-     * Display a dialog that user has no Internet connection
-	 * @param requestCode ID for the calling Activity
-     *
-     * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
-     */
-	private void saveDialog( final Activity context, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle( "Add selected POIs?" );
-	    builder.setMessage( msg );
-		builder.setCancelable(true);
-		builder.setPositiveButton( R.string.yes, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int which) {
-		    	saveAndFinish();
-		    }
-		} );
-		
-		String cancelText = cancelButtonStr;
-		if ( cancelText == ""){
-			cancelText = context.getResources().getString( R.string.cancel );
-		}
-		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				if ( cancelIntent != null ){
-					context.startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
-					dialog.dismiss();
-		    	}
-				return;
-		    }
-		} );
-
-		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-		    public void onCancel(DialogInterface dialog) {
-		    	if ( context == null ){
-		    		CityExplorer.debug(0, "OOOPS!");
-		    	}else{
-		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
-					if (cancelIntent != null){
-						context.startActivity( cancelIntent );
-					}
-		    	}
-		        return;
-		    }
-		} );
-		
-		builder.show();
-	} // saveDialog
-
-
-
 	@Override
 	public void onLocationChanged(Location location) {
 		this.userLocation = location;
@@ -850,6 +798,55 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		debug(0, "HERE I AM!!!");
-	}
+	}//onNothringSelected
 	
+	/**
+     * Display a dialog that user should save first!
+	 * @param requestCode ID for the calling Activity
+     * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
+     */
+	private void saveDialog( final Activity context, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle( "Add selected POIs?" );
+	    builder.setMessage( msg );
+		builder.setCancelable(true);
+		String cancelText = cancelButtonStr;
+		if ( cancelText == ""){
+			cancelText = context.getResources().getString( R.string.cancel );
+		}
+		builder.setPositiveButton( R.string.yes, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		    	saveAndFinish();
+		    }
+		} );
+		builder.setNeutralButton( R.string.no, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		    	finish();
+		    }
+		} );
+		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if ( cancelIntent != null ){
+					context.startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
+					dialog.dismiss();
+		    	}
+				return;
+		    }
+		} );
+		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+		    public void onCancel(DialogInterface dialog) {
+		    	if ( context == null ){
+		    		CityExplorer.debug(0, "OOOPS!");
+		    	}else{
+		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
+					if (cancelIntent != null){
+						context.startActivity( cancelIntent );
+					}
+		    	}
+		        return;
+		    }
+		} );
+		builder.show();
+	} // saveDialog
+
 } // class PlanPoiTab

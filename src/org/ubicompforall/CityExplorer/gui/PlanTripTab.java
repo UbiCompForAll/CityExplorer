@@ -28,7 +28,6 @@
  * This class handles all the action going on in the tours tab.
  * 
  */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -217,7 +216,7 @@ public class PlanTripTab extends PlanActivityTab{
 
 	@Override
 	protected void onResume() {
-		debug(0,"");
+		debug(2,"");
 		super.onResume();
 		if(existingPois != null){
 			int nrOfPoIs = existingPois.size();
@@ -234,7 +233,7 @@ public class PlanTripTab extends PlanActivityTab{
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
+		//super.onPrepareOptionsMenu(menu);
 		if (requestCode == PlanPoiTab.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP){
 			menu.setGroupVisible(R.id.planMenuGroupTrip, false);
 		}

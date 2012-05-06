@@ -41,7 +41,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
+import org.ubicompforall.CityExplorer.map.MapsActivity;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -129,9 +132,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	     */
 	    PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
 
-	    //initGPS(); //RS-120501 Use only when needed (E.g. Maps)
-	    // And what about DB-loading?  Initialize the single instance here :-)
-		//db = DBFactory.getInstance(this); //Delay?
+	    MapsActivity.initGPS( this ); //RS-120501 Use only when needed (E.g. Maps)
+		db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
 		
 		//Always warn about missing data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;

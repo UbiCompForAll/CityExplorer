@@ -49,7 +49,6 @@ import android.view.View.OnClickListener;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 
 public class StartActivity extends Activity implements OnClickListener{
@@ -85,7 +84,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		//startActivity(new Intent( this, PlanActivity.class) );
 		// TODO: FOR DEBUGGING
 
-		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
+		//initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		userLocation = verifyUserLocation( userLocation, this );		//Init userLocation
 	}//onCreate
 
@@ -201,17 +200,17 @@ public class StartActivity extends Activity implements OnClickListener{
 
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
-	 * Initializes the GPS on the device.
+	 * Initializes the GPS on the device.		//Move to MapsActivity
 	 **/
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		//Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		//onLocationChanged(lastKnownLocation);
-		// Register the listener with the Location Manager to receive location updates
-		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}//initGPS
+//	void initGPS(){
+//		// Acquire a reference to the system Location Manager
+//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//		//Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		//onLocationChanged(lastKnownLocation);
+//		// Register the listener with the Location Manager to receive location updates
+//		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//	}//initGPS
 
 	/* TODO Auto-generated method stub
 	// TODO Try to run slow methods in background Threads!

@@ -184,7 +184,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			debug(0, "ERROR in SQL: "+e.getMessage()+" SQL values: "+
 					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
 			//e.printStackTrace();
-			debug(0, "This poi was already added before?" );
+			debug(0, "The poi was already added before?" );
 			return false;
 		}
 	}//addPoiToTrip

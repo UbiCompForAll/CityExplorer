@@ -53,7 +53,7 @@
 	<string name="app_name">City Explorer</string>
 	    
 	<!-- constants -->
-	<string name="action_plan">.gui.ActivityPlan</string><string name="cancel">BACK</string>
+	<string name="action_plan">.gui.ActivityPlan</string><string name="cancel">Cancel</string>
 	<string name="categoryLabel">Category:</string>
 	<string name="composeUbiServices">compose UbiServices</string>
 	<string name="constant_provider_authority">.provider.database</string>
@@ -114,5 +114,6 @@
 	<string name="label_none">NONE</string>
 	<string name="label_select">DONE</string>
 	<string name="yes">Yes</string>
+	<string name="no">No</string>
 	
 </resources>

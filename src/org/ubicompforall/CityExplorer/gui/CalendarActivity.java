@@ -22,7 +22,6 @@
  * and limitations under the License.
  * 
  */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.data.Time;
 import org.ubicompforall.CityExplorer.data.Trip;
 import org.ubicompforall.CityExplorer.gui.ViewDayHourItem.poiTextView;
-import org.ubicompforall.CityExplorer.map.MapsActivity;
 import org.ubicompforall.CityExplorer.map.route.GoogleKML;
 import org.ubicompforall.CityExplorer.map.route.Road;
 
@@ -60,7 +58,6 @@ import android.widget.Toast;
 
 /**
  * @description:
- *
  */
 public class CalendarActivity extends Activity implements OnTouchListener{
 
@@ -89,7 +86,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 		//trip = DBFactory.getInstance(this).getAllTrips(false).get(0);
 		trip = this.getIntent().getParcelableExtra("trip");
-		debug(1, "free:"+trip.isFreeTrip() );
+		debug(2, "free:"+trip.isFreeTrip() );
 		
 		sv = new ScrollView(this);
 		ll = new LinearLayout(this);
@@ -112,9 +109,9 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			poiAdapter = preparePoiList();
 		}else{//if some (fixed time) entries have not been given a time yet
 			poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
-			debug(0, "no Time!" );
+			debug(0, "no Time on resume" );
 		}
-		debug(0, "poiAdapter.size is "+poiAdapter.getCount() );
+		debug(2, "poiAdapter.size is "+poiAdapter.getCount() );
 		//add pois that already has times: //HEAVY! Run on a different Thread!
 		addPoisWithTime();
 	}//onResume
@@ -229,6 +226,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 			//Add walking time:
 			if( poiIndex >= trip.getPois().size() || addWalkingTime( poiIndex, time, time.GetMinutes(), poi ) == false){
+				Toast.makeText( CalendarActivity.this, "No more to add...", Toast.LENGTH_SHORT );
 				return;
 	    	}//if no poi left, or no walking time
 
@@ -297,7 +295,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 				if(ptvAfterOrNull != null){ //there is another poi in the calendar after this one.
 	    			Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in cronological order.", Toast.LENGTH_LONG).show();
-	    			debug(-1, "Which one" );
+	    			debug(1, "after or null..." );
 	    			return false;
 	    		}//if first poi
 	    		
@@ -410,20 +408,21 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
-		super.onPrepareOptionsMenu( menu );
+		//super.onPrepareOptionsMenu( menu );	//This probably messes up things!
 		menu.clear();	// Rebuild the menu every time? // Or move this to on-create?
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.calendar_menu, menu);
+		//menu.removeItem(R.id.menuShowMap);
 		if ( ! CityExplorer.ubiCompose){
 			menu.removeItem( R.id.composePOIs );
 		}
-		return super.onPrepareOptionsMenu(menu);
+		return true; // ! calendarIsEmpty; // Show menu when no times?
 	}//onPrepareOptionsMenu
 	
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item ){
-		debug(0, "Selected: "+item );
 		int itemID = item.getItemId();
+		debug(0, "Selected: "+item+", id is "+itemID );
 		
 		switch (itemID){
 		case R.id.saveCalendar:
@@ -449,10 +448,10 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			trip.clearTimes();
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 			saved=false;
-		case R.id.menuShowMap:
-			Intent showInMap = new Intent( this, MapsActivity.class );
-			showInMap.putExtra(IntentPassable.TRIP, trip);
-			startActivity(showInMap);
+//		case R.id.menuShowMap:
+//			Intent showInMap = new Intent( this, MapsActivity.class );
+//			showInMap.putExtra(IntentPassable.TRIP, trip);
+//			startActivity(showInMap);
 		case R.id.composePOIs:	//Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
 			ll.removeAllViews();
 			showComposerInWebView();
