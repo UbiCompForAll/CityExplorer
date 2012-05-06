@@ -163,7 +163,11 @@ public class CityExplorer extends Application{ // implements LocationListener //
 				stackLevel++;
 			}
 			StackTraceElement e = st[stackLevel];
-			Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+			if ( d < 0 ){ //error
+				Log.e(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+			}else{ //debug
+				Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+			}//if debug, else error
 		} // if verbose enough
 	} // debug
 

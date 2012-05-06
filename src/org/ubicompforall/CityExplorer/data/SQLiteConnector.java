@@ -189,13 +189,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	}//addPoiToTrip
 
 	@Override
-	public void addTimesToTrip(Trip trip)
-	{
+	public void addTimesToTrip(Trip trip){
 		ContentValues values = new ContentValues();
 		values.put("trip_id", trip.getIdPrivate());
 
-		for (Poi poi : trip.getFixedTimes().keySet())
-		{
+		for (Poi poi : trip.getFixedTimes().keySet()){
 			values.put("poi_id", poi.getIdPrivate());
 			values.put("poi_number", trip.getPois().indexOf(poi)+1);
 			values.put("hour", trip.getFixedTimes().get(poi).hour);

@@ -156,7 +156,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		if(getIntent().getParcelableExtra("poi") != null){
 			poi = (Poi) getIntent().getParcelableExtra("poi");
 		}else{
-			System.out.println("No poi supplied.. exit activity");
+			debug(0, "No poi supplied.. exit activity");
 			this.finish();
 		}
 
@@ -182,10 +182,8 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 				nextPoi.setEnabled(false);
 			}
 
-		}
-		else
-		{
-			System.out.println("No trip supplied..");
+		}else{
+			debug(0, "No trip supplied..");
 		}
 
 		title 		= (TextView)findViewById(R.id.label);
@@ -221,13 +219,13 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 
 			new Thread(new Runnable(){
 				public void run(){
+					try{
 
-					DefaultHttpClient	httpClient = new DefaultHttpClient();
-					HttpGet	httpGet = new HttpGet(imageURL); //have user-inserted url
-					HttpResponse		httpResponse;
-					final HttpEntity	entity;
+						DefaultHttpClient	httpClient = new DefaultHttpClient();
+						HttpGet	httpGet = new HttpGet(imageURL); //have user-inserted url
+						HttpResponse		httpResponse;
+						final HttpEntity	entity;
 
-					try {
 						httpResponse = httpClient.execute(httpGet);
 						if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 							entity = httpResponse.getEntity();
@@ -254,7 +252,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 						}
 
 					} catch (Exception e) {
-						debug(0, "Error fetching image");
+						debug(-1, "Error fetching image: "+imageURL );
 					}//try-catch
 				}//run
 			}//new Runnable class
@@ -345,7 +343,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	@Override
 	public void onLocationChanged(Location location) {
 		userLocation = location;
-		//System.out.println("Inside onLocationChanged in PoiDetailsActivity");
+		//debug(0, "Inside onLocationChanged in PoiDetailsActivity");
 
 	}
 

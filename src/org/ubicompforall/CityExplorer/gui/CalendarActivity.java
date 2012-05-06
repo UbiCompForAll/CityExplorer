@@ -74,7 +74,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
     //AlertDialog alert;
     
     Trip trip;
-    ArrayAdapter<String> poiAdapter;
+    ArrayAdapter<String> poiAdapter; //Keep entries that have not been given a time (yet!)
     ArrayList<ViewDayHourItem> hourViews = new ArrayList<ViewDayHourItem>();
     public boolean calendarIsEmpty = true;
 	
@@ -88,9 +88,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 		//trip = DBFactory.getInstance(this).getAllTrips(false).get(0);
 		trip = this.getIntent().getParcelableExtra("trip");
-		debug(0, "free:"+trip.isFreeTrip() );
-		poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>());
-		
+		debug(1, "free:"+trip.isFreeTrip() );
 		
 		sv = new ScrollView(this);
 		ll = new LinearLayout(this);
@@ -102,16 +100,23 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		ll.setBackgroundColor(0xFFEBF2FA);
 		sv.addView(ll);
 		setContentView(sv);
-		
-		//add pois that already has times: //HEAVY! Run on a different Thread!
-		addPoisWithTime();
-		
+	}//onCreate
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
 		if( !trip.getFixedTimes().keySet().containsAll(trip.getPois())
 		 ||	!trip.getPois().containsAll(trip.getFixedTimes().keySet()) ){
-			//pois have not been added.
-			preparePoiList();
+			// (some) pois have not been added.
+			poiAdapter = preparePoiList();
+		}else{//if some (fixed time) entries have not been given a time yet
+			poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
+			debug(0, "no Time!" );
 		}
-	}//onCreate
+		debug(0, "poiAdapter.size is "+poiAdapter.getCount() );
+		//add pois that already has times: //HEAVY! Run on a different Thread!
+		addPoisWithTime();
+	}//onResume
 	
 
 	private void debug(int i, String string) {
@@ -121,49 +126,52 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 	private void addPoisWithTime()	{
 		if(trip.getFixedTimes() == null)
-			debug(0,"fixed time == null" );
+			debug(-1,"fixed time == null" );
+		boolean allDone = true;
 		
-		if(trip.getFixedTimes().keySet().containsAll(trip.getPois()) &&
-				trip.getPois().containsAll(trip.getFixedTimes().keySet()))	{ //all pois have time.
-			for(Poi poi : trip.getPois()){	
-				//debug(0, "times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
+		//if(trip.getFixedTimes().keySet().containsAll(trip.getPois()) &&
+			//	trip.getPois().containsAll(trip.getFixedTimes().keySet()))	{ //all pois have time.
+			for(Poi poi : trip.getPois()){
+				if ( allDone && trip.getFixedTimes().containsKey(poi) ){
+					debug(0, "times: "+poi.getLabel()+" "+trip.getFixedTimes().get(poi).hour+":"+trip.getFixedTimes().get(poi).minute);
 				
-				ViewDayHourItem time = null;
-				for(ViewDayHourItem t : hourViews)	{
-					if(t.GetHour() == trip.getFixedTimes().get(poi).hour){
-						time = t;
-						break;
+					ViewDayHourItem time = null;
+					for(ViewDayHourItem t : hourViews)	{
+						if(t.GetHour() == trip.getFixedTimes().get(poi).hour){
+							time = t;
+							break;
+						}
 					}
-				}
-				if(time == null){
-					debug(0, "ERROR in addPoisWithTime");
-				}
-				time.setMinutes(trip.getFixedTimes().get(poi).minute);
-				
-				if( !calendarIsEmpty) { //not first entry. add walking time.
-					addWalkingTime(trip.getPois().indexOf(poi), time, trip.getFixedTimes().get(poi).minute, poi);
-				}
-				
-				//Add poi calendar entry:
-		    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
-				tv.setMinutes(trip.getFixedTimes().get(poi).minute);
-				tv.setPoi(poi);
-				tv.setClickable(true);
-				tv.setOnClickListener(ocl);
-				tv.setAsWalkingEntry(false);
-				time.addView(tv);
-				time.UpdateHeight();
-				
-				calendarIsEmpty = false;
-				
-			}	
-		}
+					if(time == null){
+						debug(0, "ERROR in addPoisWithTime");
+					}
+					time.setMinutes(trip.getFixedTimes().get(poi).minute);
+					
+					//if( !calendarIsEmpty) { //not first entry. add walking time. //Deal with this in addWalkingTime instead (Write once, handle everywhere!)
+						addWalkingTime(trip.getPois().indexOf(poi), time, trip.getFixedTimes().get(poi).minute, poi);
+					//}
+					
+					//Add poi calendar entry:
+			    	poiTextView tv =  time.new poiTextView(CalendarActivity.this);
+					tv.setMinutes(trip.getFixedTimes().get(poi).minute);
+					tv.setPoi(poi);
+					tv.setClickable(true);
+					tv.setOnClickListener(ocl);
+					tv.setAsWalkingEntry(false);
+					time.addView(tv);
+					time.UpdateHeight();
+					
+					calendarIsEmpty = false;
+				}else{ //skip the rest for manual placement
+					allDone = false;
+				}//if allPois have time
+			}//for all pois in fixed trip
+		//}//all pois have time.
 	}//addPoisWithTime
 	
 	
-	private void preparePoiList(){
+	private ArrayAdapter<String> preparePoiList(){
 		ArrayList<String> poiList = new ArrayList<String>();
-		
 		//pois have not been added.
 		for(Poi poi : trip.getPois()){
 			//debug(0, "Poi: "+poi.getLabel()+" added");
@@ -173,7 +181,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				poiList.add( (trip.getPois().indexOf(poi)+1)+" "+poi.getLabel() );
 			}
 		}
-		poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, poiList);
+		return new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, poiList);
 	}//preparePoiList
 
 	/***
@@ -207,7 +215,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	//appointment click listener
 	public ViewDayHourItem.OnItemClick onNewApptItemClick = new ViewDayHourItem.OnItemClick(){
 		public void OnClick(ViewDayHourItem item){
-			debug(0, "you clicked "+item.GetHour()+item.GetMinutes() );
+			debug(0, "you clicked "+item.getTag() );//.GetHour()+item.GetMinutes() );
 			
 			final ViewDayHourItem time = item;
 			//find next poi
@@ -236,7 +244,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			setTripTime(poi, new Time(time.GetHour(), time.GetMinutes()));
 			
 			calendarIsEmpty = false;
-			poiAdapter.remove(poiAdapter.getItem(0));
+			//poiAdapter.remove(poiAdapter.getItem(0));	//Remove already placed entries
 			saved = false;
 		}//onClick
 	}; //OnNewApptItemClick: OnItemClick class
@@ -277,64 +285,71 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	 * @return success
 	 */
 	private boolean addWalkingTime(int tripPoiIndex, ViewDayHourItem time,int minutes, Poi poi){
-		debug(0, "tripPoiIndex is "+tripPoiIndex );
+		debug(1, "tripPoiIndex is "+tripPoiIndex );
 		//find the previous poi entry
 		poiTextView ptvBeforeOrNull = findPoiViewBefore(trip, hourViews, time);
 		poiTextView ptvAfterOrNull  = findPoiViewAfter(trip, hourViews, time);
-		debug(0, "before="+ptvBeforeOrNull+", after="+ptvAfterOrNull );
+		//debug(0, "before="+ptvBeforeOrNull+", after="+ptvAfterOrNull );
 		
-		if( (tripPoiIndex != 0 && !trip.isFreeTrip()) || (!calendarIsEmpty && trip.isFreeTrip()) ){ //no travel to the first POI
-    		
-    		if(ptvAfterOrNull != null){ //there is another poi in the calendar after this one.
-    			Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in cronological order.", Toast.LENGTH_LONG).show();
-    			debug(-1, "Which one" );
-    			return false;
-    		}//if first poi
-    		
-    		if( !trip.isFreeTrip() ){
-    			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) ){
-    				Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in numerical order.", Toast.LENGTH_LONG).show();
-        			debug(-1, "Which one calendarIsEmpty is "+calendarIsEmpty+", ptvBeforeOrNull is "+ptvBeforeOrNull+", tripPoiIndex is "+tripPoiIndex );
-    				return false;
-    			}// if empty, or bad order
-    		}// if FixedTour
-    		
-    		Poi prevPoi = ptvBeforeOrNull.getPoi();
-    		int prevHour = ptvBeforeOrNull.getHourItem().GetHour();
-    		int prevMinutes	= ptvBeforeOrNull.getMinutes();
-    		
-    		double distance = getDistance(poi, prevPoi);
-    		double timeNeededInMin = distance/68;//67 m/min = 4km/h
-    		
-    		//find the correct hour to insert the walk entry.
-    		int numbHoursBack = 0;
-    		if(minutes-timeNeededInMin < 0){ //more than 1 hours travel time.
-    			numbHoursBack = (int) Math.floor(((-1*(minutes-timeNeededInMin)+60)/60));
-    		}
-    		
-    		//add walking entry:
-			if(hourViews.indexOf(time) > numbHoursBack-1){	//not if it is before the first hour
-				ViewDayHourItem Hour = hourViews.get(hourViews.indexOf(time)-numbHoursBack);
-				
-				//check if the entry is before the prev poi. abort if it is.
-				if( (Hour.GetHour() < prevHour) || ((Hour.GetHour() == prevHour)&&((int)(numbHoursBack*60+(minutes-timeNeededInMin)) < prevMinutes)) ){
-					//OMG there is no time to walk to this poi
-					Toast.makeText(CalendarActivity.this, "You will not have time to walk between this and the previous PoI.", Toast.LENGTH_LONG).show();
-					return false;
-				}
-				//Add calendar walk entry:
-		    	poiTextView tv =  Hour.new poiTextView(CalendarActivity.this);
-				tv.setMinutes((int)(numbHoursBack*60+(minutes-timeNeededInMin)));
-				tv.setText("Walk "+(int)distance+" meters");
-				tv.setPoi(poi);
-				tv.setClickable(true);
-				tv.setOnClickListener(ocl);
-				tv.setAsWalkingEntry(true);
-				Hour.addView(tv);
-				Hour.UpdateHeight();	
-			} // if hour > hoursBack-1
-    	} // addWalkingTime
-		return true;
+		if ( ! trip.isFreeTrip() ){
+			if( tripPoiIndex != 0 ){ //no travel to the first POI
+
+				if(ptvAfterOrNull != null){ //there is another poi in the calendar after this one.
+	    			Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in cronological order.", Toast.LENGTH_LONG).show();
+	    			debug(-1, "Which one" );
+	    			return false;
+	    		}//if first poi
+	    		
+	    		if( !trip.isFreeTrip() ){
+	    			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) ){
+	    				Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in numerical order.", Toast.LENGTH_LONG).show();
+	        			debug(-1, "Which one calendarIsEmpty is "+calendarIsEmpty+", ptvBeforeOrNull is "+ptvBeforeOrNull+", tripPoiIndex is "+tripPoiIndex );
+	    				return false;
+	    			}// if empty, or bad order
+	    		}// if FixedTour
+	    		
+	    		Poi prevPoi = ptvBeforeOrNull.getPoi();
+	    		int prevHour = ptvBeforeOrNull.getHourItem().GetHour();
+	    		int prevMinutes	= ptvBeforeOrNull.getMinutes();
+	    		
+	    		double distance = getDistance(poi, prevPoi);
+	    		double timeNeededInMin = distance/68;//67 m/min = 4km/h
+	    		
+	    		//find the correct hour to insert the walk entry.
+	    		int numbHoursBack = 0;
+	    		if(minutes-timeNeededInMin < 0){ //more than 1 hours travel time.
+	    			numbHoursBack = (int) Math.floor(((-1*(minutes-timeNeededInMin)+60)/60));
+	    		}
+	    		
+	    		//add walking entry:
+				if(hourViews.indexOf(time) > numbHoursBack-1){	//not if it is before the first hour
+					ViewDayHourItem Hour = hourViews.get(hourViews.indexOf(time)-numbHoursBack);
+					
+					//check if the entry is before the prev poi. abort if it is.
+					if( (Hour.GetHour() < prevHour) || ((Hour.GetHour() == prevHour)&&((int)(numbHoursBack*60+(minutes-timeNeededInMin)) < prevMinutes)) ){
+						//OMG there is no time to walk to this poi
+						Toast.makeText(CalendarActivity.this, "You will not have time to walk between this and the previous PoI.", Toast.LENGTH_LONG).show();
+						return false;
+					}
+					//Add calendar walk entry:
+			    	poiTextView tv =  Hour.new poiTextView(CalendarActivity.this);
+					tv.setMinutes((int)(numbHoursBack*60+(minutes-timeNeededInMin)));
+					tv.setText("Walk "+(int)distance+" meters");
+					tv.setPoi(poi);
+					tv.setClickable(true);
+					tv.setOnClickListener(ocl);
+					tv.setAsWalkingEntry(true);
+					Hour.addView(tv);
+					Hour.UpdateHeight();	
+				} // if hour > hoursBack-1
+	    	} // if not first poi in trip: addWalkingTime
+			//debug(0, "poiAdapter.size is "+poiAdapter.getCount() );
+			if (poiAdapter.getCount() >0 ){
+				poiAdapter.remove( poiAdapter.getItem(0) );	//Remove already placed entries
+			}
+			return true;
+		}//if fixed tour
+		return false; //e.g. free trip etc.
 	} // addWalkingTime
 	
 	public poiTextView findPoiViewBefore(Trip trip,ArrayList<ViewDayHourItem> hourViews,ViewDayHourItem newView){
@@ -409,7 +424,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		int itemID = item.getItemId();
 		
 		if(itemID == R.id.saveCalendar){
-			if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
+			//if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				//done
 				DBFactory.getInstance(this).addTimesToTrip(trip);
 				Intent resultIntent = new Intent();
@@ -417,8 +432,9 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 				setResult( Activity.RESULT_OK, resultIntent );
 				saved=true;
 				finish();
-			}else{
-				Toast.makeText(this, "All locations are not added", Toast.LENGTH_LONG).show();
+			//}else{
+			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
+				Toast.makeText(this, "Some locations still without time", Toast.LENGTH_LONG).show();
 			}
 		} // saveCalendar
 

@@ -148,7 +148,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			title = (TextView)findViewById(R.id.triplabel);
 			title.setText(trip.getLabel());
 		}else{
-			System.out.println("No trip supplied.. exit activity");
+			debug(0, "No trip supplied.. exit activity");
 			this.finish();
 		}
 
@@ -230,7 +230,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 	public void onListItemClick(ListView l, View v, int pos, long id) {
 
 		Poi p = (Poi) l.getAdapter().getItem(pos);
-		System.out.println("POI " + (pois.size()-1) + ": " + pois.get(pois.size()-1).getImageURL());
+		debug(0, "POI " + (pois.size()-1) + ": " + pois.get(pois.size()-1).getImageURL());
 		Intent details = new Intent(TripListActivity.this, PoiDetailsActivity.class);
 		details.putExtra("poi", p);
 		details.putExtra("trip", trip);
