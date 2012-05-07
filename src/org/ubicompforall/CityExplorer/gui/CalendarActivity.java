@@ -109,7 +109,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			poiAdapter = preparePoiList();
 		}else{//if some (fixed time) entries have not been given a time yet
 			poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
-			debug(1, "no Time on resume" );
+			debug(2, "no Time on resume" );
 		}
 		debug(2, "poiAdapter.size is "+poiAdapter.getCount() );
 		//add pois that already has times: //HEAVY! Run on a different Thread!
@@ -426,7 +426,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		
 		switch (itemID){
 		case R.id.saveCalendar:
-			debug(0,"itemID is "+itemID);
+			debug(2,"itemID is "+itemID);
 			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				Toast.makeText(this, "Some locations still without time", Toast.LENGTH_LONG).show();
 			}
@@ -441,7 +441,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			//}else{
 		break;
 		case R.id.clearCalendar:
-			debug(0,"itemID is "+itemID);
+			debug(2,"itemID is "+itemID);
 			ll.removeAllViews();
 			addViews(); //Add the calendar view
 			poiAdapter.clear();
@@ -452,7 +452,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			saved=false;
 		break;
 		case R.id.composePOIs:
-			debug(0,"itemID is "+itemID);
+			debug(2,"itemID is "+itemID);
 			ll.removeAllViews(); //Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
 			showComposerInWebView();
 		break;
