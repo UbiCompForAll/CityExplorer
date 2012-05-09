@@ -48,13 +48,12 @@ import android.app.Activity;
 import android.content.*;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.*;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
 
-public class PoiDetailsActivity extends Activity implements LocationListener, OnClickListener {
+public class PoiDetailsActivity extends Activity implements OnClickListener {
 
 	/**
 	 * Field containing the TextView of the title.
@@ -195,7 +194,6 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		poiImage = (ImageView) findViewById(R.id.imageContainer);
 
 		showPoiDetails(poi);
-		//initGPS();
 	} // onCreate
 
 	/**
@@ -323,45 +321,6 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		}
 		return true;
 	}//onOptionsItemSelected
-
-	/**
-	 * Method containing GPS initialization. 	//Move to MapsActivity
-	 */
-//	void initGPS(){
-//		// Acquire a reference to the system Location Manager
-//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//
-//		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//TODO: change to gps
-//		onLocationChanged(lastKnownLocation);
-//
-//		// Register the listener with the Location Manager to receive location updates
-//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		userLocation = location;
-		//debug(0, "Inside onLocationChanged in PoiDetailsActivity");
-
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void onClick(View v) {

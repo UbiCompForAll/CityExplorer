@@ -136,8 +136,6 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 
 		//Init View-adapters etc.
 		makeSections();
-
-		//initGPS(); //For maps?
 	}//init
 
 	@Override

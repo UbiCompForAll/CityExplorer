@@ -28,8 +28,6 @@
  *
  *
  */
-
-
 package org.ubicompforall.CityExplorer;
 
 import java.io.ByteArrayOutputStream;
@@ -43,8 +41,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
-import org.ubicompforall.CityExplorer.map.MapsActivity;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -125,19 +121,19 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	
 	@Override
 	public void onCreate() {
-	    debug(0, "Start CityExplorer.java" );
-	    /*
-	     * This populates the default values from the preferences XML file. See
-	     * {@link DefaultValues} for more details.
-	     */
-	    PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
+		debug(0, "Start CityExplorer.java" );
+		/*
+		 * This populates the default values from the preferences XML file. See
+		 * {@link DefaultValues} for more details.
+		 */
+		PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
 
-	    MapsActivity.initGPS( this ); //RS-120501 Use only when needed (E.g. Maps)
+		//MapsActivity.initGPS( this ); //RS-120501 Use only when needed (E.g. Maps)
 		db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
 		
 		//Always warn about missing data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
-	    //debug(0, "Started CityExplorer.java" );
+		//debug(0, "Started CityExplorer.java" );
 	}//onCreate
 
     @Override

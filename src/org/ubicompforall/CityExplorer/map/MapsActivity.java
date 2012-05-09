@@ -140,6 +140,11 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		drawOverlays();
 	}//onCreate
 
+	@Override
+	public void onPause(){
+		super.onPause();
+		disableGPS( this );
+	}//onPause
 
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
@@ -208,6 +213,11 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		}//if (Intent.hasExtra(POILIST)
 	}//drawOverlays
 
+
+	private void disableGPS( MapsActivity context ) {
+		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		locationManager.removeUpdates( context );
+	}//disableGPS
 
 	/**
 	 * Init the GPS.

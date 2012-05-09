@@ -94,7 +94,7 @@
 	<string name="no_connection">Please enable data connection to use Web, Map, Download...</string>
 	<string name="no_connection_title">Data connection needed!</string>
 	<string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
-	<string name="opensqlite">City Explorer</string><string name="plan">PLAN TOUR</string>
+	<string name="opensqlite">City Explorer</string><string name="plan">TOURS &amp; MAP</string>
 	<string name="poi_details_favourite">Favourite</string>
 	<string name="poiMenufavourite">Favourite</string>
 	<string name="preferences">PREFERENCES</string>
@@ -115,5 +115,6 @@
 	<string name="label_select">DONE</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
+	<string name="compose">PERSONALIZE</string>
 	
 </resources>

@@ -41,7 +41,6 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,7 +55,7 @@ import android.widget.TextView;
  * This class shows a single trip in a list.
  */
 
-public class TripListActivity extends ListActivity implements LocationListener{
+public class TripListActivity extends ListActivity{
 
 	/**
 	 * Request code for launching calendar.
@@ -119,11 +118,8 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		setContentView(R.layout.triplist);
 		init();
 
-		//initGPS();
 		poiAdapter.notifyDataSetChanged();
 		userLocation = StartActivity.verifyUserLocation( userLocation, this );
-
-		debug(2, "FreeTrip="+trip.isFreeTrip() );
 	}//onCreate
 
 	
@@ -150,6 +146,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			debug(0, "No trip supplied.. exit activity");
 			this.finish();
 		}
+		debug(2, "FreeTrip="+trip.isFreeTrip() );
 
 		lv = getListView();
 		lv.setOnItemLongClickListener(new DrawPopup());
@@ -317,39 +314,5 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			return true;
 		}//onItemLongClick
 	}//DrawPoput Class
-
-	@Override
-	public void onLocationChanged(Location location) {
-		userLocation = location;
-	}
-
-//	/**
-//	 * Initializes the GPS on the telephone.	//Move to MapsActivity
-//	 */
-//	void initGPS(){
-//		// Acquire a reference to the system Location Manager
-//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//
-//		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//		onLocationChanged(lastKnownLocation);
-//
-//		// Register the listener with the Location Manager to receive location updates
-//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-	}
 
 }//TripListActivity

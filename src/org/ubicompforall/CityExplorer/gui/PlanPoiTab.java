@@ -56,7 +56,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,7 +72,7 @@ import android.widget.Toast;
  * This class handles all the action going on in the locations tab.
  */
 
-public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener, OnItemSelectedListener{
+public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickListener, DialogInterface.OnClickListener, OnItemSelectedListener{
 
 	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
@@ -150,7 +149,6 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		saved = true;
 		//menu_shown = false;
 		init();
-		//initGPS();
 	} //onCreate
 
 	@Override
@@ -220,20 +218,6 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		makeSections();
 		lv.setAdapter(adapter);
 	}//init
-
-	/**
-	 * Initializes the GPS of the phone.	//Move to MapsActivity
-	 */
-//	void initGPS(){
-//		// Acquire a reference to the system Location Manager
-//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//		onLocationChanged(lastKnownLocation);
-//
-//		// Register the listener with the Location Manager to receive location updates
-//		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//		userLocation = StartActivity.verifyUserLocation( userLocation, this );
-//	}// initGPS
 
 
 	/**
@@ -695,26 +679,6 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		return;
 	} //onBackPressed
 	
-	@Override
-	public void onLocationChanged(Location location) {
-		this.userLocation = location;
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		//Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		Toast.makeText(this, "Waiting for GPS lock", Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-
-	}
-
 	/**
 	 * Handles click events in the filter dialog. Check/unCheck
 	 */
