@@ -117,7 +117,7 @@
 		<activity android:name=".map.LocationActivity" android:label="@string/default_location"></activity>
 		<activity android:label="@string/preferences" android:name=".gui.MyPreferencesActivity"></activity>
 		<activity android:name=".gui.ImportWebTab" android:label="Import DB from Web"></activity>
-		
+		    		
 	</application>
 	
 </manifest> 

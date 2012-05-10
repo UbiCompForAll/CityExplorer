@@ -30,22 +30,18 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
-import java.util.ArrayList;
-
-import org.ubicompforall.CityExplorer.data.DatabaseInterface;
-import org.ubicompforall.CityExplorer.data.IntentPassable;
-import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
+import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 
 import android.app.Activity;
-import android.widget.Button;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class StartActivity extends Activity implements OnClickListener{
 	//RS-111122, "implements LocationListener{" move to CityExplorer.java (Application
@@ -119,12 +115,14 @@ public class StartActivity extends Activity implements OnClickListener{
 			startActivity(new Intent( this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){ // Button PERSONALIZE
-			
+			//Intent composeActivity = new Intent( this, UbiComposerActivity.class ); //org.ubicompforall.ubicomposer.android.
+			Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.
+			//org.ubicompforall.ubicomposer.android.intent.action.Launch
+			startActivity( composeActivity );
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
-			Intent locationActivity = new Intent(StartActivity.this, SettingsActivity.class);
-			locationActivity.putParcelableArrayListExtra(IntentPassable.POILIST, new ArrayList<Poi>() );
-			startActivity( locationActivity );
+			Intent settingsActivity = new Intent( this, SettingsActivity.class );
+			startActivity( settingsActivity );
 
 		}else{
 			debug(0, "Unknown button clicked: "+v);
@@ -133,7 +131,8 @@ public class StartActivity extends Activity implements OnClickListener{
 
 	// FOR DEBUGGING
 	//			ExportImport.send(this, poiList);
-	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
+	//settingsActivity.putParcelableArrayListExtra( IntentPassable.POILIST, new ArrayList<Poi>() );
+	//			startActivity(new Intent( this, ExportImport.class ));
 	//OLD CODE
 	// Button EXPLORE CITY MAP
 //Starting the maps activity is too slooow! How to show a progress bar etc.?
@@ -148,7 +147,7 @@ public class StartActivity extends Activity implements OnClickListener{
 
 
 	/***
-	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
+	 * This method should be run in a background Thread because db.getAllPois is quite time-consuming!
 	 */
 //	private void exploreCity() {
 //		debug(0, "Clicked ExploreMap Button...");
