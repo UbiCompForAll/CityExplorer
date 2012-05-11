@@ -24,9 +24,7 @@
  */
 
 /**
- * @description:
- *
- *
+ * @description: Package for central CityExplorer constants and switches
  */
 package org.ubicompforall.CityExplorer;
 
@@ -60,12 +58,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * This is an example of a {@link android.app.Application} class.  Ordinarily you would use
+ * This is an {@link android.app.Application} class.  Ordinarily you would use
  * a class like this as a central repository for information that might be shared between multiple
  * activities.
  * In this case, we have not defined any specific work for this Application.
- * See samples/UbiTerms/tests/src/org.ubicompforall.ubiterms/ApiDemosApplicationTests for an example
- * of how to perform unit tests on an Application object.
+ * See samples/tests/ApiDemosApplicationTests for an example of how to perform unit tests on an Application object.
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 	
@@ -73,7 +70,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String C = "CityExplorer";
 	
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = true;	// true or false ;-)
+	public static final boolean ubiCompose = false;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";

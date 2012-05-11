@@ -91,7 +91,7 @@
 	<string name="navigateFromPoi">Navigate from another location</string>
 	<string name="navigateFrom">Get Directions</string>
 	<string name="navigateButton">Navigate</string>
-	<string name="no_connection">Please enable data connection to use Web, Map, Download...</string>
+	<string name="no_connection">Please enable data connection to use Web, Map, Download etc.</string>
 	<string name="no_connection_title">Data connection needed!</string>
 	<string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
 	<string name="opensqlite">City Explorer</string><string name="plan">TOURS &amp; MAP</string>
@@ -116,5 +116,6 @@
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	<string name="compose">PERSONALIZE</string>
+	<string name="showMaps">SHOW MAP</string>
 	
 </resources>

@@ -33,6 +33,7 @@ package org.ubicompforall.CityExplorer.gui;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
+import org.ubicompforall.CityExplorer.map.MapsActivity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -105,6 +106,10 @@ public class StartActivity extends Activity implements OnClickListener{
 		}else{
 			debug(0, "StartActivity.java: Mismatch between buttons[] and buttonsIds[]");
 		}
+		if ( ! CityExplorer.ubiCompose ){
+			Button b2 = (Button) findViewById(R.id.startButton2);
+			b2.setText( getResources().getString(R.string.showMaps));
+		}//if ubiComposer enabled
 	}//setButtonListeners
 
 	@Override
@@ -114,10 +119,12 @@ public class StartActivity extends Activity implements OnClickListener{
 						
 			startActivity(new Intent( this, PlanActivity.class));
 
-		}else if (v.getId() == R.id.startButton2){ // Button PERSONALIZE
-			//Intent composeActivity = new Intent( this, UbiComposerActivity.class ); //org.ubicompforall.ubicomposer.android.
-			Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.
-			//org.ubicompforall.ubicomposer.android.intent.action.Launch
+		}else if (v.getId() == R.id.startButton2){ // Button PERSONALIZE or MAPS
+			Intent composeActivity = new Intent( this, MapsActivity.class );
+			if ( CityExplorer.ubiCompose ){
+				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
+				composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
+			}
 			startActivity( composeActivity );
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
