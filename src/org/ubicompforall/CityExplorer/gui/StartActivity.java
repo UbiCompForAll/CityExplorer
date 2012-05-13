@@ -119,13 +119,15 @@ public class StartActivity extends Activity implements OnClickListener{
 						
 			startActivity(new Intent( this, PlanActivity.class));
 
-		}else if (v.getId() == R.id.startButton2){ // Button PERSONALIZE or MAPS
-			Intent composeActivity = new Intent( this, MapsActivity.class );
+		}else if (v.getId() == R.id.startButton2){ // Button COMPOSE or SHOW MAPS depending of flag settings
+			Intent nextActivity;
 			if ( CityExplorer.ubiCompose ){
 				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
-				composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
+				nextActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
+			} else {
+				nextActivity = new Intent( this, MapsActivity.class );
 			}
-			startActivity( composeActivity );
+			startActivity( nextActivity );
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
 			Intent settingsActivity = new Intent( this, SettingsActivity.class );
