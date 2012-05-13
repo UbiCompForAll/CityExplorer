@@ -186,7 +186,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if present
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
-			//debug(2, pois.toString() );
+			debug(1, pois.toString() );
 			for (Parcelable parcelable : pois){
 				Poi poi = (Poi) parcelable;
 				//debug(0, "lat,lng is "+poi.getAddress() );
@@ -202,7 +202,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				overlays.add(poiOverlay);
 			}//for each POI to draw
 			if ( poiOverlays.size() >0 ){
-				//debug(0, "poiOverlays is "+poiOverlays );
+				debug(0, "poiOverlays is "+poiOverlays );
 				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
 			}else{
 				debug(0, "Could NOT find the POI overlays!!!" );

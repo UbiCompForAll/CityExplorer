@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.ubicompforall.ubicomposer.android"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.ubicompforall.descriptor"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.ubicompforall.simplelanguage"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

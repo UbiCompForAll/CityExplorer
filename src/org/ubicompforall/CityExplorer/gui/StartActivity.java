@@ -30,9 +30,14 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.util.ArrayList;
+
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
+import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
+import org.ubicompforall.CityExplorer.data.IntentPassable;
+import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
 import android.app.Activity;
@@ -43,6 +48,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class StartActivity extends Activity implements OnClickListener{
 	//RS-111122, "implements LocationListener{" move to CityExplorer.java (Application
@@ -120,12 +126,22 @@ public class StartActivity extends Activity implements OnClickListener{
 			startActivity(new Intent( this, PlanActivity.class));
 
 		}else if (v.getId() == R.id.startButton2){ // Button PERSONALIZE or MAPS
-			Intent composeActivity = new Intent( this, MapsActivity.class );
 			if ( CityExplorer.ubiCompose ){
 				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
-				composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
+				Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
+				startActivity( composeActivity );
+			}else{
+				// Button EXPLORE CITY MAP
+				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
+				Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
+//				try {
+//					wait(500);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+				setProgressBarVisibility(true);
+				exploreCity();
 			}
-			startActivity( composeActivity );
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
 			Intent settingsActivity = new Intent( this, SettingsActivity.class );
@@ -140,55 +156,43 @@ public class StartActivity extends Activity implements OnClickListener{
 	//			ExportImport.send(this, poiList);
 	//settingsActivity.putParcelableArrayListExtra( IntentPassable.POILIST, new ArrayList<Poi>() );
 	//			startActivity(new Intent( this, ExportImport.class ));
-	//OLD CODE
-	// Button EXPLORE CITY MAP
-//Starting the maps activity is too slooow! How to show a progress bar etc.?
-//				Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
-//				try {
-//					wait(500);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//				setProgressBarVisibility(true);
-//				exploreCity();
 
 
 	/***
 	 * This method should be run in a background Thread because db.getAllPois is quite time-consuming!
 	 */
-//	private void exploreCity() {
-//		debug(0, "Clicked ExploreMap Button...");
-//		if (userLocation == null){
-//			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-//		}
-//		userLocation = verifyUserLocation( userLocation, this );
-//		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
-//
-//		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
-//		debug(0, "Getting all POIs..." );
-//		ArrayList<Poi> poiList = db.getAllPois();
-//		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
-//
-//		for (Poi p : poiList) {
-//			double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
-//			double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
-//
-//			Location dest = new Location("dest");
-//			dest.setLatitude(dlat);
-//			dest.setLongitude(dlon);
-//
-//			if ( userLocation != null  &&  userLocation.distanceTo(dest) <= 5000 ){
-//				poiListNearBy.add(p);
-//			}else{ // if POIsNearBy
-//				debug(0, "User location is "+userLocation );
-//			}
-//		}//for POIs
-//		
-//		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
-//		startActivity(showInMap);
-//	}//exploreCity
-//
-//Removing map as a separate button...	RS-120509
+	private void exploreCity() {
+		debug(0, "Clicked ExploreMap Button...");
+		if (userLocation == null){
+			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+		}
+		userLocation = verifyUserLocation( userLocation, this );
+		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
+
+		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
+		debug(0, "Getting all POIs..." );
+		ArrayList<Poi> poiList = db.getAllPois();
+		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
+
+		for (Poi p : poiList) {
+			double dlon = p.getGeoPoint().getLongitudeE6()/1E6;
+			double dlat = p.getGeoPoint().getLatitudeE6()/1E6;
+
+			Location dest = new Location("dest");
+			dest.setLatitude(dlat);
+			dest.setLongitude(dlon);
+
+			if ( userLocation != null  &&  userLocation.distanceTo(dest) <= 5000 ){
+				poiListNearBy.add(p);
+			}else{ // if POIsNearBy
+				debug(0, "User location is "+userLocation );
+			}
+		}//for POIs
+		
+		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
+		startActivity(showInMap);
+	}//exploreCity
+//Will remove map as a separate button...	RS-120509
 
 	
 	public static Location verifyUserLocation( Location userLocation, Context context ) {
