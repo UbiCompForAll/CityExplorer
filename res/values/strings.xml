@@ -54,7 +54,7 @@
 	    
 	<!-- constants -->
 	<string name="action_plan">.gui.ActivityPlan</string><string name="cancel">Cancel</string>
-	<string name="categoryLabel">Category:</string>
+	<string name="categoryLabel">Category:</string><string name="compose">PERSONALIZE</string>
 	<string name="composeUbiServices">compose UbiServices</string>
 	<string name="constant_provider_authority">.provider.database</string>
 	
@@ -74,12 +74,12 @@
 	    <!-- as template</string -->
 	
 	<string name="editcityLabel">* City:</string>
-	<string name="exploreCity">EXPLORE CITY MAP</string>
+	
 	<string name="editzipLabel">Zip:</string>
 	<string name="editcategoryLabel">* Category:</string>
 	<string name="editaddressLabel">* Address:</string>
 	<string name="editdescriptionLabel">Description:</string>
-	<string name="editnameLabel">* Name:</string>
+	<string name="editnameLabel">* Name:</string><string name="exploreCity">EXPLORE CITY MAP</string>
 	<string name="fromexistingLabel">Create new tour from existing tour:</string>
 	<string name="freeTrip">Free Tour</string>
 	<string name="fixedTrip">Fixed Tour</string><string name="imageLabel">Image URL:</string>
@@ -94,8 +94,8 @@
 	<string name="no_connection">Please enable data connection to use Web, Map, Download etc.</string>
 	<string name="no_connection_title">Data connection needed!</string>
 	<string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
-	<string name="opensqlite">City Explorer</string><string name="plan">TOURS &amp; MAP</string>
-	<string name="poi_details_favourite">Favourite</string>
+	<string name="opensqlite">City Explorer</string>
+	<string name="plan">EXPLORE</string><string name="poi_details_favourite">Favourite</string>
 	<string name="poiMenufavourite">Favourite</string>
 	<string name="preferences">PREFERENCES</string>
 	<string name="requiredFields">* required fields</string>
@@ -115,7 +115,7 @@
 	<string name="label_select">DONE</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
-	<string name="compose">PERSONALIZE</string>
+	
 	<string name="showMaps">SHOW MAP</string>
 	
 </resources>

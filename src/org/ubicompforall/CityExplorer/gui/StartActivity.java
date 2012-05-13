@@ -125,7 +125,7 @@ public class StartActivity extends Activity implements OnClickListener{
 						
 			startActivity(new Intent( this, PlanActivity.class));
 
-		}else if (v.getId() == R.id.startButton2){ // Button PERSONALIZE or MAPS
+		}else if (v.getId() == R.id.startButton2){ // Button COMPOSE or SHOW MAPS depending of flag settings
 			if ( CityExplorer.ubiCompose ){
 				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
 				Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
@@ -134,11 +134,6 @@ public class StartActivity extends Activity implements OnClickListener{
 				// Button EXPLORE CITY MAP
 				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
 				Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
-//				try {
-//					wait(500);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
 				setProgressBarVisibility(true);
 				exploreCity();
 			}
@@ -156,7 +151,12 @@ public class StartActivity extends Activity implements OnClickListener{
 	//			ExportImport.send(this, poiList);
 	//settingsActivity.putParcelableArrayListExtra( IntentPassable.POILIST, new ArrayList<Poi>() );
 	//			startActivity(new Intent( this, ExportImport.class ));
-
+//TEST CODE
+//	try {
+//	wait(500);
+//} catch (InterruptedException e) {
+//	e.printStackTrace();
+//}
 
 	/***
 	 * This method should be run in a background Thread because db.getAllPois is quite time-consuming!
