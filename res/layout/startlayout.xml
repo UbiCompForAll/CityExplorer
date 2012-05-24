@@ -9,7 +9,7 @@
 	    android:background="@drawable/button_interactive" android:text="@string/plan" android:textColor="@android:color/white"/>
 	<Button android:id="@+id/startButton2" android:layout_width="250px" android:layout_height="62px"
 	    android:layout_centerHorizontal="true" android:layout_below="@+id/startButton1" android:layout_marginTop="14dp"
-	    android:background="@drawable/button_interactive" android:text="@string/exploreCity" android:textColor="@android:color/white"/>
+	    android:background="@drawable/button_interactive" android:text="@string/compose" android:textColor="@android:color/white"/>
 	<Button android:id="@+id/startButton3" android:layout_width="250px" android:layout_height="62px"
 	    android:layout_centerHorizontal="true" android:layout_below="@+id/startButton2" android:layout_marginTop="14dp"
 	    android:background="@drawable/button_interactive" android:text="@string/settings" android:textColor="@android:color/white"/>

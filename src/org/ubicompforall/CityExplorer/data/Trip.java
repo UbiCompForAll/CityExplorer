@@ -440,15 +440,13 @@ final public class Trip extends IntentPassable {
 		out.writeInt(freeTrip? 1 : 0);
 
 		out.writeInt(fixedTimes.size());
-		for (Poi poi : fixedTimes.keySet())
-		{
+		for (Poi poi : fixedTimes.keySet()){
 			poi.writeToParcel(out, flags);
 			out.writeInt(fixedTimes.get(poi).hour);
 			out.writeInt(fixedTimes.get(poi).minute);
 		}
 
-		for (Poi poi : pois)
-		{
+		for (Poi poi : pois){
 			poi.writeToParcel(out, flags);
 		}
 	}//writeToParcel

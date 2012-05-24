@@ -10,9 +10,15 @@
 		android:icon="@android:drawable/ic_menu_close_clear_cancel"
 		android:title="@string/clearCalendar" />
 
+<!-- Maps removed from calendar menu: One thing at a time!	
+	<item
+	    android:id="@+id/menuShowMap"
+	    android:icon="@android:drawable/ic_menu_mapmode"
+	    android:title="@string/activity_triplist_menu_showOnMap" />
+-->
 <!-- Composition removed in menu, unless ubiCompose==true
 -->
-	<item android:id="@+id/menuShowMap" android:icon="@android:drawable/ic_menu_mapmode" android:title="@string/activity_triplist_menu_showOnMap" /><item
+	<item
 	    android:id="@+id/composePOIs" 
 		android:title="@string/composeUbiServices"
 		android:icon="@drawable/compose"/>

@@ -99,7 +99,12 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 				String lbl = "";
 				if ( context instanceof TripListActivity && ! ((TripListActivity)context).getTrip().isFreeTrip() ){ //if fixed trip
 					HashMap<Poi, Time> times = ((TripListActivity)context).getTrip().getFixedTimes();
-					lbl = (pos+1)+": "+p.getLabel()+" ("+ String.format("%02d", times.get(p).hour) +":"+ String.format("%02d", times.get(p).minute) +")";
+					//CityExplorer.debug(0, "times is "+times);
+					if ( times.get(p) != null ){
+						lbl = (pos+1)+": "+p.getLabel()+" ("+ String.format("%02d", times.get(p).hour) +":"+ String.format("%02d", times.get(p).minute) +")";
+					}else{
+						lbl = (pos+1)+": "+p.getLabel();
+					}
 				}else{ //If TripListActivity - Free trip
 					lbl = p.getLabel();
 				}
@@ -108,7 +113,7 @@ public class PoiAdapter extends ArrayAdapter<Poi> {
 			if (descr != null) {
 				descr.setText(p.getDescription());
 			}
-		}
+		}//if poi != null
 		return v;
 	}//getView
 }//PoiAdapter

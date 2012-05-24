@@ -28,7 +28,6 @@
  * This class handles all the action going on in the tours tab.
  * 
  */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
@@ -120,7 +119,6 @@ public class PlanTripTab extends PlanActivityTab{
 	 */
 	protected static final int DOWNLOAD_TRIP = 7;
 	
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -128,6 +126,23 @@ public class PlanTripTab extends PlanActivityTab{
 		init();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		debug(1,"");
+		if( existingPois != null ){
+			int nrOfPoIs = existingPois.size();
+			for (Poi p : existingPois) {
+				trip.addPoi(p);
+				DBFactory.getInstance(this).addPoiToTrip(trip, p);				
+			}
+			existingPois = null;
+			Toast.makeText(this, 
+					nrOfPoIs + " location(s) added to " + tripName + ".", Toast.LENGTH_LONG).show();
+		}
+		adapter.notifyDataSetChanged();
+	}// onResume
+	
 	/**
 	 * Initializes the activity.
 	 */
@@ -150,30 +165,43 @@ public class PlanTripTab extends PlanActivityTab{
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.TRIP_LIST);
 		}
 		res = getResources();
-		//adapter.notifyDataSetChanged(); //Moved to onResume?
+		
 		lv.setAdapter(adapter);
+		adapter.notifyDataSetChanged(); //Moved to onResume?
 	}//init
+
+	/**
+	 * Checks if the given trip is empty.
+	 * @param t The trip you want to check.
+	 * @return True if the trip is empty, false otherwise.
+	 */
+	private boolean isEmptyTrip(Trip t) {
+		if(t.getPois().size() > 0){
+			return false;
+		}else {
+			return true;
+		}
+	}//isEmptyTrip
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
-		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER)
-		{
+		if( l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER ){
 			//Pressing a section header.
 			return;
 		}
 		trip = (Trip) l.getAdapter().getItem(pos);
 
-//		if(requestCode == NewTripActivity.ADD_TO_TRIP){
-////			if(!isEmptyTrip(trip)){
-//				Intent resultIntent = new Intent();
-//				resultIntent.putExtra(IntentPassable.TRIP, trip);
-//				setResult( Activity.RESULT_OK, resultIntent );
-//				finish();
-////			}else {
-////				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
-////			}
-//			return;
-//		} // NewTrip->ADD_TO_TRIP
+		if(requestCode == NewTripActivity.ADD_TO_TRIP){	//In case PlanTripTab was called only to select a trip (e.g. one to copy into a new trip).
+			if(!isEmptyTrip(trip)){
+				Intent resultIntent = new Intent();
+				resultIntent.putExtra(IntentPassable.TRIP, trip);
+				setResult( Activity.RESULT_OK, resultIntent );
+				finish();
+			}else {
+				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
+			}
+			return;
+		} // NewTrip->ADD_TO_TRIP
 
 		if (requestCode == PlanPoiTab.ADD_TO_TRIP){
 			Intent resultIntent = new Intent();
@@ -198,50 +226,14 @@ public class PlanTripTab extends PlanActivityTab{
 			return;
 		} // if download trip
 
-//		if (!isEmptyTrip(trip)) {
-			Intent details = new Intent( this, TripListActivity.class );
-			details.putExtra("trip", trip);
-			startActivity(details);
-//		} else {
-//			Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
-//		}
+		Intent details = new Intent( this, TripListActivity.class );
+		details.putExtra("trip", trip);
+		startActivity(details);
 	} // onListItemClick
 
-	/**
-	 * Checks if the given trip is empty.
-	 * 
-	 * @param t The trip you want to check.
-	 * @return True if the trip is empty, false otherwise.
-	 */
-//	private boolean isEmptyTrip(Trip t) {
-//		if(t.getPois().size() > 0){
-//			return false;
-//		}else {
-//			return true;
-//		}
-//	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		//adapter.notifyDataSetChanged();		
-
-		if(existingPois != null){
-			int nrOfPoIs = existingPois.size();
-			for (Poi p : existingPois) {
-				trip.addPoi(p);
-				DBFactory.getInstance(this).addPoiToTrip(trip, p);				
-			}
-			existingPois = null;
-			Toast.makeText(this, 
-					nrOfPoIs + " location(s) added to " + tripName + ".", Toast.LENGTH_LONG).show();
-		}
-		adapter.notifyDataSetChanged();
-	}// onResume
-	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
+		//super.onPrepareOptionsMenu(menu);
 		if (requestCode == PlanPoiTab.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP){
 			menu.setGroupVisible(R.id.planMenuGroupTrip, false);
 		}
@@ -261,7 +253,7 @@ public class PlanTripTab extends PlanActivityTab{
 		super.onCreateOptionsMenu(menu);
 		menu.setGroupVisible(R.id.planMenuGroupPoi, false);
 		return true;
-	}
+	}//onCreateOptionsMenu
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -273,26 +265,26 @@ public class PlanTripTab extends PlanActivityTab{
 			startActivityForResult(newTrip, NEW_TRIP);
 
 		}
-//		if(item.getItemId() == R.id.planMenuUpdateTrips){
-//			if(requestCode == DOWNLOAD_TRIP){
-//				if (downloadedTrips==null){
-//					Toast.makeText(this, "No trips selected", Toast.LENGTH_LONG).show();
-//					return false;
-//				}else {
-//					int[] res = du.storeTrips(downloadedTrips);
-//					
-//					Toast.makeText(this, res[0]+" trips added, "+res[1]+" trips updated", Toast.LENGTH_LONG).show();
-//				}
-//				finish();
-//			}else {				
-//				Intent downloadPoi= new Intent(PlanTabTrip.this, PlanTabTrip.class);
-//				downloadPoi.putExtra("requestCode", DOWNLOAD_TRIP);
-//				startActivityForResult(downloadPoi, DOWNLOAD_TRIP);
-//			}
-//		} // if planMenu->UpdateTrip // RS-120123
+		if(item.getItemId() == R.id.planMenuUpdateTrips){
+			if(requestCode == DOWNLOAD_TRIP){
+				if (downloadedTrips==null){
+					Toast.makeText(this, "No trips selected", Toast.LENGTH_LONG).show();
+					return false;
+				}else {
+					int[] res = du.storeTrips(downloadedTrips);
+					
+					Toast.makeText(this, res[0]+" trips added, "+res[1]+" trips updated", Toast.LENGTH_LONG).show();
+				}
+				finish();
+			}else {				
+				Intent downloadPoi= new Intent(PlanTripTab.this, PlanTripTab.class);
+				downloadPoi.putExtra("requestCode", DOWNLOAD_TRIP);
+				startActivityForResult(downloadPoi, DOWNLOAD_TRIP);
+			}
+		} // if planMenu->UpdateTrip // RS-120123
 		
 		return true;
-	}
+	}//onOptionsItemSelected
 
 	/**
 	 * Shows quick actions when the user long-presses an item.
@@ -375,7 +367,7 @@ public class PlanTripTab extends PlanActivityTab{
 			trip.addPoi(poi);
 			Toast.makeText(this, poi.getLabel() + " added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
 			DBFactory.getInstance(this).addPoiToTrip(trip, poi);
-			break;
+		break;
 		case NEW_TRIP:
 			existingPois = data.getParcelableArrayListExtra(IntentPassable.POILIST);
 			trip = data.getParcelableExtra(IntentPassable.TRIP);
@@ -386,9 +378,9 @@ public class PlanTripTab extends PlanActivityTab{
 			if(trip==null){
 				break;
 			}
-			break;
+		break;
 		default:
 			break;
 		}
 	}
-}
+}//PlanTripTab

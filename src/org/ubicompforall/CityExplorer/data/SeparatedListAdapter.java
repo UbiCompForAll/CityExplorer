@@ -82,21 +82,20 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * @param context The context of this class.
 	 * @param listType The type of list this is.
 	 */
-	public SeparatedListAdapter(Activity context, int listType) {  
-	    ctx = context;
+	public SeparatedListAdapter(Activity context, int listType) {
+		this.ctx = context;
 	    this.listType = listType;
-	    debug(2, "SeparatedListAdapter~86: I'm listType: "+ CONSTANTS[listType] );
+	    debug(1, "SeparatedListAdapter~86: I'm listType: "+ CONSTANTS[listType] );
 	} // CONSTRUCTOR
-	
-	
+
+
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
-	
-	
-	
+
+
 	  
-	    /**
+    /**
 	 * Adds a section to an adapter.
 	 * @param section The name of the section.
 	 * @param adapter The adapter the section will use.
@@ -190,88 +189,90 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * Get the names of the section. 
 	 * @return Arraylist containing the section names.
 	 */
-    public LinkedList<String> getSectionNames(){
-    	return sectionNames;
-    }
-  
-    @Override
-    public Object getItem(int position) {  
-    	for (Section section : this.sections) {
-    		Adapter adapter = section.getAdapter();  
-            int size = adapter.getCount() + 1;  
-  
-            // check if position inside this section  
-            if(position == 0) return section;  
-            if(position < size) return adapter.getItem(position - 1);  
-  
-            // otherwise jump into next section  
-            position -= size;  
-        }  
-        return null;  
-    }  
-  
-    @Override
-    public int getCount() {  
-        // total together all sections, plus one for each section header  
-        int total = 0;  
-        for (Section section : this.sections) {
-        	total += section.getAdapter().getCount() + 1;  
-        }
-        return total;  
-    }  
-  
-    @Override
-    public int getViewTypeCount() {  
-        // assume that headers count as one, then total all sections  
-        int total = 1;  
-        for (Section section : this.sections)
-            total += section.getAdapter().getViewTypeCount();  
-        return total;  
-    }  
-  
-    @Override
-    public int getItemViewType(int position) {  
-        int type = 1;  
-        for (Section section : this.sections) {
-        	Adapter adapter = section.getAdapter();  
-            int size = adapter.getCount() + 1;  
-  
-            // check if position inside this section  
-            if(position == 0) return TYPE_SECTION_HEADER;  
-            if(position < size) return type + adapter.getItemViewType(position - 1);  
-  
-            // otherwise jump into next section  
-            position -= size;  
-            type += adapter.getViewTypeCount();  
-        }  
-        return -1;  
-    }  
-  
-    @Override  
-    public View getView(int position, View convertView, ViewGroup parent) {
-    	//debug(0, "position is "+position+", converView is "+convertView );
-        int sectionnum = 0;  
-        for (Section section : this.sections) {
-        	Adapter adapter = section.getAdapter();  
-            int size = adapter.getCount() + 1;  
-  
-            // check if position inside this section  
-            if(position == 0) return getHeaderView(section.getCaption(), sectionnum, convertView, parent);
-            if(position < size) return adapter.getView(position - 1, convertView, parent);  
-  
-            // otherwise jump into next section  
-            position -= size;  
-            sectionnum++;  
-        }  
-        return null;  
-    } // getView
-  
-    @Override  
-    public long getItemId(int position) {  
-        return position;  
-    }
+	public LinkedList<String> getSectionNames(){
+		return sectionNames;
+	}
+	
+	@Override
+	public Object getItem(int position) {  
+		for (Section section : this.sections) {
+			Adapter adapter = section.getAdapter();  
+			int size = adapter.getCount() + 1;  
+			
+			// check if position inside this section  
+			if(position == 0) return section;  
+			if(position < size) return adapter.getItem(position - 1);  
 
-	/**
+			// otherwise jump into next section  
+			position -= size;  
+		}  
+		return null;  
+	}  
+	  
+	@Override
+	public int getCount() {  
+		// total together all sections, plus one for each section header  
+		int total = 0;  
+		for (Section section : this.sections) {
+			total += section.getAdapter().getCount() + 1;  
+		}
+		return total;  
+	}//getCount
+	  
+	@Override
+	public int getViewTypeCount() {  
+		// assume that headers count as one, then total all sections  
+		int total = 1;  
+		for (Section section : this.sections)
+			total += section.getAdapter().getViewTypeCount();  
+		return total;  
+	}//getViewTypeCount
+  
+	@Override
+	public int getItemViewType(int position) {  
+		int type = 1;  
+		for (Section section : this.sections) {
+			Adapter adapter = section.getAdapter();  
+			int size = adapter.getCount() + 1;  
+			
+			// check if position inside this section  
+			if(position == 0) return TYPE_SECTION_HEADER;  
+			if(position < size) return type + adapter.getItemViewType(position - 1);  
+			
+			// otherwise jump into next section  
+			position -= size;  
+			type += adapter.getViewTypeCount();  
+		}  
+		return -1;  
+	}//getItemViewType
+	  
+	@Override  
+	public View getView(int position, View convertView, ViewGroup parent) {
+		debug(2, "position is "+position+", converView is "+convertView );
+		int sectionnum = 0;  
+		for (Section section : sections) {
+			//debug(2, "Section is "+section+", count is "+section.getAdapter().getCount() );
+			Adapter adapter = section.getAdapter();  
+			int size = adapter.getCount() + 1;  
+	        
+	        // check if position inside this section
+			if(position == 0) return getHeaderView(section.getCaption(), sectionnum, convertView, parent);
+			//if(position < size) return adapter.getView(position - 1, convertView, parent);  //convertView messes up things...
+	    	if(position < size) return adapter.getView(position - 1, null, parent);  
+	  
+	    	// otherwise jump into next section  
+	        position -= size;  
+	        sectionnum++;  
+	    }//for each section
+	    return null;  
+	} // getView
+	  
+	@Override  
+	public long getItemId(int position) {  
+		return position;  
+	}
+	
+		/**
 	 * Gets a header view.
 	 * @param caption The caption of the wanted view.
 	 * @param index An int of the index for the wanted view.
@@ -280,23 +281,21 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 * @return A View of the header.
 	 */
 	private View getHeaderView(String caption, int index, View convertView,	ViewGroup parent) {
-		debug(2, "Caption is "+caption );
+		debug(2, "Caption is "+caption+", index is "+index );
 		TextView result = null;
-
+	
 		if ( convertView != null && convertView.getClass() == TextView.class ){
 			result = (TextView) convertView;
 		}else{
 			result = (TextView) ctx.getLayoutInflater().inflate(R.layout.header,null);
 		}
-
 		result.setText(caption);
-
 		return result;
 	} // getHeaderView
 	
 	@Override
 	public void notifyDataSetChanged() {
-		debug(0,"ListType is "+ CONSTANTS[listType] );
+		debug(2, "ListType is "+ CONSTANTS[listType] );
 		if(listType == POI_LIST){
 			DatabaseInterface db = DBFactory.getInstance(ctx);
 			for (Section s : sections){
@@ -331,8 +330,8 @@ public class SeparatedListAdapter extends BaseAdapter {
 		}else if(listType == INTERNET_POIS){
 			debug(0, "Missing INTERNET_POIS Adapter?");
 		}else if(listType == INTERNET_TRIPS){
-			debug(0, "Missing INTERNET_TRIPS Adaptar?");
-
+			debug(0, "Missing INTERNET_TRIPS Adapter?");
+	
 		}else if(listType == LOCAL_DBS){
 			//DatabaseInterface db = DBFactory.getInstance( ctx );	// SQLiteConnector.java
 			FileSystemInterface fs = new FileSystemConnector( ctx );// ctx is Activity-Context

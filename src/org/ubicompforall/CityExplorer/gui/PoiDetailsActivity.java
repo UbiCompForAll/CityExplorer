@@ -48,14 +48,12 @@ import android.app.Activity;
 import android.content.*;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.*;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
 
-public class PoiDetailsActivity extends Activity implements LocationListener, OnClickListener {
+public class PoiDetailsActivity extends Activity implements OnClickListener {
 
 	/**
 	 * Field containing the TextView of the title.
@@ -153,19 +151,15 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.details_poi_layout);
 
-		if(getIntent().getParcelableExtra("poi") != null)
-		{
+		if(getIntent().getParcelableExtra("poi") != null){
 			poi = (Poi) getIntent().getParcelableExtra("poi");
-		}
-		else
-		{
-			System.out.println("No poi supplied.. exit activity");
+		}else{
+			debug(0, "No poi supplied.. exit activity");
 			this.finish();
 		}
 
-		if(getIntent().getParcelableExtra("trip") != null)
-		{
-			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);	// POI MSUT BE UPDATED WHEN TEH ARROW ARE USED TODO 
+		if(getIntent().getParcelableExtra("trip") != null){
+			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);	// POI MUST BE UPDATED WHEN THE ARROW ARE USED TODO 
 			nextPoi = (ImageButton) findViewById(R.id.nextPoiButton);
 			prevPoi.setVisibility(0);
 			nextPoi.setVisibility(0);
@@ -186,10 +180,8 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 				nextPoi.setEnabled(false);
 			}
 
-		}
-		else
-		{
-			System.out.println("No trip supplied..");
+		}else{
+			debug(0, "No trip supplied..");
 		}
 
 		title 		= (TextView)findViewById(R.id.label);
@@ -202,7 +194,6 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		poiImage = (ImageView) findViewById(R.id.imageContainer);
 
 		showPoiDetails(poi);
-		initGPS();
 	} // onCreate
 
 	/**
@@ -212,8 +203,8 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 	private void showPoiDetails(Poi poi) {
 		title.setText(		poi.getLabel());
 		description.setText(poi.getDescription());
-// ZIP code removed
-//		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getZipCode() + "\n" + poi.getAddress().getCity());
+//		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getZipCode() + "\n" + poi.getAddress().getCity()); // ZIP code removed
+
 		address.setText(	poi.getAddress().getStreet() + "\n" + poi.getAddress().getCity());
 		category.setText(poi.getCategory());
 		telephone.setText(poi.getTelephone());
@@ -225,20 +216,20 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 
 			new Thread(new Runnable(){
 				public void run(){
+					try{
 
-					DefaultHttpClient	httpClient = new DefaultHttpClient();
-					HttpGet			httpGet = new HttpGet(imageURL); //have user-inserted url
-					HttpResponse		httpResponse;
-					final HttpEntity	entity;
+						DefaultHttpClient	httpClient = new DefaultHttpClient();
+						HttpGet	httpGet = new HttpGet(imageURL); //have user-inserted url
+						HttpResponse		httpResponse;
+						final HttpEntity	entity;
 
-					try {
 						httpResponse = httpClient.execute(httpGet);
 						if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 							entity = httpResponse.getEntity();
 
 							if (entity != null) {
 								//converting into bytemap and inserting into imageView
-								poiImage.post(new Runnable(){
+								poiImage.post( new Runnable(){
 									public void run(){
 										byte[] imageBytes = new byte[0];
 										try {
@@ -258,7 +249,7 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 						}
 
 					} catch (Exception e) {
-						debug(0, "Error fetching image");
+						debug(-1, "Error fetching image: "+imageURL );
 					}//try-catch
 				}//run
 			}//new Runnable class
@@ -330,46 +321,6 @@ public class PoiDetailsActivity extends Activity implements LocationListener, On
 		}
 		return true;
 	}//onOptionsItemSelected
-
-	/**
-	 * Method containing GPS initialization.
-	 */
-	void initGPS()
-	{
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//TODO: change to gps
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		userLocation = location;
-		//System.out.println("Inside onLocationChanged in PoiDetailsActivity");
-
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void onClick(View v) {

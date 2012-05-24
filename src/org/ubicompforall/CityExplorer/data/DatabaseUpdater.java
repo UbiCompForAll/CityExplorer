@@ -66,7 +66,6 @@ public class DatabaseUpdater
 		context = c;
 	}
 	
-	@SuppressWarnings("unused")
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
@@ -376,43 +375,34 @@ public class DatabaseUpdater
 		
 		Trip trip;
 		
-		if(privateId == -1)//Trip does not exist.. create it.
-		{
+		if(privateId == -1){ //Trip does not exist.. create it.
 			trip = new Trip.Builder(tripdata[1])
 			.idGlobal(Integer.parseInt(tripdata[0]))
 			.description(tripdata[2])
 			.freeTrip((tripdata[3].equals("1")) ? true:false)
 			.build();
 			
-			for (Poi poi : downloadedPois)
-			{	
+			for (Poi poi : downloadedPois){	
 				trip.addPoi(poi);
 				trip.setTime(poi, times.get(poi));
-				System.out.println("added poi to new trip obj: "+poi.getLabel());
+				debug(0, "added poi to new trip obj: "+poi.getLabel());
 			}
 			
 			
-		}
-		else//trip exists.. update it
-		{
+		}else{//trip exists.. update it
 			trip = db.getTrip(privateId);
 			ArrayList<Poi> oldPois = trip.getPois();
-			for (Poi poi : downloadedPois)
-			{
+			for (Poi poi : downloadedPois){
 				trip.setTime(poi, times.get(poi));
-				if( !oldPois.contains(poi))	//if the local trip does not contain the poi...
-				{
-					System.out.println("New poi not in list: "+poi.getLabel()+" adding it to trip obj");
+				if( !oldPois.contains(poi)){	//if the local trip does not contain the poi...
+					debug(0, "New poi not in list: "+poi.getLabel()+" adding it to trip obj");
 					trip.addPoi(poi);		//add it.
 					
-				}
-			}
-			
-			
-			
-		}
+				}//if new
+			}//for downloadedPois		
+		}//if new trip, else update trip
 		
-		System.out.println("ok.. trip sixe="+trip.getPois().size());
+		debug(0, "ok.. trip sixe="+trip.getPois().size());
 		
 		return trip;
 		
@@ -431,7 +421,7 @@ public class DatabaseUpdater
 		
 		for (Trip trip : trips)
 		{
-			System.out.println("ok.. trip size="+trip.getPois().size());
+			debug(0, "ok.. trip size="+trip.getPois().size());
 			
 			HashMap<Poi, Time> poitimes = trip.getFixedTimes();
 			HashMap<Integer, Time> gidtimes = new HashMap<Integer, Time>();
@@ -445,12 +435,12 @@ public class DatabaseUpdater
 				if(privateID == -1)//not added to db
 				{
 					db.newPoi(p);
-					System.out.println("poi "+p.getLabel()+" added to db");
+					debug(0, "poi "+p.getLabel()+" added to db");
 				}
 				else//in db, update
 				{
 					db.editPoi(p);
-					System.out.println("poi "+p.getLabel()+" updated in db");
+					debug(0, "poi "+p.getLabel()+" updated in db");
 				}
 			}
 			//update trip with new poi object (containing correct private IDs)
@@ -476,9 +466,9 @@ public class DatabaseUpdater
 				{
 					db.addPoiToTrip(trip, poi);
 					trip.addPoi(poi);
-					System.out.println("added poi to new trip: "+poi.getLabel());
+					debug(0, "added poi to new trip: "+poi.getLabel());
 				}
-				System.out.println("create new trip..");
+				debug(0, "create new trip..");
 				trip.setTime(poitimes);
 				db.addTimesToTrip(trip);
 				
@@ -486,13 +476,13 @@ public class DatabaseUpdater
 			}
 			else//trip exists.. update it
 			{
-				System.out.println("update old trip.."+trip.getPois().size());
+				debug(0, "update old trip.."+trip.getPois().size());
 				ArrayList<Poi> dbPois = db.getTrip(privateId).getPois();//trip.getPois();
 				for (Poi poi : trip.getPois())
 				{
 					if( !dbPois.contains(poi))	//if the db trip does not contain the poi...
 					{
-						System.out.println("New poi not in list: "+poi.getLabel()+" adding it");
+						debug(0, "New poi not in list: "+poi.getLabel()+" adding it");
 						db.addPoiToTrip(trip, poi);
 						trip.getFixedTimes().remove(poi);
 					}
@@ -561,7 +551,7 @@ public class DatabaseUpdater
 				trip.addPoi(poi);
 				trip.setTime(poi, times.get(poi));
 				db.addPoiToTrip(trip, poi);
-				//System.out.println("added poi to new trip: "+poi.getLabel());
+				//debug(0, "added poi to new trip: "+poi.getLabel());
 			}
 			
 			db.addTimesToTrip(trip);
@@ -577,7 +567,7 @@ public class DatabaseUpdater
 				trip.setTime(poi, times.get(poi));
 				if( !oldPois.contains(poi))	//if the local trip does not contain the poi...
 				{
-					System.out.println("New poi not in list: "+poi.getLabel()+" adding it");
+					debug(0, "New poi not in list: "+poi.getLabel()+" adding it");
 					trip.addPoi(poi);		//add it.
 					db.addPoiToTrip(trip, poi);
 				}

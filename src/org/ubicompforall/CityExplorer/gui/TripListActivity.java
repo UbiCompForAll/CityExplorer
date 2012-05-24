@@ -41,8 +41,6 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,7 +55,7 @@ import android.widget.TextView;
  * This class shows a single trip in a list.
  */
 
-public class TripListActivity extends ListActivity implements LocationListener{
+public class TripListActivity extends ListActivity{
 
 	/**
 	 * Request code for launching calendar.
@@ -120,11 +118,8 @@ public class TripListActivity extends ListActivity implements LocationListener{
 		setContentView(R.layout.triplist);
 		init();
 
-		initGPS();
 		poiAdapter.notifyDataSetChanged();
 		userLocation = StartActivity.verifyUserLocation( userLocation, this );
-
-		debug(2, "FreeTrip="+trip.isFreeTrip() );
 	}//onCreate
 
 	
@@ -148,9 +143,10 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			title = (TextView)findViewById(R.id.triplabel);
 			title.setText(trip.getLabel());
 		}else{
-			System.out.println("No trip supplied.. exit activity");
+			debug(0, "No trip supplied.. exit activity");
 			this.finish();
 		}
+		debug(2, "FreeTrip="+trip.isFreeTrip() );
 
 		lv = getListView();
 		lv.setOnItemLongClickListener(new DrawPopup());
@@ -206,21 +202,25 @@ public class TripListActivity extends ListActivity implements LocationListener{
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		debug(0,"requestCode="+requestCode+", ADD_TO_TRIP="+ADD_TO_TRIP+", CALENDER="+CALENDAR+", etc...");
 		if(resultCode==Activity.RESULT_CANCELED){
 			return;
 		}
 		switch (requestCode){
 		case ADD_TO_TRIP:
+			debug(2, "Returned pois to add to trip!" ); //From using PoiList to select new POIs to add to trip
 			trip = data.getParcelableExtra(IntentPassable.TRIP);
 			pois = trip.getPois();
 			poiAdapter.replaceAll(pois);
+			lv.setAdapter(poiAdapter);
 			poiAdapter.notifyDataSetChanged();
-//			lv.setAdapter(poiAdapter);
 			break;
 		case CALENDAR:
 			this.trip = data.getParcelableExtra(IntentPassable.TRIP);
+			poiAdapter.notifyDataSetChanged();
 			break;
 		default:
+			debug(0,"No handler for result="+resultCode );
 			break;
 		}
 	}//onActivityResult
@@ -229,7 +229,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 	public void onListItemClick(ListView l, View v, int pos, long id) {
 
 		Poi p = (Poi) l.getAdapter().getItem(pos);
-		System.out.println("POI " + (pois.size()-1) + ": " + pois.get(pois.size()-1).getImageURL());
+		debug(0, "POI " + (pois.size()-1) + ": " + pois.get(pois.size()-1).getImageURL());
 		Intent details = new Intent(TripListActivity.this, PoiDetailsActivity.class);
 		details.putExtra("poi", p);
 		details.putExtra("trip", trip);
@@ -277,9 +277,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			});
 
 			qa.addItem(mapviewIcon,	"Show on map",		new OnClickListener(){
-
 				public void onClick(View view){
-
 					Intent showInMap = new Intent(TripListActivity.this, MapsActivity.class);
 					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
 					selectedPois.add(p);
@@ -291,9 +289,7 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			});
 
 			qa.addItem(directIcon,	"Get directions",	new OnClickListener(){
-
 				public void onClick(View view){
-
 					//Latitude and longitude for current position
 					double slon = userLocation.getLongitude();
 					double slat = userLocation.getLatitude();
@@ -318,39 +314,5 @@ public class TripListActivity extends ListActivity implements LocationListener{
 			return true;
 		}//onItemLongClick
 	}//DrawPoput Class
-
-	@Override
-	public void onLocationChanged(Location location) {
-		userLocation = location;
-	}
-
-	/**
-	 * Initializes the GPS on the telephone.
-	 */
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-	}
 
 }//TripListActivity

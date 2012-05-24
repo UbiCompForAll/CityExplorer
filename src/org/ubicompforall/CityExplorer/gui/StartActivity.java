@@ -32,25 +32,23 @@ package org.ubicompforall.CityExplorer.gui;
 
 import java.util.ArrayList;
 
+import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.data.DBFactory;
 import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
 
-import org.ubicompforall.CityExplorer.CityExplorer;
-import org.ubicompforall.CityExplorer.R;
-
 import android.app.Activity;
-import android.widget.Button;
-import android.widget.Toast;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class StartActivity extends Activity implements OnClickListener{
 	//RS-111122, "implements LocationListener{" move to CityExplorer.java (Application
@@ -85,7 +83,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		//startActivity(new Intent( this, PlanActivity.class) );
 		// TODO: FOR DEBUGGING
 
-		initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
+		//initGPS(); //RS-111208 Move to CityExplorer.java Application (Common for all activities)
 		userLocation = verifyUserLocation( userLocation, this );		//Init userLocation
 	}//onCreate
 
@@ -94,6 +92,12 @@ public class StartActivity extends Activity implements OnClickListener{
 		super.onResume();
 		setButtonListeners(STARTBUTTONS, STARTBUTTON_IDS);
 	}//onResume
+
+
+	private static void debug(int level, String message ) {
+		CityExplorer.debug( level, message );		
+	} //debug
+
 
 	public void setButtonListeners(Button[] buttons, int[] buttonIds) {
 		if (buttons.length == buttonIds.length){
@@ -108,6 +112,10 @@ public class StartActivity extends Activity implements OnClickListener{
 		}else{
 			debug(0, "StartActivity.java: Mismatch between buttons[] and buttonsIds[]");
 		}
+		if ( ! CityExplorer.ubiCompose ){
+			Button b2 = (Button) findViewById(R.id.startButton2);
+			b2.setText( getResources().getString(R.string.showMaps));
+		}//if ubiComposer enabled
 	}//setButtonListeners
 
 	@Override
@@ -117,21 +125,22 @@ public class StartActivity extends Activity implements OnClickListener{
 						
 			startActivity(new Intent( this, PlanActivity.class));
 
-		}else if (v.getId() == R.id.startButton2){ // Button EXPLORE CITY MAP
-			//Starting the maps activity is too slooow! How to show a progress bar etc.?
-//			Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
-//			try {
-//				wait(500);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			setProgressBarVisibility(true);
-			exploreCity();
+		}else if (v.getId() == R.id.startButton2){ // Button COMPOSE or SHOW MAPS depending of flag settings
+			if ( CityExplorer.ubiCompose ){
+				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
+				Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
+				startActivity( composeActivity );
+			}else{
+				// Button EXPLORE CITY MAP
+				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
+				Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
+				setProgressBarVisibility(true);
+				exploreCity();
+			}
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
-			Intent locationActivity = new Intent(StartActivity.this, SettingsActivity.class);
-			locationActivity.putParcelableArrayListExtra(IntentPassable.POILIST, new ArrayList<Poi>() );
-			startActivity( locationActivity );
+			Intent settingsActivity = new Intent( this, SettingsActivity.class );
+			startActivity( settingsActivity );
 
 		}else{
 			debug(0, "Unknown button clicked: "+v);
@@ -140,16 +149,17 @@ public class StartActivity extends Activity implements OnClickListener{
 
 	// FOR DEBUGGING
 	//			ExportImport.send(this, poiList);
-	//			startActivity(new Intent(StartActivity.this, ExportImport.class));
-
-
-	private static void debug(int level, String message ) {
-		CityExplorer.debug( level, message );		
-	} //debug
-
+	//settingsActivity.putParcelableArrayListExtra( IntentPassable.POILIST, new ArrayList<Poi>() );
+	//			startActivity(new Intent( this, ExportImport.class ));
+//TEST CODE
+//	try {
+//	wait(500);
+//} catch (InterruptedException e) {
+//	e.printStackTrace();
+//}
 
 	/***
-	 * This method should be prepared in the background, e.g. db.getAllPois is quite time-consuming?
+	 * This method should be run in a background Thread because db.getAllPois is quite time-consuming!
 	 */
 	private void exploreCity() {
 		debug(0, "Clicked ExploreMap Button...");
@@ -182,6 +192,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
 		startActivity(showInMap);
 	}//exploreCity
+//Will remove map as a separate button...	RS-120509
 
 	
 	public static Location verifyUserLocation( Location userLocation, Context context ) {
@@ -198,20 +209,19 @@ public class StartActivity extends Activity implements OnClickListener{
 		return userLocation;
 	}//verifyUserLocation
 
-
 	/* RS-111122: Moved to CityExplorer.java common Application settings */
 	/**
-	 * Initializes the GPS on the device.
+	 * Initializes the GPS on the device.		//Move to MapsActivity
 	 **/
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		//Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		//onLocationChanged(lastKnownLocation);
-		// Register the listener with the Location Manager to receive location updates
-		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-	}//initGPS
+//	void initGPS(){
+//		// Acquire a reference to the system Location Manager
+//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//		//Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		//onLocationChanged(lastKnownLocation);
+//		// Register the listener with the Location Manager to receive location updates
+//		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//	}//initGPS
 
 	/* TODO Auto-generated method stub
 	// TODO Try to run slow methods in background Threads!

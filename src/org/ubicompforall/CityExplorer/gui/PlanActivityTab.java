@@ -28,7 +28,6 @@
  * This class is a superclass of PlanTabPoi and PlanTabTrip, and contains the methods they are sharing.
  * 
  */
-
 package org.ubicompforall.CityExplorer.gui;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
@@ -44,7 +43,7 @@ public class PlanActivityTab extends ListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		debug(2, "PlanTabActivity~47 create");
+		debug(2, "create");
 		setContentView(R.layout.trippoi);
 	}
 	

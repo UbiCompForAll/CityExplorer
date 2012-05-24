@@ -113,7 +113,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 */
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		debug(0, "" );
+		debug(2, "" );
 		setContentView(R.layout.maplayout);
 
 		poiClicked		= false;
@@ -136,10 +136,15 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		overlays.add(locationIcon);
 		
 		initWifi();
-		initGPS();
+		initGPS( this );
 		drawOverlays();
 	}//onCreate
 
+	@Override
+	public void onPause(){
+		super.onPause();
+		disableGPS( this );
+	}//onPause
 
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
@@ -181,7 +186,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		if( getIntent().hasExtra(IntentPassable.POILIST) ){ //Draw a list of POI if present
 			ArrayList<Parcelable> pois = (ArrayList<Parcelable>) getIntent().getParcelableArrayListExtra(IntentPassable.POILIST);
-			//debug(2, pois.toString() );
+			debug(1, pois.toString() );
 			for (Parcelable parcelable : pois){
 				Poi poi = (Poi) parcelable;
 				//debug(0, "lat,lng is "+poi.getAddress() );
@@ -197,7 +202,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				overlays.add(poiOverlay);
 			}//for each POI to draw
 			if ( poiOverlays.size() >0 ){
-				//debug(0, "poiOverlays is "+poiOverlays );
+				debug(0, "poiOverlays is "+poiOverlays );
 				mapController.animateTo( poiOverlays.get(0).getGeoPoint() );//go to current location
 			}else{
 				debug(0, "Could NOT find the POI overlays!!!" );
@@ -209,19 +214,25 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	}//drawOverlays
 
 
+	private void disableGPS( MapsActivity context ) {
+		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		locationManager.removeUpdates( context );
+	}//disableGPS
+
 	/**
 	 * Init the GPS.
 	 */
-	void initGPS(){
-		debug(0, "InitGPS now..." );
+	public static void initGPS( Context context ){
+		CityExplorer.debug(0, "InitGPS now..." );
 		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
 		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged( lastKnownLocation );
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		if ( context instanceof MapsActivity ){
+			((MapsActivity) context).onLocationChanged( lastKnownLocation );
+			// Register the listener with the Location Manager to receive location updates
+			locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) context );
+		}
 	}//initGPS
 	
 	/***
@@ -231,7 +242,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		boolean verifiedConnection = CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL );
 		if ( ! verifiedConnection ){
 			//Toast.makeText(this, R.string.map_wifi_disabled_toast, Toast.LENGTH_LONG).show();
-			CityExplorer.showNoConnectionDialog( this, "", "Use Cache", null, 0 );
+			CityExplorer.showNoConnectionDialog( this, "", "Use Cache", null );
 			//verifiedConnection = true;
 		}
 	} //initWifi

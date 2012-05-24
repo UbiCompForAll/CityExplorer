@@ -47,7 +47,6 @@ import org.ubicompforall.CityExplorer.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
@@ -57,8 +56,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,7 +72,7 @@ import android.widget.Toast;
  * This class handles all the action going on in the locations tab.
  */
 
-public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener, OnItemSelectedListener{
+public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickListener, DialogInterface.OnClickListener, OnItemSelectedListener{
 
 	/** Field containing the String of the category settings, used in shared preferences. */
 	private static String CATEGORY_SETTINGS = "catset";
@@ -140,12 +137,16 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	/*** Field containing a single trip.*/
 	private Trip trip;
 
+	/*** Remember whether the data is saved or not. */
+	private boolean saved;
+
 	//private boolean menu_shown;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);		
-		debug(2, "PlanTabPoi create");
+		debug(2, "");
+		saved = true;
 		//menu_shown = false;
 		init();
 	} //onCreate
@@ -158,28 +159,28 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	
 	@Override
 	protected void onResume() {
+		debug(2,"");
 		super.onResume();
 		if(requestCode != DOWNLOAD_POI){			
 			updateSections();
 			adapter.notifyDataSetChanged();
-		}
-
-//		if ( requestCode == 0 && ! menu_shown ){ //Main menu // Default OFF now
-//			//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
-//			debug(1, "requestCode is "+requestCode );
-//			new Handler().postDelayed(new Runnable() {
-//				public void run() {
-//					openOptionsMenu();
-//				}
-//			}, 1000);
-//		}
+		}//if not download-mode
 	}//onResume
 
+//	if ( requestCode == 0 && ! menu_shown ){ //Main menu // Default OFF now
+//	//openOptionsMenu(); // Crashes.... Postpone 1000 ms until ready
+//	debug(1, "requestCode is "+requestCode );
+//	new Handler().postDelayed(new Runnable() {
+//		public void run() {
+//			openOptionsMenu();
+//		}
+//	}, 1000);
+//}
 
+	
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
-
 
 
 	/**
@@ -216,31 +217,14 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		buildFilter();
 		makeSections();
 		lv.setAdapter(adapter);
-		initGPS();
 	}//init
 
-	/**
-	 * Initializes the GPS of the phone.
-	 */
-	void initGPS(){
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(lastKnownLocation);
-
-		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
-		userLocation = StartActivity.verifyUserLocation( userLocation, this );
-	}// initGPS
-
 
 	/**
-	 * Makes the category sections that is shown in the list. 
+	 * Makes the category sections that is shown in the POI list. 
 	 */
 	private void makeSections(){
-		debug(1, "make sections" );
+		debug(2, "make sections" );
 		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
 		if(requestCode != DOWNLOAD_POI){			
 			adapter.addSection(CityExplorer.FAVORITES, favouriteAdapter);
@@ -402,32 +386,40 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 				sharePoi.putExtra("requestCode", SHARE_POI);
 				startActivityForResult(sharePoi, SHARE_POI);
 			}
-		}
+		}//if sharePOIs selected in menu
 
 		if(item.getItemId() == R.id.planMenuAddPois){
-			if(requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
-				if (selectedPois==null){
-					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					for (Poi p : selectedPois) {
-						trip.addPoi(p);
-						DBFactory.getInstance(this).addPoiToTrip(trip, p);						
-					}
-					Toast.makeText(this, selectedPois.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
-					selectedPois = null;
-				}
-				Intent resultIntent = new Intent();
-				resultIntent.putExtra(IntentPassable.TRIP, trip);
-				setResult( Activity.RESULT_OK, resultIntent );
-				finish();
+			if ( ! saveAndFinish() ){
+				return false;	//No valid save was performed
 			}
-		}//if AddPois
+		}//if AddPois selected in menu
 		return true;
 	}//onOptionItemSelected
 
+	private boolean saveAndFinish(){
+		if(requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
+			if (selectedPois==null){
+				Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+				//return false; // Moved to bottom
+			}else {
+				for (Poi p : selectedPois) {
+					trip.addPoi(p);
+					DBFactory.getInstance(this).addPoiToTrip(trip, p);						
+				}
+				Toast.makeText(this, selectedPois.size() + " locations added to " + trip.getLabel() + ".", Toast.LENGTH_LONG).show();
+				selectedPois = null;
+			}
+			Intent resultIntent = new Intent();
+			resultIntent.putExtra(IntentPassable.TRIP, trip);
+			setResult( Activity.RESULT_OK, resultIntent );
+			finish();
+		}//if "Add Pois to trip activity" requested results from us
+		return false; //Default is "failed to save"
+	}//saveAndFinish
+
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
+		debug(0, "RequestCode is "+ requestCode +". Choose_POI="+NewPoiActivity.CHOOSE_POI+"..." );
 		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 			//Pressing a header			
 			return;
@@ -443,19 +435,22 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		}
 
 		if (requestCode == PlanTripTab.ADD_TO_TRIP || requestCode == TripListActivity.ADD_TO_TRIP){
-
 			if(selectedPois == null){				
 				selectedPois = new ArrayList<Poi>();
 			}
 			if(!selectedPois.contains(p)){
 				v.setBackgroundColor(0xff9ba7d5);
 				selectedPois.add(p);
+				saved = false;
 			}else {
 				v.setBackgroundColor(Color.TRANSPARENT);
 				selectedPois.remove(p);
-			}
+				if ( selectedPois.size()==0 ){
+					saved=true;
+				}//if nothing to add
+			}//if select, else unselect
 			return;
-		}
+		}//if adding pois to save to some other activity
 
 
 		if (requestCode == SHARE_POI){
@@ -493,6 +488,10 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 		startActivity(details);
 	}//onListItemClick
 
+	
+/////////////////////////////////////////////////////////////////////////
+// HELPER CLASSES
+	
 	/**
 	 * Shows quick actions when the user long-presses an item.
 	 */
@@ -531,12 +530,9 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 			Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
 			Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
 
-
 			// Declare quick actions 
-
 			// 1: Show on Map
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
-
 				public void onClick(View view){
 					qa.dismiss();
 					CityExplorer.showProgressDialog(context, "Launching Map" );
@@ -672,25 +668,17 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	}//onActivityResult
 
 	@Override
-	public void onLocationChanged(Location location) {
-		this.userLocation = location;
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		//Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		Toast.makeText(this, "Waiting for GPS lock", Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-
-	}
-
+	public void onBackPressed() {
+		debug(1, "back pressed!" ); // do something on back.
+		if ( saved  ){
+			super.onBackPressed();
+		}else{
+			//Toast.makeText( this, "Save your times first! Try again to discard", Toast.LENGTH_LONG).show();
+			saveDialog( this, "Save!", "", null );
+		}
+		return;
+	} //onBackPressed
+	
 	/**
 	 * Handles click events in the filter dialog. Check/unCheck
 	 */
@@ -774,6 +762,55 @@ public class PlanPoiTab extends PlanActivityTab implements LocationListener, OnM
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		debug(0, "HERE I AM!!!");
-	}
+	}//onNothringSelected
 	
+	/**
+     * Display a dialog that user should save first!
+	 * @param requestCode ID for the calling Activity
+     * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
+     */
+	private void saveDialog( final Activity context, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle( "Add selected POIs?" );
+	    builder.setMessage( msg );
+		builder.setCancelable(true);
+		String cancelText = cancelButtonStr;
+		if ( cancelText == ""){
+			cancelText = context.getResources().getString( R.string.cancel );
+		}
+		builder.setPositiveButton( R.string.yes, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		    	saveAndFinish();
+		    }
+		} );
+		builder.setNeutralButton( R.string.no, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		    	finish();
+		    }
+		} );
+		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if ( cancelIntent != null ){
+					context.startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
+					dialog.dismiss();
+		    	}
+				return;
+		    }
+		} );
+		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+		    public void onCancel(DialogInterface dialog) {
+		    	if ( context == null ){
+		    		CityExplorer.debug(0, "OOOPS!");
+		    	}else{
+		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
+					if (cancelIntent != null){
+						context.startActivity( cancelIntent );
+					}
+		    	}
+		        return;
+		    }
+		} );
+		builder.show();
+	} // saveDialog
+
 } // class PlanPoiTab

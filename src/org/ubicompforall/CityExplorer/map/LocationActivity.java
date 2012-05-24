@@ -224,14 +224,12 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 					}
 				}
 			}else{
-				CityExplorer.showNoConnectionDialog( context, "", "", null, 0 );
-				//Toast.makeText( context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+				CityExplorer.showNoConnectionDialog( context, "", "", null );
 			}
 			return false;
 		} // onTouchEvent
 
 	} // class MapOverlay
-
 
 } // LocationActivity
 

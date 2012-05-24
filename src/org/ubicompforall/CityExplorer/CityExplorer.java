@@ -23,6 +23,9 @@
  *
  */
 
+/**
+ * @description: Package for central CityExplorer constants and switches
+ */
 package org.ubicompforall.CityExplorer;
 
 import java.io.ByteArrayOutputStream;
@@ -55,13 +58,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
+<<<<<<< HEAD
  * @description:
  * This is an example of a {@link android.app.Application} class.  Ordinarily you would use
+=======
+ * This is an {@link android.app.Application} class.  Ordinarily you would use
+>>>>>>> refs/remotes/origin/master
  * a class like this as a central repository for information that might be shared between multiple
  * activities.
  * In this case, we have not defined any specific work for this Application.
- * See samples/UbiTerms/tests/src/org.ubicompforall.ubiterms/ApiDemosApplicationTests for an example
- * of how to perform unit tests on an Application object.
+ * See samples/tests/ApiDemosApplicationTests for an example of how to perform unit tests on an Application object.
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
@@ -69,7 +75,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String C = "CityExplorer";
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = true;	// true or false ;-)
+	public static final boolean ubiCompose = false;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
@@ -117,20 +123,21 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	@Override
 	public void onCreate() {
-	    debug(0, "Start CityExplorer.java" );
-	    /*
-	     * This populates the default values from the preferences XML file. See
-	     * {@link DefaultValues} for more details.
-	     */
-	    PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
+		debug(0, "Start CityExplorer.java" );
+		/*
+		 * This populates the default values from the preferences XML file. See
+		 * {@link DefaultValues} for more details.
+		 */
+		PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
 
 	    //initGPS(); //RS-120501 Use only when needed (E.g. Maps)
-	    // And what about DB-loading?  Initialize the single instance here :-)
-		//db = DBFactory.getInstance(this); //Delay?
+
+		//MapsActivity.initGPS( this ); //RS-120501 Use only when needed (E.g. Maps)
+		db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
 
 		//Always warn about missing data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
-	    //debug(0, "Started CityExplorer.java" );
+		//debug(0, "Started CityExplorer.java" );
 	}//onCreate
 
     @Override
@@ -158,7 +165,11 @@ public class CityExplorer extends Application{ // implements LocationListener //
 				stackLevel++;
 			}
 			StackTraceElement e = st[stackLevel];
-			Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+			if ( d < 0 ){ //error
+				Log.e(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+			}else{ //debug
+				Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+			}//if debug, else error
 		} // if verbose enough
 	} // debug
 
@@ -287,17 +298,15 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	/**
      * Display a dialog that user has no Internet connection
-	 * @param requestCode ID for the calling Activity
-     *
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
      */
-	public static void showNoConnectionDialog( final Activity context, final String strA, final String strB, final Intent intentB, int requestCode ) {
+	public static void showNoConnectionDialog( final Activity context, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
     	AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setCancelable(true);
-		if ( strA == "" ){
+		if ( msg == "" ){
 		    builder.setMessage( R.string.no_connection );
 		}else{
-		    builder.setMessage( strA );
+		    builder.setMessage( msg );
 		}
 		builder.setTitle( R.string.no_connection_title );
 		builder.setPositiveButton( R.string.settings, new DialogInterface.OnClickListener() {
@@ -306,14 +315,14 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		    }
 		} );
 
-		String cancelText = strB;
+		String cancelText = cancelButtonStr;
 		if ( cancelText == ""){
 			cancelText = context.getResources().getString( R.string.cancel );
 		}
 		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				if ( intentB != null ){
-					context.startActivityForResult( intentB, CityExplorer.REQUEST_LOCATION );
+				if ( cancelIntent != null ){
+					context.startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
 					dialog.dismiss();
 		    	}
 				return;
@@ -326,8 +335,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		    		debug(0, "OOOPS!");
 		    	}else{
 		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
-					if (intentB != null){
-						context.startActivity( intentB );
+					if (cancelIntent != null){
+						context.startActivity( cancelIntent );
 					}
 		    	}
 		        return;
