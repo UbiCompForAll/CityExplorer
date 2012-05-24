@@ -4,7 +4,7 @@
  * @date:			22 November 2011
  * @revised:
  *
- * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
  *
  * Licensed under the Apache License, Version 2.0.
@@ -22,13 +22,6 @@
  * and limitations under the License.
  *
  */
-
-/**
- * @description:
- *
- *
- */
-
 
 package org.ubicompforall.CityExplorer;
 
@@ -62,6 +55,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
+ * @description:
  * This is an example of a {@link android.app.Application} class.  Ordinarily you would use
  * a class like this as a central repository for information that might be shared between multiple
  * activities.
@@ -70,10 +64,10 @@ import android.widget.Toast;
  * of how to perform unit tests on an Application object.
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
-	
+
 	public static final int DEBUG = 1;
 	public static final String C = "CityExplorer";
-	
+
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
 	public static final boolean ubiCompose = true;	// true or false ;-)
 
@@ -83,18 +77,18 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String SETTINGS_DB_URL = "Url";
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
-	
+
 	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng // Trondheim Torvet 63°25′49″N  10°23′42″E ;
 	//  Default URL moved to @string/default_url
 	//	public static final String RUNE_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
-	
+
 	//CONSTANTS for X
 	public static final int TYPE_ALL = 0;
 	public static final int TYPE_FREE = 1;
 	public static final int TYPE_FIXED = 2;
 
 	public static final int MSG_DOWNLOADED = 0;
-	
+
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
 	public static final int REQUEST_KILL_BROWSER = 11;
@@ -103,7 +97,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//public static final String ALL = "ALL";
 	public static final String FAVORITES = "FAVORITES";
 	public static final String MAGIC_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/launchApp.html";
-	
+
 	//Public flags
 	public static boolean DATACONNECTION_NOTIFIED = false;
 
@@ -115,12 +109,12 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
 	public static final String SHARED_FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
 
-	
+
 	/***
 	 * The global current db connection
 	 */
 	public static DatabaseInterface db;
-	
+
 	@Override
 	public void onCreate() {
 	    debug(0, "Start CityExplorer.java" );
@@ -133,7 +127,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	    //initGPS(); //RS-120501 Use only when needed (E.g. Maps)
 	    // And what about DB-loading?  Initialize the single instance here :-)
 		//db = DBFactory.getInstance(this); //Delay?
-		
+
 		//Always warn about missing data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
 	    //debug(0, "Started CityExplorer.java" );
@@ -257,7 +251,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		timerDelayRemoveDialog(1000, pd);
 //		new Thread() {
 //		    public void run() {
-//		        handler.sendEmptyMessage( CityExplorer.MSG_DOWNLOADED ); 
+//		        handler.sendEmptyMessage( CityExplorer.MSG_DOWNLOADED );
 //		    }
 //		}.start();
 	}// showProgress
@@ -276,7 +270,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //	}; // new Handler class
 
 	/***
-	 * 
+	 *
 	 * @param time	In milliseconds
 	 * @param d
 	 */
@@ -285,12 +279,12 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	        public void run(){
 	        	if (d!= null){
 	        		debug(2, "d is "+ d );
-	        		d.dismiss();  
+	        		d.dismiss();
 	        	}
 	        }
-	    }, time); 
+	    }, time);
 	}
-	
+
 	/**
      * Display a dialog that user has no Internet connection
 	 * @param requestCode ID for the calling Activity
@@ -311,7 +305,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		        context.startActivity( new Intent(Settings.ACTION_WIRELESS_SETTINGS) );
 		    }
 		} );
-		
+
 		String cancelText = strB;
 		if ( cancelText == ""){
 			cancelText = context.getResources().getString( R.string.cancel );
@@ -339,7 +333,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		        return;
 		    }
 		} );
-		
+
 		builder.show();
 		DATACONNECTION_NOTIFIED = true;
 	} // showNoConnectionDialog
@@ -352,7 +346,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
     	//return SHARED_FILE_PATH + c.getFilesDir() +"/"+ SHARED_FILE;
     	return Environment.getExternalStorageDirectory() + CityExplorer.SHARED_FILE;
 	}
-    
+
 // HELPER CLASSES //
 //    public class LoadingScreen extends Activity{
 //        private LoadingScreen loadingScreen;
@@ -367,13 +361,13 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //                CountDownTimer timer = new CountDownTimer(10000, 1000) //10seceonds Timer
 //                {
 //                     @Override
-//                      public void onTick(long l) 
+//                      public void onTick(long l)
 //                      {
 //
 //                      }
 //
 //                      @Override
-//                      public void onFinish() 
+//                      public void onFinish()
 //                      {
 //
 //                          loadingScreen.finishActivity(0);
