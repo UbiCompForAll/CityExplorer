@@ -4,7 +4,7 @@
  * @date:			23 May 2011
  * @revised:		15 Dec 2011
  *
- * Copyright (C) 2011 UbiCompForAll Consortium (SINTEF, NTNU)
+ * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
  *
  * Licensed under the Apache License, Version 2.0.
