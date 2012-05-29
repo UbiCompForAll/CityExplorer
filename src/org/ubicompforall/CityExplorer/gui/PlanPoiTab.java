@@ -24,7 +24,6 @@
  */
 
 package org.ubicompforall.CityExplorer.gui;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -337,7 +336,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
-		debug(2, "item is "+item );
+		debug(1, "item is "+item );
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
 			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);
@@ -527,10 +526,12 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			Drawable addToTripIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
 			Drawable mapviewIcon		= res.getDrawable(android.R.drawable.ic_menu_mapmode);
 			Drawable directIcon		= res.getDrawable(android.R.drawable.ic_menu_directions);
+			Drawable editIcon		= res.getDrawable(android.R.drawable.ic_menu_edit);
 			Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
 			Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
 
-			// Declare quick actions 
+			// Declare the quick actions menu
+
 			// 1: Show on Map
 			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
 				public void onClick(View view){
@@ -544,7 +545,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				}
 			});
 
-			// 2:
+			// 2: Get Directions
 			qa.addItem(directIcon, "Get directions", new OnClickListener(){
 
 				public void onClick(View view){
@@ -604,10 +605,19 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				});
 			}//onItemLongClick
 
-			// 4: Edit 
-			// 5: 
-			qa.addItem(shareIcon, "Share", new OnClickListener(){
+			// 4: Edit
+			qa.addItem(editIcon, R.string.editLabel, new OnClickListener(){
+				public void onClick(View view){
+					Intent editIntent = new Intent( PlanPoiTab.this, NewPoiActivity.class );
+					editIntent.putExtra(IntentPassable.POI, p);	//setResult( Activity.RESULT_OK, resultIntent );
+					startActivity( editIntent );
+					qa.dismiss();
+				}
+			});
 
+			
+			// 5: Share
+			qa.addItem(shareIcon, "Share", new OnClickListener(){
 				public void onClick(View view){
 					ArrayList<Poi> sharePoi = new ArrayList<Poi>();
 					sharePoi.add(p);
@@ -616,9 +626,8 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				}
 			});
 
-			// 6: 
+			// 6: AddPoi
 			qa.addItem(addToTripIcon, R.string.activity_plan_menu_addpois, new OnClickListener(){
-
 				public void onClick(View view){
 					poi = p;
 					Intent selectTrip = new Intent(PlanPoiTab.this, PlanTripTab.class);
@@ -628,15 +637,12 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				}
 			});
 
-			// 7:
+			// 7: Delete
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
-
 				public void onClick(View view){
-
 					DBFactory.getInstance(context).deletePoi(p);											
 					updateSections();
 					((SeparatedListAdapter)par.getAdapter()).notifyDataSetChanged();
-
 					qa.dismiss();
 				}
 			});

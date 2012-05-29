@@ -133,7 +133,7 @@ public class StartActivity extends Activity implements OnClickListener{
 			}else{
 				// Button EXPLORE CITY MAP
 				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
-				Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
+				//Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
 				setProgressBarVisibility(true);
 				exploreCity();
 			}

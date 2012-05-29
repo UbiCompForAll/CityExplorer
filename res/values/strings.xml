@@ -71,7 +71,8 @@
 	<string name="default_dbName">CityExplorer.sqlite</string>
 	<string name="descriptionLabel">Description:</string>
 	<string name="editfromexistingPoiLabel">Copy existing Location</string>
-	    <!-- as template</string -->
+	<string name="editLabel">Edit</string>
+		    <!-- as template</string -->
 	
 	<string name="editcityLabel">* City:</string>
 	
@@ -95,8 +96,8 @@
 	<string name="no_connection_title">Data connection needed!</string>
 	<string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
 	<string name="opensqlite">City Explorer</string>
-	<string name="plan">EXPLORE</string><string name="poi_details_favourite">Favourite</string>
-	<string name="poiMenufavourite">Favourite</string>
+	<string name="plan">EXPLORE</string>
+	<string name="labelFavorite">Favourite</string>
 	<string name="preferences">PREFERENCES</string>
 	<string name="requiredFields">* required fields</string>
 	<string name="saveTrip">Save Tour</string>

@@ -70,7 +70,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String C = "CityExplorer";
 	
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = false;	// true or false ;-)
+	public static final boolean ubiCompose = true;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
@@ -78,11 +78,11 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String SETTINGS_DB_URL = "Url";
 	public static final String LAT = "Lat";
 	public static final String LNG = "Long";
-	
+
 	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng // Trondheim Torvet 63°25′49″N  10°23′42″E ;
 	//  Default URL moved to @string/default_url
 	//	public static final String RUNE_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
-	
+
 	//CONSTANTS for X
 	public static final int TYPE_ALL = 0;
 	public static final int TYPE_FREE = 1;

@@ -155,25 +155,22 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		context = this;
 		setContentView(R.layout.newpoi);
+
 		init();
 		initDB();
+
+		Intent myIntent = getIntent();
+		choosePoiButton = (Button) findViewById(R.id.choosePoiButton);
+		if( myIntent.getParcelableExtra("poi") == null ){
+			choosePoiButton.setOnClickListener(this);
+		}else{
+			choosePoiButton.setVisibility(View.GONE);
+			Poi p = (Poi) myIntent.getParcelableExtra( IntentPassable.POI );
+			fillPoiDetailFields( p );
+		}
 	}//onCreate
 
 	
-	private void initDB() {
-		new Thread(new Runnable(){
-			public void run(){
-				db = DBFactory.getInstance( context);
-				category = db.getCategoryNames();
-				//debug(0, "NewPoiActiity.java:168 Categories is "+category );
-				//Collections.sort(category);
-				ArrayAdapter<String> categories = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item, category);
-				catView.setAdapter(categories);
-			}
-		} ).start();
-	}//initDB
-
-
 	private void debug(int i, String string) {
 		CityExplorer.debug(i, string);
 	}//debug
@@ -195,14 +192,26 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		webPageView = (EditText)findViewById(R.id.editwebpage);
 		imageURLView = (EditText) findViewById(R.id.editImage);
 		savePoiButton = (Button) findViewById(R.id.savePoiButton);
-		choosePoiButton = (Button) findViewById(R.id.choosePoiButton);
 		searchButton = (ImageButton) findViewById(R.id.browserButton);
 
-		choosePoiButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
 		adrButton.setOnClickListener(this);
 		savePoiButton.setOnClickListener(this);
 	}//init
+
+	private void initDB() {
+		new Thread(new Runnable(){
+			public void run(){
+				db = DBFactory.getInstance( context);
+				category = db.getCategoryNames();
+				//debug(0, "NewPoiActiity.java:168 Categories is "+category );
+				//Collections.sort(category);
+				ArrayAdapter<String> categories = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item, category);
+				catView.setAdapter(categories);
+			}
+		} ).start();
+	}//initDB
+
 
 	/**
 	 * Checks if a string contains only numbers.
@@ -326,38 +335,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	}//storeToDB
 
 
-	// HELPER CLASS FOR savePoi
-
-	private class GeocoderHandler extends Handler {
-	    @Override
-	    public void handleMessage(Message message) {
-            Bundle bundle = message.getData();
-			lat = bundle.getDouble("lat");
-			lng = bundle.getDouble("lng");
-	        
-			if ( lat != 0 && lng != 0 ) {
-				debug(2, "City is "+city+", BUT WHY?!" );
-				debug(2, "lat,lng is "+lat+", "+lng );
-				PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
-				.longitude(lng).latitude(lat);
-
-				Poi p = new Poi.Builder( name, ab.build() )
-				.description(description)
-				.category(cat)
-				.favourite(false)
-				.webPage(webPage)
-				.telephone(tel)
-				.openingHours(openingHours)
-				.imageURL(imageUrl).build(); 
-
-				db.newPoi(p);
-				finish();
-			}else{
-				Toast.makeText( NewPoiActivity.this, "Invalid address or city", Toast.LENGTH_LONG).show();
-			}
-	    }//handleMessage
-	}//GeocoderHandler
-
+	////////////////////////////
 	// LISTENERS / OVERRIDE METHODS
 	
 	@Override
@@ -415,42 +393,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		switch (requestCode){
 		case CHOOSE_POI:
 			Poi p = (Poi) data.getParcelableExtra( IntentPassable.POI );
-			String name = p.getLabel();
-			String description = p.getDescription();
-			String cat = p.getCategory();
-			String street = p.getAddress().getStreet();
-			String city = p.getAddress().getCity();
-			String tel = p.getTelephone();
-			String openingHours = p.getOpeningHours(); 
-			String webPage = p.getWebPage();
-			String imageUrl = p.getImageURL();
-			//update lat and lng
-			lat = p.getGeoPoint().getLatitudeE6()/1E6;
-			lng = p.getGeoPoint().getLongitudeE6()/1E6;
-			debug( 0, "Now lat, lng is "+lat+", "+lng );
-
-			//Put received values into the layout
-			nameView.setText(name);
-			descriptionView.setText(description);
-			addrView.setText(street);
-			cityView.setText(city);
-			telView.setText(tel);
-			openingHoursView.setText(openingHours);
-			webPageView.setText(webPage);
-			imageURLView.setText(imageUrl);
-			int pos = 0;
-			while( category == null ){
-				debug(0, "Just waiting..." );
-			}
-			debug(0, "Categories is "+category );
-			for (String c : category) {
-				if(!cat.equals(c)){
-					pos++;
-				}else {					
-					break;
-				}
-			}
-			catView.setSelection(pos);
+			fillPoiDetailFields( p );
 			break;
 		case CityExplorer.REQUEST_LOCATION:
 			int[] lat_lngE6 = data.getIntArrayExtra("lat_lng");
@@ -478,6 +421,46 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	}//onActivityResult
 	
 
+	private void fillPoiDetailFields(Poi p) {
+		String name = p.getLabel();
+		String description = p.getDescription();
+		String cat = p.getCategory();
+		String street = p.getAddress().getStreet();
+		String city = p.getAddress().getCity();
+		String tel = p.getTelephone();
+		String openingHours = p.getOpeningHours(); 
+		String webPage = p.getWebPage();
+		String imageUrl = p.getImageURL();
+		//update lat and lng
+		lat = p.getGeoPoint().getLatitudeE6()/1E6;
+		lng = p.getGeoPoint().getLongitudeE6()/1E6;
+		debug( 0, "Now lat, lng is "+lat+", "+lng );
+
+		//Put received values into the layout
+		nameView.setText(name);
+		descriptionView.setText(description);
+		addrView.setText(street);
+		cityView.setText(city);
+		telView.setText(tel);
+		openingHoursView.setText(openingHours);
+		webPageView.setText(webPage);
+		imageURLView.setText(imageUrl);
+		int pos = 0;
+		while( category == null ){
+			debug(0, "Just waiting..." );
+		}
+		debug(0, "Categories is "+category );
+		for (String c : category) {
+			if(!cat.equals(c)){
+				pos++;
+			}else {					
+				break;
+			}
+		}
+		catView.setSelection(pos);
+	}//fillPoiDetailFields
+
+
 	@Override
 	public void onBackPressed() {
 		// do something on back.
@@ -490,5 +473,39 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		}
 		return;
 	} //onBackPressed
+
+	
+//////////////////////////////////////////////////////////////
+// HELPER CLASS FOR savePoi
+
+	private class GeocoderHandler extends Handler {
+	    @Override
+	    public void handleMessage(Message message) {
+            Bundle bundle = message.getData();
+			lat = bundle.getDouble("lat");
+			lng = bundle.getDouble("lng");
+	        
+			if ( lat != 0 && lng != 0 ) {
+				debug(2, "City is "+city+", BUT WHY?!" );
+				debug(2, "lat,lng is "+lat+", "+lng );
+				PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
+				.longitude(lng).latitude(lat);
+
+				Poi p = new Poi.Builder( name, ab.build() )
+				.description(description)
+				.category(cat)
+				.favourite(false)
+				.webPage(webPage)
+				.telephone(tel)
+				.openingHours(openingHours)
+				.imageURL(imageUrl).build(); 
+
+				db.newPoi(p);
+				finish();
+			}else{
+				Toast.makeText( NewPoiActivity.this, "Invalid address or city", Toast.LENGTH_LONG).show();
+			}
+	    }//handleMessage
+	}//class GeocoderHandler
 
 }//NewPoiActivity class

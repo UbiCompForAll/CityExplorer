@@ -31,6 +31,7 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -151,26 +152,27 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.details_poi_layout);
 
-		if(getIntent().getParcelableExtra("poi") != null){
-			poi = (Poi) getIntent().getParcelableExtra("poi");
+		Intent myIntent = getIntent();
+		if(myIntent.getParcelableExtra("poi") != null){
+			poi = (Poi) myIntent.getParcelableExtra("poi");
 		}else{
 			debug(0, "No poi supplied.. exit activity");
 			this.finish();
 		}
 
-		if(getIntent().getParcelableExtra("trip") != null){
+		if(myIntent.getParcelableExtra("trip") != null){
 			prevPoi = (ImageButton) findViewById(R.id.previousPoiButton);	// POI MUST BE UPDATED WHEN THE ARROW ARE USED TODO 
 			nextPoi = (ImageButton) findViewById(R.id.nextPoiButton);
 			prevPoi.setVisibility(0);
 			nextPoi.setVisibility(0);
 			prevPoi.setOnClickListener(this);
 			nextPoi.setOnClickListener(this);
-			trip = getIntent().getParcelableExtra("trip");
+			trip = myIntent.getParcelableExtra("trip");
 			pois = new ArrayList<Poi>();
 			for (Poi p : trip.getPois()) {
 				pois.add(p);
 			}
-			poiNumber = getIntent().getIntExtra("poiNumber", 0);
+			poiNumber = myIntent.getIntExtra("poiNumber", 0);
 			if(poiNumber==0){
 				prevPoi.setEnabled(false);
 				if(pois.size()==1){
@@ -248,8 +250,12 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 							debug(0, "(httpResponse.getStatusLine().getStatusCode() == not OK ");
 						}
 
-					} catch (Exception e) {
+					} catch ( UnknownHostException e) {
+						//Toast.makeText(PoiDetailsActivity.this, "Enable Internet to show Picture", Toast.LENGTH_SHORT );
+						debug(0, "Enable Internet to show Picture: "+imageURL );
+					} catch ( Exception e) {
 						debug(-1, "Error fetching image: "+imageURL );
+						e.printStackTrace();
 					}//try-catch
 				}//run
 			}//new Runnable class
@@ -265,21 +271,30 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.poi_menu, menu);
 		if(poi.isFavorite()){
-			menu.findItem(R.id.poiMenufavourite).setIcon(R.drawable.favstar_on);
+			menu.findItem(R.id.poiMenufavorite).setIcon(R.drawable.favstar_on);
 		}else{
-			menu.findItem(R.id.poiMenufavourite).setIcon(R.drawable.favstar_off);
+			menu.findItem(R.id.poiMenufavorite).setIcon(R.drawable.favstar_off);
 		}
 		return super.onPrepareOptionsMenu(menu);
-	}
+	}//onPrepareOptionsMenu
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemID = item.getItemId();
-		int favID = R.id.poiMenufavourite;
+		int editID = R.id.poiMenuEdit;
+		int favID = R.id.poiMenufavorite;
 		int dirID = R.id.poiMenuDirections;
 		int mapID = R.id.poiMenuMap;
-		if(itemID==favID){
 
+		//1: Edit
+		if(itemID==editID){
+			debug(0, "Handle Edit-selection here!" );
+			Intent editIntent = new Intent( this, NewPoiActivity.class );
+			editIntent.putExtra( IntentPassable.POI, poi );	//setResult( Activity.RESULT_OK, resultIntent );
+			startActivity( editIntent );
+		}
+		//2: Favorite
+		if(itemID==favID){
 			if(poi.isFavorite()){
 				poi  = new Poi( poi.modify().favourite(false) );
 
@@ -291,6 +306,7 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 			DBFactory.getInstance(this).editPoi(poi);
 			return true;
 		}
+		//3: Directions
 		if(itemID==dirID){
 			userLocation = StartActivity.verifyUserLocation( userLocation, this );
 
@@ -310,6 +326,7 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 
 			return true;
 		}
+		//4: Map
 		if(itemID==mapID){
 			Intent showInMap = new Intent(PoiDetailsActivity.this, MapsActivity.class);
 			ArrayList<Poi> selectedPois = new ArrayList<Poi>();
@@ -349,4 +366,5 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 		}
 		this.setResult(poiNumber);
 	}
-}
+	
+}//end class PoiDetailsActivity
