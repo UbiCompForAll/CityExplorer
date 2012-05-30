@@ -980,7 +980,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 				debug(0, "There was a minor SQLiteException "+e.getMessage() );
 			}
 			//debug(1, "poi-count is "+poiCount+", context is "+myContext );
-			Toast.makeText(myContext, "Imported "+poiCount +" POIs", Toast.LENGTH_SHORT ).show();
+// JF: I commented this toast because it is confusing for the user at start up to get the message "Imported 0 PoIs"
+//			Toast.makeText(myContext, "Imported "+poiCount +" POIs", Toast.LENGTH_SHORT ).show();
 			//JF: ZIP code removed
 			if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen
 				debug(0, "close myDataBase, before re-open");

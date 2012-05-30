@@ -105,6 +105,11 @@ public class SettingsActivity extends Activity implements OnClickListener{
 		}else{
 			debug(0, "Unknown button clicked: "+v);
 		}//if v== button-Plan|Explore|Import
+		
+		// Terminate activity after a specific settings activity has been selected.
+		// Otherwise the user might be confused as the windows for start and settings
+		// activities are quite similar.
+		finish();
 	}//onClick
 
 

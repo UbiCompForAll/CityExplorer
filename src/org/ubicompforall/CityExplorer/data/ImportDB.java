@@ -59,7 +59,8 @@ public class ImportDB extends Activity{
 		
 		Uri uri = getIntent().getData();
 		debug(0, "ImportDB, file intent uri is "+uri );
-		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
+// JF: I commented this toast because it is confusing for the user to get the message about intent
+//		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
 		
 		// try opening the file
 		if ( uri != null ){
