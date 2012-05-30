@@ -126,26 +126,24 @@ public class SeparatedListAdapter extends BaseAdapter {
 	 */
 	public void removeSection(String section){
 		
-		if( !sectionNames.contains(section))
+		if( !sectionNames.contains(section)){
 			return; //not in list.
+		}
 		Section removeSection = null;
-		for (Section sec : sections)
-		{
-			if(sec.getCaption().equalsIgnoreCase(section))
-			{
+		for (Section sec : sections){
+			if(sec.getCaption().equalsIgnoreCase(section)){
 				removeSection = sec;
 			}
 		}
-		if(removeSection != null)
+		if(removeSection != null){
 			this.sections.remove(removeSection);
-		
-		if(section.equalsIgnoreCase(CityExplorer.FAVORITES))
-		{
-			Favoritesection = null;
 		}
 		
+		if(section.equalsIgnoreCase( CityExplorer.FAVORITES )){
+			Favoritesection = null;
+		}
 		sectionNames.remove(section);
-	}
+	}//removeSection
 	
 	/**
 	 * Gets the adapter at the specified position.
