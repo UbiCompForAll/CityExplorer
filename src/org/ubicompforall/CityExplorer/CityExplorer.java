@@ -58,12 +58,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
-<<<<<<< HEAD
  * @description:
- * This is an example of a {@link android.app.Application} class.  Ordinarily you would use
-=======
  * This is an {@link android.app.Application} class.  Ordinarily you would use
->>>>>>> refs/remotes/origin/master
  * a class like this as a central repository for information that might be shared between multiple
  * activities.
  * In this case, we have not defined any specific work for this Application.
