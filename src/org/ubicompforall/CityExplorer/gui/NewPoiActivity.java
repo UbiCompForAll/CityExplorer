@@ -434,7 +434,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		//update lat and lng
 		lat = p.getGeoPoint().getLatitudeE6()/1E6;
 		lng = p.getGeoPoint().getLongitudeE6()/1E6;
-		debug( 0, "Now lat, lng is "+lat+", "+lng );
+		//debug( 0, "Now lat, lng is "+lat+", "+lng );
+		debug( 0, "id is "+p.getIdGlobal() );
 
 		//Put received values into the layout
 		nameView.setText(name);
