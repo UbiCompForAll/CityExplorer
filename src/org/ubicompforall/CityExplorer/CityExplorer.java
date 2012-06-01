@@ -1,8 +1,9 @@
 /**
  * @contributor(s): Rune Sætre (NTNU)
- * @version: 		0.1
+ * 					Jacqueline Floch (SINTEF)
+ * @version: 		0.2
  * @date:			22 November 2011
- * @revised:
+ * @revised:		1 June 2012
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -67,7 +68,17 @@ import android.widget.Toast;
  */
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
+// Turn off debugging before RELEASE! Set DEBUG to 0.
+//	 -1: ALWAYS PRINT (Not debug, but plain ERROR)
+//	 0: NO_DEBUG
+//	 1: SOME_DEBUG
+//	 2: MORE_DEBUG
+//	 3: EVEN_MORE_DEBUG
+//	 4: EVEN_EVEN_MORE_DEBUG
+//	 5: EVEN_EVEN_EVEN_MORE_DEBUG
+//	 6: ...
 	public static final int DEBUG = 1;
+
 	public static final String C = "CityExplorer";
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
@@ -155,6 +166,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
 	public static void debug(int d, String msg) {
+
 		if (DEBUG >= d) {
 			StackTraceElement[] st = Thread.currentThread().getStackTrace();
 			int stackLevel = 2;
@@ -170,6 +182,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 				Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
 			}//if debug, else error
 		} // if verbose enough
+		
 	} // debug
 
 

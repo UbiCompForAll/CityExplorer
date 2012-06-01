@@ -78,7 +78,7 @@ public class ImportActivity extends TabActivity {
 		
 		// TAB 2 Intent
 		intent = new Intent().setClass(this, ImportWebTab.class);
-		spec = tabHost.newTabSpec("web").setIndicator("WEB", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
+		spec = tabHost.newTabSpec("web").setIndicator("DOWNLOAD", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 
 		tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#000000"));
