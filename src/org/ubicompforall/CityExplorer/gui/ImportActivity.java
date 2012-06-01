@@ -73,12 +73,12 @@ public class ImportActivity extends TabActivity {
 
 		// TAB 1 Intent
 		intent = new Intent().setClass(this, ImportLocalTab.class);
-		spec = tabHost.newTabSpec("local").setIndicator("Local", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
+		spec = tabHost.newTabSpec("local").setIndicator("LOCAL", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 		
 		// TAB 2 Intent
 		intent = new Intent().setClass(this, ImportWebTab.class);
-		spec = tabHost.newTabSpec("web").setIndicator("Download", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
+		spec = tabHost.newTabSpec("web").setIndicator("DOWNLOAD", res.getDrawable(R.drawable.tab_selector)).setContent(intent);
 		tabHost.addTab(spec);
 
 		tabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#000000"));
