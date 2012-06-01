@@ -96,9 +96,13 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final int REQUEST_KILL_BROWSER = 11;
 	//public static final int REQUEST_LOCATION = 12;
 
+	/** The Constant CHOOSE_POI. */
+	public static final int CHOOSE_POI = 21;
+	
 	//public static final String ALL = "ALL";
 	public static final String FAVORITES = "FAVORITES";
 	public static final String MAGIC_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/launchApp.html";
+	public static final CharSequence NO_ADDRESS = "NO Address";
 
 	//Public flags
 	public static boolean DATACONNECTION_NOTIFIED = false;
@@ -110,7 +114,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String SHARED_FILE = "cityexplorer.txt";
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
 	public static final String SHARED_FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-
 
 	/***
 	 * The global current db connection
