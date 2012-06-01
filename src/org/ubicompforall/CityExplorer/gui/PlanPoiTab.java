@@ -249,19 +249,23 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	 * Updates the category sections in the list, e.g. after choosing filtering.
 	 */
 	private void updateSections(){
-		debug(2, "UPDATE Sections" );
+		debug(0, "UPDATE Sections" );
 		if (allPois == null){
 			allPois = DBFactory.getInstance(this).getAllPois();
 		}
 		LinkedList<String> sectionsInUse = new LinkedList<String>(); 
 		for (Poi poi : allPois)		{
 			//ignore sections that are turned off:
-			if(CheckedCategories.keySet().contains(poi.getCategory()))			{
-				if( !CheckedCategories.get(poi.getCategory() ) ){ //this section is turned off:
+			if( CheckedCategories.keySet().contains( poi.getCategory() ) ){
+				if( !CheckedCategories.get( poi.getCategory() ) ){ //this section is turned off:
+					//debug(0, "Skipping");
 					continue;
 				}
 			}
 			sectionsInUse.add(poi.getCategory());
+			if ( poi.isFavorite() && CheckedCategories.get( CityExplorer.FAVORITES ) ){ // filter.fav.isSelected and in use){
+				sectionsInUse.add( CityExplorer.FAVORITES );
+			}
 			if(!adapter.getSectionNames().contains(poi.getCategory() ) ){
 				ArrayList<Poi> list = new ArrayList<Poi>();
 				list.add(poi);
@@ -269,11 +273,15 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				adapter.addSection(poi.getCategory(), testAdapter);
 			}//if contains category
 		}//for POIs
+
 		@SuppressWarnings("unchecked")
 		LinkedList<String> listSections = (LinkedList<String>) adapter.getSectionNames().clone();
 		//LinkedList<String> ListSections;// = (LinkedList<String>) adapter.getSectionNames().clone();
 		for( String sec : listSections ){
-			if( !sectionsInUse.contains(sec) && !sec.equalsIgnoreCase(CityExplorer.FAVORITES) ) {//&& !sec.equalsIgnoreCase(CityExplorer.ALL) ){
+			if( !sectionsInUse.contains(sec)
+				//&& !sec.equalsIgnoreCase(CityExplorer.FAVORITES)
+				//&& !sec.equalsIgnoreCase(CityExplorer.ALL) 
+			){
 				adapter.removeSection(sec);
 			}
 		}//for sections
@@ -346,7 +354,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 
 		if(item.getItemId() == R.id.planMenuFilter){
 			categories = DBFactory.getInstance(this).getUniqueCategoryNames();
-			//debug(1, "Categories are "+categories );
+			debug(0, "Categories are "+categories );
 
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle("Filter");
