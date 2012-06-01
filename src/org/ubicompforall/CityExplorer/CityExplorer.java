@@ -152,21 +152,24 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 * Debug method to include the filename, line-number and method of the caller
 	 */
 	public static void debug(int d, String msg) {
-		if (DEBUG >= d) {
-			StackTraceElement[] st = Thread.currentThread().getStackTrace();
-			int stackLevel = 2;
-			while ( stackLevel < st.length-1
-			 && ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().matches("access\\$\\d+") ) ){
-				//|| st[stackLevel].getMethodName().matches("run")
-				stackLevel++;
-			}
-			StackTraceElement e = st[stackLevel];
-			if ( d < 0 ){ //error
-				Log.e(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
-			}else{ //debug
-				Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
-			}//if debug, else error
-		} // if verbose enough
+		
+// JF: Turn off debugging before release!
+//		if (DEBUG >= d) {
+//			StackTraceElement[] st = Thread.currentThread().getStackTrace();
+//			int stackLevel = 2;
+//			while ( stackLevel < st.length-1
+//			 && ( st[stackLevel].getMethodName().equals("debug") || st[stackLevel].getMethodName().matches("access\\$\\d+") ) ){
+//				//|| st[stackLevel].getMethodName().matches("run")
+//				stackLevel++;
+//			}
+//			StackTraceElement e = st[stackLevel];
+//			if ( d < 0 ){ //error
+//				Log.e(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+//			}else{ //debug
+//				Log.d(C, e.getMethodName() + ": " + msg + " at (" + e.getFileName()+":"+e.getLineNumber() +")" );
+//			}//if debug, else error
+//		} // if verbose enough
+		
 	} // debug
 
 
