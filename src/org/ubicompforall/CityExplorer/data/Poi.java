@@ -32,7 +32,6 @@
 package org.ubicompforall.CityExplorer.data;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.android.maps.GeoPoint;
@@ -183,7 +182,10 @@ final public class Poi extends IntentPassable {
 		 * @param pid A PoI's local ID number.
 		 * @return the instance of the calling Builder class (returns itself).
 		 */
-		public Builder idPrivate(int pid)		{this.idPrivate		= pid;	return this;}
+		public Builder idPrivate(int pid){
+			this.idPrivate = pid;
+			return this;
+		}
 
 		/**
 		 * Method for populating the category field.
@@ -594,4 +596,23 @@ final public class Poi extends IntentPassable {
 			return new Poi[size];
 		}
 	};
-}
+
+	public double getLat() {
+		return getAddress().getLatitude();
+	}//getLat
+
+	public double getLng() {
+		return getAddress().getLongitude();
+	}//getLng
+
+
+	//Why should all the local variables have to be final (constants?)
+//	public void setLatLng(Double[] lat_lng) {
+//		getAddress().setLatLng( lat_lng );
+//	}//setLatLng
+
+//	public void setName(String name) {
+//		label = name;
+//	}//setName
+
+}//class Poi

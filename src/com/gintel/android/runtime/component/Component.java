@@ -1,7 +1,6 @@
 package com.gintel.android.runtime.component;
 
 import java.util.Map;
-
 import android.content.Context;
 
 /**

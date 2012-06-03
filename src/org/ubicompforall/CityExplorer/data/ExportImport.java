@@ -36,7 +36,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

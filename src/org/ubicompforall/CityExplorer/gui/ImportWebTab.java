@@ -87,7 +87,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		webFolders = new ArrayList<String>();
 		//webFolders.add("http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer/");
 		webFolders.add( MyPreferencesActivity.getCurrentDbDownloadURL( this ) );
-		debug(0, "opening web-pages: "+webFolders );
+		debug(2, "opening web-pages: "+webFolders );
 		init(); //webview etc.
 		//webviewCache: two private dbopen() are automagically executed here (Maybe to create temp databases for this activity: webview.db and webviewCache.db)
 	} // onCreate
@@ -165,7 +165,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 							webview.loadData( "Loading page...", "text/html", "utf-8" );
 							webview.loadUrl( webURL );
 						}else{
-							debug(1, "searching host "+SERVER_URL+", extracted is "+linkTerms );
+							debug(2, "searching host "+SERVER_URL+", extracted is "+linkTerms );
 							webview.loadData(linkTerms, "text/html", "utf-8" );
 							loaded=true;
 						}
@@ -179,6 +179,9 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+					debug(-1, "Network unavailable? "+ e.getMessage()+"\n...weburl was "+ webURL );
 				} // try downloading db's from the Web, catch and print exceptions
 		    }// for all web-locations with DBs on them	
 		} // if not already loaded once before

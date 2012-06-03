@@ -297,10 +297,8 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 		if(itemID==favID){
 			if(poi.isFavorite()){
 				poi  = new Poi( poi.modify().favourite(false) );
-
 				DBFactory.getInstance(this).editPoi(poi);
 				return true;
-
 			}
 			poi = poi.modify().favourite(true).build();
 			DBFactory.getInstance(this).editPoi(poi);

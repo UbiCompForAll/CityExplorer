@@ -3,7 +3,7 @@
  * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
  * @date:			23 May 2011
- * @revised:		23 May 2012
+ * @revised:		02 June 2012 RS
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -23,9 +23,18 @@
  * and limitations under the License.
  -->
  <resources>
+	<!-- manifest resources-->
+	<!-- constants -->
+	<!-- can be used to initiate Intent, but not in the manifest (why?)-->
+	<string name="constant_provider_authority">.provider.database</string>
+	<string name="action_plan">.gui.ActivityPlan</string>
+	<string name="action_mapview_poi">.map.PoiMapAcitivity</string>
+
 	<!-- GUI resources -->
-	<string name="addressLabel">Address:</string>
-	
+	<!-- names of actions -->
+	<!-- I'm not sure whether we should invent new names or used standard ones.
+	Using standard ones is likely to save us a lot of trouble, but I can't find 
+	any static strings associated with maps -->
 	<string name="activity_plan_menu_newPoi">New Location</string>
 	<string name="activity_plan_menu_sharePois">Share</string>
 	<string name="activity_plan_menu_newTrip">New Tour</string>
@@ -34,67 +43,76 @@
 	<string name="activity_plan_header_favTrips">Favourite Tours</string>
 	<string name="activity_plan_header_allPois">All Locations</string>
 	<string name="activity_plan_header_allTrips">All Tours</string>
-	
-	<!-- manifest resources-->
-	
-	<!-- names of actions -->
-	<!-- I'm not sure whether we should invent new names or used standard ones.
-	Using standard ones is likely to save us a lot of trouble, but I can't find 
-	any static strings associated with maps -->
+
 	<string name="activity_triplist_menu_delete">Delete</string>
-	<string name="action_mapview_poi">.map.PoiMapAcitivity</string>
 	<string name="activity_plan_menu_updatetrips">Update Tours</string>
 	<string name="activity_triplist_menu_showOnMap">Show on Map</string>
 	<string name="activity_triplist_menu_addPoi">Add Location</string>
-	<string name="activity_newpoi_button_add">Save Location</string><string name="activity_newpoi_spinner_prompt">Choose Category</string>
+	<string name="activity_newpoi_button_add">Save Location</string>
+	<string name="activity_newpoi_spinner_prompt">Choose Category</string>
 	<string name="activity_plan_menu_updatepois">Update Locations</string>
 	<string name="activity_plan_menu_addpois">Add to Tour</string>
 	<string name="activity_triplist_menu_calendar">Time Table for Tour</string>
+
+	<string name="add_from_menu">Add items from the menu</string>
+	<string name="addressLabel">Address:</string>
 	<string name="app_name">City Explorer</string>
-	    
-	<!-- constants -->
-	<string name="action_plan">.gui.ActivityPlan</string><string name="cancel">Cancel</string>
-	<string name="categoryLabel">Category:</string><string name="compose">PERSONALIZE</string>
+
+	<string name="browse">Browse</string>
+
+	<string name="cancel">Cancel</string>
+	<string name="categoryLabel">Category:</string>
+	<string name="compose">PERSONALIZE</string>
 	<string name="composeUbiServices">compose UbiServices</string>
-	<string name="constant_provider_authority">.provider.database</string>
-	
-	<!-- can be used to initiate Intent, but not in the manifest (why?)-->
-	
+
 	<string name="cityLabel">City:</string>
 	
 	<string name="clearCalendar">Clear Times</string>
 	<string name="chooseTrip">Copy from an old tour</string>
 	<string name="choosePoi">Choose Location</string>
 	<string name="default_values">Default Values</string>
-	<string name="default_location">SET MANUAL LOCATION</string>
+	<string name="default_location">Default Location</string>
 	<string name="default_dbDownloadURL">http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer</string>
+	<string name="default_cityName">Trondheim</string>
 	<string name="default_dbName">CityExplorer.sqlite</string>
 	<string name="descriptionLabel">Description:</string>
 	<string name="editfromexistingPoiLabel">Copy existing Location</string>
 	<string name="editLabel">Edit</string>
-		    <!-- as template</string -->
-	
-	<string name="editcityLabel">* City:</string>
+	<string name="editcityLabel">* City:</string>		    <!-- as template -->
 	
 	<string name="editzipLabel">Zip:</string>
 	<string name="editcategoryLabel">* Category:</string>
 	<string name="editaddressLabel">* Address:</string>
 	<string name="editdescriptionLabel">Description:</string>
-	<string name="editnameLabel">* Name:</string><string name="exploreCity">EXPLORE CITY MAP</string>
+	<string name="editnameLabel">* Name:</string>
+	<string name="exploreCity">EXPLORE CITY MAP</string>
 	<string name="fromexistingLabel">Create new tour from existing tour:</string>
 	<string name="freeTrip">Free Tour</string>
-	<string name="fixedTrip">Fixed Tour</string><string name="imageLabel">Image URL:</string>
-	<string name="importdata">IMPORT DATA</string><string name="manageDB">Manage Databases</string>
+	<string name="fixedTrip">Fixed Tour</string>
+	<string name="imageLabel">Image URL:</string>
+	<string name="importdata">IMPORT DATA</string>
+
+	<string name="label_all">ALL</string>
+	<string name="label_none">NONE</string>
+	<string name="label_select">DONE</string>
+
+	<string name="latitude">Latitude</string>
+	<string name="longitude">Longitude</string>
+
+	<string name="manageDB">Manage Databases</string>
 	<string name="map_gps_disabled_toast">GPS must be enabled for automatic positioning. GPS works best outside.</string>
 	<string name="map_wifi_disabled_toast">Please enable WiFi or Data connection in phone settings menu (to show the map)</string>
-	<string name="nameLabel">Name:</string><string name="navigateFromCurrentPos">Navigate from current position</string>
+	<string name="nameLabel">Name:</string>
+	<string name="navigateFromCurrentPos">Navigate from current position</string>
 	
 	<string name="navigateFromPoi">Navigate from another location</string>
 	<string name="navigateFrom">Get Directions</string>
 	<string name="navigateButton">Navigate</string>
+	<string name="no">No</string>
 	<string name="no_connection">Please enable data connection to use Web, Map, Download etc.</string>
 	<string name="no_connection_title">Data connection needed!</string>
-	<string name="no_notes">No data here.</string><string name="openingHoursLabel">Opening\nHours:</string>
+	<string name="no_notes">No data here.</string>
+	<string name="openingHoursLabel">Opening\nHours:</string>
 	<string name="opensqlite">City Explorer</string>
 	<string name="plan">EXPLORE</string>
 	<string name="labelFavorite">Favourite</string>
@@ -104,19 +122,23 @@
 	<string name="savePoi">Save</string>
 	<string name="saveCalendar">Save Times</string>
 	
-	<string name="setlocation">SET LOCATION</string><string name="settings">SETTINGS</string><string name="summary">SUMMARY</string>
+	<string name="select_db">Select DB</string>
+	<string name="selected_city">Selected city</string>
+	<string name="select_city">Select City</string>
+	<string name="selected_database">Selected database</string>	
+	<string name="set_at_launch">set at launch</string>
+	<string name="setlocation">SET LOCATION</string>
+	<string name="settings">SETTINGS</string>
+	<string name="showMaps">SHOW MAP</string>
 	<string name="sqlitemimetype">application/octet-stream</string>
+	<string name="summary">SUMMARY</string>
+	
 	<string name="telephoneLabel">Telephone:</string>
 	<string name="title">TITLE</string><string name="webPageLabel">Web page:</string>
-	
-	<string name="zipLabel">Zip:</string>
-	<string name="add_from_menu">Add items from the menu</string>
-	<string name="label_all">ALL</string>
-	<string name="label_none">NONE</string>
-	<string name="label_select">DONE</string>
+
+	<string name="web_url">Web URL (Type to change, back to save)</string>
+
 	<string name="yes">Yes</string>
-	<string name="no">No</string>
-	
-	<string name="showMaps">SHOW MAP</string>
-	
+	<string name="zipLabel">Zip:</string>
+
 </resources>

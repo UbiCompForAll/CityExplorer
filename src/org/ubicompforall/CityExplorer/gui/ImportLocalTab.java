@@ -64,7 +64,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 
 	/** The location of all the local DBs **/
 	//String pathName = "";
-	FileSystemConnector fs = null;
+	//FileSystemConnector fs = null;
 
 	/*** Field containing all DBs.*/
 	private ArrayList<DB> allDBs = null;
@@ -101,9 +101,9 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		//INITIALIZE OWN FIELDS
 		allDBs = new ArrayList<DB>();
 		//fs = new FileSystemConnector( this, db.getParent() );
-		fs = new FileSystemConnector( this );
+		//fs = new FileSystemConnector( this );
 		categoryFolders = new ArrayList<String>();
-		categoryFolders.add( fs.getDatabasePath() );
+		categoryFolders.add( getDatabasePath( CityExplorer.CITIES[0] ).getAbsolutePath() );
 		//Collections.sort(categoryFolders);
 		debug(2, "localeDbFolder is "+categoryFolders );
 

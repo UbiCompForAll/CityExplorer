@@ -38,6 +38,7 @@ import java.util.Locale;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
+import org.ubicompforall.CityExplorer.data.PoiAddress;
 import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -215,7 +216,10 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 					
 					if (connection){
 						TextView tv = (TextView) findViewById(R.id.map_name);
-						tv.setText( MyPreferencesActivity.getCurrentAddress( LocationActivity.this, latLng ).toString() );
+						PoiAddress adr = MyPreferencesActivity.getCurrentAddress( LocationActivity.this, latLng );
+						if ( tv !=null && adr !=null ){
+							tv.setText( MyPreferencesActivity.getCurrentAddress( LocationActivity.this, latLng ).toString() );
+						}
 					}else{
 						//Update screen with new coordinates
 						//tv = (TextView) findViewById(R.id.map_lng);

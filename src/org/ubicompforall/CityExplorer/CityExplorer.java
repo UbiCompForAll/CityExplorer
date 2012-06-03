@@ -80,16 +80,19 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final int DEBUG = 1;
 
 	public static final String C = "CityExplorer";
+	public static final String[] CITIES = { "Trondheim" };
+
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
 	public static final boolean ubiCompose = false;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
-	public static final String SETTINGS_DB_NAME = "Name";
-	public static final String SETTINGS_DB_URL = "Url";
-	public static final String LAT = "Lat";
-	public static final String LNG = "Long";
+	public static final String SETTINGS_CITY_NAME = "CITY";
+	public static final String SETTINGS_DB_NAME = "DB";
+	public static final String SETTINGS_DB_URL = "DB_URL";
+	public static final String LAT = "LAT";
+	public static final String LNG = "LNG";
 
 	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng // Trondheim Torvet 63°25′49″N  10°23′42″E ;
 	//  Default URL moved to @string/default_url
@@ -125,6 +128,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String SHARED_FILE = "cityexplorer.txt";
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
 	public static final String SHARED_FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+
 
 	/***
 	 * The global current db connection
@@ -363,8 +367,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 * Return the URI of the file used when sharing PoI
 	 * @param context of the calling Activity
      */
-	public static String getSharedFileName (Context c) {
-    	//return SHARED_FILE_PATH + c.getFilesDir() +"/"+ SHARED_FILE;
+	public static String getSharedFileName(Context ctx) {
+    	//return SHARED_FILE_PATH + ctx.getFilesDir() +"/"+ SHARED_FILE;
     	return Environment.getExternalStorageDirectory() + CityExplorer.SHARED_FILE;
 	}
 

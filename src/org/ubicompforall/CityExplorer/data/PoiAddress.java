@@ -154,11 +154,7 @@ final public class PoiAddress {
 	 * @param b The builder. //TODO: Describe it!
 	 */
 	public PoiAddress(Builder b){
-//		if (b.street == null){
-//			debug(0, "Why was builder b.street==null?!");
-//			street="";
-//		}else{
-		
+		//Use street for place too, or the other way around, if one is missing
 		//Set street
 		if ( b.street==null || b.street.equals("") ){
 			street = b.place;
@@ -298,4 +294,9 @@ final public class PoiAddress {
 		}
 		return sb.toString();
 	}//toString
+
+//	public void setLatLng(Double[] lat_lng) {
+//		this.latitude = lat_lng[0];
+//		this.longitude = lat_lng[1];
+//	}//
 }//PoiAddress

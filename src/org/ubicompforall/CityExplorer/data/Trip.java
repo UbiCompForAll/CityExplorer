@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 

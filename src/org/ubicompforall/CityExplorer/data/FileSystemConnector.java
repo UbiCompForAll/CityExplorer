@@ -34,45 +34,39 @@ package org.ubicompforall.CityExplorer.data;
 import java.io.File;
 import java.util.ArrayList;
 import org.ubicompforall.CityExplorer.CityExplorer;
-
 import android.content.Context;
 
 public class FileSystemConnector implements FileSystemInterface {
 
 	/*** Field containing an {@link ArrayList} of the categoryFolders.*/
-	private ArrayList<String> categoryFolders;
+	private String[] categoryFolders;
 
 	/** All the DBs in the current categoryFolders **/
 	ArrayList<DB> allDBs = null;
 
 	private String dbPath = null;	// remembering the default path for locals DBs
 	
-	private Context ctx = null;	//context for display etc.
+	//private Context ctx = null;	//context for display etc.
 
 	public FileSystemConnector( Context context ){
 		//INITIALIZE OWN FIELDS
-		ctx = context;
-		dbPath  = getDatabasePath();
-		if (dbPath.equals("") ){
-			debug(0, "What!? No dbPath given!");
-		}else{
-			debug(2, "dbPath is "+dbPath );
-			categoryFolders = new ArrayList<String>();
-			categoryFolders.add( dbPath );
-			//Collections.sort(categoryFolders);
-		}
-		debug(2, "categoryFolders is "+categoryFolders );
-		allDBs = getAllDBs();	// Find all DBs in categoryFolders
+		categoryFolders = CityExplorer.CITIES; //e.g. { "Trondheim", "Etc?" }
+		dbPath  = context.getDatabasePath( categoryFolders[0] ).getParent();
+		debug(2, "dbPath is "+dbPath );
+
+		allDBs = getAllDBs();	// Find all DBs in categoryFolders (the cities)
 		debug(2, "allDBs.size is "+allDBs.size() );
 	} // CONSTRUCTOR
 
+	
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 
 
 	@Override
-	public ArrayList<DB> getAllDBs() {
+	public ArrayList<DB>
+	 getAllDBs() {
 		if ( allDBs == null ){
 			allDBs = new ArrayList<DB>();
 			if (categoryFolders == null){
@@ -80,6 +74,7 @@ public class FileSystemConnector implements FileSystemInterface {
 			}else{
 				//categoryFolders.add( getFilesDir().getPath() ); // Testing RS-120201
 				for ( String path : categoryFolders ){
+					debug(2, "categoryFolders city is "+path );
 					allDBs.addAll( findAllDBs(path) );
 				} // for each folder
 			} // if not null-pointer
@@ -91,20 +86,22 @@ public class FileSystemConnector implements FileSystemInterface {
 	public ArrayList<DB>
 	 findAllDBs( String category ) {
 		ArrayList<DB> foundDBs = new ArrayList<DB>();
-		File dir = new File( category );
+		File dir = new File( dbPath+"/"+category );
 		File[] files = dir.listFiles();
 		if (files == null){
 			debug(0, "No files found in "+dir.getPath() );
 		}else{
 			for ( int f=0; f<files.length ; f++ ){
 				File file = files[f];
-//Just cleaning up after an old Bug ;-)
-				if ( file.getName().matches( ".*webview(Cache)?.db" ) ){
-					file.delete();
-				}else{
+//Just cleaning up after old Bugs and bad filenames, and interference with webView DBs ;-)
+//				if ( file.getName().matches( ".*webview(Cache)?(-journal)?.db" ) ){
+//				if ( file.getName().matches( "http:.*" ) ){
+//					file.delete();
+//					debug(0, "deleted "+file );
+//				}else{
 					debug(2, "Keep "+file );
-				}
-				foundDBs.add( new DB( file.getName(), dir.getName() ) );
+					foundDBs.add( new DB( file.getName(), dir.getName() ) );
+//				}
 			}// for each file
 		}// if not null-pointer path->files
 		return foundDBs;
@@ -122,11 +119,15 @@ public class FileSystemConnector implements FileSystemInterface {
 		return false;
 	}//deleteDB
 
-	public String getDatabasePath() {
-		if (dbPath == null || dbPath.equals("") ){
-			dbPath = ctx.getDatabasePath("dummy").getParent();
-		}
-		return dbPath;
-	} // return the default db-path
+//	public String getDatabasePath( String dbName ) {
+//		if (dbPath == null || dbPath.equals("") ){
+//			//dbPath = ctx.getDatabasePath(dbName).getParent();
+//			dbPath = ctx.getDatabasePath(dbName).getAbsolutePath();
+//		}
+//		if (dbPath.equals("") ){
+//			debug(0, "What!? No dbPath given!");
+//		}
+//		return dbPath;
+//	} // return the default db-path
 
 }//FileSystemConnector

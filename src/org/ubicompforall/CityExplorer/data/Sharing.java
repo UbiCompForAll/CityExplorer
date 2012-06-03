@@ -36,7 +36,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -188,16 +187,13 @@ public class Sharing extends Activity
 		c.startActivity(Intent.createChooser(sharingIntent,"Share ce file using"));
 	}
 	
-	public static int countOccurrences(String haystack, char needle)
-	{
+	public static int countOccurrences(String haystack, char needle){
 	    int count = 0;
-	    for (int i=0; i < haystack.length(); i++)
-	    {
-	        if (haystack.charAt(i) == needle)
-	        {
+	    for (int i=0; i < haystack.length(); i++){
+	        if (haystack.charAt(i) == needle){
 	             count++;
 	        }
 	    }
 	    return count;
 	}
-}
+}//class Sharing

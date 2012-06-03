@@ -32,7 +32,6 @@
 package org.ubicompforall.CityExplorer.map.route;
 
 import java.util.ArrayList;
-
 import android.location.Location;
 
 import com.google.android.maps.GeoPoint;

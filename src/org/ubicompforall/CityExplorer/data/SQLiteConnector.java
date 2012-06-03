@@ -62,109 +62,109 @@ import android.widget.Toast;
 /**
  * The Class SQLiteConnector.
  */
-public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
+public class SQLiteConnector extends SQLiteOpenHelper implements
+		DatabaseInterface {
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
-	// private static final String	DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android default value for DBs
-	//private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
+	// private static final String DB_PATH =
+	// "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android
+	// default value for DBs
+	// private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
 	/** The Constant DB_NAME, which is our database name. */
-	//private static final String	DB_NAME = "CityExplorer.backup.db"; // Moved to DBFactory
+	// private static final String DB_NAME = "CityExplorer.backup.db"; // Moved
+	// to DBFactory
 
 	/** The whole path to our database. */
-	//private String				myPath;
+	// private String myPath;
 
 	/** The current/local/private database file. */
 	private File dbFile;
-	//private File dbFilePath;
+	// private File dbFilePath;
 
 	/** The SQLiteDatabase object we are using. */
-	private SQLiteDatabase		myDataBase;
+	private SQLiteDatabase myDataBase;
 
 	/** The context. */
-	private Context				myContext;
+	private Context myContext;
 
 	private static final String POI_TABLE = "poi";
-	//private static final String COUNT_ALL_POIS = "SELECT Count(*) FROM "+POI_TABLE;
+	// private static final String COUNT_ALL_POIS =
+	// "SELECT Count(*) FROM "+POI_TABLE;
 
-	/** The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all POIs. */
-	private static final String SELECT_ALL_POIS=	// Change this to String[] columns, see other examples below (RS-120124)
-			"SELECT " +
-					"POI._id," +
-					"POI.title," +
-					"POI.description," +
-					"ADDR.street_name," +
-// ZIP code removed "ADDR.zipcode," +
-					"ADDR.city," +
-					"ADDR.lat," +
-					"ADDR.lon," +
-					"CAT.title, " +
-					"POI.favourite, " +
-					"POI.openingHours, " +
-					"POI.web_page, " +
-					"POI.telephone, " +
-					"POI.image_url, " +
-					"POI.global_id " +
-					"FROM poi as POI, address as ADDR, category as CAT " +
-					"WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
+	/**
+	 * The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all
+	 * POIs.
+	 */
+	private static final String SELECT_ALL_POIS = // Change this to String[]
+													// columns, see other
+													// examples below
+													// (RS-120124)
+	"SELECT "
+			+ "POI._id,"
+			+ "POI.title,"
+			+ "POI.description,"
+			+ "ADDR.street_name,"
+			+
+			// ZIP code removed "ADDR.zipcode," +
+			"ADDR.city," + "ADDR.lat," + "ADDR.lon," + "CAT.title, "
+			+ "POI.favourite, " + "POI.openingHours, " + "POI.web_page, "
+			+ "POI.telephone, " + "POI.image_url, " + "POI.global_id "
+			+ "FROM poi as POI, address as ADDR, category as CAT "
+			+ "WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
 
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
 	 * in order to access the application assets and resources.
-	 *
-	 * @param context The context
+	 * 
+	 * @param context
+	 *            The context
 	 */
-//	public SQLiteConnector( Context context ) {	// extends SQLiteOpenHelper, implements DatabaseInterface
-//		this( context, DB_NAME );
-//	}//SQLiteConnector CONSTRUCTOR
+	// public SQLiteConnector( Context context ) { // extends SQLiteOpenHelper,
+	// implements DatabaseInterface
+	// this( context, DB_NAME );
+	// }//SQLiteConnector CONSTRUCTOR
 
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
 	 * in order to access the application assets and resources.
-	 *
-	 * @param context The context
+	 * 
+	 * @param context
+	 *            The context
 	 */
-	public SQLiteConnector( Context context, File dbFile ) { // extends SQLiteOpenHelper, implements DatabaseInterface
+	public SQLiteConnector(Context context, File dbFile) { // extends SQLiteOpenHelper, implements DatabaseInterface
 		super(context, dbFile.getName(), null, 2);
 		myContext = context;
-		debug(2, "dbFile is "+dbFile );
-		//dbFilePath = context.getDatabasePath( dbName );
-		//debug(0, "myPath is "+dbFilePath.getParent() );
+		debug(2, "dbFile is " + dbFile);
+		MyPreferencesActivity.storeDbNameSetting(context, dbFile); // JF: is set to Web URL if the user has not chosen settings
+	}// SQLiteConnector CONSTRUCTOR
 
-		//SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		MyPreferencesActivity.storeDbNameSetting(context, dbFile ); //JF: is set to Web URL if the user has not chosen settings
-	}//SQLiteConnector CONSTRUCTOR
 
-	
-	///////////////////////////////////
+	// /////////////////////////////////
 	// STATIC METHODS
-	///////////////////////////////////
-	private static void debug(int level, String message ){
-		CityExplorer.debug( level, message );
+	// /////////////////////////////////
+	private static void debug(int level, String message) {
+		CityExplorer.debug(level, message);
 	} // debug
 
-	
-	public static final Map<String,Integer>
-	 getKeys( String[] columns ){
+	public static final Map<String, Integer> getKeys(String[] columns) {
 		Map<String, Integer> key = new HashMap<String, Integer>();
-		for(int i=0; i<columns.length; i++){
+		for (int i = 0; i < columns.length; i++) {
 			key.put(columns[i], i);
 		} // for each column, store key index
 		return key;
 	} // getKeys
-	
-	public static final String
-	 getSelectStr( String[] columns ){
-		String selectStr =  "SELECT ";
-		String prefix="";
-		for(int i=0; i<columns.length; i++){
+
+	public static final String getSelectStr(String[] columns) {
+		String selectStr = "SELECT ";
+		String prefix = "";
+		for (int i = 0; i < columns.length; i++) {
 			selectStr += prefix + columns[i];
-			prefix=",";
+			prefix = ",";
 		} // for each column, store key index
-		debug(2, "sqlstr is "+selectStr);
+		debug(2, "sqlstr is " + selectStr);
 		return selectStr;
 	} // getKeys
 
-	///////////////////////////////////
-
+	// /////////////////////////////////
 
 	@Override
 	public boolean addPoiToTrip(Trip t, Poi poi) {
@@ -173,527 +173,568 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		ContentValues values = new ContentValues();
 		values.put("trip_id", trip.getIdPrivate());
 		values.put("poi_id", poi.getIdPrivate());
-		values.put("poi_number", trip.getPois().indexOf(poi)+1);
+		values.put("poi_number", trip.getPois().indexOf(poi) + 1);
 
-		try	{
+		try {
 			myDataBase.insertOrThrow("trip_poi", null, values);
-			debug(0, "POI added to DB: "+
-					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
+			debug(0, "POI added to DB: " + "trip_id(" + trip.getIdPrivate()
+					+ ") poi_id(" + poi.getIdPrivate() + ") poi_number("
+					+ (trip.getPois().indexOf(poi) + 1) + ")");
 			return true;
 		} catch (Exception e) {
-			debug(0, "ERROR in SQL: "+e.getMessage()+" SQL values: "+
-					"trip_id("+trip.getIdPrivate()+") poi_id("+poi.getIdPrivate()+") poi_number("+(trip.getPois().indexOf(poi)+1)+")");
-			//e.printStackTrace();
-			debug(0, "The poi was already added before?" );
+			debug(0,
+					"ERROR in SQL: " + e.getMessage() + " SQL values: "
+							+ "trip_id(" + trip.getIdPrivate() + ") poi_id("
+							+ poi.getIdPrivate() + ") poi_number("
+							+ (trip.getPois().indexOf(poi) + 1) + ")");
+			// e.printStackTrace();
+			debug(0, "The poi was already added before?");
 			return false;
 		}
-	}//addPoiToTrip
+	}// addPoiToTrip
 
 	@Override
-	public void addTimesToTrip(Trip trip){
+	public void addTimesToTrip(Trip trip) {
 		ContentValues values = new ContentValues();
 		values.put("trip_id", trip.getIdPrivate());
 
-		for (Poi poi : trip.getFixedTimes().keySet()){
+		for (Poi poi : trip.getFixedTimes().keySet()) {
 			values.put("poi_id", poi.getIdPrivate());
-			values.put("poi_number", trip.getPois().indexOf(poi)+1);
+			values.put("poi_number", trip.getPois().indexOf(poi) + 1);
 			values.put("hour", trip.getFixedTimes().get(poi).hour);
 			values.put("minute", trip.getFixedTimes().get(poi).minute);
-			myDataBase.update("trip_poi", values, "trip_id = ? and poi_id = ?", new String[]{Integer.toString(trip.getIdPrivate()), Integer.toString(poi.getIdPrivate())});
+			myDataBase.update("trip_poi", values, "trip_id = ? and poi_id = ?",
+					new String[] { Integer.toString(trip.getIdPrivate()),
+							Integer.toString(poi.getIdPrivate()) });
 		}
-	} //addTimesToTrip
+	} // addTimesToTrip
 
 	@Override
 	public synchronized void close() {
-		if (myDataBase != null){
+		if (myDataBase != null) {
 			myDataBase.close();
 		}
 		super.close();
-	}//close
+	}// close
 
 	@Override
-	public void deleteFromTrip(Trip trip, Poi poi){
-		myDataBase.delete("trip_poi", "poi_id = ? AND trip_id = ?", new String[]{""+poi.getIdPrivate(), ""+trip.getIdPrivate()});
-		Toast.makeText(myContext, poi.getLabel() + " deleted from tour.", Toast.LENGTH_LONG).show();
-	}//deleteFromTrip
+	public void deleteFromTrip(Trip trip, Poi poi) {
+		myDataBase.delete(
+				"trip_poi",
+				"poi_id = ? AND trip_id = ?",
+				new String[] { "" + poi.getIdPrivate(),
+						"" + trip.getIdPrivate() });
+		Toast.makeText(myContext, poi.getLabel() + " deleted from tour.",
+				Toast.LENGTH_LONG).show();
+	}// deleteFromTrip
 
 	@Override
-	public void deleteTrip(Trip trip){
-		myDataBase.delete("trip_poi", "trip_id = ?", new String[]{""+trip.getIdPrivate()});
-		myDataBase.delete("trip", "_id = ?", new String[]{""+trip.getIdPrivate()});
-		Toast.makeText(myContext, trip.getLabel() + " deleted.", Toast.LENGTH_LONG).show();
+	public void deleteTrip(Trip trip) {
+		myDataBase.delete("trip_poi", "trip_id = ?",
+				new String[] { "" + trip.getIdPrivate() });
+		myDataBase.delete("trip", "_id = ?",
+				new String[] { "" + trip.getIdPrivate() });
+		Toast.makeText(myContext, trip.getLabel() + " deleted.",
+				Toast.LENGTH_LONG).show();
 	}
 
 	@Override
-	public boolean deletePoi(Poi poi){
-		//Check if the poi is in a trip first.
-		Cursor c = myDataBase.query("trip_poi", new String[]{"trip_id"}, "poi_id = ?", new String[]{""+poi.getIdPrivate()}, null, null, null);
+	public boolean deletePoi(Poi poi) {
+		// Check if the poi is in a trip first.
+		Cursor c = myDataBase.query("trip_poi", new String[] { "trip_id" },
+				"poi_id = ?", new String[] { "" + poi.getIdPrivate() }, null,
+				null, null);
 
-		if(c.getCount() > 0){
-			//the poi is in a trip. abort!
+		if (c.getCount() > 0) {
+			// the poi is in a trip. abort!
 			StringBuilder trips = new StringBuilder();
-			while(c.moveToNext()) //make a list of all the trips this poi is in.
+			while (c.moveToNext()) // make a list of all the trips this poi is
+									// in.
 			{
-				if(trips.length() != 0)
+				if (trips.length() != 0)
 					trips.append(", ");
 				trips.append(this.getTrip(c.getInt(0)).getLabel());
 			}
 
-			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is in "+c.getCount()+" tour"+((c.getCount() > 1) ? "s":"")+" ("+trips.toString()+")", Toast.LENGTH_LONG).show();
+			Toast.makeText(
+					myContext,
+					poi.getLabel() + " not deleted, because it is in "
+							+ c.getCount() + " tour"
+							+ ((c.getCount() > 1) ? "s" : "") + " ("
+							+ trips.toString() + ")", Toast.LENGTH_LONG).show();
 			c.close();
 			return false;
 		}
 
-		if(myDataBase.delete("poi", "_id = ?", new String[]{""+poi.getIdPrivate()}) > 0){
-			//poi deleted
-			Toast.makeText(myContext, poi.getLabel() + " deleted", Toast.LENGTH_LONG).show();
+		if (myDataBase.delete("poi", "_id = ?",
+				new String[] { "" + poi.getIdPrivate() }) > 0) {
+			// poi deleted
+			Toast.makeText(myContext, poi.getLabel() + " deleted",
+					Toast.LENGTH_LONG).show();
 			return true;
-		}else{
-			//the poi is not found
-			Toast.makeText(myContext, poi.getLabel() + " not deleted, because it is not found", Toast.LENGTH_LONG).show();
+		} else {
+			// the poi is not found
+			Toast.makeText(myContext,
+					poi.getLabel() + " not deleted, because it is not found",
+					Toast.LENGTH_LONG).show();
 			return false;
 		}
-	}//deletePoi
-
+	}// deletePoi
 
 	@Override
-	public ArrayList<Poi>
-	 getAllPois() {
-		if (myDataBase == null){
+	public ArrayList<Poi> getAllPois() {
+		if (myDataBase == null) {
 			debug(-1, "myDatabase is null!!");
-		}else{
-			debug(2, "myDataBase is "+ myDataBase.getPath() );
-			return getPoisFromCursor( myDataBase.rawQuery( SELECT_ALL_POIS, null));
+		} else {
+			debug(2, "myDataBase is " + myDataBase.getPath());
+			return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS, null));
 		}
 		return null;
 	}// getAllPois
 
 	@Override
-	public ArrayList<Poi>
-	 getAllPois(String category) {
-		return getPoisFromCursor(
-				myDataBase.rawQuery(
-						SELECT_ALL_POIS + " AND CAT.title = ?",
-						new String[]{category}					// replaces ?s
-				)
-		);
-	}//getAllPois(category)
+	public ArrayList<Poi> getAllPois(String category) {
+		return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS
+				+ " AND CAT.title = ?", new String[] { category } // replaces ?s
+				));
+	}// getAllPois(category)
 
 	@Override
-	public ArrayList<Poi>
-	 getAllPois(Boolean favourite){
-		return 	getPoisFromCursor(
-				myDataBase.rawQuery(
-						SELECT_ALL_POIS + " AND POI.favourite = ?",
-						new String[]{"" + (favourite? 1 : 0)}	// replaces ?s
-				)
-		);
-	}//getAllPois(favorite)
+	public ArrayList<Poi> getAllPois(Boolean favourite) {
+		return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS
+				+ " AND POI.favourite = ?", new String[] { ""
+				+ (favourite ? 1 : 0) } // replaces ?s
+				));
+	}// getAllPois(favorite)
 
-
-	
 	/***
 	 * Return all Trips of the given TYPE
-	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
+	 * 
+	 * @param mode
+	 *            TYPE_ALL, TYPE_FREE, or TYPE_FIXED
 	 */
 	@Override
-	//public ArrayList<Trip> getAllTrips( Boolean free ){
-	public ArrayList<Trip> getTripsWithPOIs( int type ){
+	// public ArrayList<Trip> getAllTrips( Boolean free ){
+	public ArrayList<Trip> getTripsWithPOIs(int type) {
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
-		//CONSTANT key-index mappings
-		final String[] columns = {
-			"TRIP._id",			"TRIP.title",	"TRIP.description",	"TRIP.free_trip",	"TRIP.global_id",
-			"POI._id",			"POI.title",	"POI.description",	"POI.favourite",	"POI.image_url",
-			"POI.global_id",	"POI.telephone",
-			"ADDR.street_name", //ZIP removed:	"ADDR.zipcode",
-			"ADDR.city",		"ADDR.lat",		"ADDR.lon",
-			"CAT.title",
-			"TP.poi_number",	"TP.hour",		"TP.minute"
-		};
-		
-		final Map<String,Integer> key = //new HashMap<String,Integer>(); 		getKeys( key, columns );
-				getKeys( columns );
+		// CONSTANT key-index mappings
+		final String[] columns = { "TRIP._id", "TRIP.title",
+				"TRIP.description", "TRIP.free_trip", "TRIP.global_id",
+				"POI._id", "POI.title", "POI.description", "POI.favourite",
+				"POI.image_url", "POI.global_id",
+				"POI.telephone",
+				"ADDR.street_name", // ZIP removed: "ADDR.zipcode",
+				"ADDR.city", "ADDR.lat", "ADDR.lon", "CAT.title",
+				"TP.poi_number", "TP.hour", "TP.minute" };
+
+		final Map<String, Integer> key = // new HashMap<String,Integer>();
+											// getKeys( key, columns );
+		getKeys(columns);
 		String sqlStr, selectStr, fromStr, whereStr, freeStr, orderStr;
-		selectStr = getSelectStr( columns );
-		fromStr =	" FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP ";
-		whereStr =	" WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id ";
-		freeStr =	" AND TRIP.free_trip = ? ";
-		orderStr =	" ORDER BY TRIP._id, TP.poi_number";
-		
+		selectStr = getSelectStr(columns);
+		fromStr = " FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP ";
+		whereStr = " WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id ";
+		freeStr = " AND TRIP.free_trip = ? ";
+		orderStr = " ORDER BY TRIP._id, TP.poi_number";
+
 		Cursor c;
-		if ( type==CityExplorer.TYPE_ALL ){
+		if (type == CityExplorer.TYPE_ALL) {
 			sqlStr = selectStr + fromStr + whereStr + orderStr;
-			c = myDataBase.rawQuery( sqlStr, null );
-		}else{
+			c = myDataBase.rawQuery(sqlStr, null);
+		} else {
 			sqlStr = selectStr + fromStr + whereStr + freeStr + orderStr;
-			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
-		}//if ALL
-		
-		debug(2, "TRIPS: " + c.getCount() );
+			c = myDataBase.rawQuery(sqlStr, new String[] { ""
+					+ (type == CityExplorer.TYPE_FREE ? 1 : 0) }); // Fill the
+																	// "?" in
+																	// the
+																	// select
+																	// with 1 or
+																	// 0
+		}// if ALL
+
+		debug(2, "TRIPS: " + c.getCount());
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
-		while(c.moveToNext()){
-			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				//debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
-				if(currentTripId != -1) { //next trip on the list
+		while (c.moveToNext()) {
+			if (c.getInt(key.get("TRIP._id")) != currentTripId) { // make new
+																	// trip
+				// debug(0, "Got trip: "+c.getString( key.get("TRIP.title") ) );
+				if (currentTripId != -1) { // next trip on the list
 					trips.add(trip);
 				}
-				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
-				.idPrivate(c.getInt( key.get("TRIP._id") ))
-				.description(c.getString( key.get("TRIP.description") ))
-				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
-				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
-				.build();
+				trip = new Trip.Builder(c.getString(key.get("TRIP.title")))
+						.idPrivate(c.getInt(key.get("TRIP._id")))
+						.description(c.getString(key.get("TRIP.description")))
+						.freeTrip(1 == c.getInt(key.get("TRIP.free_trip")))
+						.idGlobal(c.getInt(key.get("TRIP.global_id"))).build();
 				currentTripId = trip.getIdPrivate();
-			}//if not current trip - Make new
+			}// if not current trip - Make new
 
-			Poi poi = new Poi.Builder( c.getString( key.get("POI.title") ),
-				new PoiAddress.Builder( c.getString( key.get("ADDR.city") )	)
-//				.zipCode(c.getInt( key.get("ADDR.zipcode") ))	// ZIP code removed, but needed for Google Maps
-				.street(c.getString( key.get("ADDR.street_name") ))
-				.longitude(c.getDouble( key.get("ADDR.lon") ))
-				.latitude(c.getDouble( key.get("ADDR.lat") ))
-				.build()
-			)
-			.description(c.getString( key.get("POI.description") ))
-			.category(c.getString( key.get("CAT.title") ))
-			.favourite((1==c.getInt( key.get("POI.favourite") )))
-			.imageURL(c.getString( key.get("POI.image_url") ))
-			.telephone(Integer.toString(c.getInt( key.get("POI.telephone") )))
-			.idPrivate(c.getInt( key.get("POI._id") ))
-			.idGlobal(c.getInt( key.get("POI.global_id") ))
-			.build();
+			Poi poi = new Poi.Builder(c.getString(key.get("POI.title")),
+					new PoiAddress.Builder(c.getString(key.get("ADDR.city")))
+							// .zipCode(c.getInt( key.get("ADDR.zipcode") )) //
+							// ZIP code removed, but needed for Google Maps
+							.street(c.getString(key.get("ADDR.street_name")))
+							.longitude(c.getDouble(key.get("ADDR.lon")))
+							.latitude(c.getDouble(key.get("ADDR.lat"))).build())
+					.description(c.getString(key.get("POI.description")))
+					.category(c.getString(key.get("CAT.title")))
+					.favourite((1 == c.getInt(key.get("POI.favourite"))))
+					.imageURL(c.getString(key.get("POI.image_url")))
+					.telephone(
+							Integer.toString(c.getInt(key.get("POI.telephone"))))
+					.idPrivate(c.getInt(key.get("POI._id")))
+					.idGlobal(c.getInt(key.get("POI.global_id"))).build();
 			trip.addPoi(poi);
-			if(c.getInt( key.get("TP.hour") ) != -1 && c.getInt( key.get("TP.minute") ) != -1)//add time if it is not -1
-				trip.setTime(poi, new Time(c.getInt( key.get("TP.hour") ), c.getInt( key.get("TP.minute") )));
-		}//while more trips
-		if(currentTripId != -1) { //next trip on the list
+			if (c.getInt(key.get("TP.hour")) != -1
+					&& c.getInt(key.get("TP.minute")) != -1)// add time if it is
+															// not -1
+				trip.setTime(
+						poi,
+						new Time(c.getInt(key.get("TP.hour")), c.getInt(key
+								.get("TP.minute"))));
+		}// while more trips
+		if (currentTripId != -1) { // next trip on the list
 			trips.add(trip);
 		}
 		c.close();
-		
-		trips.addAll( this.getTripsWithoutPOIs( type ) );
+
+		trips.addAll(this.getTripsWithoutPOIs(type));
 		return trips;
-	}//getAllTrips(free)
+	}// getAllTrips(free)
 
 	@Override
-	public ArrayList<String>
-	 getCategoryNames() {
+	public ArrayList<String> getCategoryNames() {
 		ArrayList<String> categories = new ArrayList<String>();
-		Cursor c = myDataBase.query("category", new String[]{"title"}, null, null, null, null, null);
+		Cursor c = myDataBase.query("category", new String[] { "title" }, null,
+				null, null, null, null);
 		while (c.moveToNext()) {
 			categories.add(c.getString(0));
 		}
 		c.close();
 		return categories;
-	}//getCategoryNames
-
+	}// getCategoryNames
 
 	@Override
-	public Poi getPoi(int privateId){
-		return 	getPoisFromCursor(
-				myDataBase.rawQuery(
-						SELECT_ALL_POIS + " AND POI._id = ?",
-						new String[]{""+privateId}	// replaces ?s
-				)
-		).get(0);
-	}//getPoi(privId)
+	public Poi getPoi(int privateId) {
+		return getPoisFromCursor(
+				myDataBase.rawQuery(SELECT_ALL_POIS + " AND POI._id = ?",
+						new String[] { "" + privateId } // replaces ?s
+						)).get(0);
+	}// getPoi(privId)
 
 	/**
 	 * Gets the pois from the cursor.
-	 *
-	 * @param c The cursor to fetch pois from the database using the query based on SELECT_ALL_POIS.
+	 * 
+	 * @param c
+	 *            The cursor to fetch pois from the database using the query
+	 *            based on SELECT_ALL_POIS.
 	 * @return The pois from the cursor.
 	 * 
-	 * The order of attributes depends of the formulation of the query SELECT_ALL_POIS
-	 *
-	 * 0  _id; 
-	 * 1  title;
-	 * 2  description;
-	 * 3  street_name;
-     * x  ZIP code removed  - 4  zipcode;
-	 * 4  city;
-	 * 5  lat;
-	 * 6  lon;
-	 * 7  category_title;
-	 * 8  favourite
-	 * 9  openingHours;
-	 * 10 web_page;
-	 * 11 telephone;
-	 * 12 image_url
-	 * 13 global_id
+	 *         The order of attributes depends of the formulation of the query
+	 *         SELECT_ALL_POIS
+	 * 
+	 *         0 _id; 1 title; 2 description; 3 street_name; x ZIP code removed
+	 *         - 4 zipcode; 4 city; 5 lat; 6 lon; 7 category_title; 8 favourite
+	 *         9 openingHours; 10 web_page; 11 telephone; 12 image_url 13
+	 *         global_id
 	 */
-	private ArrayList<Poi>
-	 getPoisFromCursor(Cursor c){
+	private ArrayList<Poi> getPoisFromCursor(Cursor c) {
 		ArrayList<Poi> pois = new ArrayList<Poi>();
-		while(c.moveToNext()){
-			pois.add(
-				new Poi.Builder(
-					c.getString(1),								// POI.title
-					new PoiAddress.Builder(
-						c.getString(4)							// ADDR.city
+		while (c.moveToNext()) {
+			pois.add(new Poi.Builder(c.getString(1), // POI.title
+					new PoiAddress.Builder(c.getString(4) // ADDR.city
 					)
 					// ZIP code removed
-//					.zipCode(c.getInt(-1))						// ADDR.zipcode
-					.street(c.getString(3))						// ADDR.street_name
-					.longitude(c.getDouble(6))					// ADDR.lon
-					.latitude(c.getDouble(5))					// ADDR.lat
-					.build()
-				).description(c.getString(2))					// POI.description
-				.category(c.getString(7))						// CAT.title
-				.favourite((1==c.getInt(8)))					// POI.favourite
-				.openingHours(c.getString(9))					// POI.openingHours
-				.webPage(c.getString(10))						// POI.web_page
-				.telephone(c.getString(11))						// POI.telephone
-				.idPrivate(c.getInt(0))							//POI.id (private)
-				.imageURL(c.getString(12))						//POI.image_url
-				.idGlobal(c.isNull(13) ? -1:c.getInt(13))
-				.build()
-			);
-		}//while more pois
+					// .zipCode(c.getInt(-1)) // ADDR.zipcode
+					.street(c.getString(3)) // ADDR.street_name
+							.longitude(c.getDouble(6)) // ADDR.lon
+							.latitude(c.getDouble(5)) // ADDR.lat
+							.build()).description(c.getString(2)) // POI.description
+					.category(c.getString(7)) // CAT.title
+					.favourite((1 == c.getInt(8))) // POI.favourite
+					.openingHours(c.getString(9)) // POI.openingHours
+					.webPage(c.getString(10)) // POI.web_page
+					.telephone(c.getString(11)) // POI.telephone
+					.idPrivate(c.getInt(0)) // POI.id (private)
+					.imageURL(c.getString(12)) // POI.image_url
+					.idGlobal(c.isNull(13) ? -1 : c.getInt(13)).build());
+		}// while more pois
 		c.close();
-		//debug(0, "pois.size is "+pois.size() );
+		// debug(0, "pois.size is "+pois.size() );
 		return pois;
-	}//getPoisFromCursor
+	}// getPoisFromCursor
 
-	
 	@Override
-	public Trip getTrip(int privateId){
+	public Trip getTrip(int privateId) {
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
-		String sqlstr = "SELECT " +
-		"TRIP._id," +			//0
-		"TRIP.title," +			//1
-		"TRIP.description," +	//2
-		"POI._id," +			//3
-		"POI.title," +			//4
-		"POI.description," +	//5
-		"ADDR.street_name," +	//6
-// ZIP code removed
-//		"ADDR.zipcode," +		//7
-		"ADDR.city," +			//8
-		"ADDR.lat," +			//9
-		"ADDR.lon," +			//10
-		"CAT.title," +			//11
-		"POI.favourite," +		//12
-		"TP.poi_number," +		//13
-		"Trip.free_trip, " +	//14
-		"Poi.image_url, " +		//15
-		"TP.hour, "+			//16
-		"TP.minute, "+			//17
-		"TRIP.global_id, "+
-		"POI.global_id, "+
-		"POI.telephone "+
-		"FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP._id = ? "+
-		"ORDER BY TRIP._id, TP.poi_number";
+		String sqlstr = "SELECT "
+				+ "TRIP._id,"
+				+ // 0
+				"TRIP.title,"
+				+ // 1
+				"TRIP.description,"
+				+ // 2
+				"POI._id,"
+				+ // 3
+				"POI.title,"
+				+ // 4
+				"POI.description,"
+				+ // 5
+				"ADDR.street_name,"
+				+ // 6
+				// ZIP code removed
+				// "ADDR.zipcode," + //7
+				"ADDR.city,"
+				+ // 8
+				"ADDR.lat,"
+				+ // 9
+				"ADDR.lon,"
+				+ // 10
+				"CAT.title,"
+				+ // 11
+				"POI.favourite,"
+				+ // 12
+				"TP.poi_number,"
+				+ // 13
+				"Trip.free_trip, "
+				+ // 14
+				"Poi.image_url, "
+				+ // 15
+				"TP.hour, "
+				+ // 16
+				"TP.minute, "
+				+ // 17
+				"TRIP.global_id, "
+				+ "POI.global_id, "
+				+ "POI.telephone "
+				+ "FROM poi as POI, address as ADDR, category as CAT, trip as TRIP, trip_poi as TP "
+				+ "WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id AND POI.address_id = ADDR._id AND POI.category_id = CAT._id AND TRIP._id = ? "
+				+ "ORDER BY TRIP._id, TP.poi_number";
 
-		String sqlstrEMPTY = "SELECT " +
-		"TRIP._id," +				//0
-		"TRIP.title," +				//1
-		"Trip.free_trip," +			//2
-		"TRIP.description, " +		//3
-		"TRIP.global_id "+
-		"FROM trip as TRIP " +
-		"WHERE TRIP._id = ? AND TRIP._id NOT IN (" +
-		"SELECT " +
-		"TRIP._id " +
-		"FROM trip as TRIP, poi as POI, trip_poi as TP " +
-		"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
+		String sqlstrEMPTY = "SELECT "
+				+ "TRIP._id,"
+				+ // 0
+				"TRIP.title,"
+				+ // 1
+				"Trip.free_trip,"
+				+ // 2
+				"TRIP.description, "
+				+ // 3
+				"TRIP.global_id " + "FROM trip as TRIP "
+				+ "WHERE TRIP._id = ? AND TRIP._id NOT IN (" + "SELECT "
+				+ "TRIP._id "
+				+ "FROM trip as TRIP, poi as POI, trip_poi as TP "
+				+ "WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
 
-		Cursor c = myDataBase.rawQuery(sqlstr, new String[]{""+privateId});
+		Cursor c = myDataBase.rawQuery(sqlstr, new String[] { "" + privateId });
 
-		if(c.getCount() == 0) { //the trip may be empty
-			c = myDataBase.rawQuery(sqlstrEMPTY, new String[]{""+privateId});
-			if( c.moveToNext() ) {
-				Trip trip = new Trip.Builder(c.getString(1/*"TRIP.title"*/))
-				.idPrivate(c.getInt(0/*"TRIP.id"*/))
-				.description(c.getString(3/*"TRIP.description"*/))
-				.freeTrip(1==c.getInt(2))
-				.idGlobal(c.getInt(4))
-				.build();
+		if (c.getCount() == 0) { // the trip may be empty
+			c = myDataBase.rawQuery(sqlstrEMPTY,
+					new String[] { "" + privateId });
+			if (c.moveToNext()) {
+				Trip trip = new Trip.Builder(c.getString(1/* "TRIP.title" */))
+						.idPrivate(c.getInt(0/* "TRIP.id" */))
+						.description(c.getString(3/* "TRIP.description" */))
+						.freeTrip(1 == c.getInt(2)).idGlobal(c.getInt(4))
+						.build();
 				trips.add(trip);
 			}
-		}else{ // trip is not empty
+		} else { // trip is not empty
 			int currentTripId = -1;
 			Trip trip = new Trip.Builder("").build();
-			while(c.moveToNext()){
-				if(c.getInt(0/*"TRIP.id"*/) != currentTripId) { //make new trip
-					debug(0, "Got trip: "+c.getString(1/*"TRIP.title"*/));
-					if(currentTripId != -1)	{ //next trip on the list
+			while (c.moveToNext()) {
+				if (c.getInt(0/* "TRIP.id" */) != currentTripId) { // make new
+																	// trip
+					debug(0, "Got trip: " + c.getString(1/* "TRIP.title" */));
+					if (currentTripId != -1) { // next trip on the list
 						trips.add(trip);
 					}
-					trip = new Trip.Builder(c.getString(1/*"TRIP.title"*/))
-					.idPrivate(c.getInt(0/*"TRIP.id"*/))
-					.description(c.getString(2/*"TRIP.description"*/))
-					.freeTrip(1==c.getInt(14))
-					.idGlobal(c.getInt(18))
-					.build();
+					trip = new Trip.Builder(c.getString(1/* "TRIP.title" */))
+							.idPrivate(c.getInt(0/* "TRIP.id" */))
+							.description(c.getString(2/* "TRIP.description" */))
+							.freeTrip(1 == c.getInt(14)).idGlobal(c.getInt(18))
+							.build();
 					currentTripId = trip.getIdPrivate();
 				}
-				Poi poi = new Poi.Builder( c.getString(4/*"POI.title"*/),
-				 new PoiAddress.Builder( c.getString(8/*"ADDR.city"*/) )
-					// ZIP code removed
-					//.zipCode(c.getInt(7/*"ADDR.zipcode"*/))
-					.street(c.getString(6/*"ADDR.street_name"*/))
-					.longitude(c.getDouble(10/*"ADDR.lon"*/)).latitude(c.getDouble(9/*"ADDR.lat"*/))
-					.build()
-				).description(c.getString(5/*"POI.description"*/))
-				.category(c.getString(11/*"CAT.title"*/))
-				.favourite((1==c.getInt(12/*"POI.favourite"*/)))
-				.imageURL(c.getString(15))
-				.telephone(Integer.toString(c.getInt(19))) // RS-111208, Changed 20->19
-				.idPrivate(c.getInt(3))
-				.idGlobal(c.getInt(19))
-				.build();
+				Poi poi = new Poi.Builder(c.getString(4/* "POI.title" */),
+						new PoiAddress.Builder(c.getString(8/* "ADDR.city" */))
+								// ZIP code removed
+								// .zipCode(c.getInt(7/*"ADDR.zipcode"*/))
+								.street(c.getString(6/* "ADDR.street_name" */))
+								.longitude(c.getDouble(10/* "ADDR.lon" */))
+								.latitude(c.getDouble(9/* "ADDR.lat" */))
+								.build())
+						.description(c.getString(5/* "POI.description" */))
+						.category(c.getString(11/* "CAT.title" */))
+						.favourite((1 == c.getInt(12/* "POI.favourite" */)))
+						.imageURL(c.getString(15))
+						.telephone(Integer.toString(c.getInt(19))) // RS-111208,
+																	// Changed
+																	// 20->19
+						.idPrivate(c.getInt(3)).idGlobal(c.getInt(19)).build();
 				trip.addPoi(poi);
 				trip.setTime(poi, new Time(c.getInt(16), c.getInt(17)));
-			}//while more trips
-			if(currentTripId != -1)//next trip on the list
+			}// while more trips
+			if (currentTripId != -1)// next trip on the list
 			{
 				trips.add(trip);
 			}
-		}//if empty trip - else trip with pois
+		}// if empty trip - else trip with pois
 		c.close();
-		if(trips.size() == 0) return null;
+		if (trips.size() == 0)
+			return null;
 		return trips.get(0);
-	}//getTrip
+	}// getTrip
 
 	/***
 	 * Get trips (without POIs).
-	 * @param mode TYPE_ALL, TYPE_FREE, or TYPE_FIXED
+	 * 
+	 * @param mode
+	 *            TYPE_ALL, TYPE_FREE, or TYPE_FIXED
 	 * @return ArrayList of selected Trips
 	 */
 	@Override
-	public ArrayList<Trip> getTripsWithoutPOIs( int type ){
+	public ArrayList<Trip> getTripsWithoutPOIs(int type) {
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
-		String[] columns = {
-			"TRIP._id",	"TRIP.title", "TRIP.free_trip", "TRIP.description", "TRIP.global_id"
-		};
-		final Map<String,Integer> key = //new HashMap<String,Integer>();		getKeys( key, columns );
-				getKeys( columns );
+		String[] columns = { "TRIP._id", "TRIP.title", "TRIP.free_trip",
+				"TRIP.description", "TRIP.global_id" };
+		final Map<String, Integer> key = // new HashMap<String,Integer>();
+											// getKeys( key, columns );
+		getKeys(columns);
 		String sqlStr, selectStr, fromStr, whereStr, freeStr;
 
-		selectStr = getSelectStr( columns );
+		selectStr = getSelectStr(columns);
 		fromStr = " FROM trip as TRIP ";
-		whereStr = " WHERE TRIP._id NOT IN (" +
-				"SELECT " +
-				"TRIP._id " +
-				"FROM trip as TRIP, poi as POI, trip_poi as TP " +
-				"WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
+		whereStr = " WHERE TRIP._id NOT IN (" + "SELECT " + "TRIP._id "
+				+ "FROM trip as TRIP, poi as POI, trip_poi as TP "
+				+ "WHERE POI._id = TP.poi_id AND TRIP._id = TP.trip_id)";
 		freeStr = " AND TRIP.free_trip = ? ";
-		
+
 		Cursor c;
-		if ( type==CityExplorer.TYPE_ALL ){
+		if (type == CityExplorer.TYPE_ALL) {
 			sqlStr = selectStr + fromStr;
-			c = myDataBase.rawQuery( sqlStr, null );
-		}else{ //Filter for free or fixed
+			c = myDataBase.rawQuery(sqlStr, null);
+		} else { // Filter for free or fixed
 			sqlStr = selectStr + fromStr + whereStr + freeStr;
-			c = myDataBase.rawQuery(sqlStr, new String[]{"" + (type==CityExplorer.TYPE_FREE? 1 : 0)}); // Fill the "?" in the select with 1 or 0
-		}//if ALL
+			c = myDataBase.rawQuery(sqlStr, new String[] { ""
+					+ (type == CityExplorer.TYPE_FREE ? 1 : 0) }); // Fill the
+																	// "?" in
+																	// the
+																	// select
+																	// with 1 or
+																	// 0
+		}// if ALL
 		sqlStr = selectStr + fromStr + whereStr;
-		debug (2, "sql string is "+sqlStr );
+		debug(2, "sql string is " + sqlStr);
 
 		int currentTripId = -1;
 		Trip trip = new Trip.Builder("").build();
-		while( c.moveToNext() ){
-			if(c.getInt( key.get("TRIP._id") ) != currentTripId) { //make new trip
-				debug(2, "Got trip: "+c.getString( key.get("TRIP.title") ) );
-				if(currentTripId != -1) { //next trip on the list
+		while (c.moveToNext()) {
+			if (c.getInt(key.get("TRIP._id")) != currentTripId) { // make new
+																	// trip
+				debug(2, "Got trip: " + c.getString(key.get("TRIP.title")));
+				if (currentTripId != -1) { // next trip on the list
 					trips.add(trip);
 				}
-				trip = new Trip.Builder(c.getString( key.get("TRIP.title") ))
-				.idPrivate(c.getInt( key.get("TRIP._id") ))
-				.description(c.getString( key.get("TRIP.description") ))
-				.freeTrip(1==c.getInt( key.get("TRIP.free_trip") ))
-				.idGlobal(c.getInt( key.get("TRIP.global_id") ))
-				.build();
-				debug(2, "Trip is "+trip );
+				trip = new Trip.Builder(c.getString(key.get("TRIP.title")))
+						.idPrivate(c.getInt(key.get("TRIP._id")))
+						.description(c.getString(key.get("TRIP.description")))
+						.freeTrip(1 == c.getInt(key.get("TRIP.free_trip")))
+						.idGlobal(c.getInt(key.get("TRIP.global_id"))).build();
+				debug(2, "Trip is " + trip);
 
 				currentTripId = trip.getIdPrivate();
 			} // while same trip
 		}// while more empty trips
-		if(currentTripId != -1) { //next trip on the list
+		if (currentTripId != -1) { // next trip on the list
 			trips.add(trip);
 		}
 		c.close();
-		debug(2, "FOUND size="+trips.size()+" empty trips" );
+		debug(2, "FOUND size=" + trips.size() + " empty trips");
 		return trips;
-	}//getTrips
-
+	}// getTrips
 
 	@Override
-	public LinkedList<String>
-	 getUniqueCategoryNames() {
-		//Collect all category names in order in "categories",
+	public LinkedList<String> getUniqueCategoryNames() {
+		// Collect all category names in order in "categories",
 		LinkedList<String> categories = new LinkedList<String>();
 
 		// add Favorites to categories first
-		categories.add( CityExplorer.FAVORITES );
+		categories.add(CityExplorer.FAVORITES);
 
-		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
+		Cursor c = myDataBase
+				.rawQuery(
+						"SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title",
+						null);
 		while (c.moveToNext()) {
 			categories.add(c.getString(0));
 		}
 		c.close();
 		return categories;
-	}//getUniqueCategoryNames
+	}// getUniqueCategoryNames
 
 	/***
-	 * Reading category names from the DB,
-	 * and images from the Assets folder.
+	 * Reading category names from the DB, and images from the Assets folder.
 	 */
 	@Override
-	public HashMap<String, Bitmap>
-	 getUniqueCategoryNamesAndIcons() {
+	public HashMap<String, Bitmap> getUniqueCategoryNamesAndIcons() {
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
-		//Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
-		Cursor c = myDataBase.rawQuery("SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null);
+		// Cursor c =
+		// myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title",
+		// null);
+		Cursor c = myDataBase
+				.rawQuery(
+						"SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title",
+						null);
 		while (c.moveToNext()) {
-			Bitmap bmp = null;//BitmapFactory.decodeResource(myContext.getResources(), R.drawable.new_location);
-			String filename = "icons/"+c.getInt(1)+"_"+c.getString(0)+".bmp";
+			Bitmap bmp = null;// BitmapFactory.decodeResource(myContext.getResources(),
+								// R.drawable.new_location);
+			String filename = "icons/" + c.getInt(1) + "_" + c.getString(0)
+					+ ".bmp";
 			filename = filename.replace(' ', '_');
-			debug(2, "Getting bmp for category: "+filename );
-			try{
-				InputStream isAssetPNG	= myContext.getAssets().open(filename);
-				bmp = BitmapFactory.decodeStream( isAssetPNG);
-			}catch (IOException e){
-				debug(0, "No bmp in assets, for category "+filename+". Error: "+e);
+			debug(2, "Getting bmp for category: " + filename);
+			try {
+				InputStream isAssetPNG = myContext.getAssets().open(filename);
+				bmp = BitmapFactory.decodeStream(isAssetPNG);
+			} catch (IOException e) {
+				debug(0, "No bmp in assets, for category " + filename
+						+ ". Error: " + e);
 				filename = filename.replace(".bmp", ".png");
-				try{
-					InputStream isAssetPNG	= myContext.getAssets().open(filename);
-					bmp = BitmapFactory.decodeStream( isAssetPNG);
-				}catch (IOException e2){
-					debug(0, "No png in assets, for category "+filename+". Error: "+e2);
+				try {
+					InputStream isAssetPNG = myContext.getAssets().open(
+							filename);
+					bmp = BitmapFactory.decodeStream(isAssetPNG);
+				} catch (IOException e2) {
+					debug(0, "No png in assets, for category " + filename
+							+ ". Error: " + e2);
 					categories.put(c.getString(0), bmp);
 				}
 				categories.put(c.getString(0), bmp);
 			}
 			categories.put(c.getString(0), bmp);
-		}//while more categories
-		debug(2, "Got bmp for "+categories.size()+" categories" );
+		}// while more categories
+		debug(2, "Got bmp for " + categories.size() + " categories");
 		c.close();
 		return categories;
-	}//getUniqueCategoryNamesAndIcons
-	
-	/* RS-111208
-	 * Old code using blobs, Should be re-used for maintainability
-	 *  (tight connection in DB is much BETTER than loose connection to filename!)
-	 * byte[] imgData = c.getBlob(1);
-	Bitmap bmp = defaultBmp;
-	if (imgData.length>20){
-		debug(0, "imgData.length is "+imgData.length);
-		bmp = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-	}else{
-		bmp = defaultBmp;
-	}
-	*/
+	}// getUniqueCategoryNamesAndIcons
+
+	/*
+	 * RS-111208 Old code using blobs, Should be re-used for maintainability
+	 * (tight connection in DB is much BETTER than loose connection to
+	 * filename!) byte[] imgData = c.getBlob(1); Bitmap bmp = defaultBmp; if
+	 * (imgData.length>20){ debug(0, "imgData.length is "+imgData.length); bmp =
+	 * BitmapFactory.decodeByteArray(imgData, 0, imgData.length); }else{ bmp =
+	 * defaultBmp; }
+	 */
 
 	@Override
 	public int getCategoryId(String title) {
-		Cursor c = myDataBase.query("category", new String[]{"_id"}, "title = ?", new String[]{title}, null, null, null);
+		Cursor c = myDataBase.query("category", new String[] { "_id" },
+				"title = ?", new String[] { title }, null, null, null);
 		while (c.moveToNext()) {
 			int catID = c.getInt(0);
 			c.close();
@@ -701,16 +742,16 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return -1;
-	}//getCategoryId
+	}// getCategoryId
 
 	@Override
 	public int newPoi(Poi poi) {
-		//Category:
+		debug(0, "TODO: CHeck private id = " + poi.getIdPrivate());
+		// Category:
 		int categoryId = -1;
-		if(getCategoryNames().contains(poi.getCategory()))//category exists
+		if (getCategoryNames().contains(poi.getCategory()))// category exists
 			categoryId = getCategoryId(poi.getCategory());
-		else //does not exist, create it:
-		{
+		else { // does not exist, create it:
 			ContentValues values1 = new ContentValues();
 			values1.put("title", poi.getCategory());
 			myDataBase.insertOrThrow("category", null, values1);
@@ -718,21 +759,26 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			categoryId = getCategoryId(poi.getCategory());
 		}
 
-		int AddressId = -1;		//does the address exist?
-		//debug(0, "0: .getStreet 1: getCity 2: getLatitude() 3: .getLongitude() from "+poi.getAddress() );
-		//debug(0, poi.getAddress().getStreet()+ poi.getAddress().getCity()+ ""+poi.getAddress().getLatitude()+ ""+poi.getAddress().getLongitude() );
-		debug(0, poi.getAddress().toString() );
-		Cursor c = myDataBase.query("address", new String[]{"_id"},
-				"street_name = ? AND " +
-				"city = ? AND " +
-				"lat = ? AND " +
-				"lon = ?",
-				new String[]{ poi.getAddress().getStreet(), poi.getAddress().getCity(), ""+poi.getAddress().getLatitude(), ""+poi.getAddress().getLongitude() },
-				null, null, null );
-		if( c.moveToFirst() ){
+		int AddressId = -1; // does the address exist?
+		// debug(0,
+		// "0: .getStreet 1: getCity 2: getLatitude() 3: .getLongitude() from "+poi.getAddress()
+		// );
+		// debug(0, poi.getAddress().getStreet()+ poi.getAddress().getCity()+
+		// ""+poi.getAddress().getLatitude()+ ""+poi.getAddress().getLongitude()
+		// );
+		debug(0, poi.getAddress().toString());
+		Cursor c = myDataBase.query("address", new String[] { "_id" },
+				"street_name = ? AND " + "city = ? AND " + "lat = ? AND "
+						+ "lon = ?", new String[] {
+						poi.getAddress().getStreet(),
+						poi.getAddress().getCity(),
+						"" + poi.getAddress().getLatitude(),
+						"" + poi.getAddress().getLongitude() }, null, null,
+				null);
+		if (c.moveToFirst()) {
 			AddressId = c.getInt(0);
-			debug(0, "AddressId is "+AddressId );
-		}else{//add the address
+			debug(0, "AddressId is " + AddressId);
+		} else {// add the address
 			ContentValues values2 = new ContentValues();
 			values2.put("street_name", poi.getAddress().getStreet());
 			values2.put("city", poi.getAddress().getCity());
@@ -740,33 +786,41 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			values2.put("lon", poi.getAddress().getLongitude());
 			myDataBase.insertOrThrow("address", null, values2);
 
-			//get the id
-			c = myDataBase.query("address", new String[]{"_id"},
+			// get the id
+			c = myDataBase.query("address", new String[] { "_id" },
 					"street_name = ? AND " +
-// ZIP code removed
-//					"zipcode = ? AND " +
-					"city = ? AND " +
-					"lat = ? AND " +
-					"lon = ?",
-// ZIP code removed
-					new String[]{ poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,
-						poi.getAddress().getCity(), ""+poi.getAddress().getLatitude(), ""+poi.getAddress().getLongitude() },
-					null, null, null );
-			if( c.moveToFirst() ){
+					// ZIP code removed
+					// "zipcode = ? AND " +
+							"city = ? AND " + "lat = ? AND " + "lon = ?",
+					// ZIP code removed
+					new String[] { poi.getAddress().getStreet()/*
+																 * ,""+poi.
+																 * getAddress
+																 * ().getZipCode
+																 * ()
+																 */,
+							poi.getAddress().getCity(),
+							"" + poi.getAddress().getLatitude(),
+							"" + poi.getAddress().getLongitude() }, null, null,
+					null);
+			if (c.moveToFirst()) {
 				AddressId = c.getInt(0);
 			}
-			debug(0, "AddressId is "+AddressId );
-		}//if existing address, else new adr
+			debug(0, "AddressId is " + AddressId);
+		}// if existing address, else new adr
 
-		if(AddressId == -1){
+		if (AddressId == -1) {
 			System.err.println("Error getting the address_id");
-			debug(0, "Error getting the address_id" );
-			Toast.makeText(myContext, poi.getLabel() + " Error getting the address_id", Toast.LENGTH_LONG).show();
+			debug(0, "Error getting the address_id");
+			Toast.makeText(myContext,
+					poi.getLabel() + " Error getting the address_id",
+					Toast.LENGTH_LONG).show();
 		}
-		
-		//POI:
-		ContentValues values3= new ContentValues();
-		if(poi.getIdGlobal() != -1) values3.put("global_id", poi.getIdGlobal());
+
+		// POI:
+		ContentValues values3 = new ContentValues();
+		if (poi.getIdGlobal() != -1)
+			values3.put("global_id", poi.getIdGlobal());
 		values3.put("title", poi.getLabel());
 		values3.put("description", poi.getDescription());
 		values3.put("category_id", categoryId);
@@ -774,27 +828,30 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		values3.put("address_id", AddressId);
 		values3.put("web_page", poi.getWebPage());
 		values3.put("openingHours", poi.getOpeningHours());
-		values3.put("telephone",poi.getTelephone());
+		values3.put("telephone", poi.getTelephone());
 		values3.put("image_url", poi.getImageURL());
 
 		try {
 			myDataBase.insertOrThrow("poi", null, values3);
-			debug(0, "Remember to update the PlanPoiTab" );
-			//Toast.makeText(myContext, "Remember to update the PlanPoiTab-list", Toast.LENGTH_SHORT ).show();
+			debug(1, "Remember to update the PlanPoiTab");
+			// Toast.makeText(myContext,
+			// "Remember to update the PlanPoiTab-list", Toast.LENGTH_SHORT
+			// ).show();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
-		}//try DB insert - catch SQL error
+		}// try DB insert - catch SQL error
 
 		c.close();
 		return 1;
-	}//newPoi
+	}// newPoi
 
 	@Override
 	public void newTrip(Trip t) {
-		//TRIP:
+		// TRIP:
 		ContentValues values = new ContentValues();
-		if(t.getIdGlobal() != -1) values.put("global_id", t.getIdGlobal());
+		if (t.getIdGlobal() != -1)
+			values.put("global_id", t.getIdGlobal());
 		values.put("title", t.getLabel());
 		values.put("description", t.getDescription());
 		values.put("free_trip", t.isFreeTrip());
@@ -808,18 +865,19 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	/**
 	 * Get the poi's private id from global id.
-	 *
-	 * @param global_id The global id
-	 * @return The private id for the poi with the given global id.
-	 * Returns -1 if the poi is not in the database.
+	 * 
+	 * @param global_id
+	 *            The global id
+	 * @return The private id for the poi with the given global id. Returns -1
+	 *         if the poi is not in the database.
 	 */
 	@Override
-	public int getPoiPrivateIdFromGlobalId(int global_id)
-	{
-		Cursor c = myDataBase.query("poi", new String[]{"_id"},
-				"global_id = ?", new String[]{""+global_id}, null, null, null);
+	public int getPoiPrivateIdFromGlobalId(int global_id) {
+		Cursor c = myDataBase.query("poi", new String[] { "_id" },
+				"global_id = ?", new String[] { "" + global_id }, null, null,
+				null);
 
-		debug(0, "ids found: "+c.getCount());
+		debug(0, "ids found: " + c.getCount());
 		while (c.moveToNext()) {
 			int private_id = c.getInt(0);
 
@@ -828,21 +886,23 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return -1;
-	}//getPoiPrivateIdFromGlobalId
+	}// getPoiPrivateIdFromGlobalId
 
 	/**
 	 * Get the trip's private id from global id.
-	 *
-	 * @param global_id The global id
-	 * @return The private id for the trip with the given global id.
-	 * Returns -1 if the trip is not in the database.
+	 * 
+	 * @param global_id
+	 *            The global id
+	 * @return The private id for the trip with the given global id. Returns -1
+	 *         if the trip is not in the database.
 	 */
 	@Override
-	public int getTripPrivateIdFromGlobalId(int global_id){
-		Cursor c = myDataBase.query("trip", new String[]{"_id"},
-				"global_id = ?", new String[]{""+global_id}, null, null, null);
+	public int getTripPrivateIdFromGlobalId(int global_id) {
+		Cursor c = myDataBase.query("trip", new String[] { "_id" },
+				"global_id = ?", new String[] { "" + global_id }, null, null,
+				null);
 
-		debug(0, "ids found: "+c.getCount());
+		debug(0, "ids found: " + c.getCount());
 		while (c.moveToNext()) {
 			int private_id = c.getInt(0);
 
@@ -851,63 +911,62 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		}
 		c.close();
 		return -1;
-	}//getTripPrivateIdFromGlobalId
+	}// getTripPrivateIdFromGlobalId
 
 	/**
 	 * Method for editing an already existing PoI.
-	 *
-	 * @param poi The modified poi, that is going to be saved in the database
+	 * 
+	 * @param poi
+	 *            The modified poi, that is going to be saved in the database
 	 */
 	@Override
-	public void editPoi(Poi poi){
+	public void editPoi(Poi poi) {
 		ContentValues poiValues = new ContentValues();
 
 		int addressId = -1;
-		Cursor c = myDataBase.query("address", new String[]{"_id"},
+		Cursor c = myDataBase.query("address", new String[] { "_id" },
 				"street_name = ? AND " +
-// ZIP code removed
-//				"zipcode = ? AND " +
-				"city = ? AND " +
-				"lat = ? AND " +
-				"lon = ?",
-// ZIP code removed
-				new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
-				null, null, null);
-		if(c.moveToFirst()){
+				// "zipcode = ? AND " + // ZIP code removed
+						"city = ? AND " + "lat = ? AND " + "lon = ?",
+				// ZIP code removed /*,""+poi.getAddress().getZipCode()*/
+				new String[] { poi.getAddress().getStreet(),
+						poi.getAddress().getCity(),
+						"" + poi.getAddress().getLatitude(),
+						"" + poi.getAddress().getLongitude() }, null, null,
+				null);
+		if (c.moveToFirst()) {
 			addressId = c.getInt(0);
-		}
-		else{//add the address
+		} else {// add the address
 			ContentValues addrValues = new ContentValues();
 			addrValues.put("street_name", poi.getAddress().getStreet());
-// ZIP code removed
-//			addrValues.put("zipcode", poi.getAddress().getZipCode());
+			// addrValues.put("zipcode", poi.getAddress().getZipCode()); // ZIP
+			// code removed
 			addrValues.put("city", poi.getAddress().getCity());
 			addrValues.put("lat", poi.getAddress().getLatitude());
 			addrValues.put("lon", poi.getAddress().getLongitude());
 			myDataBase.insertOrThrow("address", null, addrValues);
 
-			//get the id
-			c = myDataBase.query("address", new String[]{"_id"},
+			// get the id
+			c = myDataBase.query("address", new String[] { "_id" },
 					"street_name = ? AND " +
-// ZIP code removed
-//					"zipcode = ? AND " +
-					"city = ? AND " +
-					"lat = ? AND " +
-					"lon = ?",
-// ZIP code removed
-					new String[]{poi.getAddress().getStreet()/*,""+poi.getAddress().getZipCode()*/,poi.getAddress().getCity(),""+poi.getAddress().getLatitude(),""+poi.getAddress().getLongitude()},
-					null, null, null);
-			if(c.moveToFirst()){
+					// "zipcode = ? AND " + // ZIP code removed
+							"city = ? AND " + "lat = ? AND " + "lon = ?",
+					// ZIP code removed /*,""+poi.getAddress().getZipCode()*/
+					new String[] { poi.getAddress().getStreet(),
+							poi.getAddress().getCity(),
+							"" + poi.getAddress().getLatitude(),
+							"" + poi.getAddress().getLongitude() }, null, null,
+					null);
+			if (c.moveToFirst()) {
 				addressId = c.getInt(0);
 			}
 		}
 
-		//Category
+		// Category
 		int categoryId = -1;
-		if(getCategoryNames().contains(poi.getCategory()))//category exists
+		if ( getCategoryNames().contains( poi.getCategory() ) )// category exists
 			categoryId = getCategoryId(poi.getCategory());
-		else //does not exist, create it:
-		{
+		else { // does not exist, create it:
 			ContentValues catValues = new ContentValues();
 			catValues.put("title", poi.getCategory());
 			myDataBase.insertOrThrow("category", null, catValues);
@@ -915,12 +974,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			categoryId = getCategoryId(poi.getCategory());
 		}
 
-		if(categoryId == -1){
+		if (categoryId == -1) {
 			debug(0, "Error getting the category_id");
 		}
 
 		int poiID = poi.getIdPrivate();
-		if(poi.getIdGlobal() != -1) poiValues.put("global_id", poi.getIdGlobal());
+		if (poi.getIdGlobal() != -1){
+			poiValues.put("global_id", poi.getIdGlobal());
+		}
 		poiValues.put("favourite", poi.isFavorite());
 		poiValues.put("description", poi.getDescription());
 		poiValues.put("title", poi.getLabel());
@@ -929,129 +990,135 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		poiValues.put("web_page", poi.getWebPage());
 		poiValues.put("image_url", poi.getImageURL());
 
-		myDataBase.update("poi", poiValues, "_id = ?", new String[]{""+poiID} );
-		//		myDataBase.replaceOrThrow("poi", null, dbValues);
+		myDataBase.update("poi", poiValues, "_id = ?", new String[] { ""+ poiID });
+		// myDataBase.replaceOrThrow("poi", null, dbValues);
 
 		poiValues.put("address_id", addressId);
 		poiValues.put("category_id", categoryId);
 
 		c.close();
-	}//editPoi
-
-	
+	}// editPoi
 
 	@Override
-	public void onCreate(SQLiteDatabase db) { }
+	public void onCreate(SQLiteDatabase db) {
+	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	}
 
 	@Override
-	public boolean isOpen(){
+	public boolean isOpen() {
 		if (myDataBase == null) {
 			return false;
 		}
 		return myDataBase.isOpen();
-	}//isOpen
-
+	}// isOpen
 
 	/***
-	 * Open the Database
-	 * This is quite time-consuming, and should be done in a background process,
-	 * so the map can show immediately!
+	 * Open the Database This is quite time-consuming, and should be done in a
+	 * background process, so the map can show immediately!
 	 */
 	@Override
-	public boolean open( File currentDbFile ){
-		try{
-			debug(2, "Trying to open db "+ currentDbFile );
-			myDataBase = openDataBase( currentDbFile );
-		}catch (SQLException e){
-			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "+ currentDbFile);
+	public boolean open(File currentDbFile) {
+		try {
+			debug(2, "Trying to open db " + currentDbFile);
+			myDataBase = openDataBase(currentDbFile);
+		} catch (SQLException e) {
+			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "
+					+ currentDbFile);
 			e.printStackTrace();
-			myDataBase=null;
+			myDataBase = null;
 		}
 		long poiCount = 0;
-		if ( myDataBase == null ){
-			debug(1, "OOOPS! Couldn't open " + currentDbFile );
-		}else{
-			try{
-				poiCount = DatabaseUtils.queryNumEntries( myDataBase, POI_TABLE );
-			}catch (SQLiteException e){ //No such table: poi (if just created blank DB)
-				debug(0, "There was a minor SQLiteException "+e.getMessage() );
+		if (myDataBase == null) {
+			debug(1, "OOOPS! Couldn't open " + currentDbFile);
+		} else {
+			try {
+				poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
+			} catch (SQLiteException e) { // No such table: poi (if just created
+											// blank DB)
+				debug(0, "There was a minor SQLiteException " + e.getMessage());
 			}
-			//debug(1, "poi-count is "+poiCount+", context is "+myContext );
-// JF: I commented this toast because it is confusing for the user at start up to get the message "Imported 0 PoIs"
-//			Toast.makeText(myContext, "Imported "+poiCount +" POIs", Toast.LENGTH_SHORT ).show();
-			//JF: ZIP code removed
-			if ( poiCount ==0 ){ //No existing POIs, close DB, copy default DB-file from assets, and reopen
+			// debug(1, "poi-count is "+poiCount+", context is "+myContext );
+			// JF: I commented this toast because it is confusing for the user
+			// at start up to get the message "Imported 0 PoIs"
+			// Toast.makeText(myContext, "Imported "+poiCount +" POIs",
+			// Toast.LENGTH_SHORT ).show();
+			// JF: ZIP code removed
+			if (poiCount == 0) { // No existing POIs, close DB, copy default
+									// DB-file from assets, and reopen
 				debug(0, "close myDataBase, before re-open");
 				myDataBase.close();
-				try{
-					debug(0, currentDbFile+" was missing... now copying from assets");
-					DBFactory.createDataBase( myContext, dbFile );
+				try {
+					debug(0, currentDbFile
+							+ " was missing... now copying from assets");
+					DBFactory.createDataBase(myContext, dbFile);
 					myDataBase = getReadableDatabase();
-				}catch (IOException e){
+				} catch (IOException e) {
 					e.printStackTrace();
 					return false;
 				}
 			}// if empty database, copy from assets
-		}//if myDataBase == null, else open it 
+		}// if myDataBase == null, else open it
 		return (myDataBase == null) ? false : true;
-	}//open
-
+	}// open
 
 	/**
 	 * Opens the database.
-	 *
-	 * @throws SQLException if the database cannot be opened.
+	 * 
+	 * @throws SQLException
+	 *             if the database cannot be opened.
 	 * @return The SQLite database that has been opened.
 	 */
-	public SQLiteDatabase openDataBase( File currentDbFile ) throws SQLException {
-		if ( currentDbFile == null || currentDbFile.getName().equals("") ){
+	public SQLiteDatabase openDataBase(File currentDbFile) throws SQLException {
+		if (currentDbFile == null || currentDbFile.getName().equals("")) {
 			return null;
-		}else{
-			debug(2, "update SQLiteConnector dbFile to "+currentDbFile );
+		} else {
+			debug(2, "update SQLiteConnector dbFile to " + currentDbFile);
 			dbFile = currentDbFile;
 		}
-		// (Re-) create local DB folder in case it has been removed by the system, or for first time runs
-		File folder = new File ( currentDbFile.getParent() );
-		if ( ! folder.isDirectory() ){
-			debug(0, "Making folder "+folder );
+		// (Re-) create local DB folder in case it has been removed by the
+		// system, or for first time runs
+		File folder = new File(currentDbFile.getParent());
+		if (!folder.isDirectory()) {
+			debug(0, "Making folder " + folder);
 			folder.mkdir();
-			//debug(2, "made folder for: "+currentDbFile);
-		}//if folder missing
+			// debug(2, "made folder for: "+currentDbFile);
+		}// if folder missing
 
-		debug(2, "opening db: "+currentDbFile);
-		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE+SQLiteDatabase.CREATE_IF_NECESSARY);
+		debug(2, "opening db: " + currentDbFile);
+		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(),
+				null, SQLiteDatabase.OPEN_READWRITE
+						+ SQLiteDatabase.CREATE_IF_NECESSARY);
 
 		return myDataBase;
-	}//openDataBase
+	}// openDataBase
 
 	@Override
 	public void setContext(Context context) {
 		this.myContext = context;
 	} // setContext
 
-	
-}//class SQLiteConnecto
+}// class SQLiteConnecto
 
-
-///////////////////////////////////////////////////////////////////////////////
-
+// /////////////////////////////////////////////////////////////////////////////
 
 class ValueComparator2 implements Comparator<String> {
-	  Map<String,Integer> base;
-	  public ValueComparator2(Map<String,Integer> base) {
-	      this.base = base;
-	  }
-	  public int compare(String a, String b) {
-	    if(base.get(a) < base.get(b)) {
-	      return -1;
-	    } else if(base.get(a) == base.get(b)) {
-	      return 0;
-	    } else {
-	      return 1;
-	    }
-	  }//compare
-}//ValueComparator Class
+	Map<String, Integer> base;
+
+	public ValueComparator2(Map<String, Integer> base) {
+		this.base = base;
+	}
+
+	public int compare(String a, String b) {
+		if (base.get(a) < base.get(b)) {
+			return -1;
+		} else if (base.get(a) == base.get(b)) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}// compare
+}// ValueComparator Class
 

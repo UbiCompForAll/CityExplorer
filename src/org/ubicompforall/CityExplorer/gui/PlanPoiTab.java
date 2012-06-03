@@ -190,7 +190,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		requestCode = getIntent().getIntExtra("requestCode",0);
 		DatabaseInterface dbInstance = DBFactory.getInstance(this);
 		lv = getListView();
-		if (requestCode == NewPoiActivity.CHOOSE_POI || 
+		if (requestCode == CityExplorer.CHOOSE_POI || 
 				requestCode == PlanTripTab.ADD_TO_TRIP || 
 				requestCode == TripListActivity.ADD_TO_TRIP ||
 				requestCode == SHARE_POI ||
@@ -249,7 +249,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	 * Updates the category sections in the list, e.g. after choosing filtering.
 	 */
 	private void updateSections(){
-		debug(0, "UPDATE Sections" );
+		debug(2, "UPDATE Sections" );
 		if (allPois == null){
 			allPois = DBFactory.getInstance(this).getAllPois();
 		}
@@ -306,7 +306,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		super.onPrepareOptionsMenu(menu);
 		//menu_shown = true;
 		debug(2, "REQUEST CODE is "+requestCode );
-		if (requestCode == NewPoiActivity.CHOOSE_POI){	
+		if (requestCode == CityExplorer.CHOOSE_POI){	
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
@@ -426,14 +426,14 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 
 	@Override
 	public void onListItemClick(ListView l, View v, int pos, long id) {
-		debug(0, "RequestCode is "+ requestCode +". Choose_POI="+NewPoiActivity.CHOOSE_POI+"..." );
+		debug(0, "RequestCode is "+ requestCode +". Choose_POI="+CityExplorer.CHOOSE_POI+"..." );
 		if(l.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
 			//Pressing a header			
 			return;
 		}
 		Poi p = (Poi) l.getAdapter().getItem(pos);
 
-		if (requestCode == NewPoiActivity.CHOOSE_POI){
+		if (requestCode == CityExplorer.CHOOSE_POI){
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra(IntentPassable.POI, p);
 			setResult( Activity.RESULT_OK, resultIntent );
@@ -584,7 +584,6 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 					public void onClick(View view){
 						//set favourite off
 						Poi poi = p;
-
 						poi = poi.modify().favourite(false).build();
 						DBFactory.getInstance(PlanPoiTab.this).editPoi(poi);//update poi;
 
@@ -600,7 +599,6 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 					public void onClick(View view){
 						//set as favourite
 						Poi poi = p;
-
 						poi = poi.modify().favourite(true).build();
 						DBFactory.getInstance(PlanPoiTab.this).editPoi(poi);//update poi;
 
@@ -617,6 +615,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			qa.addItem(editIcon, R.string.editLabel, new OnClickListener(){
 				public void onClick(View view){
 					Intent editIntent = new Intent( PlanPoiTab.this, NewPoiActivity.class );
+					debug( 0, "id is "+ p.getIdPrivate() +", globId is "+p.getIdGlobal() );
 					editIntent.putExtra(IntentPassable.POI, p);	//setResult( Activity.RESULT_OK, resultIntent );
 					startActivity( editIntent );
 					qa.dismiss();

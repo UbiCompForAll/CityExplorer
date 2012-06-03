@@ -72,8 +72,8 @@ public class DBFactory{
 			dbConnectorInstance.close();
 		}
 		if(databaseType == DBType.SQLITE){
-			currentDbFile = new File( context.getDatabasePath(dbName).getAbsolutePath() );
-			CityExplorer.debug(2, "new dbFile is "+currentDbFile);
+			currentDbFile = new File( context.getDatabasePath( CityExplorer.CITIES[0] ).getAbsolutePath()+"/"+dbName );
+			CityExplorer.debug(1, "new dbFile is "+currentDbFile );
 			dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 		} // if right type
 		dbConnectorInstance.open( currentDbFile );
@@ -132,16 +132,19 @@ public class DBFactory{
 	 * @return Single instance of DBFactory
 	 */
 	public static DatabaseInterface getInstance( Context context ){
-		//CityExplorer.debug(1, "currentDbFile is "+currentDbFile); //Overused
 		if ( currentDbFile == null || currentDbFile.equals("") ){
-			String currentDbName = MyPreferencesActivity.getCurrentDbName( context );
-			String currentDbFileUri = context.getDatabasePath(currentDbName).getAbsolutePath();
-			if ( ! currentDbFileUri.matches( ".*"+currentDbName ) ){
-				currentDbFileUri += "/" + currentDbName;
-			}
+			//String[] currentDbName = MyPreferencesActivity.getSelectedDbName( context ).split("/"); [0] Folder [1] dbName
+			String currentDbFolder	= MyPreferencesActivity.getSelectedCityName( context );
+			String currentDbFilename= MyPreferencesActivity.getSelectedDbName( context );
+			String currentDbFolderUri = context.getDatabasePath(currentDbFolder).getAbsolutePath();
+			//if ( ! currentDbFolderUri.matches( ".*"+currentDbFolder ) ){
+			//	currentDbFolderUri += "/" + currentDbFolder;
+			//}
+			String currentDbFileUri = currentDbFolderUri+"/"+currentDbFilename;
 			currentDbFile = new File( currentDbFileUri );
 			CityExplorer.debug(2, "currentDbFile was set to " + currentDbFile );
 		}
+		//CityExplorer.debug(1, "currentDbFile is "+currentDbFile); //Overused
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if(databaseType == DBType.SQLITE){
 				CityExplorer.debug(2, "currentDbFile is "+currentDbFile);

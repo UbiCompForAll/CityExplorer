@@ -63,9 +63,6 @@ import android.widget.EditText;
 
 public class NewPoiActivity extends Activity implements OnClickListener{
 
-	/** The Constant CHOOSE_POI. */
-	protected static final int CHOOSE_POI = 1;
-	
 	/** The name view. */
 	private EditText nameView;
 	
@@ -75,10 +72,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The adr view. */
 	private EditText addrView;
 	
-	/** The zip view. */
-// ZIP code removed
-//	private EditText zipView; 
-	
+	/** The zip view. */ //	private EditText zipView;	// ZIP code removed
+
 	/** The city view. */
 	private EditText cityView;
 	
@@ -94,39 +89,32 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The image url view. */
 	private EditText imageURLView;
 	
+
+	/** The new poi. */
+	private Poi newPoi;
 	/** The name of the new poi. */
 	private String name;
-	
 	/** The description of the new poi. */
 	private String description;
-	
 	/** The category  of the new poi. */
 	private String cat;
-	
 	/** The street of the new poi. */
 	private String street;
-	
 	/** The city of the new poi. */
 	private String city;
-	
 	/** The latitude and longitude of the new poi **/
 	Double lat, lng;
-	
 	/** The telephone number of the new poi. */
 	private String tel;
-	
 	/** The opening hours of the new poi. */
 	private String openingHours;
-	
 	/** The web page of the new poi. */
 	private String webPage;
-	
 	/** The image url of the new poi. */
 	private String imageUrl;
-	
-	/** The zip code of the new poi. */
-//	ZIP code removed 
-//	private int zip;
+	/** The private ID of the new poi **/
+	private int idPriv;
+	/** The zip code of the new poi. */	//	private int zip; //	ZIP code removed
 	
 	/** The save poi button. */
 	private Button savePoiButton;
@@ -143,7 +131,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The DataBase object. */
 	private DatabaseInterface db;
 	
-	/** The arraylist containing all the category names. */
+	/** The ArrayList containing all the category names. */
 	private ArrayList<String> category;
 
 	protected Context context;
@@ -166,6 +154,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		}else{
 			choosePoiButton.setVisibility(View.GONE);
 			Poi p = (Poi) myIntent.getParcelableExtra( IntentPassable.POI );
+			idPriv = p.getIdPrivate();
+			debug( 0, "id is "+ idPriv +", globId is "+p.getIdGlobal() );
 			fillPoiDetailFields( p );
 		}
 	}//onCreate
@@ -232,22 +222,6 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	}//isNumbers
 
 	/**
-	 * Converts a String to an int.
-	 * 
-	 * @param text The input text, containing only numbers.
-	 * @return An int that is converted successfully from a String.
-	 */
-//	private int stringToInt(String text){
-//		int n=-1;
-//		try {
-//			n=  Integer.parseInt(text);
-//		} catch ( NumberFormatException ne){
-//			ne.printStackTrace();
-//		}
-//		return n;
-//	}// stringToInt
-	
-	/**
 	 * Checks all the mandatory input fields and saves a location in the database.
 	 */
 	private void savePoi(){
@@ -260,8 +234,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		description = descriptionView.getText().toString();
 		cat = (String) catView.getSelectedItem();
 		street = addrView.getText().toString();
-// ZIP code removed
-//		zip = stringToInt(zipView.getText().toString());
+//		zip = stringToInt(zipView.getText().toString()); // ZIP code removed, Se OLD CODE on Bottom
 		city = cityView.getText().toString();
 		tel = telView.getText().toString();
 		openingHours = openingHoursView.getText().toString();
@@ -271,67 +244,87 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		if(street.trim().equals("")){
 			Toast.makeText(this, "Please enter an address", Toast.LENGTH_LONG).show();
 			return;
-		}
+		}//Check Street
 		if( city != null && city.trim().equals("") ){
 			Toast.makeText(this, "Please enter a city", Toast.LENGTH_LONG).show();
 			return;
-		}
+		}//Check City
 		if( !tel.equals("") && !isNumbers(tel) ){
 			Toast.makeText(this, "Invalid phone number: "+tel, Toast.LENGTH_LONG).show();
 			return;
-		}
+		}//Check Telephone
 
 		// Gets the latitude and longitude of the poi, by giving the street, city and zip.
+		debug(2, "lat_lng is "+ lat +", "+ lng );
 		StringBuilder searchString = new StringBuilder(street);
 		if( city != null && ! city.trim().equals("") ){
 			searchString.append(", "+city);
 		}
-		//debug(0, "Save! lat is "+lat+" and lng is "+lng );
-		if ( CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL ) ){
-			//Double[] lat_lng = LocationActivity.getAddressFromLocation( this, searchString.toString(), new GeocoderHandler() ); //Ask online service
-			Double[] lat_lng = LocationActivity.runGetAddressFromLocation( context, searchString.toString(), new GeocoderHandler() );
-			Toast.makeText( context, "Verifying Address", Toast.LENGTH_LONG).show();
-			lat = lat_lng[0]; lng = lat_lng[1];
-			debug(2, "Got Address: "+lat+", "+lng );
-		}else if( ! CityExplorer.DATACONNECTION_NOTIFIED ){ //Ask to connect
-			CityExplorer.showNoConnectionDialog( this, "Data connection needed to verify address location",
-					"Set Manually", new Intent( this, LocationActivity.class ) ); //, CityExplorer.REQUEST_LOCATION ) );
-		}else if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
-			debug(1, "Save! lat is "+lat+" and lng is "+lng );
-			storeToDB();	//Save!
-		}else{ //set lat and lng manually
-			Toast.makeText( NewPoiActivity.this, "Set POI location", Toast.LENGTH_LONG).show();
-			Intent selectLatLng = new Intent( this, LocationActivity.class ); //startActivityForResult()...
-			startActivityForResult( selectLatLng, CityExplorer.REQUEST_LOCATION );
-			debug(0, "Not able to find location of address in city online by Google Maps" );
-		}// if web available - else not
+		if ( lat==0 && lng==0 ){
+			if ( CityExplorer.pingConnection( this, CityExplorer.MAGIC_URL ) ){
+				//Double[] lat_lng = LocationActivity.getAddressFromLocation( this, searchString.toString(), new GeocoderHandler() ); //Ask online service
+				Double[] lat_lng = LocationActivity.runGetAddressFromLocation( context, searchString.toString(), new GeocoderHandler() );
+				Toast.makeText( context, "Verifying Address", Toast.LENGTH_LONG).show();
+				lat = lat_lng[0]; lng = lat_lng[1];
+				debug(2, "Got Address: "+lat+", "+lng );
+			}else if( ! CityExplorer.DATACONNECTION_NOTIFIED ){ //Ask to connect
+				CityExplorer.showNoConnectionDialog( this, "Data connection needed to verify address location",
+						"Set Manually", new Intent( this, LocationActivity.class ) ); //, CityExplorer.REQUEST_LOCATION ) );
+			}else{ //set lat and lng manually
+				Toast.makeText( NewPoiActivity.this, "Set POI location", Toast.LENGTH_LONG).show();
+				Intent selectLatLng = new Intent( this, LocationActivity.class ); //startActivityForResult()...
+				startActivityForResult( selectLatLng, CityExplorer.REQUEST_LOCATION );
+				debug(0, "Not able to find location of address in city online by Google Maps" );
+			}// if web available - else not
+		}
+		if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
+			storeToDB( newPoi );	//Save!
+		}else{
+			debug(0, "NO Save!??" );
+		}
 
 		// ZIP code removed
 	}// savePoi
 
-	// HELPER CLASS FOR savePoi
-	public boolean storeToDB(){
-		if ( lat != 0 && lng != 0 ) {
+	// HELPER Class/Method FOR savePoi
+	public boolean storeToDB( Poi currentPoi ){
+		boolean correct = true;
+		boolean existing = false;
+		debug(0, "Save! lat is "+lat+" and lng is "+lng );
+		if ( lat != 0 || lng != 0 ) { //Valid address
+			if ( currentPoi.getIdPrivate() == -1 ){
+				debug(0, "HERE!! TODO: Check Name for clash against existing entries!!" );
+				existing = false;
+			}
+		}else{ //if valid, else false
+			correct = false;
+			Toast.makeText( NewPoiActivity.this, "Invalid address or city", Toast.LENGTH_LONG).show();
+		}
+		
+		if (correct){
 			PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
 			.longitude(lng).latitude(lat);
 		
-			Poi p = new Poi.Builder( name, ab.build() )
+			Poi newPoi = new Poi.Builder( name, ab.build() )
 			.description(description)
 			.category(cat)
 			.favourite(false)
 			.webPage(webPage)
 			.telephone(tel)
 			.openingHours(openingHours)
-			.imageURL(imageUrl).build(); 
-		
-			debug(0, "poi is "+p );
-			db.newPoi(p);
+			.imageURL(imageUrl)
+			.idPrivate( idPriv )
+			.build();
+			debug(0, "poi is "+newPoi );
+
+			if (existing){
+				db.editPoi(newPoi);
+			}else{
+				db.newPoi(newPoi);
+			}
 			finish();
-		}else{
-			Toast.makeText( NewPoiActivity.this, "Invalid address or city", Toast.LENGTH_LONG).show();
-			return false;
-		}
-		return true;
+		}//if correct new entry
+		return correct;
 	}//storeToDB
 
 
@@ -358,9 +351,10 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		if(v == choosePoiButton){
 			Intent selectPoi = new Intent( this, PlanPoiTab.class );
-			selectPoi.putExtra("requestCode", CHOOSE_POI);
-			startActivityForResult( selectPoi, CHOOSE_POI );
+			selectPoi.putExtra("requestCode", CityExplorer.CHOOSE_POI);
+			startActivityForResult( selectPoi, CityExplorer.CHOOSE_POI );
 		}else if(v == savePoiButton){
+			//debug(0, "Clicked save..." );
 			savePoi();
 
 		}else if(v == searchButton){
@@ -385,13 +379,13 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onActivityResult( int requestCode, int resultCode, Intent data) {
 		//debug(1, "resultCode is "+resultCode+". Activity.RESULT_CANCELED is "+Activity.RESULT_CANCELED );
-		debug(1, "requestCode is "+requestCode+". CHOOSE_POI is "+CHOOSE_POI );
+		debug(0, "requestCode is "+requestCode+". CHOOSE_POI is "+CityExplorer.CHOOSE_POI );
 		if( resultCode == Activity.RESULT_CANCELED ){
 			return;
 		}
 
 		switch (requestCode){
-		case CHOOSE_POI:
+		case CityExplorer.CHOOSE_POI:
 			Poi p = (Poi) data.getParcelableExtra( IntentPassable.POI );
 			fillPoiDetailFields( p );
 			break;
@@ -403,8 +397,13 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 
 			//Testing... Merged...
 			PoiAddress adr = MyPreferencesActivity.getCurrentAddress( this, lat_lngE6 );
-			addrView.setText( adr.getStreet() );
-			cityView.setText( adr.getCity() );
+			if (adr != null){
+				addrView.setText( adr.getStreet() );
+				cityView.setText( adr.getCity() );
+			}else{
+				addrView.setText( CityExplorer.NO_ADDRESS );
+				cityView.setText( CityExplorer.NO_ADDRESS );
+			}
 			break;
 //		case CityExplorer.REQUEST_MAP_ADDRESS:
 //			PoiAddress adr = MyPreferencesActivity.getCurrentAddress( this, latLngE6 );
@@ -510,3 +509,22 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	}//class GeocoderHandler
 
 }//NewPoiActivity class
+
+
+
+//OLD CODE
+/**
+ * Converts a String to an int.
+ * 
+ * @param text The input text, containing only numbers.
+ * @return An int that is converted successfully from a String.
+ */
+//private int stringToInt(String text){
+//	int n=-1;
+//	try {
+//		n=  Integer.parseInt(text);
+//	} catch ( NumberFormatException ne){
+//		ne.printStackTrace();
+//	}
+//	return n;
+//}// stringToInt

@@ -71,8 +71,8 @@ public class ImportDB extends Activity{
 			OutputStream out = null;
 			try {
 				in = new BufferedInputStream( new FileInputStream(file) );
-				out = new FileOutputStream( getDatabasePath( file.getName() ) );
-				debug(0, "Copying from input to " + getDatabasePath( file.getName() ) );
+				out = new FileOutputStream( getDatabasePath( CityExplorer.CITIES[0] ) +"/"+ file.getName() );
+				debug(0, "Copying from input to " + getDatabasePath( CityExplorer.CITIES[0] ) +"/"+ file.getName() );
 				copyFile(in, out);
 				in.close();
 				in = null;
