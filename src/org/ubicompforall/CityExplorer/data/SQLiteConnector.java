@@ -76,7 +76,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	/** The whole path to our database. */
 	// private String myPath;
 
-	/** The current/local/private database file. */
+	/** The current (local/private) database file. */
 	private File dbFile;
 	// private File dbFilePath;
 
@@ -130,11 +130,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * @param context
 	 *            The context
 	 */
-	public SQLiteConnector(Context context, File dbFile) { // extends SQLiteOpenHelper, implements DatabaseInterface
+	public SQLiteConnector( Context context, File dbFile ) { // extends SQLiteOpenHelper, implements DatabaseInterface
 		super(context, dbFile.getName(), null, 2);
 		myContext = context;
-		debug(2, "dbFile is " + dbFile);
-		MyPreferencesActivity.storeDbNameSetting(context, dbFile); // JF: is set to Web URL if the user has not chosen settings
+		debug(2, "dbFile is " + dbFile );
+		MyPreferencesActivity.storeDbNameSetting( context, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
 	}// SQLiteConnector CONSTRUCTOR
 
 
@@ -1051,9 +1051,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 				debug(0, "close myDataBase, before re-open");
 				myDataBase.close();
 				try {
-					debug(0, currentDbFile
-							+ " was missing... now copying from assets");
-					DBFactory.createDataBase(myContext, dbFile);
+					debug(0, currentDbFile +" was missing... now copying from assets/"+CityExplorer.ASSETS_DB );
+					dbFile = DBFactory.createDataBase( myContext, dbFile ); // AND Reset dbFile to assets-name
+					MyPreferencesActivity.storeDbNameSetting( myContext, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
 					myDataBase = getReadableDatabase();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -1087,10 +1087,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 			// debug(2, "made folder for: "+currentDbFile);
 		}// if folder missing
 
-		debug(2, "opening db: " + currentDbFile);
-		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(),
-				null, SQLiteDatabase.OPEN_READWRITE
-						+ SQLiteDatabase.CREATE_IF_NECESSARY);
+		debug(0, "opening db: " + currentDbFile);
+		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null,
+				SQLiteDatabase.OPEN_READWRITE + SQLiteDatabase.CREATE_IF_NECESSARY);
 
 		return myDataBase;
 	}// openDataBase

@@ -32,8 +32,9 @@ package org.ubicompforall.CityExplorer.data;
 import java.util.ArrayList;
 
 /**
- * The interface for abstracting the connection to the fileSystem.
+ * BASED ON: The interface for abstracting the connection to the fileSystem.
  * @author Christian Skjetne
+ * @author Rune Sætre
  */
 public interface FileSystemInterface{
 	/**
@@ -48,13 +49,13 @@ public interface FileSystemInterface{
 	 * @return ArrayList containing DBs from fileSystem.
 	 */
 	public ArrayList<DB> findAllDBs(String category); 
-	
-	/**
-	 * Interface method for fetching a DB from the fileSystem.
-	 * @param privateId The ID of the DB to be fetched.
-	 * @return The DB from the fileSystem.
-	 */
-	public DB getDB(int privateId);
+
+//	/**
+//	 * Interface method for fetching a DB from the fileSystem.
+//	 * @param privateId The ID of the DB to be fetched.
+//	 * @return The DB from the fileSystem.
+//	 */
+//	public DB getDB(int privateId);
 	
 	/**
 	 * Interface method for deleting a DB from the fileSystem.
@@ -62,11 +63,11 @@ public interface FileSystemInterface{
 	 * @return Boolean as to whether the deletion was successful or not.
 	 */
 	boolean deleteDB(DB db);
-	
-	/**
-	 * Interface method for setting the Context.
-	 * @param context The Context to be set.
-	 */
-	//void setContext(Context context);  // Which Context? RS-111215
-	
+
+//	/**
+//	 * Interface method for setting the Context.
+//	 * @param context The Context to be set.
+//	 */
+//	void setContext(Context context);  // Which Context? RS-111215
+
 }//FileSystemInterface

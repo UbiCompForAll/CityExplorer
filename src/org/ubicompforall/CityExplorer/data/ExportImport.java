@@ -124,7 +124,7 @@ public class ExportImport extends Activity{
 		OutputStreamWriter osw;
 		try{
 			//FileOutputStream fOut = c.openFileOutput(CityExplorer.SHARED_FILE, MODE_WORLD_READABLE);
-			FileOutputStream fOut = new FileOutputStream( CityExplorer.getSharedFileName(c) );
+			FileOutputStream fOut = new FileOutputStream( CityExplorer.getSharedFileName() );
 			osw = new OutputStreamWriter(fOut);
 			// Write the string to the file
 			for (Poi poi : pois){
@@ -155,7 +155,7 @@ public class ExportImport extends Activity{
 			System.out.println("IO error: "+e.getMessage());
 		}
 		
-		File F = c.getFileStreamPath( CityExplorer.getSharedFileName(c) );
+		File F = c.getFileStreamPath( CityExplorer.getSharedFileName() );
         Uri U = Uri.fromFile(F);
 
 		

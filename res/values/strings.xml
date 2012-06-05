@@ -74,7 +74,7 @@
 	<string name="default_location">Default Location</string>
 	<string name="default_dbDownloadURL">http://www.sintef.no/Projectweb/UbiCompForAll/Results/Software/City-Explorer</string>
 	<string name="default_cityName">Trondheim</string>
-	<string name="default_dbName">CityExplorer.sqlite</string>
+	<string name="default_dbName">MiniTrondheim.sqlite</string>
 	<string name="descriptionLabel">Description:</string>
 	<string name="editfromexistingPoiLabel">Copy existing Location</string>
 	<string name="editLabel">Edit</string>

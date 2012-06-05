@@ -25,21 +25,44 @@
 
 package org.ubicompforall.CityExplorer.data;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
+import org.ubicompforall.CityExplorer.CityExplorer;
+
+/***
+ * Contains the file-connection to a db-file
+ * (Or a db-folder, if filename is empty)
+ * @author satre
+ */
 public class DB {
-	private String url = new String();
-	private String category;
-
-	public DB( String url, String category ) {
-		this.url = url;
+	private final String fullname, category, filename;
+	
+	public DB( String dbPath, String category, String filename ) throws URISyntaxException   {
 		this.category = category;
+		this.filename = filename;
+
+		if ( filename == "" ){
+			fullname = dbPath+"/"+category;
+		}else{
+			fullname = dbPath+"/"+category+"/"+filename;
+		}
 	}//CONSTRUCTOR
+	
+	public boolean delete(){
+		CityExplorer.debug(0, "Deleting file: "+ fullname );
+		File db = new File( fullname );
+		try{
+			return db.delete();			
+		}catch (Error e){
+			CityExplorer.debug(-1, "Could not delete "+db );
+			e.printStackTrace();
+		}//try-catch
+		return false;
+	}//delete
 
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
+	public String getFullname() {
+		return fullname;
 	}
 
 	public String getCategory() {
@@ -47,12 +70,16 @@ public class DB {
 	} // getCategory
 
 	public String getLabel() {
-		return url;
+		return filename;
 	} // getLabel
 
 	public CharSequence getDescription() {
-		// TODO Auto-generated method stub
-		return "Runes Beskrivæls";
+		return category+" DataBase";
 	} //getDescription
+
+
+//	public void setUrl(String url) {
+//		this.dbPath = url;
+//	}//setUrl
 
 } // class DB

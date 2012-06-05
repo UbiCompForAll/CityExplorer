@@ -31,7 +31,6 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -59,17 +58,17 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	//Activity fields
 	SharedPreferences settings;	// common settings for all the activities in the whole application
 	Editor editor;	// Editor for changing the shared preferences
-	private TextView cityName_text, dbName_text;
+	private TextView dbName_text;	// cityName_text
 	private EditText url_edit;
 	
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 	
-	public static void storeDbNameSetting( Context context, File dbFile ){
+	public static void storeDbNameSetting( Context context, String dbFileName ){
 		Editor editor = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0).edit();
-		debug(2, "committing db:"+dbFile.getName() );
-		editor.putString( CityExplorer.SETTINGS_DB_NAME, dbFile.getName() );
+		debug(2, "committing db:"+dbFileName );
+		editor.putString( CityExplorer.SETTINGS_DB_NAME, dbFileName );
 		editor.commit();
 	}//storeDbSettings
 
@@ -97,9 +96,10 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		editor = settings.edit();	// Remember to commit changes->onPause etc.
 
-		cityName_text = (TextView) findViewById( R.id.pref_city );
-		cityName_text.setText( getSelectedCityName( this ) );
-		findViewById(R.id.cityBrowserButton).setOnClickListener(this);
+		//JF: Don't want one folder pr. city
+//		cityName_text = (TextView) findViewById( R.id.pref_city );
+//		cityName_text.setText( getSelectedCityName( this ) );
+//		findViewById(R.id.cityBrowserButton).setOnClickListener(this);
 
 		dbName_text = (TextView) findViewById( R.id.pref_db );
 		dbName_text.setText( getSelectedDbName( this ) );
@@ -271,7 +271,6 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 
 	public static String getSelectedCityName ( Context context ){
 		String defaultCityName = context.getResources().getString( R.string.default_cityName );
-		//String defaultCityName = CityExplorer.CITIES[0];
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		String settingsCityName = settings.getString ( CityExplorer.SETTINGS_CITY_NAME, defaultCityName );
@@ -292,7 +291,6 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 
 	public static String getSelectedDbName ( Context context ){
 		String defaultDbName = context.getResources().getString( R.string.default_dbName );
-		//String defaultCityName = CityExplorer.CITIES[0];
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		String settingsDbName = settings.getString ( CityExplorer.SETTINGS_DB_NAME, defaultDbName );

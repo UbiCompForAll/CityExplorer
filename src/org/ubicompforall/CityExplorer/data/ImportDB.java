@@ -23,12 +23,12 @@
  * 
  */
 
-
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +37,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-import org.ubicompforall.CityExplorer.gui.ImportActivity;
+import org.ubicompforall.CityExplorer.gui.PlanActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -46,10 +47,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 /**
- * @description: Class to handle import a database on reception of the VIEW FILE intent. NOT IMPLEMENTED
+ * @description: Class to handle import a database on reception of the VIEW FILE intent.
  * At the moment the file file is copied from ExportImport (or Sharing?) that is text based.
  * 
- * Suggested Functionality: copy to application folder and open it.
+ * Suggested Functionality: copy to application folder and open it. NOT IMPLEMENTED LIKE THAT YET?
  */
 public class ImportDB extends Activity{
 
@@ -71,25 +72,34 @@ public class ImportDB extends Activity{
 			OutputStream out = null;
 			try {
 				in = new BufferedInputStream( new FileInputStream(file) );
-				out = new FileOutputStream( getDatabasePath( CityExplorer.CITIES[0] ) +"/"+ file.getName() );
-				debug(0, "Copying from input to " + getDatabasePath( CityExplorer.CITIES[0] ) +"/"+ file.getName() );
+				try{
+					out = new FileOutputStream( getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
+				}catch( FileNotFoundException e ){
+					new File( getDatabasePath( CityExplorer.DEFAULT_CITY ).getAbsolutePath() ).mkdirs();
+					out = new FileOutputStream( getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
+				}
+				debug(0, "Copying from input to " + getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
 				copyFile(in, out);
 				in.close();
 				in = null;
 				out.flush();
 				out.close();
-				out = null;	
+				out = null;
+
+				//Close this activity, and start the next one: View imported pois
+				finish();
+				//startActivity(new Intent( this, ImportActivity.class) );
+				DBFactory.changeInstance( this, file.getName() );
+				startActivity(new Intent( this, PlanActivity.class) );
 			} catch(Exception e) {
 			    debug(0, e.getMessage() );
 			    e.printStackTrace();
 			}
 			
-		}else{//if URI given in intent
+		}else{//if URI given in intent, else uri == null
 			Toast.makeText( this, "ImportDB, file intent uri.getPath==null in uri "+uri, Toast.LENGTH_LONG).show();
 			debug(0, "file intent uri.getPath==null in uri "+uri );
 		}
-		finish();
-		startActivity(new Intent( this, ImportActivity.class) );
 	}// onCreate
 	
 	private void copyFile(InputStream in, OutputStream out) throws IOException {
@@ -100,10 +110,12 @@ public class ImportDB extends Activity{
 	    }
 	}//copyFile
 
+	
 	private void debug(int i, String string) {
 		CityExplorer.debug(i, string);
 	}// debug
 
+	
 	/**
 	 * Share pois with another user.
 	 *
@@ -125,8 +137,7 @@ public class ImportDB extends Activity{
 				 * 1  title;
 				 * 2  description;
 				 * 3  street_name;
-// ZIP code removed
-//				 * x4  zipcode;
+//				 * x4  zipcode; // ZIP code removed
 				 * 4  city;
 				 * 5  lat;
 				 * 6  lon;
@@ -142,8 +153,7 @@ public class ImportDB extends Activity{
 						poi.getLabel()		+";"+
 						poi.getDescription().replaceAll("\n", "%EOL")+";"+
 						poi.getAddress().getStreet()+";"+
-// ZIP code removed
-//						poi.getAddress().getZipCode()+";"+
+//						poi.getAddress().getZipCode()+";"+	// ZIP code removed
 						poi.getAddress().getCity()+";"+
 						poi.getAddress().getLatitude()+";"+
 						poi.getAddress().getLongitude()+";"+

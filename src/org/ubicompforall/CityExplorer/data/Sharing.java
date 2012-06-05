@@ -142,7 +142,7 @@ public class Sharing extends Activity
 	public static void send(Context c, ArrayList<Poi> pois){
 		OutputStreamWriter osw;
 		try{
-			FileOutputStream fOut = new FileOutputStream( CityExplorer.getSharedFileName(c) );
+			FileOutputStream fOut = new FileOutputStream( CityExplorer.getSharedFileName() );
 			CityExplorer.debug(0, "Storing pois to "+fOut );
 			osw = new OutputStreamWriter(fOut); 
 			// Write the string to the file

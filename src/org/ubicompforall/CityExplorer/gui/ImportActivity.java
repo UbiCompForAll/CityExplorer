@@ -43,10 +43,6 @@ import android.widget.*;
 
 public class ImportActivity extends TabActivity {
 
-//	OLD IDEA: RS-111130
-//		setContentView(R.layout.importview);
-//		TextView tv = (TextView) findViewById(R.id.importTV);		tv.setText("WHOOPIE!");
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);

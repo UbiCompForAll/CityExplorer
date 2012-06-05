@@ -80,7 +80,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final int DEBUG = 1;
 
 	public static final String C = "CityExplorer";
-	public static final String[] CITIES = { "Trondheim" };
+	//public static final String[] CITIES = { "Trondheim" }; // Take from folder names in databases instead
 
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
@@ -95,8 +95,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String LNG = "LNG";
 
 	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng // Trondheim Torvet 63°25′49″N  10°23′42″E ;
-	//  Default URL moved to @string/default_url
-	//	public static final String RUNE_URL = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //CityExplorer.sqlite
+	// Default URL moved to @string/default_url = "http://www.idi.ntnu.no/~satre/ubicomp/cityexplorer/"; //MiniTrondheim.sqlite
 
 	//CONSTANTS for X
 	public static final int TYPE_ALL = 0;
@@ -124,10 +123,14 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//Other fields
 	private static ProgressDialog pd;
 
-	// CONSTANTS for sharing
+	// CONSTANTS for DBs and sharing
+	public static final String ASSETS_DB = "MiniTrondheim.sqlite";
+	public static final String DEFAULT_CITY = "Downloaded";
 	public static final String SHARED_FILE = "cityexplorer.txt";
-	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../.."; // introduced as work around for Gmail - but does not seem to work
-	public static final String SHARED_FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+	// introduced as work around for Gmail - but does not seem to work
+	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../..";
+	public static final String SHARED_FILE_PATH
+	 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(); //= "/mnt/sdcard/"
 
 
 	/***
@@ -367,8 +370,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	 * Return the URI of the file used when sharing PoI
 	 * @param context of the calling Activity
      */
-	public static String getSharedFileName(Context ctx) {
-    	//return SHARED_FILE_PATH + ctx.getFilesDir() +"/"+ SHARED_FILE;
+	public static String getSharedFileName() {
     	return Environment.getExternalStorageDirectory() + CityExplorer.SHARED_FILE;
 	}
 

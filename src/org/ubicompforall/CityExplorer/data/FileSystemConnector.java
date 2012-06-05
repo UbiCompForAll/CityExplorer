@@ -32,6 +32,7 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import android.content.Context;
@@ -39,20 +40,31 @@ import android.content.Context;
 public class FileSystemConnector implements FileSystemInterface {
 
 	/*** Field containing an {@link ArrayList} of the categoryFolders.*/
-	private String[] categoryFolders;
+	private ArrayList<String> categoryFolders;
 
 	/** All the DBs in the current categoryFolders **/
 	ArrayList<DB> allDBs = null;
 
 	private String dbPath = null;	// remembering the default path for locals DBs
 	
-	//private Context ctx = null;	//context for display etc.
-
 	public FileSystemConnector( Context context ){
 		//INITIALIZE OWN FIELDS
-		categoryFolders = CityExplorer.CITIES; //e.g. { "Trondheim", "Etc?" }
-		dbPath  = context.getDatabasePath( categoryFolders[0] ).getParent();
+		//categoryFolders = CityExplorer.CITIES; //e.g. { "Trondheim", "Etc?" }
+		dbPath  = context.getDatabasePath( "dummy" ).getParent();
 		debug(2, "dbPath is "+dbPath );
+
+		//Store all folders in the database folder
+		categoryFolders = new ArrayList<String>(); //e.g. { "Trondheim", "Etc?" }
+		File dir = new File( dbPath );
+		for ( File file : dir.listFiles() ){
+			//debug(1, "test "+file );
+			if ( file.isDirectory() ){
+				debug(2, "Keep "+file );
+				categoryFolders.add( file.getName() );
+//			}else{	// Some cleaning up of files left after old bugs
+//				file.delete();
+			}
+		}// for each file
 
 		allDBs = getAllDBs();	// Find all DBs in categoryFolders (the cities)
 		debug(2, "allDBs.size is "+allDBs.size() );
@@ -93,41 +105,36 @@ public class FileSystemConnector implements FileSystemInterface {
 		}else{
 			for ( int f=0; f<files.length ; f++ ){
 				File file = files[f];
-//Just cleaning up after old Bugs and bad filenames, and interference with webView DBs ;-)
 //				if ( file.getName().matches( ".*webview(Cache)?(-journal)?.db" ) ){
-//				if ( file.getName().matches( "http:.*" ) ){
+//Just cleaning up after old Bugs and bad filenames, and interference with webView DBs ;-)
+//				if ( file.getName().matches( ".*CityExplorer.sqlite" ) ){
 //					file.delete();
 //					debug(0, "deleted "+file );
 //				}else{
-					debug(2, "Keep "+file );
-					foundDBs.add( new DB( file.getName(), dir.getName() ) );
+					try {
+						DB foundDb;
+						foundDb = new DB( dbPath, dir.getName(), file.getName() );
+						foundDBs.add( foundDb );
+						debug(2, "Keep "+file );
+					} catch (URISyntaxException e) {
+						debug(-1, e.getMessage() );
+						e.printStackTrace();
+					}
 //				}
 			}// for each file
 		}// if not null-pointer path->files
 		return foundDBs;
 	}// getAllDBs( category )
 
-	@Override
-	public DB getDB(int privateId) {
-		// TODO Auto-generated method stub
-		return null;
+
+	public ArrayList<String> getCityFolders() {
+		return categoryFolders;
 	}
 
-	@Override
-	public boolean deleteDB(DB db) {
-		// TODO Auto-generated method stub
-		return false;
-	}//deleteDB
 
-//	public String getDatabasePath( String dbName ) {
-//		if (dbPath == null || dbPath.equals("") ){
-//			//dbPath = ctx.getDatabasePath(dbName).getParent();
-//			dbPath = ctx.getDatabasePath(dbName).getAbsolutePath();
-//		}
-//		if (dbPath.equals("") ){
-//			debug(0, "What!? No dbPath given!");
-//		}
-//		return dbPath;
-//	} // return the default db-path
+	@Override
+	public boolean deleteDB( DB db ) {
+		return db.delete();
+	}//deleteDB
 
 }//FileSystemConnector
