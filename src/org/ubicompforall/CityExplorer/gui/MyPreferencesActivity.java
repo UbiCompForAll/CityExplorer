@@ -46,6 +46,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.*;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -64,7 +65,14 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
-	
+
+	public static void storeCitySetting( Context context, String cityName ){
+		Editor editor = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0).edit();
+		debug(2, "committing city:"+cityName );
+		editor.putString( CityExplorer.SETTINGS_DB_NAME, cityName );
+		editor.commit();
+	}//storeCitySettings
+
 	public static void storeDbNameSetting( Context context, String dbFileName ){
 		Editor editor = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0).edit();
 		debug(2, "committing db:"+dbFileName );
@@ -223,7 +231,15 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		}
 	} // initLocation
 
-
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(resultCode==Activity.RESULT_CANCELED){
+			return;
+		}else{
+			debug(0, "Result was "+data );
+		}
+	}//onActivityResult
+	
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.pref_location){
@@ -238,17 +254,21 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			startActivity( new Intent( this, ImportActivity.class ) );
 		}else{
 			debug(0, "Clicked v.getId: "+v.getId() );
+			//String url = "http://www.example.com";
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setData( Uri.parse( url_edit.getText().toString() ) );
+			startActivityForResult( intent, 0);
 		}// Switch on different key-press events
 	} //onClick
 
 	
 	public void setDbName(String newDbName) {
 		dbName_text.setText( newDbName );
-	} // initDbUrl
+	} //setDbName
 
 	public void setDbUrl(String newDbUrl) {
 		url_edit.setText( newDbUrl );
-	} // initDbUrl
+	} //setDbUrl
 
 	//public static PoiAddress getCurrentAddress(Context context, ) {
 	public static PoiAddress getCurrentAddress(Context context, int[] latLng ){ // = getLatLng(context);

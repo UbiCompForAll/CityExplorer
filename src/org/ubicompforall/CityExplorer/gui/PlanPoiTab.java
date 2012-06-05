@@ -503,21 +503,44 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	 * Shows quick actions when the user long-presses an item.
 	 */
 	final private class DrawPopup implements AdapterView.OnItemLongClickListener {
+
+		private void drawCategoryMenu( final AdapterView<?> parent, View view, final int pos ){
+			debug(0, "go" );
+			final int[] xy 			= new int[2];
+			view.getLocationInWindow(xy);
+			final Rect rect 		= new Rect(	xy[0], xy[1], xy[0]+view.getWidth(), xy[1]+view.getHeight());
+
+			final QuickActionPopup qa = new QuickActionPopup( PlanPoiTab.this, view, rect );
+
+			Drawable mapviewIcon	= res.getDrawable(android.R.drawable.ic_menu_mapmode);
+			//Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
+
+			// Declare the quick actions menu	// 1: Show on Map
+			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
+				public void onClick(View view){
+					qa.dismiss();
+					CityExplorer.showProgressDialog(context, "Launching Map" );
+
+					Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
+					Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
+					ArrayList<Poi> selectedPois = new ArrayList<Poi>();
+					for (int i = 0; i < sectionAd.getCount(); i++){
+						selectedPois.add((Poi) sectionAd.getItem(i));
+					}
+					showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
+					startActivity(showInMap);
+				}
+			});//quick-action 1
+		}//drawCategoryMenu
+		
 		public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
 
+			//RS-120214: Don't implement different behavior for headings and single items. Suddenly seeing the map is confusing!
 			if(parent.getAdapter().getItemViewType(pos) == SeparatedListAdapter.TYPE_SECTION_HEADER){
-//RS-120214: Don't implement different behavior for headings and single items. Suddenly seeing the map is confusing!
-//
-				Intent showInMap = new Intent(PlanPoiTab.this, MapsActivity.class);
-				Adapter sectionAd = adapter.getAdapter(parent.getAdapter().getItem(pos).toString());
-				ArrayList<Poi> selectedPois = new ArrayList<Poi>();
-				for (int i = 0; i < sectionAd.getCount(); i++){
-					selectedPois.add((Poi) sectionAd.getItem(i));
-				}
-				showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, selectedPois);
-				startActivity(showInMap);
+				drawCategoryMenu( parent, v, pos );
+				debug(0, "draw category menu" );
 				return true;
-			}
+			}//If long-pressed category
 
 			final Poi	p 			= (Poi) parent.getAdapter().getItem(pos);
 			final AdapterView<?> par = parent;

@@ -69,9 +69,10 @@
 	<EditText	android:id="@+id/pref_url"
 	    android:layout_width="wrap_content"  android:layout_height="wrap_content"
 		android:text="@string/default_dbDownloadURL"
-		android:inputType="textUri"
+		android:inputType="textMultiLine"
 	/>
-
+	<!--android:inputType="textUri" -->
+	
 	<!-- Makes a white line to separate the entries -->
 	<View android:layout_height="2dip"  android:layout_width="fill_parent"  android:background="#FF909090" />
 

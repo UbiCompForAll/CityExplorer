@@ -53,7 +53,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -125,8 +124,10 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	// CONSTANTS for DBs and sharing
 	public static final String ASSETS_DB = "MiniTrondheim.sqlite";
-	public static final String DEFAULT_CITY = "Downloaded";
+	//public static final String DEFAULT_CITY = "Downloaded";
+	public static String DEFAULT_CITY;	//Get from values/strings.xml
 	public static final String SHARED_FILE = "cityexplorer.txt";
+
 	// introduced as work around for Gmail - but does not seem to work
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../..";
 	public static final String SHARED_FILE_PATH
@@ -145,14 +146,13 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		 * This populates the default values from the preferences XML file. See
 		 * {@link DefaultValues} for more details.
 		 */
-		PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
+		//PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
+		DEFAULT_CITY = getResources().getText( R.string.default_cityName ).toString();
 
-	    //initGPS(); //RS-120501 Use only when needed (E.g. Maps)
-
-		//MapsActivity.initGPS( this ); //RS-120501 Use only when needed (E.g. Maps)
+	    //MapsActivity.initGPS(); //RS-120501 Use only when needed (E.g. in mapActivities)
 		db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
 
-		//Always warn about missing data connection after startup/restart
+		//Always warn about missing wifi/data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
 		//debug(0, "Started CityExplorer.java" );
 	}//onCreate

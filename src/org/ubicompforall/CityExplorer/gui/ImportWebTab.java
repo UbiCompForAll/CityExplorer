@@ -140,7 +140,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 
 	/***
 	 * @param webview
-	 * @return
+	 * @return status: loaded or not
 	 */
 	public boolean setupWebDBs() {
 		if ( ! loaded ){
@@ -185,7 +185,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 				} // try downloading db's from the Web, catch and print exceptions
 		    }// for all web-locations with DBs on them	
 		} // if not already loaded once before
-		return false;
+		return loaded;
 	} // setupWebDBs (called from init / from onCreate... Too slow?)
 
 	@Override

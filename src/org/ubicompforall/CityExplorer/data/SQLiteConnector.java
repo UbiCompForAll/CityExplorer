@@ -1054,6 +1054,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 					debug(0, currentDbFile +" was missing... now copying from assets/"+CityExplorer.ASSETS_DB );
 					dbFile = DBFactory.createDataBase( myContext, dbFile ); // AND Reset dbFile to assets-name
 					MyPreferencesActivity.storeDbNameSetting( myContext, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
+					MyPreferencesActivity.storeCitySetting( myContext, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
 					myDataBase = getReadableDatabase();
 				} catch (IOException e) {
 					e.printStackTrace();
