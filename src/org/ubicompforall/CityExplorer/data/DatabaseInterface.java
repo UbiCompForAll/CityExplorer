@@ -210,7 +210,7 @@ public interface DatabaseInterface{
 	 * Interface method for opening the database connection.
 	 * @return Boolean for successful opening or not
 	 */
-	public boolean	open( File currentDbFile );
+	public boolean	openOrCreate( File currentDbFile );
 	
 
 	/**

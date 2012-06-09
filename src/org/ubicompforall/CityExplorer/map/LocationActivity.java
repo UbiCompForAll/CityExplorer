@@ -128,7 +128,7 @@ public class LocationActivity extends MapActivity{ // implements LocationListene
 			SharedPreferences settings = getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 			//Toast.makeText( context, "Updating Latitude/Longitude...", Toast.LENGTH_LONG).show();
 			Editor editor = settings.edit();
-			editor.putInt( CityExplorer.LAT, latE6 );
+			editor.putInt( CityExplorer.SETTINGS_LAT, latE6 );
 			editor.putInt( CityExplorer.LNG, lngE6 );
 			editor.commit();
 			debug(0, "committed: lat=" + Integer.toString( latE6 ) + ", lng="+ Integer.toString( lngE6 ) );

@@ -31,6 +31,7 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -235,7 +236,9 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 			DB selectedDb = (DB) l.getAdapter().getItem(pos);
 			debug(2, "requestCode is "+ requestCode ); //RequestCode == 0
 			debug(2, "I just found DB "+selectedDb.getLabel() );
-			DBFactory.changeInstance( this, selectedDb.getLabel() );
+			String DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
+			File currentDbFile = new File( getDatabasePath( DEFAULT_DBFOLDER ).getAbsolutePath()+"/"+ selectedDb.getLabel() );
+			DBFactory.changeInstance( this, currentDbFile );
 			//startActivity( new Intent( this, PlanActivity.class) );
 			finish();
 		}//if header: skip, else select and finish

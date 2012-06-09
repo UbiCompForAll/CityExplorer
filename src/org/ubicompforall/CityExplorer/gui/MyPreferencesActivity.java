@@ -66,10 +66,10 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		CityExplorer.debug( level, message );		
 	} //debug
 
-	public static void storeCitySetting( Context context, String cityName ){
+	public static void storeDbFolderSetting( Context context, String folderName ){
 		Editor editor = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0).edit();
-		debug(2, "committing city:"+cityName );
-		editor.putString( CityExplorer.SETTINGS_DB_NAME, cityName );
+		debug(2, "committing db-folder:"+folderName );
+		editor.putString( CityExplorer.SETTINGS_DB_FOLDER, folderName ); //BAD BUG FIXED! RS-120608
 		editor.commit();
 	}//storeCitySettings
 
@@ -123,8 +123,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		super.onPause();
 		String db = dbName_text.getText().toString();
 		String url = url_edit.getText().toString();
-		//storeDbNameSetting( this, new File( url+"/"+db ) );
-		editor.putString( CityExplorer.SETTINGS_DB_NAME, db );
+		storeDbNameSetting( this, db );	//		editor.putString( CityExplorer.SETTINGS_DB_NAME, db );
 		editor.putString( CityExplorer.SETTINGS_DB_URL, url );
 		editor.commit();
 		debug(1, "committed sync url: "+url+db );
@@ -184,11 +183,11 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		Integer lng = context.getResources().getInteger( R.integer.default_lng );
 
 		//Get stored values if existing
-		lat = settings.getInt( CityExplorer.LAT, lat );
+		lat = settings.getInt( CityExplorer.SETTINGS_LAT, lat );
 		lng = settings.getInt( CityExplorer.LNG, lng );
 
 		SharedPreferences.Editor editor = settings.edit();	// Make sure lat and lng are correctly set			
-		editor.putInt( CityExplorer.LAT, lat);
+		editor.putInt( CityExplorer.SETTINGS_LAT, lat);
 		editor.putInt( CityExplorer.LNG, lng);
 		editor.commit();
 		int[] lat_lng = {lat, lng};	// Trondheim Torg: {63430396N, 10395041E};
@@ -224,8 +223,8 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		}
 		//Place-name
 		tv = (TextView) findViewById(R.id.pref_loc);
-		if (tv==null){
-			debug(0, "where is tv?" );
+		if ( tv==null || address==null ){
+			debug(0, "where is tv address? LatLng-Service not available?" );
 		}else{
 			tv.setText( address.toString() );
 		}
@@ -289,24 +288,24 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		return adr;
 	}//getCurrentAddress
 
-	public static String getSelectedCityName ( Context context ){
-		String defaultCityName = context.getResources().getString( R.string.default_cityName );
+	public static String getSelectedDbFolder ( Context context ){
+		String defaultCityName = context.getResources().getString( R.string.default_dbFolderName );
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		String settingsCityName = settings.getString ( CityExplorer.SETTINGS_CITY_NAME, defaultCityName );
-		CityExplorer.debug(1, "settingsCityName is "+settingsCityName);
+		String settingsDbFolder = settings.getString ( CityExplorer.SETTINGS_DB_FOLDER, defaultCityName );
+		CityExplorer.debug(1, "settingsCityName is "+settingsDbFolder);
 
 		//update City NAME in setting - in case not yet set
 		SharedPreferences.Editor editor = settings.edit();
 		//add the default name to settings - if settings was set to blank
-		if ( settingsCityName.equals("") ){
-			settingsCityName = defaultCityName;
-			CityExplorer.debug(0, "settingsCityName is "+settingsCityName);
+		if ( settingsDbFolder.equals("") ){
+			settingsDbFolder = defaultCityName;
+			CityExplorer.debug(0, "settingsCityName is "+settingsDbFolder);
 		}
-		editor.putString( CityExplorer.SETTINGS_CITY_NAME, settingsCityName );
+		editor.putString( CityExplorer.SETTINGS_DB_FOLDER, settingsDbFolder );
 		editor.commit();
 
-		return settingsCityName;
+		return settingsDbFolder;
 	}//getCurrentCityFile
 
 	public static String getSelectedDbName ( Context context ){

@@ -37,6 +37,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
+import org.ubicompforall.CityExplorer.R;
 import org.ubicompforall.CityExplorer.gui.PlanActivity;
 
 import android.app.Activity;
@@ -67,18 +68,20 @@ public class ImportDB extends Activity{
 		if ( uri != null ){
 			// open the file for reading
 			File file = new File( uri.getPath() );
+			String DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
 
 			InputStream in = null;
 			OutputStream out = null;
 			try {
 				in = new BufferedInputStream( new FileInputStream(file) );
 				try{
-					out = new FileOutputStream( getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
+					out = new FileOutputStream( getDatabasePath( DEFAULT_DBFOLDER )+"/"+file.getName() );
 				}catch( FileNotFoundException e ){
-					new File( getDatabasePath( CityExplorer.DEFAULT_CITY ).getAbsolutePath() ).mkdirs();
-					out = new FileOutputStream( getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
+					File newOutFile = new File( getDatabasePath( DEFAULT_DBFOLDER + "/"+file.getName() ).getAbsolutePath() );
+					newOutFile.mkdirs();
+					out = new FileOutputStream( newOutFile );
 				}
-				debug(0, "Copying from input to " + getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
+				debug(0, "Copying from input to " + out ); //.getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
 				copyFile(in, out);
 				in.close();
 				in = null;
@@ -89,7 +92,7 @@ public class ImportDB extends Activity{
 				//Close this activity, and start the next one: View imported pois
 				finish();
 				//startActivity(new Intent( this, ImportActivity.class) );
-				DBFactory.changeInstance( this, file.getName() );
+				DBFactory.changeInstance( this, file );
 				startActivity(new Intent( this, PlanActivity.class) );
 			} catch(Exception e) {
 			    debug(0, e.getMessage() );

@@ -170,7 +170,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
 
 		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
-		debug(0, "Getting all POIs..." );
+		debug(0, "Getting all POIs from "+db );
 		ArrayList<Poi> poiList = db.getAllPois();
 		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
 

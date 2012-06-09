@@ -87,10 +87,10 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
-	public static final String SETTINGS_CITY_NAME = "CITY";
-	public static final String SETTINGS_DB_NAME = "DB";
+	public static final String SETTINGS_DB_FOLDER = "DB_FOLDER";
+	public static final String SETTINGS_DB_NAME = "DB_NAME";
 	public static final String SETTINGS_DB_URL = "DB_URL";
-	public static final String LAT = "LAT";
+	public static final String SETTINGS_LAT = "LAT";
 	public static final String LNG = "LNG";
 
 	// DEFAULT GEO-POINT for first map view - moved to @string/default_lat_lng // Trondheim Torvet 63°25′49″N  10°23′42″E ;
@@ -124,8 +124,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	// CONSTANTS for DBs and sharing
 	public static final String ASSETS_DB = "MiniTrondheim.sqlite";
-	//public static final String DEFAULT_CITY = "Downloaded";
-	public static String DEFAULT_CITY;	//Get from values/strings.xml
+	//public static String DEFAULT_DBFOLDER;	//Get from values/strings.xml	//DEFAULT_CITY = "Downloaded"
 	public static final String SHARED_FILE = "cityexplorer.txt";
 
 	// introduced as work around for Gmail - but does not seem to work
@@ -147,7 +146,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		 * {@link DefaultValues} for more details.
 		 */
 		//PreferenceManager.setDefaultValues( this, R.xml.default_values, false);
-		DEFAULT_CITY = getResources().getText( R.string.default_cityName ).toString();
+		//DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
 
 	    //MapsActivity.initGPS(); //RS-120501 Use only when needed (E.g. in mapActivities)
 		db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?

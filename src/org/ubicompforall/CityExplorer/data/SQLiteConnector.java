@@ -62,8 +62,7 @@ import android.widget.Toast;
 /**
  * The Class SQLiteConnector.
  */
-public class SQLiteConnector extends SQLiteOpenHelper implements
-		DatabaseInterface {
+public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
 	// private static final String DB_PATH =
 	// "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android
@@ -77,7 +76,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	// private String myPath;
 
 	/** The current (local/private) database file. */
-	private File dbFile;
+	//private File dbFile;
 	// private File dbFilePath;
 
 	/** The SQLiteDatabase object we are using. */
@@ -127,13 +126,13 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * Public constructor that takes and keeps a reference of the passed context
 	 * in order to access the application assets and resources.
 	 * 
-	 * @param context
-	 *            The context
+	 * @param context	The context
+  	 * CONSTRUCTOR
 	 */
 	public SQLiteConnector( Context context, File dbFile ) { // extends SQLiteOpenHelper, implements DatabaseInterface
-		super(context, dbFile.getName(), null, 2);
+		super(context, dbFile.getParent()+"/"+dbFile.getName(), null, 2);
 		myContext = context;
-		debug(2, "dbFile is " + dbFile );
+		debug(1, "dbFile is " + dbFile );
 		MyPreferencesActivity.storeDbNameSetting( context, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
 	}// SQLiteConnector CONSTRUCTOR
 
@@ -145,7 +144,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		CityExplorer.debug(level, message);
 	} // debug
 
-	public static final Map<String, Integer> getKeys(String[] columns) {
+	public static final Map<String, Integer>
+	 getKeys(String[] columns) {
 		Map<String, Integer> key = new HashMap<String, Integer>();
 		for (int i = 0; i < columns.length; i++) {
 			key.put(columns[i], i);
@@ -164,9 +164,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		return selectStr;
 	} // getKeys
 
-	// /////////////////////////////////
+//END STATIC METHODS
+///////////////////////////////////
+//SQLiteOpenHelper and
+//DatabaseInterface methods
+	
 
-	@Override
 	public boolean addPoiToTrip(Trip t, Poi poi) {
 		Trip trip = t;
 
@@ -193,7 +196,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		}
 	}// addPoiToTrip
 
-	@Override
+
 	public void addTimesToTrip(Trip trip) {
 		ContentValues values = new ContentValues();
 		values.put("trip_id", trip.getIdPrivate());
@@ -203,21 +206,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 			values.put("poi_number", trip.getPois().indexOf(poi) + 1);
 			values.put("hour", trip.getFixedTimes().get(poi).hour);
 			values.put("minute", trip.getFixedTimes().get(poi).minute);
-			myDataBase.update("trip_poi", values, "trip_id = ? and poi_id = ?",
-					new String[] { Integer.toString(trip.getIdPrivate()),
-							Integer.toString(poi.getIdPrivate()) });
+			myDataBase.update( "trip_poi", values, "trip_id = ? and poi_id = ?",
+				new String[] { Integer.toString(trip.getIdPrivate()), Integer.toString(poi.getIdPrivate()) }
+			);
 		}
-	} // addTimesToTrip
+	}//addTimesToTrip
 
-	@Override
+
 	public synchronized void close() {
 		if (myDataBase != null) {
 			myDataBase.close();
 		}
 		super.close();
-	}// close
+	}//close
 
-	@Override
+
 	public void deleteFromTrip(Trip trip, Poi poi) {
 		myDataBase.delete(
 				"trip_poi",
@@ -228,7 +231,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 				Toast.LENGTH_LONG).show();
 	}// deleteFromTrip
 
-	@Override
+
 	public void deleteTrip(Trip trip) {
 		myDataBase.delete("trip_poi", "trip_id = ?",
 				new String[] { "" + trip.getIdPrivate() });
@@ -238,7 +241,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 				Toast.LENGTH_LONG).show();
 	}
 
-	@Override
+
 	public boolean deletePoi(Poi poi) {
 		// Check if the poi is in a trip first.
 		Cursor c = myDataBase.query("trip_poi", new String[] { "trip_id" },
@@ -281,25 +284,29 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		}
 	}// deletePoi
 
-	@Override
-	public ArrayList<Poi> getAllPois() {
+
+	public ArrayList<Poi>
+	 getAllPois() {
 		if (myDataBase == null) {
 			debug(-1, "myDatabase is null!!");
 		} else {
-			debug(2, "myDataBase is " + myDataBase.getPath());
+			debug(1, "myDataBase is " + myDataBase.getPath());
 			return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS, null));
 		}
 		return null;
 	}// getAllPois
 
-	@Override
-	public ArrayList<Poi> getAllPois(String category) {
-		return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS
-				+ " AND CAT.title = ?", new String[] { category } // replaces ?s
-				));
+
+	public ArrayList<Poi>
+	 getAllPois(String category) {
+		return getPoisFromCursor(
+			myDataBase.rawQuery( SELECT_ALL_POIS + " AND CAT.title = ?",
+				new String[] { category }// replaces ? in the query
+			)
+		);
 	}// getAllPois(category)
 
-	@Override
+
 	public ArrayList<Poi> getAllPois(Boolean favourite) {
 		return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS
 				+ " AND POI.favourite = ?", new String[] { ""
@@ -313,7 +320,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * @param mode
 	 *            TYPE_ALL, TYPE_FREE, or TYPE_FIXED
 	 */
-	@Override
+
 	// public ArrayList<Trip> getAllTrips( Boolean free ){
 	public ArrayList<Trip> getTripsWithPOIs(int type) {
 		ArrayList<Trip> trips = new ArrayList<Trip>();
@@ -404,7 +411,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		return trips;
 	}// getAllTrips(free)
 
-	@Override
+
 	public ArrayList<String> getCategoryNames() {
 		ArrayList<String> categories = new ArrayList<String>();
 		Cursor c = myDataBase.query("category", new String[] { "title" }, null,
@@ -416,7 +423,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		return categories;
 	}// getCategoryNames
 
-	@Override
+
 	public Poi getPoi(int privateId) {
 		return getPoisFromCursor(
 				myDataBase.rawQuery(SELECT_ALL_POIS + " AND POI._id = ?",
@@ -443,30 +450,32 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	private ArrayList<Poi> getPoisFromCursor(Cursor c) {
 		ArrayList<Poi> pois = new ArrayList<Poi>();
 		while (c.moveToNext()) {
-			pois.add(new Poi.Builder(c.getString(1), // POI.title
-					new PoiAddress.Builder(c.getString(4) // ADDR.city
-					)
-					// ZIP code removed
-					// .zipCode(c.getInt(-1)) // ADDR.zipcode
+			pois.add(new Poi.Builder(
+					c.getString(1), // POI.title
+					new PoiAddress.Builder( c.getString(4) ) // ADDR.city
+					// .zipCode(c.getInt(-1)) // ADDR.zipcode	// removed
 					.street(c.getString(3)) // ADDR.street_name
-							.longitude(c.getDouble(6)) // ADDR.lon
-							.latitude(c.getDouble(5)) // ADDR.lat
-							.build()).description(c.getString(2)) // POI.description
-					.category(c.getString(7)) // CAT.title
-					.favourite((1 == c.getInt(8))) // POI.favourite
-					.openingHours(c.getString(9)) // POI.openingHours
-					.webPage(c.getString(10)) // POI.web_page
-					.telephone(c.getString(11)) // POI.telephone
-					.idPrivate(c.getInt(0)) // POI.id (private)
-					.imageURL(c.getString(12)) // POI.image_url
-					.idGlobal(c.isNull(13) ? -1 : c.getInt(13)).build());
+					.longitude(c.getDouble(6)) // ADDR.lon
+					.latitude(c.getDouble(5)) // ADDR.lat
+					.build()
+					)
+			.description(c.getString(2)) // POI.description
+			.category(c.getString(7)) // CAT.title
+			.favourite((1 == c.getInt(8))) // POI.favourite
+			.openingHours(c.getString(9)) // POI.openingHours
+			.webPage(c.getString(10)) // POI.web_page
+			.telephone(c.getString(11)) // POI.telephone
+			.idPrivate(c.getInt(0)) // POI.id (private)
+			.imageURL(c.getString(12)) // POI.image_url
+			.idGlobal(c.isNull(13) ? -1 : c.getInt(13)).build()
+			);
 		}// while more pois
 		c.close();
 		// debug(0, "pois.size is "+pois.size() );
 		return pois;
 	}// getPoisFromCursor
 
-	@Override
+
 	public Trip getTrip(int privateId) {
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
@@ -596,8 +605,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 *            TYPE_ALL, TYPE_FREE, or TYPE_FIXED
 	 * @return ArrayList of selected Trips
 	 */
-	@Override
-	public ArrayList<Trip> getTripsWithoutPOIs(int type) {
+
+	public ArrayList<Trip>
+	 getTripsWithoutPOIs(int type) {
 		ArrayList<Trip> trips = new ArrayList<Trip>();
 
 		String[] columns = { "TRIP._id", "TRIP.title", "TRIP.free_trip",
@@ -658,7 +668,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		return trips;
 	}// getTrips
 
-	@Override
+
 	public LinkedList<String> getUniqueCategoryNames() {
 		// Collect all category names in order in "categories",
 		LinkedList<String> categories = new LinkedList<String>();
@@ -666,10 +676,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		// add Favorites to categories first
 		categories.add(CityExplorer.FAVORITES);
 
-		Cursor c = myDataBase
-				.rawQuery(
-						"SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title",
-						null);
+		Cursor c = myDataBase.rawQuery(
+			"SELECT DISTINCT category.title from category, poi WHERE poi.category_id = category._id ORDER BY category.title", null
+		);
 		while (c.moveToNext()) {
 			categories.add(c.getString(0));
 		}
@@ -680,16 +689,15 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	/***
 	 * Reading category names from the DB, and images from the Assets folder.
 	 */
-	@Override
+
 	public HashMap<String, Bitmap> getUniqueCategoryNamesAndIcons() {
 		HashMap<String, Bitmap> categories = new HashMap<String, Bitmap>();
 		// Cursor c =
 		// myDataBase.rawQuery("SELECT DISTINCT category.title, category.icon FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title",
 		// null);
-		Cursor c = myDataBase
-				.rawQuery(
-						"SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title",
-						null);
+		Cursor c = myDataBase.rawQuery(
+			"SELECT DISTINCT category.title, category._id FROM category, poi WHERE poi.category_id = category._id ORDER BY category.title", null
+		);
 		while (c.moveToNext()) {
 			Bitmap bmp = null;// BitmapFactory.decodeResource(myContext.getResources(),
 								// R.drawable.new_location);
@@ -731,7 +739,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * defaultBmp; }
 	 */
 
-	@Override
+
 	public int getCategoryId(String title) {
 		Cursor c = myDataBase.query("category", new String[] { "_id" },
 				"title = ?", new String[] { title }, null, null, null);
@@ -744,7 +752,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		return -1;
 	}// getCategoryId
 
-	@Override
+
 	public int newPoi(Poi poi) {
 		debug(0, "TODO: CHeck private id = " + poi.getIdPrivate());
 		// Category:
@@ -846,7 +854,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		return 1;
 	}// newPoi
 
-	@Override
+
 	public void newTrip(Trip t) {
 		// TRIP:
 		ContentValues values = new ContentValues();
@@ -871,7 +879,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * @return The private id for the poi with the given global id. Returns -1
 	 *         if the poi is not in the database.
 	 */
-	@Override
+
 	public int getPoiPrivateIdFromGlobalId(int global_id) {
 		Cursor c = myDataBase.query("poi", new String[] { "_id" },
 				"global_id = ?", new String[] { "" + global_id }, null, null,
@@ -896,7 +904,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * @return The private id for the trip with the given global id. Returns -1
 	 *         if the trip is not in the database.
 	 */
-	@Override
+
 	public int getTripPrivateIdFromGlobalId(int global_id) {
 		Cursor c = myDataBase.query("trip", new String[] { "_id" },
 				"global_id = ?", new String[] { "" + global_id }, null, null,
@@ -919,7 +927,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	 * @param poi
 	 *            The modified poi, that is going to be saved in the database
 	 */
-	@Override
+
 	public void editPoi(Poi poi) {
 		ContentValues poiValues = new ContentValues();
 
@@ -999,15 +1007,17 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 		c.close();
 	}// editPoi
 
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-	}
+	@Override //SQLiteOpenHelper
+	public void onCreate( SQLiteDatabase db ) {
+		debug(0, "OPENING DB NOW: "+db.getPath() );
+	}//onCreate
 
-	@Override
+	@Override //SQLiteOpenHelper
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	}
+		debug(0, "UPGRADING THE DB: You can create custom tables etc. here :-)" );
+	}//onUpgrade
 
-	@Override
+
 	public boolean isOpen() {
 		if (myDataBase == null) {
 			return false;
@@ -1016,68 +1026,59 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 	}// isOpen
 
 	/***
-	 * Open the Database This is quite time-consuming, and should be done in a
+	 * Open a Database. This is quite time-consuming, and should be done in a
 	 * background process, so the map can show immediately!
 	 */
-	@Override
-	public boolean open(File currentDbFile) {
+	public boolean openOrCreate( final File currentDbFile ) {
 		try {
-			debug(2, "Trying to open db " + currentDbFile);
-			myDataBase = openDataBase(currentDbFile);
+			debug(1, "Trying to open db " + currentDbFile);
+			myDataBase = tryToOpenDataBase(currentDbFile);
+			debug(1, "openen db " + myDataBase);
 		} catch (SQLException e) {
-			debug(0, "SQLiteConnector~500: FAILED Opening SQLite connector to "
-					+ currentDbFile);
-			e.printStackTrace();
-			myDataBase = null;
+			debug(0, "FAILED Opening SQLite connector to "+ currentDbFile +": "+e.getMessage() );
+			//e.printStackTrace();
+			myDataBase = null; //See //Recovery below
 		}
 		long poiCount = 0;
-		if (myDataBase == null) {
-			debug(1, "OOOPS! Couldn't open " + currentDbFile);
-		} else {
-			try {
+
+		//Recovery
+		if ( myDataBase == null ) {
+			debug(2, "OOOPS! Couldn't open " + currentDbFile);
+		}else{
+			try{
 				poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
-			} catch (SQLiteException e) { // No such table: poi (if just created
-											// blank DB)
-				debug(0, "There was a minor SQLiteException " + e.getMessage());
+			}catch (SQLiteException e){ // No such table: poi (if just created blank DB)
+				debug(0, "There was a minor SQLiteException " + e.getMessage() );
 			}
-			// debug(1, "poi-count is "+poiCount+", context is "+myContext );
-			// JF: I commented this toast because it is confusing for the user
-			// at start up to get the message "Imported 0 PoIs"
-			// Toast.makeText(myContext, "Imported "+poiCount +" POIs",
-			// Toast.LENGTH_SHORT ).show();
-			// JF: ZIP code removed
-			if (poiCount == 0) { // No existing POIs, close DB, copy default
-									// DB-file from assets, and reopen
-				debug(0, "close myDataBase, before re-open");
-				myDataBase.close();
-				try {
-					debug(0, currentDbFile +" was missing... now copying from assets/"+CityExplorer.ASSETS_DB );
-					dbFile = DBFactory.createDataBase( myContext, dbFile ); // AND Reset dbFile to assets-name
-					MyPreferencesActivity.storeDbNameSetting( myContext, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
-					MyPreferencesActivity.storeCitySetting( myContext, dbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
-					myDataBase = getReadableDatabase();
-				} catch (IOException e) {
-					e.printStackTrace();
-					return false;
-				}
-			}// if empty database, copy from assets
 		}// if myDataBase == null, else open it
-		return (myDataBase == null) ? false : true;
-	}// open
+
+		//More Recovery
+		if (poiCount == 0) { // No existing POIs, close any open DB, copy default DB-file from assets, and reopen
+			createDbFromAssets( currentDbFile );
+		}// if empty database, copy from assets
+		return ( myDataBase == null ) ? false : true;
+	}// openOrCreate
+
+	// debug(1, "poi-count is "+poiCount+", context is "+myContext );
+	// JF: I commented this toast because it is confusing for the user
+	// at start up to get the message "Imported 0 PoIs"
+	// Toast.makeText(myContext, "Imported "+poiCount +" POIs",
+	// Toast.LENGTH_SHORT ).show();
+	// JF: ZIP code removed
+	
 
 	/**
-	 * Opens the database.
+	 * Try to opens a current database location. Create it if needed?
 	 * 
-	 * @throws SQLException
-	 *             if the database cannot be opened.
+	 * @throws SQLException    if the database cannot be opened.
 	 * @return The SQLite database that has been opened.
 	 */
-	public SQLiteDatabase openDataBase(File currentDbFile) throws SQLException {
+	public SQLiteDatabase tryToOpenDataBase(File currentDbFile) throws SQLException {
 		if (currentDbFile == null || currentDbFile.getName().equals("")) {
 			return null;
 		} else {
 			debug(2, "update SQLiteConnector dbFile to " + currentDbFile);
-			dbFile = currentDbFile;
+			//dbFile = currentDbFile;
 		}
 		// (Re-) create local DB folder in case it has been removed by the
 		// system, or for first time runs
@@ -1087,18 +1088,45 @@ public class SQLiteConnector extends SQLiteOpenHelper implements
 			folder.mkdir();
 			// debug(2, "made folder for: "+currentDbFile);
 		}// if folder missing
-
 		debug(0, "opening db: " + currentDbFile);
-		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null,
-				SQLiteDatabase.OPEN_READWRITE + SQLiteDatabase.CREATE_IF_NECESSARY);
-
+		myDataBase = SQLiteDatabase.openDatabase(
+			currentDbFile.getAbsolutePath() , null,	SQLiteDatabase.OPEN_READWRITE + SQLiteDatabase.CREATE_IF_NECESSARY
+		);
+		debug(2, "opened db: " + myDataBase );
 		return myDataBase;
-	}// openDataBase
+	}// tryToOpenDataBase
 
-	@Override
+
 	public void setContext(Context context) {
 		this.myContext = context;
-	} // setContext
+	}// setContext
+	
+//END OVERIDE OpenHelper and DbInterface METHODS
+/////////////////////////////////////////////////////////
+//Supporting Methods
+	
+	public void createDbFromAssets( File currentDbFile ){
+		if (myDataBase != null ){
+			debug(0, "close myDataBase, before re-open");
+			myDataBase.close();
+		}
+		try {
+			debug(0, currentDbFile +" was missing!\n... now copying from assets/"+CityExplorer.ASSETS_DB );
+			//Reset currentDbFile to defaultFolder/AssetsDbName
+			debug(0, "...(Changing) TO default location: "+ currentDbFile );
+			DBFactory.createDataBase( myContext, CityExplorer.ASSETS_DB, currentDbFile );
+
+			//Store in Settings/Preferences
+			MyPreferencesActivity.storeDbNameSetting( myContext, currentDbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
+			MyPreferencesActivity.storeDbFolderSetting( myContext, currentDbFile.getParentFile().getName() ); // JF: is set to Web URL if the user has not chosen settings
+	
+			myDataBase = getReadableDatabase(); //Time consuming, run from a background THREAD!!! Calls onCreate in this (SQLiteConnector)
+			debug(1, "TODO: Opened db " + myDataBase.getPath() );
+		} catch (IOException e){
+			e.printStackTrace();
+			myDataBase = null; //Return false
+		}
+	}//createDbFromAssets
 
 }// class SQLiteConnecto
 

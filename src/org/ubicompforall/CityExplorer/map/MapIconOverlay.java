@@ -128,7 +128,7 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	    if (bmp != null){
 	    	canvas.drawBitmap(bmp, screenPts.x-bmp.getWidth()/2, screenPts.y-bmp.getHeight()/*/2*/, null);
 	    }else{
-			debug(0, "No bmp for "+this.getGeoPoint() );
+			debug(0, "No bmp for for "+ this.getPoi()+ ": "+ this.getGeoPoint() );
 	    }
 	    return true;
 	}//draw

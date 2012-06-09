@@ -59,46 +59,52 @@ public class DBFactory{
 	private static DBType databaseType = DBType.SQLITE; //change this to change the database type
 	
 	/**
-	 * Gets the single instance of DBFactory.
+	 * Change the single instance of the DBFactory to a new (existing) db-location.
 	 *
 	 * @param context The context, that will be current from now to next getInstance
-	 * @return Single instance of DBFactory
+	 * @return The single instance of the DBFactory
 	 */
-	public static DatabaseInterface changeInstance( Context context, String dbName ){
+	//public static DatabaseInterface changeInstance( Context context, String dbName ){
+	public static DatabaseInterface changeInstance( Context context, File newDbFile ){
 		if( dbConnectorInstance != null && dbConnectorInstance.isOpen() == true ){
 			dbConnectorInstance.close();
 		}
 		if(databaseType == DBType.SQLITE){
-			currentDbFile = new File( context.getDatabasePath( CityExplorer.DEFAULT_CITY ).getAbsolutePath()+"/"+dbName );
+			//currentDbFile = new File( context.getDatabasePath( CityExplorer.DEFAULT_DBFOLDER ).getAbsolutePath()+"/"+dbName );
+			currentDbFile = newDbFile;
 			CityExplorer.debug(1, "new dbFile is "+currentDbFile );
 			dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 		} // if right type
-		dbConnectorInstance.open( currentDbFile );
+		dbConnectorInstance.openOrCreate( currentDbFile );
 		dbConnectorInstance.setContext(context);
-		MyPreferencesActivity.storeDbNameSetting(context, currentDbFile.getName() );
+
+		//Store in Settings/Preferences
+		MyPreferencesActivity.storeDbNameSetting( context, currentDbFile.getName() );
+		MyPreferencesActivity.storeDbFolderSetting( context, currentDbFile.getParentFile().getName() );
 		return dbConnectorInstance;
 	}//changeInstance
 
 	/**
-	 * Creates an empty database on the data/data/project/databases/City-folder and rewrites it with the database from assets.
+	 * Creates an empty database on the dbFile location and rewrites it with the database from assets.
+	 * dbFile should be set to data/data/project/databases/Downloaded-folder
 	 * @return 
 	 *
 	 * @throws IOException when the asset database file can not be read,
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
 	 */
- 	public static File createDataBase( Context myContext, File dbFile ) throws IOException {
- 		dbFile = new File( dbFile.getParent() +"/"+ CityExplorer.ASSETS_DB );
- 		OutputStream 	osDbPath;
+ 	public static File createDataBase( Context myContext, final String ASSETS_DB_NAME, final File dbFile ) throws IOException {
 		InputStream 	isAssetDb 	= myContext.getAssets().open( dbFile.getName() );
+ 		OutputStream 	osDbPath;
 		byte[] 			buffer 		= new byte[1024 * 64];
 		int 			bytesRead;
 
-		CityExplorer.debug(-1, "Make copy of default assets/"+dbFile.getName()+" to "+dbFile.getParent() );
-		//CityExplorer.debug(0, "HERE" );
+		CityExplorer.debug(1, "Make copy of default assets/"+ASSETS_DB_NAME+" to "+dbFile );
 		try {
+			dbFile.getParentFile().mkdirs();
+			CityExplorer.debug(2, "Made folder: "+dbFile );
 			osDbPath = new FileOutputStream( dbFile );
-
+			
 			while ((bytesRead = isAssetDb.read(buffer))>0){
 				try {
 					osDbPath.write(buffer, 0, bytesRead);
@@ -115,9 +121,9 @@ public class DBFactory{
 			Toast.makeText(myContext, "Local DB-file was missing, made a new copy from assets/"+dbFile.getName(), Toast.LENGTH_LONG);
 
 			//myDataBase = this.getReadableDatabase(); // Moved back to SQLiteConnector
-		} catch (IOException io) {
+		} catch (IOException e) {
 			CityExplorer.debug(0, "Failed to copy "+ dbFile.getName() + " to " + dbFile.getParent());
-			io.printStackTrace();
+			e.printStackTrace();
 		}//try catch (making copy)
 		return dbFile;
 	}//createDataBase
@@ -131,24 +137,25 @@ public class DBFactory{
 	 */
 	public static DatabaseInterface getInstance( Context context ){
 		if ( currentDbFile == null || currentDbFile.equals("") ){
-			//String[] currentDbName = MyPreferencesActivity.getSelectedDbName( context ).split("/"); [0] Folder [1] dbName
-			String currentDbFolder	= MyPreferencesActivity.getSelectedCityName( context );
+			String currentDbFolder	= MyPreferencesActivity.getSelectedDbFolder( context );
 			String currentDbFilename= MyPreferencesActivity.getSelectedDbName( context );
 			String currentDbFolderUri = context.getDatabasePath(currentDbFolder).getAbsolutePath();
-			//if ( ! currentDbFolderUri.matches( ".*"+currentDbFolder ) ){
-			//	currentDbFolderUri += "/" + currentDbFolder;
-			//}
+			if ( ! currentDbFolderUri.matches( ".*"+currentDbFolder ) ){
+				currentDbFolderUri += "/" + currentDbFolder;
+			}
 			String currentDbFileUri = currentDbFolderUri+"/"+currentDbFilename;
 			currentDbFile = new File( currentDbFileUri );
 			CityExplorer.debug(2, "currentDbFile was set to " + currentDbFile );
+		}else{
+			CityExplorer.debug(0, "Skipping with dbFile "+currentDbFile );
 		}
-		//CityExplorer.debug(1, "currentDbFile is "+currentDbFile); //Overused
+		//CityExplorer.debug(1, "currentDbFile is "+currentDbFile); //Over-used?
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
-			if(databaseType == DBType.SQLITE){
+			if( databaseType == DBType.SQLITE ){
 				CityExplorer.debug(2, "currentDbFile is "+currentDbFile);
 				dbConnectorInstance = new SQLiteConnector( context, currentDbFile );
 			} // if right type
-			dbConnectorInstance.open( currentDbFile );
+			dbConnectorInstance.openOrCreate( currentDbFile );
 		} // if DB not already open
 		dbConnectorInstance.setContext(context);
 		return dbConnectorInstance;
