@@ -78,6 +78,11 @@
 	<string name="default_dbFolderName">Downloaded</string>
 	<string name="default_dbName">MiniTrondheim.sqlite</string>
 	<string name="descriptionLabel">Description:</string>
+
+	<string name="download_dialog">Select a database for download. To open the database, go to the Android notifications window and click on the download notification.</string>
+	<string name="download_dialog_ok">PROCEED</string>
+ 	<string name="download_dialog_title">Import database from the web</string>
+
 	<string name="editfromexistingPoiLabel">Copy existing Location</string>
 	<string name="editLabel">Edit</string>
 	<string name="editcityLabel">* City:</string>		    <!-- as template -->
