@@ -90,7 +90,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	private EditText imageURLView;
 	
 
-	/** The new poi. */
+	/** The new poi or existing poi that will be edited. */
 	private Poi newPoi;
 	/** The name of the new poi. */
 	private String name;
@@ -153,10 +153,10 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			choosePoiButton.setOnClickListener(this);
 		}else{
 			choosePoiButton.setVisibility(View.GONE);
-			Poi p = (Poi) myIntent.getParcelableExtra( IntentPassable.POI );
-			idPriv = p.getIdPrivate();
-			debug( 0, "id is "+ idPriv +", globId is "+p.getIdGlobal() );
-			fillPoiDetailFields( p );
+			newPoi = (Poi) myIntent.getParcelableExtra( IntentPassable.POI );
+			idPriv = newPoi.getIdPrivate();
+			debug( 0, "id is "+ idPriv +", globId is "+ newPoi.getIdGlobal() );
+			fillPoiDetailFields( newPoi );
 		}
 	}//onCreate
 
@@ -278,7 +278,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			}// if web available - else not
 		}
 		if (lat != null && lng != null){ // Set Manually --- Move to where? Do directly from connectionDialog!
-			storeToDB( newPoi );	//Save!
+			storeToDB ();	//Save!
 		}else{
 			debug(0, "NO Save!??" );
 		}
@@ -287,13 +287,13 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	}// savePoi
 
 	// HELPER Class/Method FOR savePoi
-	public boolean storeToDB( Poi currentPoi ){
+	public boolean storeToDB( ){
 		boolean correct = true;
-		boolean existing = false;
+		boolean existing = true;
 		debug(0, "Save! lat is "+lat+" and lng is "+lng );
 		if ( lat != 0 || lng != 0 ) { //Valid address
-			if ( currentPoi.getIdPrivate() == -1 ){
-				debug(0, "HERE!! TODO: Check Name for clash against existing entries!!" );
+			if ( newPoi == null || newPoi.getIdPrivate() == -1 ){
+				debug(0, "HERE!! TODO: New name already exists in DB!!" );
 				existing = false;
 			}
 		}else{ //if valid, else false
@@ -305,7 +305,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			PoiAddress.Builder ab = new PoiAddress.Builder(city).street(street)
 			.longitude(lng).latitude(lat);
 		
-			Poi newPoi = new Poi.Builder( name, ab.build() )
+			newPoi = new Poi.Builder( name, ab.build() )
 			.description(description)
 			.category(cat)
 			.favourite(false)
@@ -322,6 +322,12 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			}else{
 				db.newPoi(newPoi);
 			}
+			
+			// refresh the poi details activity
+			Intent showPoiDetailsIntent = new Intent( this, PoiDetailsActivity.class );
+			showPoiDetailsIntent.putExtra( IntentPassable.POI, newPoi );
+			startActivity( showPoiDetailsIntent );
+			
 			finish();
 		}//if correct new entry
 		return correct;

@@ -183,6 +183,7 @@ final public class Poi extends IntentPassable {
 		 * @return the instance of the calling Builder class (returns itself).
 		 */
 		public Builder idPrivate(int pid){
+			if (pid == 0) pid = -1;
 			this.idPrivate = pid;
 			return this;
 		}

@@ -44,6 +44,8 @@
 	<string name="activity_plan_header_allPois">All Locations</string>
 	<string name="activity_plan_header_allTrips">All Tours</string>
 
+	<string name="activity_Poidetails_title">Edit Location</string>
+	    	
 	<string name="activity_triplist_menu_delete">Delete</string>
 	<string name="activity_plan_menu_updatetrips">Update Tours</string>
 	<string name="activity_triplist_menu_showOnMap">Show on Map</string>

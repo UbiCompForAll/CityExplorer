@@ -1001,6 +1001,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		myDataBase.update("poi", poiValues, "_id = ?", new String[] { ""+ poiID });
 		// myDataBase.replaceOrThrow("poi", null, dbValues);
 
+//TODO: The address is not updated 
 		poiValues.put("address_id", addressId);
 		poiValues.put("category_id", categoryId);
 
