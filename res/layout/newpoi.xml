@@ -19,7 +19,7 @@
 			    android:paddingBottom="2dip"
 			    android:paddingLeft="5dip"
 			    android:paddingTop="2dip"
-			    android:text="@string/activity_plan_menu_newPoi"
+			    android:text="@string/activity_Poidetails_title"
 			    android:textColor="#EBF2FA"
 			    android:textSize="20dip"
 			    android:textStyle="bold" />

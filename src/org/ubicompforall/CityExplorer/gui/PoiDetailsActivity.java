@@ -292,6 +292,7 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 			Intent editIntent = new Intent( this, NewPoiActivity.class );
 			editIntent.putExtra( IntentPassable.POI, poi );	//setResult( Activity.RESULT_OK, resultIntent );
 			startActivity( editIntent );
+			finish ();		// After editing, the details should be refreshed. This activity should thus be restarted.
 		}
 		//2: Favorite
 		if(itemID==favID){

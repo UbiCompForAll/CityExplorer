@@ -1,8 +1,9 @@
 /**
  * @contributor(s): Rune Sætre (NTNU)
- * @version: 		0.1
+ * 					Jacqueline Floch
+ * @version: 		0.2
  * @date:			22 November 2011
- * @revised:		15 December 2011
+ * @revised:		11 June 2012
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -49,13 +50,18 @@ import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 public class ImportWebTab extends Activity implements OnTouchListener{ // LocationListener, OnMultiChoiceClickListener, DialogInterface.OnClickListener{
 
@@ -246,6 +252,7 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 	private void showDownloadPage() {
 		if ( CityExplorer.ensureConnected(this) ){ //For downloading DBs
 			setupWebDBs();
+			showDownloadDialog (this);
 		}else{
 			CityExplorer.showNoConnectionDialog( this, "", "", null );
 			webview.loadData("Click to load online databases from web<BR>", "text/html", "utf-8");
@@ -253,5 +260,27 @@ public class ImportWebTab extends Activity implements OnTouchListener{ // Locati
 		}
 	}//showDownloadPage
 
+
+
+	/**
+     * Display a dialog for explaining the user the process of downloading a database.
+     */
+	 private static void showDownloadDialog (Activity context) {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setCancelable(true);
+		
+		builder.setMessage( R.string.download_dialog );
+		builder.setTitle( R.string.download_dialog_title );
+
+		builder.setPositiveButton( R.string.download_dialog_ok, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		    	return;
+		    }
+		} );
+
+		builder.show();
+	}
+	
 
 }//ImportLocalTab
