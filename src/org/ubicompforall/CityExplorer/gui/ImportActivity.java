@@ -1,8 +1,8 @@
 /**
- * @contributor(s): Rune Sætre (NTNU)
+ * @contributor(s): Rune Sætre (NTNU), Jacqueline Floch (SINTEF)
  * @version: 		0.1
  * @date:			22 November 2011
- * @revised:		15 December 2011
+ * @revised:		12 June 2012
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -83,4 +83,16 @@ public class ImportActivity extends TabActivity {
 		tabHost.setCurrentTab(0);
 	}//initTabs
 
+	
+	/**
+	 * Terminates activity when the user when another activity starts (either on user behalf or not).
+	 * Done to avoid keeping the activity on the stack when a user selects a downloaded database in the
+	 * Android notification window.
+	 */	
+	public void onStop () {
+		super.onStop ();
+		finish ();
+	}//onCreate
+
+	
 }//class
