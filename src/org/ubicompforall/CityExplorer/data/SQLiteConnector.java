@@ -1031,11 +1031,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 */
 	public boolean openOrCreate( final File currentDbFile ) {
 		try {
-			debug(1, "Trying to open db " + currentDbFile);
+			debug(2, "Trying to open db " + currentDbFile);
 			myDataBase = tryToOpenDataBase(currentDbFile);
-			debug(1, "openen db " + myDataBase);
+			debug(3, "openen db " + myDataBase);
 		} catch (SQLException e) {
-			debug(0, "FAILED Opening SQLite connector to "+ currentDbFile +": "+e.getMessage() );
+			debug(1, "FAILED Opening SQLite connector to "+ currentDbFile +": "+e.getMessage() );
 			//e.printStackTrace();
 			myDataBase = null; //See //Recovery below
 		}
@@ -1073,10 +1073,10 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * @throws SQLException    if the database cannot be opened.
 	 * @return The SQLite database that has been opened.
 	 */
-	public SQLiteDatabase tryToOpenDataBase(File currentDbFile) throws SQLException {
-		if (currentDbFile == null || currentDbFile.getName().equals("")) {
+	public SQLiteDatabase tryToOpenDataBase(File currentDbFile) throws SQLException{
+		if (currentDbFile == null || currentDbFile.getName().equals("")){
 			return null;
-		} else {
+		}else{
 			debug(2, "update SQLiteConnector dbFile to " + currentDbFile);
 			//dbFile = currentDbFile;
 		}
@@ -1084,11 +1084,11 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		// system, or for first time runs
 		File folder = new File(currentDbFile.getParent());
 		if (!folder.isDirectory()) {
-			debug(0, "Making folder " + folder);
+			debug(1, "Making folder " + folder);
 			folder.mkdir();
 			// debug(2, "made folder for: "+currentDbFile);
 		}// if folder missing
-		debug(0, "opening db: " + currentDbFile);
+		debug(2, "opening db: " + currentDbFile);
 		myDataBase = SQLiteDatabase.openDatabase(
 			currentDbFile.getAbsolutePath() , null,	SQLiteDatabase.OPEN_READWRITE + SQLiteDatabase.CREATE_IF_NECESSARY
 		);
@@ -1111,9 +1111,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			myDataBase.close();
 		}
 		try {
-			debug(0, currentDbFile +" was missing!\n... now copying from assets/"+CityExplorer.ASSETS_DB );
 			//Reset currentDbFile to defaultFolder/AssetsDbName
-			debug(0, "...(Changing) TO default location: "+ currentDbFile );
+			debug(0, currentDbFile +" was missing!\n... now copying from assets/"+CityExplorer.ASSETS_DB
+					+"\n...TO default location: "+ currentDbFile );
 			DBFactory.createDataBase( myContext, CityExplorer.ASSETS_DB, currentDbFile );
 
 			//Store in Settings/Preferences
