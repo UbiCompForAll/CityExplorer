@@ -59,7 +59,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	//Activity fields
 	SharedPreferences settings;	// common settings for all the activities in the whole application
 	Editor editor;	// Editor for changing the shared preferences
-	private TextView dbName_text;	// cityName_text
+	private TextView dbName_text;	// DbFolder_text
 	private EditText url_edit;
 	
 	private static void debug( int level, String message ) {
@@ -106,7 +106,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 
 		//JF: Don't want one folder pr. city
 //		cityName_text = (TextView) findViewById( R.id.pref_city );
-//		cityName_text.setText( getSelectedCityName( this ) );
+//		cityName_text.setText( getSelectedDbFolder( this ) );
 //		findViewById(R.id.cityBrowserButton).setOnClickListener(this);
 
 		dbName_text = (TextView) findViewById( R.id.pref_db );
@@ -289,18 +289,18 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	}//getCurrentAddress
 
 	public static String getSelectedDbFolder ( Context context ){
-		String defaultCityName = context.getResources().getString( R.string.default_dbFolderName );
+		String defaultDbFolder = context.getResources().getString( R.string.default_dbFolderName );
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
-		String settingsDbFolder = settings.getString ( CityExplorer.SETTINGS_DB_FOLDER, defaultCityName );
-		CityExplorer.debug(1, "settingsCityName is "+settingsDbFolder);
+		String settingsDbFolder = settings.getString ( CityExplorer.SETTINGS_DB_FOLDER, defaultDbFolder );
+		CityExplorer.debug(2, "settingsDbFolder is "+settingsDbFolder);
 
 		//update City NAME in setting - in case not yet set
 		SharedPreferences.Editor editor = settings.edit();
 		//add the default name to settings - if settings was set to blank
 		if ( settingsDbFolder.equals("") ){
-			settingsDbFolder = defaultCityName;
-			CityExplorer.debug(0, "settingsCityName is "+settingsDbFolder);
+			settingsDbFolder = defaultDbFolder;
+			CityExplorer.debug(1, "settingsDbFolder is "+settingsDbFolder);
 		}
 		editor.putString( CityExplorer.SETTINGS_DB_FOLDER, settingsDbFolder );
 		editor.commit();
@@ -313,7 +313,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		String settingsDbName = settings.getString ( CityExplorer.SETTINGS_DB_NAME, defaultDbName );
-		CityExplorer.debug(1, "settingsDbName is "+settingsDbName);
+		CityExplorer.debug(1, "settingsDbName="+settingsDbName+", default="+defaultDbName);
 
 		//update DB NAME in setting - in case not yet set
 		SharedPreferences.Editor editor = settings.edit();	// Make sure the default DB url is correctly set			

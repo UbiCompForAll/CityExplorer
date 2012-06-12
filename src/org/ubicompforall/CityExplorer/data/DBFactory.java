@@ -147,7 +147,7 @@ public class DBFactory{
 			currentDbFile = new File( currentDbFileUri );
 			CityExplorer.debug(2, "currentDbFile was set to " + currentDbFile );
 		}else{
-			CityExplorer.debug(0, "Skipping with dbFile "+currentDbFile );
+			//CityExplorer.debug(0, "Skipping with dbFile "+currentDbFile );
 		}
 		//CityExplorer.debug(1, "currentDbFile is "+currentDbFile); //Over-used?
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){

@@ -123,7 +123,7 @@ class MapIconOverlay extends com.google.android.maps.Overlay{
 	
 	    //---translate the GeoPoint to screen pixels---
 	    mapView.getProjection().toPixels(p, screenPts);
-	
+
 	    //---add the marker---
 	    if (bmp != null){
 	    	canvas.drawBitmap(bmp, screenPts.x-bmp.getWidth()/2, screenPts.y-bmp.getHeight()/*/2*/, null);
