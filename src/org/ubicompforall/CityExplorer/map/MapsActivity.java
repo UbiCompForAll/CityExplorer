@@ -279,6 +279,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 */
 	@Override
 	public void onProviderDisabled(String provider){
+		debug(0, "GPS DISABLED?!");
 		Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 	} // onProviderDisabled
 

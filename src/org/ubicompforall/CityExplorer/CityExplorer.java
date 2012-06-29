@@ -68,7 +68,7 @@ import android.widget.Toast;
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
 // Turn off debugging before RELEASE! Set DEBUG to 0.
-//	 -1: ALWAYS PRINT (Not debug, but plain ERROR)
+//	 -1: ALWAYS PRINT (Not really debug, just plain ERROR)
 //	 0: NO_DEBUG
 //	 1: SOME_DEBUG
 //	 2: MORE_DEBUG

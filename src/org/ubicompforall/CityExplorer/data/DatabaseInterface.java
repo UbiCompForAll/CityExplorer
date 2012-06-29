@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 
 /**
@@ -100,7 +101,7 @@ public interface DatabaseInterface{
 	 * @param favourite Status for PoIs to be fetched.
 	 * @return ArrayList containing PoIs from database.
 	 */
-	public ArrayList<Poi> getAllPois(Boolean favourite);
+	public ArrayList<Poi> getAllPois(Boolean favouritesOnly);
 	
 	/**
 	 * Interface method for fetching all trips from the database.
@@ -199,6 +200,10 @@ public interface DatabaseInterface{
 	 */
 	Trip getTrip(int privateId);
 
+	/***
+	 * @return a writable SQLiteDatabase
+	 */
+	//SQLiteDatabase getWritableDatabase();	//From SQLiteOpenHelper
 
 	/**
 	 * Interface method for checking if the connection is open.
@@ -210,7 +215,7 @@ public interface DatabaseInterface{
 	 * Interface method for opening the database connection.
 	 * @return Boolean for successful opening or not
 	 */
-	public boolean	openOrCreate( File currentDbFile );
+	public SQLiteDatabase  openOrCreate( File currentDbFile );
 	
 
 	/**

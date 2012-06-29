@@ -52,7 +52,7 @@ public class DBFactory{
 	}
 
 	/** The DataBase connector instance. */
-	private static DatabaseInterface dbConnectorInstance;
+	private static SQLiteConnector dbConnectorInstance;
 	private static File currentDbFile = null; // Cannot move to SQLiteConnector dbConnectorInstance?
 	
 	/** The database type. */
@@ -135,7 +135,7 @@ public class DBFactory{
 	 * @param context The context, that will be current from now to next getInstance
 	 * @return Single instance of DBFactory
 	 */
-	public static DatabaseInterface getInstance( Context context ){
+	public static SQLiteConnector getInstance( Context context ){
 		if ( currentDbFile == null || currentDbFile.equals("") ){
 			String currentDbFolder	= MyPreferencesActivity.getSelectedDbFolder( context );
 			String currentDbFilename= MyPreferencesActivity.getSelectedDbName( context );

@@ -17,7 +17,7 @@
 	
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:debuggable="true" android:allowTaskReparenting="false" android:name="CityExplorer">
+		android:allowTaskReparenting="false" android:name="CityExplorer">
 	
 		<uses-library android:name="com.google.android.maps" android:required="true"/>
 		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
@@ -117,6 +117,7 @@
 		<activity android:name=".map.LocationActivity" android:label="@string/default_location"></activity>
 		<activity android:label="@string/preferences" android:name=".gui.MyPreferencesActivity"></activity>
 		<activity android:name=".gui.ImportWebTab" android:label="Import DB from Web"></activity>
+		<provider android:name=".data.CityContentProvider" android:authorities="@string/constant_provider_authority"></provider>
 		    		
 	</application>
 	

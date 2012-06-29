@@ -64,30 +64,13 @@ import android.widget.Toast;
  */
 public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterface{
 	/** The Constant DB_PATH, which is the path to were the database is saved. */
-	// private static final String DB_PATH =
-	// "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android
-	// default value for DBs
-	// private String DB_PATH =""; /*, WEB_DB_PATH = ""; */
-	/** The Constant DB_NAME, which is our database name. */
-	// private static final String DB_NAME = "CityExplorer.backup.db"; // Moved
-	// to DBFactory
-
-	/** The whole path to our database. */
-	// private String myPath;
-
-	/** The current (local/private) database file. */
-	//private File dbFile;
-	// private File dbFilePath;
-
+	// DB_PATH = "/data/data/org.ubicompforall.CityExplorer/databases/"; // Android default
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase myDataBase;
 
-	/** The context. */
-	private Context myContext;
+	public static final String POI_TABLE = "POI";	//Remember what the name of this table is, in case it ever changes in the SQLite Database.
 
-	private static final String POI_TABLE = "poi";
-	// private static final String COUNT_ALL_POIS =
-	// "SELECT Count(*) FROM "+POI_TABLE;
+	public static final String NAME_COL = "title";
 
 	/**
 	 * The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all
@@ -109,6 +92,12 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			+ "POI.telephone, " + "POI.image_url, " + "POI.global_id "
 			+ "FROM poi as POI, address as ADDR, category as CAT "
 			+ "WHERE POI.address_id = ADDR._id AND POI.category_id = CAT._id";
+
+
+	/** The context. */
+	private Context myContext;
+
+	// private static final String COUNT_ALL_POIS = "SELECT Count(*) FROM "+POI_TABLE;
 
 	/**
 	 * Public constructor that takes and keeps a reference of the passed context
@@ -291,7 +280,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			debug(-1, "myDatabase is null!!");
 		} else {
 			debug(1, "myDataBase is " + myDataBase.getPath());
-			return getPoisFromCursor(myDataBase.rawQuery(SELECT_ALL_POIS, null));
+			return getPoisFromCursor( myDataBase.rawQuery(SELECT_ALL_POIS, null) );
 		}
 		return null;
 	}// getAllPois
@@ -1030,7 +1019,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * Open a Database. This is quite time-consuming, and should be done in a
 	 * background process, so the map can show immediately!
 	 */
-	public boolean openOrCreate( final File currentDbFile ) {
+	//public boolean openOrCreate( final File currentDbFile ) {
+	public SQLiteDatabase openOrCreate( final File currentDbFile ) {
 		try {
 			debug(2, "Trying to open db " + currentDbFile);
 			myDataBase = tryToOpenDataBase(currentDbFile);
@@ -1057,7 +1047,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		if (poiCount == 0) { // No existing POIs, close any open DB, copy default DB-file from assets, and reopen
 			createDbFromAssets( currentDbFile );
 		}// if empty database, copy from assets
-		return ( myDataBase == null ) ? false : true;
+		//return ( myDataBase == null ) ? false : true;
+		return myDataBase;
 	}// openOrCreate
 
 	// debug(1, "poi-count is "+poiCount+", context is "+myContext );
@@ -1121,6 +1112,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			MyPreferencesActivity.storeDbNameSetting( myContext, currentDbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
 			MyPreferencesActivity.storeDbFolderSetting( myContext, currentDbFile.getParentFile().getName() ); // JF: is set to Web URL if the user has not chosen settings
 	
+			//myDataBase = getWritableDatabase(); //Time consuming, run from a background Worker Thread!!! Calls onCreate in this (SQLiteConnector)
 			myDataBase = getReadableDatabase(); //Time consuming, run from a background THREAD!!! Calls onCreate in this (SQLiteConnector)
 			debug(1, "TODO: Opened db " + myDataBase.getPath() );
 		} catch (IOException e){
