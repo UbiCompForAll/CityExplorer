@@ -49,7 +49,6 @@ public class DownloadManagerActivity extends Activity {
                                         .getString(c
                                                 .getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                                 view.setImageURI(Uri.parse(uri_String_abcd));
-
                             }
                         }
                     }

@@ -10,7 +10,8 @@ import android.content.Context;
  * Execute() performs the step
  * 
  * @author frank, john_edvard
- *
+ * @author satre
+ * @since 2012.06.14
  */
 public abstract class Component {
 	private String name;

@@ -164,6 +164,7 @@ public class StartActivity extends Activity implements OnClickListener{
 	private void exploreCity() {
 		debug(0, "Clicked ExploreMap Button...");
 		if (userLocation == null){
+			debug(0, "userLocation is null!!!");
 			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 		}
 		userLocation = verifyUserLocation( userLocation, this );
@@ -209,7 +210,7 @@ public class StartActivity extends Activity implements OnClickListener{
 		return userLocation;
 	}//verifyUserLocation
 
-	/* RS-111122: Moved to CityExplorer.java common Application settings */
+	/* RS-111122: Moved to MapsActivity.java common Application settings */
 	/**
 	 * Initializes the GPS on the device.		//Move to MapsActivity
 	 **/

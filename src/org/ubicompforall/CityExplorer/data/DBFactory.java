@@ -52,7 +52,7 @@ public class DBFactory{
 	}
 
 	/** The DataBase connector instance. */
-	private static DatabaseInterface dbConnectorInstance;
+	private static SQLiteConnector dbConnectorInstance;
 	private static File currentDbFile = null; // Cannot move to SQLiteConnector dbConnectorInstance?
 	
 	/** The database type. */
@@ -93,13 +93,13 @@ public class DBFactory{
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
 	 */
- 	public static File createDataBase( Context myContext, final String ASSETS_DB_NAME, final File dbFile ) throws IOException {
-		InputStream 	isAssetDb 	= myContext.getAssets().open( dbFile.getName() );
+ 	public static File createDataBaseFromAssets( Context myContext, final String ASSETS_DB_NAME, final File dbFile ) throws IOException {
+		InputStream 	isAssetDb 	= myContext.getAssets().open( ASSETS_DB_NAME );
  		OutputStream 	osDbPath;
 		byte[] 			buffer 		= new byte[1024 * 64];
 		int 			bytesRead;
 
-		CityExplorer.debug(1, "Make copy of default assets/"+ASSETS_DB_NAME+" to "+dbFile );
+		CityExplorer.debug(-1, "Make copy of default assets/"+ASSETS_DB_NAME+" to "+dbFile );
 		try {
 			dbFile.getParentFile().mkdirs();
 			CityExplorer.debug(2, "Made folder: "+dbFile );
@@ -135,7 +135,7 @@ public class DBFactory{
 	 * @param context The context, that will be current from now to next getInstance
 	 * @return Single instance of DBFactory
 	 */
-	public static DatabaseInterface getInstance( Context context ){
+	public static SQLiteConnector getInstance( Context context ){
 		if ( currentDbFile == null || currentDbFile.equals("") ){
 			String currentDbFolder	= MyPreferencesActivity.getSelectedDbFolder( context );
 			String currentDbFilename= MyPreferencesActivity.getSelectedDbName( context );
