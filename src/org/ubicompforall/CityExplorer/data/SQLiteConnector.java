@@ -57,6 +57,9 @@ import android.widget.Toast;
 /***
  * How to debug SQL DB with ADB-shell to Phone:
  * http://developer.android.com/guide/topics/data/data-storage.html#netw
+ * 
+ * How to build SQLite queries:
+ * http://www.sqlite.org/lang_select.html
  */
 
 /**
@@ -68,9 +71,21 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	/** The SQLiteDatabase object we are using. */
 	private SQLiteDatabase myDataBase;
 
-	public static final String POI_TABLE = "POI";	//Remember what the name of this table is, in case it ever changes in the SQLite Database.
+	public static final String POI_TABLE = "poi";	//Remember what the name of this table is, in case it ever changes in the SQLite Database.
+	public static final String ADDR_TABLE = "address";	//Remember what the name of this table is, in case it ever changes in the SQLite Database.
 
-	public static final String NAME_COL = "title";
+	public static final String POI = "POI";		//Remember what the name of this table is, in case it ever changes in the SQLite Database.
+	public static final String ADDR = "ADDR";	//Remember what the name of this table is, in case it ever changes in the SQLite Database.
+
+	//Remember what the name of all the tables are, in case they ever change in the SQLite Database.
+	public static final String POI_MULTITABLE
+	= POI_TABLE;//+" as "+POI
+//	+ ", "+ADDR_TABLE+" as "+ADDR;
+	
+
+	public static final String POI_NAME_COL = POI+".title";
+	public static final String LAT_COL = ADDR+".lat";
+	public static final String LON_COL = ADDR+".lon";
 
 	/**
 	 * The Constant SELECT_ALL_POIS, which is a SQL-query for selecting all
@@ -85,9 +100,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			+ "POI.title,"
 			+ "POI.description,"
 			+ "ADDR.street_name,"
-			+
-			// ZIP code removed "ADDR.zipcode," +
-			"ADDR.city," + "ADDR.lat," + "ADDR.lon," + "CAT.title, "
+			// + "ADDR.zipcode," //ZIP code removed
+			+ "ADDR.city," + "ADDR.lat," + "ADDR.lon," + "CAT.title, "
 			+ "POI.favourite, " + "POI.openingHours, " + "POI.web_page, "
 			+ "POI.telephone, " + "POI.image_url, " + "POI.global_id "
 			+ "FROM poi as POI, address as ADDR, category as CAT "
@@ -1017,14 +1031,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	/***
 	 * Open a Database. This is quite time-consuming, and should be done in a
-	 * background process, so the map can show immediately!
+	 * background process, so the map can be shown immediately, and POIs appear later!
 	 */
 	//public boolean openOrCreate( final File currentDbFile ) {
 	public SQLiteDatabase openOrCreate( final File currentDbFile ) {
 		try {
 			debug(2, "Trying to open db " + currentDbFile);
 			myDataBase = tryToOpenDataBase(currentDbFile);
-			debug(3, "openen db " + myDataBase);
+			debug(1, "openen db " + myDataBase);
 		} catch (SQLException e) {
 			debug(1, "FAILED Opening SQLite connector to "+ currentDbFile +": "+e.getMessage() );
 			//e.printStackTrace();
@@ -1039,13 +1053,14 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			try{
 				poiCount = DatabaseUtils.queryNumEntries(myDataBase, POI_TABLE);
 			}catch (SQLiteException e){ // No such table: poi (if just created blank DB)
-				debug(0, "There was a minor SQLiteException " + e.getMessage() );
+				debug(0, "Could not find anything in current DB... Re-Create below." ); //)+ e.getMessage() );
 			}
 		}// if myDataBase == null, else open it
 
 		//More Recovery
 		if (poiCount == 0) { // No existing POIs, close any open DB, copy default DB-file from assets, and reopen
-			createDbFromAssets( currentDbFile );
+			//createDbFromAssets( currentDbFile );
+			createDbFromWebOrAssets( currentDbFile );
 		}// if empty database, copy from assets
 		//return ( myDataBase == null ) ? false : true;
 		return myDataBase;
@@ -1069,7 +1084,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		if (currentDbFile == null || currentDbFile.getName().equals("")){
 			return null;
 		}else{
-			debug(2, "update SQLiteConnector dbFile to " + currentDbFile);
+			debug(-1, "update SQLiteConnector dbFile to " + currentDbFile);
 			//dbFile = currentDbFile;
 		}
 		// (Re-) create local DB folder in case it has been removed by the
@@ -1084,7 +1099,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		myDataBase = SQLiteDatabase.openDatabase(
 			currentDbFile.getAbsolutePath() , null,	SQLiteDatabase.OPEN_READWRITE + SQLiteDatabase.CREATE_IF_NECESSARY
 		);
-		debug(2, "opened db: " + myDataBase );
+		debug(1, "opened db: " + myDataBase );
 		return myDataBase;
 	}// tryToOpenDataBase
 
@@ -1106,7 +1121,9 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			//Reset currentDbFile to defaultFolder/AssetsDbName
 			debug(0, currentDbFile +" was missing!\n... now copying from assets/"+CityExplorer.ASSETS_DB
 					+"\n...TO default location: "+ currentDbFile );
-			DBFactory.createDataBase( myContext, CityExplorer.ASSETS_DB, currentDbFile );
+			debug(-1, "Remember to set currentDbFile to "+CityExplorer.ASSETS_DB+", if that is what we want..." );
+			debug(-1, "...Or download the latest version of the user's preferred DB from web, if that is what we want..." );
+			DBFactory.createDataBaseFromAssets( myContext, CityExplorer.ASSETS_DB, currentDbFile );
 
 			//Store in Settings/Preferences
 			MyPreferencesActivity.storeDbNameSetting( myContext, currentDbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
@@ -1120,6 +1137,33 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			myDataBase = null; //Return false
 		}
 	}//createDbFromAssets
+
+	private void createDbFromWebOrAssets(File currentDbFile) {
+		if (myDataBase != null ){
+			debug(0, "close myDataBase, before re-open");
+			myDataBase.close();
+		}
+		try {
+			//Reset currentDbFile to default Web Folder/CurrentDbName
+			debug(0, currentDbFile +" was missing!\n... now copying from "+"/"+currentDbFile );
+			DBFactory.createDataBaseFromAssets( myContext, CityExplorer.ASSETS_DB, currentDbFile );
+
+			//Store in Settings/Preferences
+			MyPreferencesActivity.storeDbNameSetting( myContext, currentDbFile.getName() ); // JF: is set to Web URL if the user has not chosen settings
+			MyPreferencesActivity.storeDbFolderSetting( myContext, currentDbFile.getParentFile().getName() ); // JF: is set to Web URL if the user has not chosen settings
+	
+			//myDataBase = getWritableDatabase(); //Time consuming, run from a background Worker Thread!!! Calls onCreate in this (SQLiteConnector)
+			myDataBase = getReadableDatabase(); //Time consuming, run from a background THREAD!!! Calls onCreate in this (SQLiteConnector)
+			debug(1, "TODO: Opened db " + myDataBase.getPath() );
+		} catch (IOException e){
+			e.printStackTrace();
+			myDataBase = null; //Return false
+		}
+
+		//Last Resort
+		createDbFromAssets( currentDbFile );
+	}//createDbFromWebOrAssets
+
 
 }// class SQLiteConnecto
 

@@ -12,10 +12,12 @@ import android.text.TextUtils;
 
 public class CityContentProvider extends ContentProvider{
 
+	//Move to final static Contract class
 	public static final String AUTHORITY = "org.ubicompforall.CityExplorer.provider";
 	public static final String POI_TABLE = "PoiTable";
-	//public static final String SQLITE_POI_TABLE = "Poi";
-	public static final String SQLITE_POI_TABLE = SQLiteConnector.POI_TABLE;
+	
+	//City-Explorer Internal
+	public static final String SQLITE_ALL_TABLE = SQLiteConnector.POI_MULTITABLE;
 
 	//public static final Uri CONTENT_URI = Uri( AUTHORITY, POI_TABLE );
 	public static final Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY).appendPath(POI_TABLE).build();
@@ -77,7 +79,7 @@ public class CityContentProvider extends ContentProvider{
 	 */
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) throws SQLiteException {
-		CityExplorer.debug(1, "GO!" );
+		CityExplorer.debug(0, "Looking for "+CONTENT_URI );
 	    /*
 	     * Sets the integer value for multiple rows in PoiTable to 1. Notice that no wildcard is used in the path
 	     */
@@ -113,7 +115,7 @@ public class CityContentProvider extends ContentProvider{
 	    
 		// call the code to actually do the query
 	    try{
-	    	return sqliteConnector.getReadableDatabase().query( SQLITE_POI_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
+	    	return sqliteConnector.getReadableDatabase().query( SQLITE_ALL_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
 	    }catch (SQLiteException e){
 	    	e.printStackTrace();
 		    CityExplorer.debug(-1, "Error: "+e.getMessage() );
