@@ -413,9 +413,12 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.calendar_menu, menu);
 		//menu.removeItem(R.id.menuShowMap);
-		if ( ! CityExplorer.ubiCompose){
-			menu.removeItem( R.id.composePOIs );
-		}
+
+// Old version. The composition tool is invoked from the Start activity.
+//		if ( ! CityExplorer.ubiCompose){
+//			menu.removeItem( R.id.composePOIs );
+//		}
+
 		return true; // ! calendarIsEmpty; // Show menu when no times?
 	}//onPrepareOptionsMenu
 	
@@ -451,57 +454,60 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
 			saved=false;
 		break;
-		case R.id.composePOIs:
-			debug(2,"itemID is "+itemID);
-			ll.removeAllViews(); //Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
-			showComposerInWebView();
-		break;
+// Old version. The composition tool is invoked from the Start activity.		
+//		case R.id.composePOIs:
+//			debug(2,"itemID is "+itemID);
+//			ll.removeAllViews(); //Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
+//			showComposerInWebView();
+//		break;
 		default:
 			break;
 		}
 		return true;
 	} // onOptionsItemSelected
 
-	private void showComposerInWebView() {
-		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
-		//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
-		Intent intent = new Intent(Intent.ACTION_MAIN, null);
-		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-		intent.setAction("org.mozilla.gecko.BOOKMARK");
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		//intent.putExtra("args", "--url=" + url);
-		//intent.setData(Uri.parse(url));
-		startActivity(intent);
-
-		/*
-		Send (JSON) context:
-			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
-			List of Library-URI: Which Trigger/Building Block to load on invocation
-				Always include Generic.library in the list
-		OR:
-		 http://developer.android.com/reference/android/content/ContentProvider.html
-		Implement ContentProvider
-			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
-			URI: cityExplorer/POI or cityExplorer/POI/14
-			COLS: Name ( always include hidden ID_COL, possibly null )
-			CONDITIONS: null
-			COND_VALUES: null
-			SORT: By name - Ascending
-		Other types of queries
-			Pick (Must provide its own User Interface)
-		Composition
-			Trigger:
-				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
-			Step:
-				Send SMS with
-					Text with name-reference from Trigger,
-					Phone Number from PhoneBook on the phone, use PICK/ContentProvider
-			Info:
-				Name of the POI,
-				Phone number from AddressBook
-		*/
-	}//showComposerInWebView
+// Old version. The composition tool is invoked from the Start activity.
+//	
+//	private void showComposerInWebView() {
+//		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+//		//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
+//		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+//		intent.setAction("org.mozilla.gecko.BOOKMARK");
+//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		//intent.putExtra("args", "--url=" + url);
+//		//intent.setData(Uri.parse(url));
+//		startActivity(intent);
+//
+//		/*
+//		Send (JSON) context:
+//			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
+//			List of Library-URI: Which Trigger/Building Block to load on invocation
+//				Always include Generic.library in the list
+//		OR:
+//		 http://developer.android.com/reference/android/content/ContentProvider.html
+//		Implement ContentProvider
+//			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
+//			URI: cityExplorer/POI or cityExplorer/POI/14
+//			COLS: Name ( always include hidden ID_COL, possibly null )
+//			CONDITIONS: null
+//			COND_VALUES: null
+//			SORT: By name - Ascending
+//		Other types of queries
+//			Pick (Must provide its own User Interface)
+//		Composition
+//			Trigger:
+//				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
+//			Step:
+//				Send SMS with
+//					Text with name-reference from Trigger,
+//					Phone Number from PhoneBook on the phone, use PICK/ContentProvider
+//			Info:
+//				Name of the POI,
+//				Phone number from AddressBook
+//		*/
+//	}//showComposerInWebView
 
 	public OnClickListener ocl = new OnClickListener() {
 		
@@ -548,10 +554,11 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	    }//showToast
 	}//class JavaScriptInterface
 
+// TODO: check when this was used.	
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouch (View v, MotionEvent event) {
 		debug(0, "Go External!" );
-		showComposerInWebView();
+//		showComposerInWebView();
 		return false;
 	}//
 

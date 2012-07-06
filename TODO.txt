@@ -2,6 +2,7 @@ ONGOING:
 
 For Tablets
 ===========
+I have removed this method; the composition tool is only invoked from Start.
 	private void showComposerInWebView() {
 		wantToGoBack = true; // Disable required double-press on back-key
 

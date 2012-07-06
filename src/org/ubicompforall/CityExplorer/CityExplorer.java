@@ -83,7 +83,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = true;	// true or false ;-)
+	public static final boolean ubiCompose = false;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
