@@ -14,7 +14,7 @@
 	<item
 	    android:id="@+id/menuShowMap"
 	    android:icon="@android:drawable/ic_menu_mapmode"
-	    android:title="@string/activity_triplist_menu_showOnMap" />
+	    android:title="@string/activity_menu_showOnMap" />
 -->
 <!-- Composition removed in menu, unless ubiCompose==true
 Old version. The composition tool is invoked from the Start activity.

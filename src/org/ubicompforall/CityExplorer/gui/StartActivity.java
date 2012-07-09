@@ -1,7 +1,7 @@
 /**
  * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
  * @version: 		0.1
- * @date:			23 May 2011
+ * @date:			09 June 2012
  * @revised:
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
@@ -56,7 +56,7 @@ public class StartActivity extends Activity implements OnClickListener{
 	/***
 	 * The current db connection
 	 */
-	DatabaseInterface db;
+	static DatabaseInterface db;
 
 	/**
 	 * The buttons in this activity.
@@ -67,7 +67,7 @@ public class StartActivity extends Activity implements OnClickListener{
 	/**
 	 * The user's current location.
 	 */
-	protected Location userLocation; // Inherited by SettingsActivity
+	protected static Location userLocation; // Inherited by SettingsActivity
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +127,8 @@ public class StartActivity extends Activity implements OnClickListener{
 
 		}else if (v.getId() == R.id.startButton2){ // Button COMPOSE or SHOW MAPS depending of flag settings
 			if ( CityExplorer.ubiCompose ){
+				// Composition settings
+				initComposition ();
 				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
 				Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
 				startActivity( composeActivity );
@@ -135,7 +137,7 @@ public class StartActivity extends Activity implements OnClickListener{
 				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
 				//Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
 				setProgressBarVisibility(true);
-				exploreCity();
+				exploreCity(this);
 			}
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
@@ -161,16 +163,18 @@ public class StartActivity extends Activity implements OnClickListener{
 	/***
 	 * This method should be run in a background Thread because db.getAllPois is quite time-consuming!
 	 */
-	private void exploreCity() {
+// This method is static since it is called in PlanPoiTab
+// Should be moved to PlanPoiTab if no longer used here.
+	public static void exploreCity( Context context) {
 		debug(0, "Clicked ExploreMap Button...");
 		if (userLocation == null){
 			debug(0, "userLocation is null!!!");
-			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+			Toast.makeText(context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 		}
-		userLocation = verifyUserLocation( userLocation, this );
-		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
+		userLocation = verifyUserLocation( userLocation, context );
+		Intent showInMap = new Intent(context, MapsActivity.class);
 
-		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
+		db = DBFactory.getInstance(context);	// Already initialized in the CityExplorer.java application
 		debug(0, "Getting all POIs from "+db );
 		ArrayList<Poi> poiList = db.getAllPois();
 		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
@@ -191,10 +195,8 @@ public class StartActivity extends Activity implements OnClickListener{
 		}//for POIs
 		
 		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
-		startActivity(showInMap);
+		context.startActivity(showInMap);
 	}//exploreCity
-//Will remove map as a separate button...	RS-120509
-
 	
 	public static Location verifyUserLocation( Location userLocation, Context context ) {
 		int[] lat_lng = MyPreferencesActivity.getLatLng ( context );
@@ -209,6 +211,20 @@ public class StartActivity extends Activity implements OnClickListener{
 		debug(2, "lat_lng is "+ lat_lng[0] + ", "+ lat_lng[1] );
 		return userLocation;
 	}//verifyUserLocation
+
+	/***
+	 * This method prepares the file needed for composition before calling the composition tool 
+	 */
+	public void initComposition ( ) {
+		// Check whether or not a composition file exists
+		// if not create it
+		
+		// Check whether or not the descriptor files in data folder exist
+		// If not move them from assets desc
+		
+		return;
+		
+	}//initComposition
 
 	/* RS-111122: Moved to MapsActivity.java common Application settings */
 	/**
