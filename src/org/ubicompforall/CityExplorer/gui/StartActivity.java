@@ -41,8 +41,8 @@ import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 import org.ubicompforall.descriptor.UbiCompDescriptorPackage;
 import org.ubicompforall.simplelanguage.SimpleLanguagePackage;
 import org.ubicompforall.simplelanguage.UserService;
-//import org.ubicompforall.ubicomposer.android.TaskListActivity;
-//import org.ubicompforall.ubicomposer.util.UserServiceUtils;
+import org.ubicompforall.ubicomposer.android.TaskListActivity;
+import org.ubicompforall.ubicomposer.util.UserServiceUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -136,9 +136,9 @@ public class StartActivity extends Activity implements OnClickListener{
 				String fileName = initComposition (this);
 				
 		    	if ( fileName != null) {
-//		    		Intent taskListIntent = new Intent(this, TaskListActivity.class);
-//		    		taskListIntent.setData(Uri.fromFile(getFileStreamPath(fileName)));
-//		    		this.startActivity(taskListIntent);
+		    		Intent taskListIntent = new Intent(this, TaskListActivity.class);
+		    		taskListIntent.setData(Uri.fromFile(getFileStreamPath(fileName)));
+		    		this.startActivity(taskListIntent);
 		    	}
 				
 			}else{
@@ -234,17 +234,19 @@ public class StartActivity extends Activity implements OnClickListener{
 		// Check whether or not a composition file exists
 		File file = this.getFileStreamPath(userServiceFilename);
 
-//		if(! file.exists()) {		// create the composition file
-//			SimpleLanguagePackage pkg = SimpleLanguagePackage.eINSTANCE;
-//			UbiCompDescriptorPackage pkg2 = UbiCompDescriptorPackage.eINSTANCE;
-//	    	UserService userService = UserServiceUtils.newUserService();
-//	    	userService.setName(dbFilename + "user service");
-//	    	UserServiceUtils.addLibraryToUserService(
-//	    		context.getFileStreamPath("Communication.ubicompdescriptor").getAbsolutePath(), userService);
-//	    	UserServiceUtils.addLibraryToUserService(
-//	    			context.getFileStreamPath("CityExplorer.ubicompdescriptor").getAbsolutePath(), userService);
-//			UserServiceUtils.saveUserService(getFileStreamPath(userServiceFilename).getAbsolutePath(), userService);
-//		}
+		if(! file.exists()) {		// create the composition file
+			@SuppressWarnings("unused")
+			SimpleLanguagePackage pkg = SimpleLanguagePackage.eINSTANCE;
+			@SuppressWarnings("unused")
+			UbiCompDescriptorPackage pkg2 = UbiCompDescriptorPackage.eINSTANCE;
+	    	UserService userService = UserServiceUtils.newUserService();
+	    	userService.setName(dbFilename + "user service");
+	    	UserServiceUtils.addLibraryToUserService(
+	    		context.getFileStreamPath("Communication.ubicompdescriptor").getAbsolutePath(), userService);
+	    	UserServiceUtils.addLibraryToUserService(
+	    			context.getFileStreamPath("CityExplorer.ubicompdescriptor").getAbsolutePath(), userService);
+			UserServiceUtils.saveUserService(getFileStreamPath(userServiceFilename).getAbsolutePath(), userService);
+		}
 		
 		return userServiceFilename;
 		

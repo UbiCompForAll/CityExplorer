@@ -54,7 +54,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
-//import org.ubicompforall.ubicomposer.android.ModelUtils.copyAssetFiles
+import org.ubicompforall.ubicomposer.android.ModelUtils;
 
 /**
  * @description:
@@ -82,7 +82,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = false;	// true or false ;-)
+	public static final boolean ubiCompose = true;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
@@ -155,7 +155,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		//debug(0, "Started CityExplorer.java" );
 		
 		// Copy all composition assets in the desc sub-folder to the application data area
-//		ModelUtils.copyAssetFiles (this);
+		ModelUtils.copyAssetFiles (this);
 		
 	}//onCreate
 
