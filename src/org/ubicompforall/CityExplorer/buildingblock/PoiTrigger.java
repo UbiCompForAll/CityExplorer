@@ -22,6 +22,31 @@
 
 package org.ubicompforall.CityExplorer.buildingblock;
 
-public class PoiTrigger {
+import org.ubicompforall.simplelanguage.Task;
+import org.ubicompforall.simplelanguage.runtime.TaskTrigger;
+import org.ubicompforall.simplelanguage.runtime.TriggerMonitor;
+import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
+
+import android.content.Context;
+
+public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance{
+	Context context;
+
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+	@Override
+	public void startMonitoring(Task task, TaskTrigger tasktrigger) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopMonitoring() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

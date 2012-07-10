@@ -22,6 +22,28 @@
 
 package org.ubicompforall.CityExplorer.buildingblock;
 
-public class PoiNotification {
+import java.util.Map;
+
+import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
+import org.ubicompforall.simplelanguage.runtime.TaskInstance;
+import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
+
+import android.content.Context;
+
+public class PoiNotification extends AbstractStepInstance implements AndroidBuildingBlockInstance {
+	Context context;
+
+	@Override
+	public int execute(TaskInstance context, Map<String, Object> parameters) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+
+		
+	}
 
 }
