@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			23 May 2011
- * @revised:
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -50,7 +47,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -59,7 +55,7 @@ import android.widget.Toast;
 /**
  * @description:
  */
-public class CalendarActivity extends Activity implements OnTouchListener{
+public class CalendarActivity extends Activity {
 
 	Paint mpt = new Paint();
 	int iTextHeight = ViewDayHourItem.GetTextHeight(mpt);
@@ -553,15 +549,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
 	    }//showToast
 	}//class JavaScriptInterface
-
-// TODO: check when this was used.	
-	@Override
-	public boolean onTouch (View v, MotionEvent event) {
-		debug(0, "Go External!" );
-//		showComposerInWebView();
-		return false;
-	}//
-
 
 	public Trip getTrip() {
 		return trip;

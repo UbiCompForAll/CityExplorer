@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <descriptor:DescriptorLibrary xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:descriptor="http://www.ubicompforall.org/descriptor" name="CityExplorerComposition" userFriendlyName="City Explorer composition library" description="Building blocks related to City Exoplorer">
-  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAnyPoI" userFriendlyName="When arriving at a City Explorer location" description="This trigger is activated when arriving at a location defined by City Explorer." iconUrl="poi_any_arriving.bmp">
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtAnyPoI" userFriendlyName="When arriving at a City Explorer location" description="This trigger is activated when arriving at a location defined by City Explorer." iconUrl="poi_any_arriving.bmp">
     <properties name="poiName" userFriendlyName="Location Name" description="Name of the location" isResultValue="true" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>

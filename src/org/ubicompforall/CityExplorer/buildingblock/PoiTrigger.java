@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
+ * @contributor(s): Rune Sætre (NTNU)
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -17,35 +17,11 @@
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
- * 
- */
-
-/**
- * @description:
  *
- * 
  */
 
-package org.ubicompforall.CityExplorer.data;
+package org.ubicompforall.CityExplorer.buildingblock;
 
-public class Time
-{
+public class PoiTrigger {
 
-	/** The hour of the time object. */
-	public int hour;
-	
-	/** The minute of the time object. */
-	public int minute;
-	
-	/**
-	 * Instantiates a new time object.
-	 *
-	 * @param hour The hour.
-	 * @param minute The minute.
-	 */
-	public Time(int hour, int minute)
-	{
-		this.hour = hour;
-		this.minute = minute;
-	}
 }

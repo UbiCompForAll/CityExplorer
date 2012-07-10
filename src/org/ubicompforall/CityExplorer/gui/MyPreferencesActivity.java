@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			22 November 2011
- * @revised:		15 December 2011
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project

@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			09 June 2012
- * @revised:
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -30,6 +27,7 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
@@ -39,11 +37,18 @@ import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
+import org.ubicompforall.descriptor.UbiCompDescriptorPackage;
+import org.ubicompforall.simplelanguage.SimpleLanguagePackage;
+import org.ubicompforall.simplelanguage.UserService;
+//import org.ubicompforall.ubicomposer.android.TaskListActivity;
+//import org.ubicompforall.ubicomposer.util.UserServiceUtils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -128,10 +133,14 @@ public class StartActivity extends Activity implements OnClickListener{
 		}else if (v.getId() == R.id.startButton2){ // Button COMPOSE or SHOW MAPS depending of flag settings
 			if ( CityExplorer.ubiCompose ){
 				// Composition settings
-				initComposition ();
-				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
-				Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
-				startActivity( composeActivity );
+				String fileName = initComposition (this);
+				
+		    	if ( fileName != null) {
+//		    		Intent taskListIntent = new Intent(this, TaskListActivity.class);
+//		    		taskListIntent.setData(Uri.fromFile(getFileStreamPath(fileName)));
+//		    		this.startActivity(taskListIntent);
+		    	}
+				
 			}else{
 				// Button EXPLORE CITY MAP
 				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
@@ -213,16 +222,31 @@ public class StartActivity extends Activity implements OnClickListener{
 	}//verifyUserLocation
 
 	/***
-	 * This method prepares the file needed for composition before calling the composition tool 
+	 * This method prepares the file needed for composition before calling the composition tool. 
+	 * The composition descriptors were copied  
 	 */
-	public void initComposition ( ) {
+	public String initComposition (Context context) {
+		
+		// Build name of user service file
+		String dbFilename = MyPreferencesActivity.getSelectedDbName (context); 		// Get current DbFileName
+		String userServiceFilename = dbFilename.replace(".sqlite", "UserService.simplelanguage");
+		
 		// Check whether or not a composition file exists
-		// if not create it
+		File file = this.getFileStreamPath(userServiceFilename);
+
+//		if(! file.exists()) {		// create the composition file
+//			SimpleLanguagePackage pkg = SimpleLanguagePackage.eINSTANCE;
+//			UbiCompDescriptorPackage pkg2 = UbiCompDescriptorPackage.eINSTANCE;
+//	    	UserService userService = UserServiceUtils.newUserService();
+//	    	userService.setName(dbFilename + "user service");
+//	    	UserServiceUtils.addLibraryToUserService(
+//	    		context.getFileStreamPath("Communication.ubicompdescriptor").getAbsolutePath(), userService);
+//	    	UserServiceUtils.addLibraryToUserService(
+//	    			context.getFileStreamPath("CityExplorer.ubicompdescriptor").getAbsolutePath(), userService);
+//			UserServiceUtils.saveUserService(getFileStreamPath(userServiceFilename).getAbsolutePath(), userService);
+//		}
 		
-		// Check whether or not the descriptor files in data folder exist
-		// If not move them from assets desc
-		
-		return;
+		return userServiceFilename;
 		
 	}//initComposition
 

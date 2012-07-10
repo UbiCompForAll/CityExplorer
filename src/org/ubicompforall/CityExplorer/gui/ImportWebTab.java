@@ -1,9 +1,6 @@
 /**
  * @contributor(s): Rune Sætre (NTNU)
  * 					Jacqueline Floch
- * @version: 		0.2
- * @date:			22 November 2011
- * @revised:		11 June 2012
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
