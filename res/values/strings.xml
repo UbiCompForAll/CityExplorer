@@ -35,6 +35,9 @@
 	<!-- I'm not sure whether we should invent new names or used standard ones.
 	Using standard ones is likely to save us a lot of trouble, but I can't find 
 	any static strings associated with maps -->
+	
+	<string name="activity_menu_showOnMap">Show on Map</string>
+	
 	<string name="activity_plan_menu_newPoi">New Location</string>
 	<string name="activity_plan_menu_sharePois">Share</string>
 	<string name="activity_plan_menu_newTrip">New Tour</string>
@@ -48,7 +51,6 @@
 	    	
 	<string name="activity_triplist_menu_delete">Delete</string>
 	<string name="activity_plan_menu_updatetrips">Update Tours</string>
-	<string name="activity_triplist_menu_showOnMap">Show on Map</string>
 	<string name="activity_triplist_menu_addPoi">Add Location</string>
 	<string name="activity_newpoi_button_add">Save Location</string>
 	<string name="activity_newpoi_spinner_prompt">Choose Category</string>

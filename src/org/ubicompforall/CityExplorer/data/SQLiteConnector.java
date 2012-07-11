@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Christian Skjetne (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			23 May 2011
- * @revised:		08 December 2011
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -82,8 +79,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	//Remember what the name of all the tables are, in case they ever change in the SQLite Database.
 	public static final String POI_MULTITABLE
-	= POI_TABLE;//+" as "+POI
-//	+ ", "+ADDR_TABLE+" as "+ADDR;
+	= POI_TABLE+" as "+POI+ ", "+ADDR_TABLE+" as "+ADDR;
 	
 
 	public static final String POI_NAME_COL = POI+".title";

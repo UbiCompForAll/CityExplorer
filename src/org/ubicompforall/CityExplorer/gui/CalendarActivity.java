@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			23 May 2011
- * @revised:
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -38,7 +35,6 @@ import org.ubicompforall.CityExplorer.map.route.GoogleKML;
 import org.ubicompforall.CityExplorer.map.route.Road;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -47,10 +43,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -59,7 +53,7 @@ import android.widget.Toast;
 /**
  * @description:
  */
-public class CalendarActivity extends Activity implements OnTouchListener{
+public class CalendarActivity extends Activity {
 
 	Paint mpt = new Paint();
 	int iTextHeight = ViewDayHourItem.GetTextHeight(mpt);
@@ -98,22 +92,25 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		ll.setBackgroundColor(0xFFEBF2FA);
 		sv.addView(ll);
 		setContentView(sv);
-	}//onCreate
-	
-	@Override
-	protected void onResume(){
-		super.onResume();
-		if( !trip.getFixedTimes().keySet().containsAll(trip.getPois())
-		 ||	!trip.getPois().containsAll(trip.getFixedTimes().keySet()) ){
+
+
+		if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() )
+				||	! trip.getPois().containsAll( trip.getFixedTimes().keySet() ) ){
 			// (some) pois have not been added.
 			poiAdapter = preparePoiList();
 		}else{//if some (fixed time) entries have not been given a time yet
 			poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
 			debug(2, "no Time on resume" );
 		}
-		debug(2, "poiAdapter.size is "+poiAdapter.getCount() );
+		debug(1, "poiAdapter.size is "+poiAdapter.getCount() );
 		//add pois that already has times: //HEAVY! Run on a different Thread!
 		addPoisWithTime();
+
+	}//onCreate
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
 	}//onResume
 	
 
@@ -123,8 +120,9 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 
 
 	private void addPoisWithTime()	{
-		if(trip.getFixedTimes() == null)
+		if( trip.getFixedTimes() == null ){
 			debug(-1,"fixed time == null" );
+		}
 		boolean allDone = true;
 		
 		//if(trip.getFixedTimes().keySet().containsAll(trip.getPois()) &&
@@ -162,17 +160,19 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 					calendarIsEmpty = false;
 				}else{ //skip the rest for manual placement
 					allDone = false;
+					break;
 				}//if allPois have time
 			}//for all pois in fixed trip
 		//}//all pois have time.
 	}//addPoisWithTime
 	
 	
-	private ArrayAdapter<String> preparePoiList(){
+	private ArrayAdapter<String>
+	 preparePoiList(){
 		ArrayList<String> poiList = new ArrayList<String>();
 		//pois have not been added.
 		for(Poi poi : trip.getPois()){
-			//debug(0, "Poi: "+poi.getLabel()+" added");
+			debug(0, "Poi: "+poi.getLabel()+" added");
 			if( trip.isFreeTrip() ){
 				poiList.add(poi.getLabel());
 			}else{
@@ -222,7 +222,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			if ( poiIndex < trip.getPois().size() ){
 		    	poi = trip.getPois().get(poiIndex);
 			}
-			debug(2, "poiIndex is "+ poiIndex );
+			debug(1, "poiIndex is "+ poiIndex );
 
 			//Add walking time:
 			if( poiIndex >= trip.getPois().size() || addWalkingTime( poiIndex, time, time.GetMinutes(), poi ) == false){
@@ -300,7 +300,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	    		}//if first poi
 	    		
 	    		if( !trip.isFreeTrip() ){
-	    			if(calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals(trip.getPoiAt(tripPoiIndex-1)) ){
+	    			if( calendarIsEmpty || ptvBeforeOrNull == null || !ptvBeforeOrNull.getPoi().equals( trip.getPoiAt(tripPoiIndex-1) ) ){
 	    				Toast.makeText(CalendarActivity.this, "Please add the PoIs to the calendar in numerical order.", Toast.LENGTH_LONG).show();
 	        			debug(-1, "Which one calendarIsEmpty is "+calendarIsEmpty+", ptvBeforeOrNull is "+ptvBeforeOrNull+", tripPoiIndex is "+tripPoiIndex );
 	    				return false;
@@ -321,7 +321,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	    		}
 	    		
 	    		//add walking entry:
-				if(hourViews.indexOf(time) > numbHoursBack-1){	//not if it is before the first hour
+				if( hourViews.indexOf(time) > numbHoursBack-1 ){ //not if it is before the first hour
 					ViewDayHourItem Hour = hourViews.get(hourViews.indexOf(time)-numbHoursBack);
 					
 					//check if the entry is before the prev poi. abort if it is.
@@ -342,7 +342,7 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 					Hour.UpdateHeight();	
 				} // if hour > hoursBack-1
 	    	} // if not first poi in trip: addWalkingTime
-			//debug(0, "poiAdapter.size is "+poiAdapter.getCount() );
+			debug(-1, "poiAdapter.size is "+poiAdapter.getCount() );
 			if (poiAdapter.getCount() >0 ){
 				poiAdapter.remove( poiAdapter.getItem(0) );	//Remove already placed entries
 			}
@@ -413,9 +413,12 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.calendar_menu, menu);
 		//menu.removeItem(R.id.menuShowMap);
-		if ( ! CityExplorer.ubiCompose){
-			menu.removeItem( R.id.composePOIs );
-		}
+
+// Old version. The composition tool is invoked from the Start activity.
+//		if ( ! CityExplorer.ubiCompose){
+//			menu.removeItem( R.id.composePOIs );
+//		}
+
 		return true; // ! calendarIsEmpty; // Show menu when no times?
 	}//onPrepareOptionsMenu
 	
@@ -430,15 +433,8 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
 				Toast.makeText(this, "Some locations still without time", Toast.LENGTH_LONG).show();
 			}
-			//if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
-				//done
-				DBFactory.getInstance(this).addTimesToTrip(trip);
-				Intent resultIntent = new Intent();
-				resultIntent.putExtra( IntentPassable.TRIP, trip );
-				setResult( Activity.RESULT_OK, resultIntent );
-				saved=true;
-				finish();
-			//}else{
+			saveSchedule();
+			finish();
 		break;
 		case R.id.clearCalendar:
 			debug(2,"itemID is "+itemID);
@@ -449,59 +445,73 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 			
 			trip.clearTimes();
 			Toast.makeText(this, "Times cleared", Toast.LENGTH_SHORT).show();
+			saveSchedule();
 			saved=false;
 		break;
-		case R.id.composePOIs:
-			debug(2,"itemID is "+itemID);
-			ll.removeAllViews(); //Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
-			showComposerInWebView();
-		break;
+// Old version. The composition tool is invoked from the Start activity.		
+//		case R.id.composePOIs:
+//			debug(2,"itemID is "+itemID);
+//			ll.removeAllViews(); //Only used for UbiComposer Version, if CityExplorer.ubiCompose == true
+//			showComposerInWebView();
+//		break;
 		default:
 			break;
 		}
 		return true;
 	} // onOptionsItemSelected
 
-	private void showComposerInWebView() {
-		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
-		//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
-		Intent intent = new Intent(Intent.ACTION_MAIN, null);
-		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-		intent.setAction("org.mozilla.gecko.BOOKMARK");
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		//intent.putExtra("args", "--url=" + url);
-		//intent.setData(Uri.parse(url));
-		startActivity(intent);
+// Old version. The composition tool is invoked from the Start activity.
+//	
+//	private void showComposerInWebView() {
+//		Toast.makeText(this, "Loading UbiComposer", Toast.LENGTH_LONG).show();
+//		//Testing how to launch a specific intent for the Firefox browser, Or Use Webview (below)
+//		Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//		intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+//		intent.setAction("org.mozilla.gecko.BOOKMARK");
+//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		//intent.putExtra("args", "--url=" + url);
+//		//intent.setData(Uri.parse(url));
+//		startActivity(intent);
+//
+//		/*
+//		Send (JSON) context:
+//			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
+//			List of Library-URI: Which Trigger/Building Block to load on invocation
+//				Always include Generic.library in the list
+//		OR:
+//		 http://developer.android.com/reference/android/content/ContentProvider.html
+//		Implement ContentProvider
+//			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
+//			URI: cityExplorer/POI or cityExplorer/POI/14
+//			COLS: Name ( always include hidden ID_COL, possibly null )
+//			CONDITIONS: null
+//			COND_VALUES: null
+//			SORT: By name - Ascending
+//		Other types of queries
+//			Pick (Must provide its own User Interface)
+//		Composition
+//			Trigger:
+//				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
+//			Step:
+//				Send SMS with
+//					Text with name-reference from Trigger,
+//					Phone Number from PhoneBook on the phone, use PICK/ContentProvider
+//			Info:
+//				Name of the POI,
+//				Phone number from AddressBook
+//		*/
+//	}//showComposerInWebView
 
-		/*
-		Send (JSON) context:
-			List of URIs: To the available DB (-provider) (with specific Table-names: POIs in TrondheimDB, for example)
-			List of Library-URI: Which Trigger/Building Block to load on invocation
-				Always include Generic.library in the list
-		OR:
-		 http://developer.android.com/reference/android/content/ContentProvider.html
-		Implement ContentProvider
-			query( URI, COLS, CONDITIONS, CONDITION_VALUES, SORTING )
-			URI: cityExplorer/POI or cityExplorer/POI/14
-			COLS: Name ( always include hidden ID_COL, possibly null )
-			CONDITIONS: null
-			COND_VALUES: null
-			SORT: By name - Ascending
-		Other types of queries
-			Pick (Must provide its own User Interface)
-		Composition
-			Trigger:
-				Arriving at POI (Need URI for POI-table, column names, ID_COLUMN)
-			Step:
-				Send SMS with
-					Text with name-reference from Trigger,
-					Phone Number from PhoneBook on the phone, use PICK/ContentProvider
-			Info:
-				Name of the POI,
-				Phone number from AddressBook
-		*/
-	}//showComposerInWebView
+	private void saveSchedule() {
+		//if( trip.getFixedTimes().keySet().containsAll( trip.getPois() ) ){
+		//done
+		DBFactory.getInstance(this).addTimesToTrip(trip);
+		Intent resultIntent = new Intent();
+		resultIntent.putExtra( IntentPassable.TRIP, trip );
+		setResult( Activity.RESULT_OK, resultIntent );
+		saved=true;
+	}//saveSchedule
 
 	public OnClickListener ocl = new OnClickListener() {
 		
@@ -547,14 +557,6 @@ public class CalendarActivity extends Activity implements OnTouchListener{
 	        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
 	    }//showToast
 	}//class JavaScriptInterface
-
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		debug(0, "Go External!" );
-		showComposerInWebView();
-		return false;
-	}//
-
 
 	public Trip getTrip() {
 		return trip;

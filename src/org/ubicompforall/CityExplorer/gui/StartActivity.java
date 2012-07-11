@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			23 May 2011
- * @revised:
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -30,6 +27,7 @@
 
 package org.ubicompforall.CityExplorer.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
@@ -39,11 +37,18 @@ import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import org.ubicompforall.CityExplorer.data.IntentPassable;
 import org.ubicompforall.CityExplorer.data.Poi;
 import org.ubicompforall.CityExplorer.map.MapsActivity;
+import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
+import org.ubicompforall.descriptor.UbiCompDescriptorPackage;
+import org.ubicompforall.simplelanguage.SimpleLanguagePackage;
+import org.ubicompforall.simplelanguage.UserService;
+import org.ubicompforall.ubicomposer.android.TaskListActivity;
+import org.ubicompforall.ubicomposer.util.UserServiceUtils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,7 +61,7 @@ public class StartActivity extends Activity implements OnClickListener{
 	/***
 	 * The current db connection
 	 */
-	DatabaseInterface db;
+	static DatabaseInterface db;
 
 	/**
 	 * The buttons in this activity.
@@ -67,7 +72,7 @@ public class StartActivity extends Activity implements OnClickListener{
 	/**
 	 * The user's current location.
 	 */
-	protected Location userLocation; // Inherited by SettingsActivity
+	protected static Location userLocation; // Inherited by SettingsActivity
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,15 +132,21 @@ public class StartActivity extends Activity implements OnClickListener{
 
 		}else if (v.getId() == R.id.startButton2){ // Button COMPOSE or SHOW MAPS depending of flag settings
 			if ( CityExplorer.ubiCompose ){
-				//Intent composeActivity = new Intent( this, org.ubicompforall.ubicomposer.android.UbiComposerActivity.class ); //Does work, cross-package
-				Intent composeActivity = new Intent( "org.ubicompforall.ubicomposer.android.Launch" ); //org.ubicompforall.ubicomposer.android.Launch
-				startActivity( composeActivity );
+				// Composition settings
+				String fileName = initComposition (this);
+				
+		    	if ( fileName != null) {
+		    		Intent taskListIntent = new Intent(this, TaskListActivity.class);
+		    		taskListIntent.setData(Uri.fromFile(getFileStreamPath(fileName)));
+		    		this.startActivity(taskListIntent);
+		    	}
+				
 			}else{
 				// Button EXPLORE CITY MAP
 				//Starting the maps activity is too slow!!! How to show a progress bar etc.?
 				//Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
 				setProgressBarVisibility(true);
-				exploreCity();
+				exploreCity(this);
 			}
 
 		}else if (v.getId() == R.id.startButton3){ // Button SETTINGS
@@ -161,16 +172,18 @@ public class StartActivity extends Activity implements OnClickListener{
 	/***
 	 * This method should be run in a background Thread because db.getAllPois is quite time-consuming!
 	 */
-	private void exploreCity() {
+// This method is static since it is called in PlanPoiTab
+// Should be moved to PlanPoiTab if no longer used here.
+	public static void exploreCity( Context context) {
 		debug(0, "Clicked ExploreMap Button...");
 		if (userLocation == null){
 			debug(0, "userLocation is null!!!");
-			Toast.makeText(this, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
+			Toast.makeText(context, R.string.map_gps_disabled_toast, Toast.LENGTH_LONG).show();
 		}
-		userLocation = verifyUserLocation( userLocation, this );
-		Intent showInMap = new Intent(StartActivity.this, MapsActivity.class);
+		userLocation = verifyUserLocation( userLocation, context );
+		Intent showInMap = new Intent(context, MapsActivity.class);
 
-		db = DBFactory.getInstance(this);	// Already initialized in the CityExplorer.java application
+		db = DBFactory.getInstance(context);	// Already initialized in the CityExplorer.java application
 		debug(0, "Getting all POIs from "+db );
 		ArrayList<Poi> poiList = db.getAllPois();
 		ArrayList<Poi> poiListNearBy = new ArrayList<Poi>();
@@ -191,10 +204,8 @@ public class StartActivity extends Activity implements OnClickListener{
 		}//for POIs
 		
 		showInMap.putParcelableArrayListExtra(IntentPassable.POILIST, poiListNearBy);
-		startActivity(showInMap);
+		context.startActivity(showInMap);
 	}//exploreCity
-//Will remove map as a separate button...	RS-120509
-
 	
 	public static Location verifyUserLocation( Location userLocation, Context context ) {
 		int[] lat_lng = MyPreferencesActivity.getLatLng ( context );
@@ -209,6 +220,37 @@ public class StartActivity extends Activity implements OnClickListener{
 		debug(2, "lat_lng is "+ lat_lng[0] + ", "+ lat_lng[1] );
 		return userLocation;
 	}//verifyUserLocation
+
+	/***
+	 * This method prepares the file needed for composition before calling the composition tool. 
+	 * The composition descriptors were copied  
+	 */
+	public String initComposition (Context context) {
+		
+		// Build name of user service file
+		String dbFilename = MyPreferencesActivity.getSelectedDbName (context); 		// Get current DbFileName
+		String userServiceFilename = dbFilename.replace(".sqlite", "UserService.simplelanguage");
+		
+		// Check whether or not a composition file exists
+		File file = this.getFileStreamPath(userServiceFilename);
+
+		if(! file.exists()) {		// create the composition file
+			@SuppressWarnings("unused")
+			SimpleLanguagePackage pkg = SimpleLanguagePackage.eINSTANCE;
+			@SuppressWarnings("unused")
+			UbiCompDescriptorPackage pkg2 = UbiCompDescriptorPackage.eINSTANCE;
+	    	UserService userService = UserServiceUtils.newUserService();
+	    	userService.setName(dbFilename + "user service");
+	    	UserServiceUtils.addLibraryToUserService(
+	    		context.getFileStreamPath("Communication.ubicompdescriptor").getAbsolutePath(), userService);
+	    	UserServiceUtils.addLibraryToUserService(
+	    			context.getFileStreamPath("CityExplorer.ubicompdescriptor").getAbsolutePath(), userService);
+			UserServiceUtils.saveUserService(getFileStreamPath(userServiceFilename).getAbsolutePath(), userService);
+		}
+		
+		return userServiceFilename;
+		
+	}//initComposition
 
 	/* RS-111122: Moved to MapsActivity.java common Application settings */
 	/**

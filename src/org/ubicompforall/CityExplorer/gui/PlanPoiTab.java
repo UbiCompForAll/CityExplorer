@@ -1,8 +1,5 @@
 /**
  * @contributor(s): Kristian Greve Hagen (NTNU), Jacqueline Floch (SINTEF), Rune Sætre (NTNU)
- * @version: 		0.1
- * @date:			23 May 2011
- * @revised:		15 Dec 2011, Rune
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -339,12 +336,17 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	}//onCreateOptionsMenu
 
 	/***
-	 * Selection in the options menu?
+	 * Selection in the options menu
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 		debug(1, "item is "+item );
+		
+		if(item.getItemId() == R.id.planMenuMap){
+			setProgressBarVisibility(true);
+			StartActivity.exploreCity (this);
+		}
 
 		if(item.getItemId() == R.id.planMenuNewPoi){
 			Intent newPoi = new Intent(PlanPoiTab.this, NewPoiActivity.class);

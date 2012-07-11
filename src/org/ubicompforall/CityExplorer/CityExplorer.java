@@ -1,9 +1,6 @@
 /**
  * @contributor(s): Rune Sætre (NTNU)
  * 					Jacqueline Floch (SINTEF)
- * @version: 		0.2
- * @date:			22 November 2011
- * @revised:		1 June 2012
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -38,6 +35,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.ubicompforall.CityExplorer.data.DBFactory;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -54,6 +53,10 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
+
+
+//import org.ubicompforall.ubicomposer.android.ModelUtils; //See line 156: 		ModelUtils.copyAssetFiles (this);
+
 
 /**
  * @description:
@@ -148,10 +151,15 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	    //MapsActivity.initGPS(); //RS-120501 Use only when needed (E.g. in mapActivities)
 		//db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
+		DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
 
 		//Always warn about missing wifi/data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
 		//debug(0, "Started CityExplorer.java" );
+		
+		// Copy all composition assets in the desc sub-folder to the application data area
+		//ModelUtils.copyAssetFiles (this);
+		
 	}//onCreate
 
     @Override
