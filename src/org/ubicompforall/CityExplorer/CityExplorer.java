@@ -38,8 +38,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.ubicompforall.CityExplorer.data.DBFactory;
-import org.ubicompforall.CityExplorer.data.DatabaseInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -129,14 +127,14 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	// introduced as work around for Gmail - but does not seem to work
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../..";
-	public static final String SHARED_FILE_PATH
-	 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(); //= "/mnt/sdcard/"
+//	public static final String SHARED_FILE_PATH
+//	 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(); //= "/mnt/sdcard/"
 
 
 	/***
 	 * The global current db connection
 	 */
-	public static DatabaseInterface db;
+	//public static DatabaseInterface db;
 
 	@Override
 	public void onCreate() {
@@ -149,7 +147,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		//DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
 
 	    //MapsActivity.initGPS(); //RS-120501 Use only when needed (E.g. in mapActivities)
-		db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
+		//db = DBFactory.getInstance(this); // DB-loading?  Initialize the single instance here :-) // Or Delay?
 
 		//Always warn about missing wifi/data connection after startup/restart
 		DATACONNECTION_NOTIFIED = false;
@@ -192,8 +190,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	} // debug
 
 
-	public static boolean ensureConnected( Activity context ) {
-		ConnectivityManager connectivityManager	= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	public static boolean ensureConnected( Context myContext ) {
+		ConnectivityManager connectivityManager	= (ConnectivityManager) myContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = null;
 		if (connectivityManager != null) {
 		    networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -318,8 +316,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
      * Display a dialog that user has no Internet connection
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
      */
-	public static void showNoConnectionDialog( final Activity context, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
+	public static void showNoConnectionDialog( final Context myContext, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
 		builder.setCancelable(true);
 		if ( msg == "" ){
 		    builder.setMessage( R.string.no_connection );
@@ -329,18 +327,22 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		builder.setTitle( R.string.no_connection_title );
 		builder.setPositiveButton( R.string.settings, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
-		        context.startActivity( new Intent(Settings.ACTION_WIRELESS_SETTINGS) );
+		        myContext.startActivity( new Intent(Settings.ACTION_WIRELESS_SETTINGS) );
 		    }
 		} );
 
 		String cancelText = cancelButtonStr;
 		if ( cancelText == ""){
-			cancelText = context.getResources().getString( R.string.cancel );
+			cancelText = myContext.getResources().getString( R.string.cancel );
 		}
 		builder.setNegativeButton( cancelText, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				if ( cancelIntent != null ){
-					context.startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
+					if (myContext instanceof Activity){
+						((Activity) myContext).startActivityForResult( cancelIntent, CityExplorer.REQUEST_LOCATION );
+					}else{
+						debug(-1, "This is not an Activity!!" );
+					}
 					dialog.dismiss();
 		    	}
 				return;
@@ -349,12 +351,12 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
 		    public void onCancel(DialogInterface dialog) {
-		    	if ( context == null ){
+		    	if ( myContext == null ){
 		    		debug(0, "OOOPS!");
 		    	}else{
-		    		Toast.makeText( context, "CANCELLED!", Toast.LENGTH_LONG).show();
+		    		Toast.makeText( myContext, "CANCELLED!", Toast.LENGTH_LONG).show();
 					if (cancelIntent != null){
-						context.startActivity( cancelIntent );
+						myContext.startActivity( cancelIntent );
 					}
 		    	}
 		        return;

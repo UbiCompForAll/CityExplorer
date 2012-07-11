@@ -32,7 +32,6 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import android.content.Context;
@@ -105,22 +104,10 @@ public class FileSystemConnector implements FileSystemInterface {
 		}else{
 			for ( int f=0; f<files.length ; f++ ){
 				File file = files[f];
-//				if ( file.getName().matches( ".*webview(Cache)?(-journal)?.db" ) ){
-//Just cleaning up after old Bugs and bad filenames, and interference with webView DBs ;-)
-//				if ( file.getName().matches( ".*CityExplorer.sqlite" ) ){
-//					file.delete();
-//					debug(0, "deleted "+file );
-//				}else{
-					try {
-						DB foundDb;
-						foundDb = new DB( dbPath, dir.getName(), file.getName() );
-						foundDBs.add( foundDb );
-						debug(2, "Keep "+file );
-					} catch (URISyntaxException e) {
-						debug(-1, e.getMessage() );
-						e.printStackTrace();
-					}
-//				}
+				DB foundDb;
+				foundDb = new DB( dbPath, dir.getName(), file.getName(), file.getName() );
+				foundDBs.add( foundDb );
+				debug(2, "Keep "+file );
 			}// for each file
 		}// if not null-pointer path->files
 		return foundDBs;

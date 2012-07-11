@@ -168,7 +168,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		if ( ! settings_dbDownloadURL.contains( "/" ) ){ //	if ( settings_dbDownloadURL.equals("") ){
 			settings_dbDownloadURL = defaultDbDownloadURL;
 		}
-		debug(1, "Setting settings_dbDownloadURL: "+ settings_dbDownloadURL );
+		debug(2, "Set default settings_dbDownloadURL: "+ settings_dbDownloadURL );
 		editor.putString( CityExplorer.SETTINGS_DB_URL, settings_dbDownloadURL );
 		editor.commit();
 		return settings_dbDownloadURL;
@@ -309,7 +309,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	}//getCurrentCityFile
 
 	public static String getSelectedDbName ( Context context ){
-		String defaultDbName = context.getResources().getString( R.string.default_dbName );
+		String defaultDbName = getDefaultDbName(context);
 		
 		SharedPreferences settings = context.getSharedPreferences( CityExplorer.GENERAL_SETTINGS, 0);
 		String settingsDbName = settings.getString ( CityExplorer.SETTINGS_DB_NAME, defaultDbName );
@@ -327,5 +327,9 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 
 		return settingsDbName;
 	}//getCurrentDbFile	// Used to be: getDbPath
+
+	private static String getDefaultDbName(Context context) {
+		return context.getResources().getString( R.string.default_dbName );
+	}//getDefaultDbName
 
 }//class MyPreferencesActivity

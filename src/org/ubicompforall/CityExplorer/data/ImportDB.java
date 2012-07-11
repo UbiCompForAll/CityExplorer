@@ -28,11 +28,9 @@ package org.ubicompforall.CityExplorer.data;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
@@ -49,7 +47,6 @@ import android.widget.Toast;
 
 /**
  * @description: Class to handle import a database on reception of the VIEW FILE intent.
- * At the moment the file file is copied from ExportImport (or Sharing?) that is text based.
  * 
  * Suggested Functionality: copy to application folder and open it. NOT IMPLEMENTED LIKE THAT YET?
  */
@@ -61,57 +58,66 @@ public class ImportDB extends Activity{
 		
 		Uri uri = getIntent().getData();
 		debug(0, "ImportDB, file intent uri is "+uri );
-// JF: I commented this toast because it is confusing for the user to get the message about intent
-//		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
-		
+		// JF: I commented away this toast because it is confusing for the user to get the message about intent
+		//		Toast.makeText( this, "ImportDB, file intent uri is "+uri, Toast.LENGTH_LONG).show();
 		// try opening the file
 		if ( uri != null ){
 			// open the file for reading
 			File file = new File( uri.getPath() );
-			String DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
-
-			InputStream in = null;
-			OutputStream out = null;
 			try {
-				in = new BufferedInputStream( new FileInputStream(file) );
-				try{
-					out = new FileOutputStream( getDatabasePath( DEFAULT_DBFOLDER )+"/"+file.getName() );
-				}catch( FileNotFoundException e ){
-					File newOutFile = new File( getDatabasePath( DEFAULT_DBFOLDER + "/"+file.getName() ).getAbsolutePath() );
-					newOutFile.mkdirs();
-					out = new FileOutputStream( newOutFile );
-				}
-				debug(0, "Copying from input to " + out ); //.getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
-				copyFile(in, out);
-				in.close();
-				in = null;
-				out.flush();
-				out.close();
-				out = null;
+				InputStream in = new BufferedInputStream( new FileInputStream(file) );
+				//file = copyFileToDbFolder( in, file ); //Use DBFactory.createDataBaseFromStream instead
+				String DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
+				File newOutFile = new File( getDatabasePath( DEFAULT_DBFOLDER + "/"+file.getName() ).getAbsolutePath() );
 
-				//Close this activity, and start the next one: View imported pois
-				finish();
-				//startActivity(new Intent( this, ImportActivity.class) );
-				DBFactory.changeInstance( this, file );
-				startActivity(new Intent( this, PlanActivity.class) );
+				DBFactory.createDataBaseFromStream(this, in, file);
+				DBFactory.changeInstance( this, newOutFile );
 			} catch(Exception e) {
 			    debug(0, e.getMessage() );
 			    e.printStackTrace();
 			}
-			
 		}else{//if URI given in intent, else uri == null
 			Toast.makeText( this, "ImportDB, file intent uri.getPath==null in uri "+uri, Toast.LENGTH_LONG).show();
 			debug(0, "file intent uri.getPath==null in uri "+uri );
 		}
+		//Close this activity, and start the next one: View imported pois
+		finish();
+		//startActivity(new Intent( this, ImportActivity.class) );
+		startActivity(new Intent( this, PlanActivity.class) );
 	}// onCreate
 	
-	private void copyFile(InputStream in, OutputStream out) throws IOException {
-	    byte[] buffer = new byte[1024];
-	    int read;
-	    while((read = in.read(buffer)) != -1){
-	      out.write(buffer, 0, read);
-	    }
-	}//copyFile
+
+	/**
+	 * Use DBFactory.createDataBaseFromStream instead
+	 * @param in
+	 * @param inFile
+	 * @return
+	 * @throws IOException
+	 */
+//	private void copyFileStream(InputStream in, OutputStream out) throws IOException {
+//	    byte[] buffer = new byte[1024];
+//	    int read;
+//	    while((read = in.read(buffer)) != -1){
+//	      out.write(buffer, 0, read);
+//	    }
+//	}//copyFileStream
+//
+//	public File copyFileToDbFolder(InputStream in, File inFile) throws IOException {
+//		OutputStream out = null;
+//		String DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
+//		File newOutFile = new File( getDatabasePath( DEFAULT_DBFOLDER + "/"+inFile.getName() ).getAbsolutePath() );
+//		try{
+//			out = new FileOutputStream( getDatabasePath( DEFAULT_DBFOLDER )+"/"+inFile.getName() );
+//		}catch( FileNotFoundException e ){
+//			newOutFile.mkdirs();
+//			out = new FileOutputStream( newOutFile );
+//		}
+//		debug(0, "Copying from input to " + out ); //.getDatabasePath( CityExplorer.DEFAULT_CITY ) +"/"+ file.getName() );
+//		copyFileStream(in, out);
+//		in.close();		in = null;
+//		out.flush();	out.close();	out = null;
+//		return newOutFile;
+//	}//copyFileToDbFolder
 
 	
 	private void debug(int i, String string) {

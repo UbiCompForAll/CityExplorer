@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 public class CityContentProvider extends ContentProvider{
+	
+	//Activity context;
 
 	//Move to final static Contract class
 	public static final String AUTHORITY = "org.ubicompforall.CityExplorer.provider";
@@ -39,6 +41,10 @@ public class CityContentProvider extends ContentProvider{
 	private SQLiteConnector sqliteConnector;	//MainDatabaseHelper == SQLiteConnector == DatabaseInterface
 	//private SQLiteDatabase db;    // Holds the database object // Use sqliteConnector.getReadableDatabase() or getWritableDatabase() instead
 
+//	public CityContentProvider( Activity context ){
+//		this.context = context;
+//	}
+	
 	/*
 	 * Creates a new helper object. This method always returns quickly.
 	 * Notice that the database itself isn't created or opened
@@ -47,7 +53,7 @@ public class CityContentProvider extends ContentProvider{
 	public boolean onCreate() {
 		sqliteConnector = DBFactory.getInstance( getContext() );  //calls new SQLiteConnector()  //mOpenHelper = new DBFactory();
 	    return true;
-	}
+	}//onCreate
 
 	@Override
 	// Implements the provider's insert method

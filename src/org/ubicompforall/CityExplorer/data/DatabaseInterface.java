@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -222,7 +223,7 @@ public interface DatabaseInterface{
 	 * Interface method for setting the Context.
 	 * @param context The Context to be set.
 	 */
-	void setContext(Context context);
+	void setContext( Context context );
 
 	
 

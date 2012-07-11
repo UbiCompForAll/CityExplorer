@@ -34,6 +34,7 @@ package org.ubicompforall.CityExplorer.data;
 import java.util.ArrayList;
 
 
+import android.app.Activity;
 import android.content.Context;
 
 import android.view.LayoutInflater;
@@ -53,7 +54,7 @@ public class TripAdapter extends ArrayAdapter<Trip> {
 	private ArrayList<Trip> items;
 
 	/** The context. */
-	Context context;
+	Activity context;
 
 	/** The text view resource id. */
 	int textViewResourceId;
@@ -65,7 +66,7 @@ public class TripAdapter extends ArrayAdapter<Trip> {
 	 * @param textViewResourceId The text view resource id.
 	 * @param items The items.
 	 */
-	public TripAdapter(Context context, int textViewResourceId, ArrayList<Trip> items) {
+	public TripAdapter(Activity context, int textViewResourceId, ArrayList<Trip> items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
 		this.context = context;

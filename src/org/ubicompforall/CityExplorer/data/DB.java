@@ -26,8 +26,6 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.io.File;
-import java.net.URISyntaxException;
-
 import org.ubicompforall.CityExplorer.CityExplorer;
 
 /***
@@ -36,11 +34,12 @@ import org.ubicompforall.CityExplorer.CityExplorer;
  * @author satre
  */
 public class DB {
-	private final String fullname, category, filename;
+	private final String fullname, category, filename, dbName;
 	
-	public DB( String dbPath, String category, String filename ) throws URISyntaxException   {
+	public DB( String dbPath, String category, String filename, String dbName ){
 		this.category = category;
 		this.filename = filename;
+		this.dbName = dbName;
 
 		if ( filename == "" ){
 			fullname = dbPath+"/"+category;
@@ -81,5 +80,14 @@ public class DB {
 //	public void setUrl(String url) {
 //		this.dbPath = url;
 //	}//setUrl
+	
+	@SuppressWarnings("unused")
+	public String toString(){
+		if ( CityExplorer.DEBUG > 1 ){
+			return fullname;
+		}else{
+			return dbName;
+		}
+	}//toString
 
 } // class DB

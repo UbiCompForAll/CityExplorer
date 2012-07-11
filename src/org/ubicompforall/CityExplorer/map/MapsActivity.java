@@ -252,9 +252,8 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	 * @see com.google.android.maps.MapActivity#isRouteDisplayed()
 	 */
 	@Override
-	protected boolean isRouteDisplayed() 
-	{
-		//required method for mapactivity. ignore this.
+	protected boolean isRouteDisplayed() {
+		//required method for mapActivity. ignore this.
 		return false;
 	}
 

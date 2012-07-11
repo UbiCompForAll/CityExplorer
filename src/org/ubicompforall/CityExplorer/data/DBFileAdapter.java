@@ -31,6 +31,7 @@
 package org.ubicompforall.CityExplorer.data;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
@@ -48,7 +49,7 @@ import android.widget.TextView;
 public class DBFileAdapter extends ArrayAdapter<DB> {
 
 	/** The items in the DB adapter. */
-	private ArrayList<DB> items;
+	private CopyOnWriteArrayList<DB> items;
 
 	/** The context. */
 	private Context context;
@@ -61,11 +62,11 @@ public class DBFileAdapter extends ArrayAdapter<DB> {
 	 * Instantiates a new DB adapter.
 	 * @param context The context.
 	 * @param textViewResourceId The text view resource id.
-	 * @param items The items to add to the adapter.
+	 * @param webDBs The items to add to the adapter.
 	 */
-	public DBFileAdapter(Context context, int textViewResourceId, ArrayList<DB> items) {
-		super(context, textViewResourceId, items);
-		this.items = items;
+	public DBFileAdapter(Context context, int textViewResourceId, CopyOnWriteArrayList<DB> webDBs) {
+		super(context, textViewResourceId, webDBs);
+		this.items = webDBs;
 		this.context = context;
 		this.textViewResourceId = textViewResourceId;
 	}

@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.gui.MyPreferencesActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -65,7 +66,7 @@ public class DBFactory{
 	 * @return The single instance of the DBFactory
 	 */
 	//public static DatabaseInterface changeInstance( Context context, String dbName ){
-	public static DatabaseInterface changeInstance( Context context, File newDbFile ){
+	public static DatabaseInterface changeInstance( Activity context, File newDbFile ){
 		if( dbConnectorInstance != null && dbConnectorInstance.isOpen() == true ){
 			dbConnectorInstance.close();
 		}
@@ -93,7 +94,7 @@ public class DBFactory{
 	 * or the database-destination file can not be written to,
 	 * or when parent directories to the database-destination file do not exist.
 	 */
- 	public static File createDataBaseFromAssets( Context myContext, final String ASSETS_DB_NAME, final File dbFile ) throws IOException {
+ 	public static File createDataBaseFromAssets_old( Context myContext, final String ASSETS_DB_NAME, final File dbFile ) throws IOException {
 		InputStream 	isAssetDb 	= myContext.getAssets().open( ASSETS_DB_NAME );
  		OutputStream 	osDbPath;
 		byte[] 			buffer 		= new byte[1024 * 64];
@@ -126,8 +127,55 @@ public class DBFactory{
 			e.printStackTrace();
 		}//try catch (making copy)
 		return dbFile;
-	}//createDataBase
+	}//createDataBaseFromAssets
 
+	public static File createDataBaseFromStream(Context myContext, InputStream isDb, final File dbFile) throws IOException {
+		//InputStream 	isAssetDb 	= myContext.getAssets().open( ASSETS_DB_NAME );
+ 		OutputStream 	osDbPath;
+		byte[] 			buffer 		= new byte[1024 * 64];
+		int 			bytesRead;
+
+		CityExplorer.debug(-1, "Make copy of assets/stream:"+isDb+" to "+dbFile );
+		try {
+			dbFile.getParentFile().mkdirs();
+			CityExplorer.debug(2, "Made folder: "+dbFile );
+			osDbPath = new FileOutputStream( dbFile );
+			
+			while ((bytesRead = isDb.read(buffer))>0){
+				try {
+					osDbPath.write(buffer, 0, bytesRead);
+				} catch (IOException io) {
+					CityExplorer.debug(0, "Failed to write to " + dbFile );
+					io.printStackTrace();
+				}
+				CityExplorer.debug(0, "copyDataBase(): wrote " + bytesRead + " bytes");
+			}//while more bytes to copy
+			osDbPath.flush();
+			osDbPath.close();
+			buffer = null;
+			CityExplorer.debug(0, dbFile.getName()+" successufully copied");
+			Toast.makeText(myContext, "Local DB-file was missing, made a new copy from assets/"+dbFile.getName(), Toast.LENGTH_LONG);
+
+			//myDataBase = this.getReadableDatabase(); // Moved back to SQLiteConnector
+		} catch (IOException e) {
+			CityExplorer.debug(0, "Failed to copy "+ dbFile.getName() + " to " + dbFile.getParent());
+			e.printStackTrace();
+		}//try catch (making copy)
+		return dbFile;
+	}//createDataBaseFromWeb
+
+	public static File getCurrentDbFileFromPreferences( Context context ) {
+		String currentDbFolder	= MyPreferencesActivity.getSelectedDbFolder(  context );
+		String currentDbFilename= MyPreferencesActivity.getSelectedDbName( context );
+		String currentDbPathUri = context.getDatabasePath(currentDbFolder).getAbsolutePath();
+		if ( ! currentDbPathUri.matches( ".*"+currentDbFolder ) ){
+			currentDbPathUri += "/" + currentDbFolder;
+		}
+		String currentDbFileUri = currentDbPathUri+"/"+currentDbFilename;
+		currentDbFile = new File( currentDbFileUri );
+		CityExplorer.debug(2, "currentDbFile was set to " + currentDbFile );
+		return currentDbFile;
+	}//getCurrentDbFileFromPreferences
 
 	/**
 	 * Gets the single instance of DBFactory.
@@ -137,18 +185,9 @@ public class DBFactory{
 	 */
 	public static SQLiteConnector getInstance( Context context ){
 		if ( currentDbFile == null || currentDbFile.equals("") ){
-			String currentDbFolder	= MyPreferencesActivity.getSelectedDbFolder( context );
-			String currentDbFilename= MyPreferencesActivity.getSelectedDbName( context );
-			String currentDbFolderUri = context.getDatabasePath(currentDbFolder).getAbsolutePath();
-			if ( ! currentDbFolderUri.matches( ".*"+currentDbFolder ) ){
-				currentDbFolderUri += "/" + currentDbFolder;
-			}
-			String currentDbFileUri = currentDbFolderUri+"/"+currentDbFilename;
-			currentDbFile = new File( currentDbFileUri );
-			CityExplorer.debug(2, "currentDbFile was set to " + currentDbFile );
-		}else{
-			//CityExplorer.debug(0, "Skipping with dbFile "+currentDbFile );
+			currentDbFile = getCurrentDbFileFromPreferences( context );
 		}
+
 		//CityExplorer.debug(1, "currentDbFile is "+currentDbFile); //Over-used?
 		if(dbConnectorInstance == null || dbConnectorInstance.isOpen() == false){
 			if( databaseType == DBType.SQLITE ){
@@ -160,4 +199,5 @@ public class DBFactory{
 		dbConnectorInstance.setContext(context);
 		return dbConnectorInstance;
 	}//getInstance
+
 }//class DBFactory

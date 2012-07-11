@@ -41,7 +41,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ubicompforall.CityExplorer.CityExplorer;
-import android.content.Context;
+
+import android.app.Activity;
 import android.widget.Toast;
 
 public class DatabaseUpdater {
@@ -53,7 +54,7 @@ public class DatabaseUpdater {
 	private URL updateServerURL;
 
 	/** The context. */
-	private Context context;
+	private Activity context;
 
 	/**
 	 * Instantiates a new database updater.
@@ -61,7 +62,7 @@ public class DatabaseUpdater {
 	 * @param c
 	 *            the c
 	 */
-	public DatabaseUpdater(Context c) {
+	public DatabaseUpdater(Activity c) {
 		context = c;
 	}
 
@@ -180,8 +181,7 @@ public class DatabaseUpdater {
 		 * image_url
 		 */
 
-		int privateId = DBFactory.getInstance(context)
-				.getPoiPrivateIdFromGlobalId(Integer.parseInt(poidata[0]));
+		int privateId = DBFactory.getInstance(context).getPoiPrivateIdFromGlobalId(Integer.parseInt(poidata[0]));
 
 		Poi poi = new Poi.Builder(poidata[1], new PoiAddress.Builder(
 				poidata[/* 5 */4])

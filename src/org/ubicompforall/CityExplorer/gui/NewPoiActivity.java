@@ -50,7 +50,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -134,7 +133,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 	/** The ArrayList containing all the category names. */
 	private ArrayList<String> category;
 
-	protected Context context;
+	protected Activity context;
 
     boolean wantToGoBack = false;
 

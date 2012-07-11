@@ -34,6 +34,7 @@ package org.ubicompforall.CityExplorer.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.ubicompforall.CityExplorer.data.FileSystemConnector;
 //import org.ubicompforall.CityExplorer.data.DatabaseUpdater;
@@ -46,7 +47,6 @@ import org.ubicompforall.CityExplorer.map.MapsActivity;
 import org.ubicompforall.CityExplorer.CityExplorer;
 import org.ubicompforall.CityExplorer.R;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -152,14 +152,13 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	private void makeSections(){
 		for (DB db : fs.getAllDBs() ){
 			if( !adapter.getSectionNames().contains(db.getCategory())){ //category does not exist, create it.
-				ArrayList<DB> list = new ArrayList<DB>();
-
+				CopyOnWriteArrayList<DB> list = new CopyOnWriteArrayList<DB>();
 				DBFileAdapter testAdapter;
 				testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(db.getCategory(), testAdapter);
 			}
 			((DBFileAdapter)adapter.getAdapter( db.getCategory() ) ).add(db);//add to the correct section
-			((DBFileAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged();
+			((DBFileAdapter)adapter.getAdapter(db.getCategory())).notifyDataSetChanged(); //In case the DBs belong to different Categories
 		}
 	}//makeSections
 
@@ -176,7 +175,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		for (DB db : allDBs){
 			sectionsInUse.add(db.getCategory());
 			if(!adapter.getSectionNames().contains(db.getCategory())){
-				ArrayList<DB> list = new ArrayList<DB>();
+				CopyOnWriteArrayList<DB> list = new CopyOnWriteArrayList<DB>();
 				list.add(db);
 				DBFileAdapter testAdapter = new DBFileAdapter(this, R.layout.plan_listitem, list);
 				adapter.addSection(db.getCategory(), testAdapter);
@@ -195,29 +194,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		if (requestCode == 2){
-			debug(0, "Code Two!");
-			//Smenu.removeItem(R.id.planMenuUpdatePois );
-		}
-//		else if (requestCode == SHARE_DB)
-//		{	
-//			menu.removeItem(R.id.planMenuAddDBs);
-//			menu.removeItem(R.id.planMenuNewDB);
-//			menu.removeItem(R.id.planMenuUpdateDBs);
-//		}
-//		else if(requestCode == DOWNLOAD_DB){
-//			menu.removeItem(R.id.planMenuAddDBs);
-//			menu.removeItem(R.id.planMenuNewDB);
-//			menu.removeItem(R.id.planMenuShareDBs);
-//			menu.removeItem(R.id.planMenuFilter);
-//		}
-//		else
-//		{
-//			menu.removeItem(R.id.planMenuAddDBs);
-//		}
-
-		return true;
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -306,12 +283,12 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		}//onItemLongClick
 	}//DrawPopup
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		if(resultCode==Activity.RESULT_CANCELED){
-			return;
-		}
-	}//onActivityResult
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+//		if(resultCode==Activity.RESULT_CANCELED){
+//			return;
+//		}
+//	}//onActivityResult
 
 
 	/**
@@ -334,7 +311,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 		cat.add(0, CityExplorer.FAVORITES);
 		for (String title : cat){
 			//preferences:
-			ArrayList<DB> list = new ArrayList<DB>();
+			CopyOnWriteArrayList<DB> list = new CopyOnWriteArrayList<DB>();
 
 			for (DB db : allDBs){
 				if (title.equals(CityExplorer.FAVORITES) ){ //add to favorite section

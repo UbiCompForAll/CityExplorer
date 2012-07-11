@@ -66,10 +66,12 @@ public class SeparatedListAdapter extends BaseAdapter {
 	public final static int INTERNET_POIS = 3;
 	/*** Constant field describing a list of downloaded pois.*/
 	public final static int INTERNET_TRIPS = 4;
-	/*** Constant field describing a list of downloaded pois.*/
+	/*** Constant field describing a list of downloaded DataBases.*/
 	public final static int LOCAL_DBS = 5;
+	/*** Constant field describing a list of available Web DataBases.*/
+	public final static int WEB_DBS = 6;
 	
-	private final static String[] CONSTANTS = { "UNUSED", "POI_LIST", "TRIP_LIST", "INTERNET_POIS", "INTERNET_TRIPS", "LOCAL_DBS"	}; // String[] CONSTANTS
+	private final static String[] CONSTANTS = { "UNUSED", "POI_LIST", "TRIP_LIST", "INTERNET_POIS", "INTERNET_TRIPS", "LOCAL_DBS", "WEB_DBS" }; // String[] CONSTANTS
 	
 	/*** Field containing the type of list. */
 	private int listType;
@@ -338,6 +340,8 @@ public class SeparatedListAdapter extends BaseAdapter {
 				debug(0, "caption is "+caption );
 	   			((DBFileAdapter)s.getAdapter()).replaceAll( fs.findAllDBs( caption ) );
 			}//for sections
+		}else if(listType == WEB_DBS){
+			debug(-1, "Something happened to the Web-SeparatedListAdapter!" );
 		}//switch on listType
 	
 		super.notifyDataSetChanged();
