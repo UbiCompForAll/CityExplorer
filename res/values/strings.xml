@@ -26,7 +26,7 @@
 	<!-- manifest resources-->
 	<!-- constants -->
 	<!-- can be used to initiate Intent, but not in the manifest (why?)-->
-	<string name="constant_provider_authority">org.ubicompforall.CityExplorer.provider</string>
+	<string name="constant_provider_authority">org.ubicompforall.cityexplorer.provider</string>
 	<string name="action_plan">.gui.ActivityPlan</string>
 	<string name="action_mapview_poi">.map.PoiMapAcitivity</string>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionCode="2"
-	android:versionName="1.1" package="org.ubicompforall.CityExplorer">
+	android:versionName="1.1" package="org.ubicompforall.cityexplorer">
 <!-- android:installLocation="preferExternal" -->
 	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="10"
 		android:maxSdkVersion="14" />
@@ -17,7 +17,7 @@
 	
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:allowTaskReparenting="false" android:name="CityExplorer">
+		android:allowTaskReparenting="false" android:name=".CityExplorer">
 	
 		<uses-library android:name="com.google.android.maps" android:required="true"/>
 		<activity android:theme="@android:style/Theme.NoTitleBar" android:name=".data.Sharing">
@@ -93,7 +93,7 @@
 
 		<activity android:name=".gui.PlanPoiTab" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
-				<action android:name="org.ubicompforall.CityExplorer.gui.PlanPoiTab" />
+				<action android:name="org.ubicompforall.cityexplorer.gui.PlanPoiTab" />
 	            <category android:name="android.intent.category.BROWSABLE" />
 				<category android:name="android.intent.category.DEFAULT" />
 	        </intent-filter>
@@ -109,7 +109,7 @@
 		
 		<activity android:name=".map.MapsActivity" android:launchMode="standard" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
-				<action android:name="org.ubicompforall.CityExplorer.map.MapsActivity" />
+				<action android:name="org.ubicompforall.cityexplorer.map.MapsActivity" />
 	            <category android:name="android.intent.category.BROWSABLE" />
 				<category android:name="android.intent.category.DEFAULT" />
 	        </intent-filter>
