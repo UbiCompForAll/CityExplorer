@@ -312,7 +312,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //	}; // new Handler class
 
 	/***
-	 *
 	 * @param time	In milliseconds
 	 * @param d
 	 */

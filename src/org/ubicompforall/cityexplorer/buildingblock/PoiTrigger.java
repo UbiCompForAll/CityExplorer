@@ -61,7 +61,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 
 	//public static final Uri CONTENT_URI = Uri( AUTHORITY, POI_TABLE );
 	public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).appendPath(POI_TABLE).build();
-	private static final Integer PROXIMITY_DISTANCE = 2000;	//Warn if a POI is within 1000 meters
+	private static final Integer PROXIMITY_DISTANCE = 1000;	//Warn if a POI is within 1000 meters
 
 	//METHODS
 	
