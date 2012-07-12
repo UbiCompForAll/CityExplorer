@@ -36,6 +36,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.CityExplorer.data.DBFactory;
+import org.ubicompforall.ubicomposer.android.ModelUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -158,8 +159,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		//debug(0, "Started CityExplorer.java" );
 		
 		// Copy all composition assets in the desc sub-folder to the application data area
-		//ModelUtils.copyAssetFiles (this);
-		
+//TODO: This should only be done once.
+		ModelUtils.copyAssetFiles (this);
+
 	}//onCreate
 
     @Override

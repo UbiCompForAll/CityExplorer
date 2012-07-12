@@ -63,7 +63,8 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".gui.SettingsActivity" android:label="@string/settings"></activity>
-		
+		<activity android:name=".gui.PersonalizeActivity" android:label="@string/personalize"></activity>
+				
 		
 	
 		<activity android:launchMode="standard" android:name=".gui.PlanActivity" android:theme="@style/TabTheme"><!-- singleTop? -->

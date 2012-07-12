@@ -31,7 +31,7 @@ import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInst
 
 import android.content.Context;
 
-public class CompositionFactory extends MapBasedBuildingBlockFactory implements AndroidBuildingBlockFactory {
+public class CityExplorerCompositionFactory extends MapBasedBuildingBlockFactory implements AndroidBuildingBlockFactory {
 	Context context;
 	
 	@Override
@@ -53,7 +53,7 @@ public class CompositionFactory extends MapBasedBuildingBlockFactory implements 
 		return classMap;
 	}
 	
-	public CompositionFactory() {
+	public CityExplorerCompositionFactory() {
 		super(MAP);
 	}
 
