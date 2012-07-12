@@ -126,7 +126,9 @@
 	<string name="opensqlite">City Explorer</string>
 	<string name="plan">EXPLORE</string>
 	<string name="labelFavorite">Favourite</string>
-	<string name="preferences">PREFERENCES</string>
+	<string name="settings">SETTINGS</string>
+	<string name="personalize">PERSONALIZE</string>
+	<string name="preferences">PREFERENCES</string>	
 	<string name="requiredFields">* required fields</string>
 	<string name="saveTrip">Save Tour</string>
 	<string name="savePoi">Save</string>

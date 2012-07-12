@@ -152,7 +152,7 @@ public class StartActivity extends Activity implements OnClickListener{
 			
 			if ( CityExplorer.ubiCompose ){ 		// PERSONALIZE i.e. support for user service composition
 //TODO: The Perzonalize Activity may be removed later on (this requires to composition tool to support start/stop
-				startActivity( new Intent( this, PerzonalizeActivity.class));
+				startActivity( new Intent( this, PersonalizeActivity.class));
 
 			}else{									// SHOW MAP
 //TODO: Starting the maps activity is too slow!!! How to show a progress bar etc.?

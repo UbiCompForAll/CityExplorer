@@ -56,7 +56,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-public class PerzonalizeActivity extends Activity implements OnClickListener{
+public class PersonalizeActivity extends Activity implements OnClickListener{
 
 	UserService userService;
 	String userServiceFileName;
