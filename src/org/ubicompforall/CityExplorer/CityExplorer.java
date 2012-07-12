@@ -155,6 +155,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		//debug(0, "Started CityExplorer.java" );
 		
 		// Copy all composition assets in the desc sub-folder to the application data area
+//TODO: This should only be done once.
 		ModelUtils.copyAssetFiles (this);
 		
 	}//onCreate

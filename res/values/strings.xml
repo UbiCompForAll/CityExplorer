@@ -88,6 +88,7 @@
 	<string name="editfromexistingPoiLabel">Copy existing Location</string>
 	<string name="editLabel">Edit</string>
 	<string name="editcityLabel">* City:</string>		    <!-- as template -->
+	<string name="editUserService">Create task</string>
 	
 	<string name="editzipLabel">Zip:</string>
 	<string name="editcategoryLabel">* Category:</string>
@@ -140,6 +141,8 @@
 	<string name="settings">SETTINGS</string>
 	<string name="showMaps">SHOW MAP</string>
 	<string name="sqlitemimetype">application/octet-stream</string>
+	<string name="startUserService">Start tasks</string>
+	<string name="stopUserService">Stop tasks</string>
 	<string name="summary">SUMMARY</string>
 	
 	<string name="telephoneLabel">Telephone:</string>
