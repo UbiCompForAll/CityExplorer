@@ -31,13 +31,18 @@ import org.ubicompforall.cityexplorer.data.Poi;
 import org.ubicompforall.cityexplorer.data.Time;
 import org.ubicompforall.cityexplorer.data.Trip;
 import org.ubicompforall.cityexplorer.gui.ViewDayHourItem.poiTextView;
-import org.ubicompforall.cityexplorer.map.route.GoogleKML;
+import org.ubicompforall.cityexplorer.map.MapsActivity;
+//import org.ubicompforall.cityexplorer.map.route.GoogleKML;
 import org.ubicompforall.cityexplorer.map.route.Road;
+import org.ubicompforall.cityexplorer.map.route.Route;
+
+import com.google.android.maps.GeoPoint;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -53,6 +58,7 @@ import android.widget.Toast;
 /**
  * @description:
  */
+@SuppressWarnings("unused")
 public class CalendarActivity extends Activity {
 
 	Paint mpt = new Paint();
@@ -104,7 +110,7 @@ public class CalendarActivity extends Activity {
 				poiAdapter = preparePoiList();
 			}else{//if some (fixed time) entries have not been given a time yet
 				poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
-				debug(2, "no Time on resume" );
+				debug(1, "no Time on resume" );
 			}
 			debug(1, "poiAdapter.size is "+poiAdapter.getCount() );
 			//add pois that already has times: //HEAVY! Run on a different Thread!
@@ -174,7 +180,7 @@ public class CalendarActivity extends Activity {
 	private ArrayAdapter<String>
 	 preparePoiList(){
 		ArrayList<String> poiList = new ArrayList<String>();
-		//pois have not been added.
+		//POIs have not been added.
 		for(Poi poi : trip.getPois()){
 			debug(0, "Poi: "+poi.getLabel()+" added");
 			if( trip.isFreeTrip() ){
@@ -390,24 +396,27 @@ public class CalendarActivity extends Activity {
 	}//findPoiViewAfter
 	
 	public double getDistance(Poi startPoi, Poi endPoi){
-		double dist = 0;
+		float[] dist = new float[3];
 		//debug(0, "Start, end is "+startPoi+", "+endPoi );
 		
-		/*if we are offline, use straight line to calculate distance: 
+		/*if we are offline, use straight line to calculate distance: */
         Location.distanceBetween(
-		poi.getGeoPoint().getLatitudeE6()/1E6, 
-		poi.getGeoPoint().getLongitudeE6()/1E6, 
-		prevPoi.getGeoPoint().getLatitudeE6()/1E6, 
-		prevPoi.getGeoPoint().getLongitudeE6()/1E6, dist);*/
-
-		Road r = GoogleKML.getRoad(
-				startPoi.getGeoPoint().getLatitudeE6()/1E6, 
-				startPoi.getGeoPoint().getLongitudeE6()/1E6, 
-				endPoi.getGeoPoint().getLatitudeE6()/1E6, 
-				endPoi.getGeoPoint().getLongitudeE6()/1E6);
-		dist = r.getDistance();
+		startPoi.getGeoPoint().getLatitudeE6()/1E6, 
+		startPoi.getGeoPoint().getLongitudeE6()/1E6, 
+		endPoi.getGeoPoint().getLatitudeE6()/1E6, 
+		endPoi.getGeoPoint().getLongitudeE6()/1E6, dist);
+//*/
+//		Road r = GoogleKML.getRoad(
+//				startPoi.getGeoPoint().getLatitudeE6()/1E6, 
+//				startPoi.getGeoPoint().getLongitudeE6()/1E6, 
+//				endPoi.getGeoPoint().getLatitudeE6()/1E6, 
+//				endPoi.getGeoPoint().getLongitudeE6()/1E6);
 		
-		return dist;
+		//dist = route.getDistance();
+		//dist[0] = route.getDistance();
+		Route route = MapsActivity.directions( startPoi.getGeoPoint(), endPoi.getGeoPoint() );
+		
+		return dist[0];
 	}//getDistance
 	
 	@Override

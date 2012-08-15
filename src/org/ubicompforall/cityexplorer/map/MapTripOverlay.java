@@ -32,13 +32,12 @@ import java.util.ArrayList;
 
 import org.ubicompforall.cityexplorer.data.Poi;
 import org.ubicompforall.cityexplorer.data.Trip;
-import org.ubicompforall.cityexplorer.map.route.GoogleKML;
-import org.ubicompforall.cityexplorer.map.route.Road;
-
+import org.ubicompforall.cityexplorer.map.route.Route;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -47,7 +46,8 @@ import com.google.android.maps.Overlay;
  * The Class MapTripOverlay.
  */
 public class MapTripOverlay extends Overlay{
-
+//OBSOLETE!!!
+//
 	/** The pencil. */
 	Paint pencil;
 	
@@ -189,7 +189,8 @@ public class MapTripOverlay extends Overlay{
 	private class PoiToPoi {
 		
 		/** The from to. */
-		Road fromTo;
+		//Road fromTo;
+		Route fromTo;
 		
 		/**
 		 * Instantiates a new poi to poi.
@@ -201,13 +202,15 @@ public class MapTripOverlay extends Overlay{
 			final Poi f = from;
 			final Poi t = to;
 			//new Thread(){ public void run(){
-				fromTo = GoogleKML.getRoad(
-					f.getAddress().getLatitude(),
-					f.getAddress().getLongitude(),
-					t.getAddress().getLatitude(),
-					t.getAddress().getLongitude()
-				);
-				fromTo.getGeoPoints();
+//			fromTo = GoogleKML.getRoad(
+//					f.getAddress().getLatitude(),
+//					f.getAddress().getLongitude(),
+//					t.getAddress().getLatitude(),
+//					t.getAddress().getLongitude()
+//				);
+				fromTo = MapsActivity.directions( new GeoPoint( (int)(f.getAddress().getLatitude()*1E6),(int)(f.getAddress().getLongitude()*1E6) ),
+					    new GeoPoint( (int)(t.getAddress().getLatitude()*1E6),(int)(t.getAddress().getLongitude()*1E6) ) );
+				fromTo.getPoints();
 			//}}.start();
 		}
 		
@@ -221,7 +224,7 @@ public class MapTripOverlay extends Overlay{
 		public void drawRoadSegment(MapView mv, Canvas cs, Paint pen){
 			Point last = null;  
 
-			for ( GeoPoint gp : fromTo.getGeoPoints()){
+			for ( GeoPoint gp : fromTo.getPoints()){
 				Point onMap = new Point();
 				mv.getProjection().toPixels(gp, onMap);
 

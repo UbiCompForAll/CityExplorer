@@ -43,6 +43,10 @@ import org.ubicompforall.cityexplorer.gui.MyPreferencesActivity;
 import org.ubicompforall.cityexplorer.gui.NavigateFrom;
 import org.ubicompforall.cityexplorer.gui.PoiDetailsActivity;
 import org.ubicompforall.cityexplorer.gui.QuickActionPopup;
+import org.ubicompforall.cityexplorer.map.route.GoogleParser;
+import org.ubicompforall.cityexplorer.map.route.Parser;
+import org.ubicompforall.cityexplorer.map.route.Route;
+import org.ubicompforall.cityexplorer.map.route.RouteOverlay;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -53,6 +57,7 @@ import com.google.android.maps.Overlay;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -134,6 +139,11 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		
 		initWifi();
 		initGPS( this );
+
+		Route route = directions( new GeoPoint( (int)(26.2*1E6),(int)(50.6*1E6) ),
+				new GeoPoint( (int)(26.3*1E6),(int)(50.7*1E6) ) );
+		RouteOverlay routeOverlay = new RouteOverlay(route, Color.BLUE);
+		mapView.getOverlays().add(routeOverlay);
 		drawOverlays();
 	}//onCreate
 
@@ -146,6 +156,25 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	private void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
+
+	
+	public static Route directions(final GeoPoint start, final GeoPoint dest) {
+	    Parser parser;
+	    String jsonURL = "maps.google.com/maps/api/directions/json?";
+	    final StringBuffer sBuf = new StringBuffer(jsonURL);
+	    sBuf.append("origin=");
+	    sBuf.append(start.getLatitudeE6()/1E6);
+	    sBuf.append(',');
+	    sBuf.append(start.getLongitudeE6()/1E6);
+	    sBuf.append("&destination=");
+	    sBuf.append(dest.getLatitudeE6()/1E6);
+	    sBuf.append(',');
+	    sBuf.append(dest.getLongitudeE6()/1E6);
+	    sBuf.append("&sensor=true&mode=driving");
+	    parser = new GoogleParser(sBuf.toString());
+	    Route r =  parser.parse();
+	    return r;
+	}//directions
 
 
 	/**

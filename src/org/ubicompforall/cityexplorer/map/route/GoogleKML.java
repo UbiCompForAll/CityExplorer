@@ -26,8 +26,10 @@
  * 
  */
 
-package org.ubicompforall.cityexplorer.map.route;
 
+package org.ubicompforall.cityexplorer.map.route;
+//OBSOLETE !!!
+/*
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -218,3 +220,4 @@ private final static class KMLHandler extends DefaultHandler {
 
 }
 
+*/

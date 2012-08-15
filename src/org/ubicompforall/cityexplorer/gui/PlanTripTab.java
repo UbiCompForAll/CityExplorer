@@ -294,7 +294,7 @@ public class PlanTripTab extends PlanActivityTab{
 				return true;
 			}
 
-			final Trip	t 			= (Trip) parent.getAdapter().getItem(pos);
+			final Trip	clicked_trip 			= (Trip) parent.getAdapter().getItem(pos);
 			final int	idx			= pos;
 			final int[] xy 			= new int[2]; v.getLocationInWindow(xy);
 			final Rect rect 		= new Rect(	xy[0], 
@@ -307,15 +307,16 @@ public class PlanTripTab extends PlanActivityTab{
 			Drawable	addPoiIcon	= res.getDrawable(android.R.drawable.ic_menu_add);
 			Drawable	mapviewIcon	= res.getDrawable(android.R.drawable.ic_menu_mapmode);
 			Drawable	deleteIcon	= res.getDrawable(android.R.drawable.ic_menu_delete);
+			Drawable	timeIcon	= res.getDrawable(android.R.drawable.ic_menu_recent_history);
 
 
 			// Declare quick actions 
 
 			// 1: Show on Map
-			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
+			qa.addItem(mapviewIcon,	R.string.activity_menu_showOnMap,	 new OnClickListener(){
 				public void onClick(View view){
 					Intent showInMap = new Intent(PlanTripTab.this, MapsActivity.class);
-					showInMap.putExtra(IntentPassable.TRIP, t);
+					showInMap.putExtra(IntentPassable.TRIP, clicked_trip);
 					startActivity(showInMap);
 					qa.dismiss();
 				}
@@ -327,7 +328,7 @@ public class PlanTripTab extends PlanActivityTab{
 				{
 					
 					Intent selectPoi = new Intent(PlanTripTab.this, PlanPoiTab.class);
-					selectPoi.putExtra(IntentPassable.TRIP, t);
+					selectPoi.putExtra(IntentPassable.TRIP, clicked_trip);
 					selectPoi.putExtra("requestCode", ADD_TO_TRIP);
 					startActivityForResult(selectPoi, ADD_TO_TRIP);
 
@@ -338,11 +339,26 @@ public class PlanTripTab extends PlanActivityTab{
 			// 3: Deletes
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
 				public void onClick(View view){	
-					((TripAdapter)adapter.getAdapter(idx)).remove(t);
+					((TripAdapter)adapter.getAdapter(idx)).remove(clicked_trip);
 					adapter.notifyDataSetChanged();
 					qa.dismiss();
 				}
 			});
+
+			// 4: Show Time Table (TODO: if fixed tour!)	%% RS-120815
+			if( clicked_trip != null && clicked_trip.isFreeTrip() == false ){ // && clicked_trip.isEmpty() == false){
+				//From TripListActivity: menu.findItem(R.id.triplistMenuCalendar).setVisible(true);
+				qa.addItem(timeIcon, "TimeTable", new OnClickListener(){
+					public void onClick(View view){
+						Intent calendar = new Intent( PlanTripTab.this, TripListActivity.class );
+						calendar.putExtra(IntentPassable.TRIP, clicked_trip);
+						startActivity( calendar );
+						qa.dismiss();
+					}
+				});
+			}else{// If fixed tour (with time-table)
+				debug(2, "trip was free (without time-schedule?)" );
+			}
 
 			qa.show();
 			return true;

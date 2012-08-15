@@ -518,7 +518,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			//Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
 
 			// Declare the quick actions menu	// 1: Show on Map
-			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
+			qa.addItem(mapviewIcon,	R.string.activity_menu_showOnMap,	 new OnClickListener(){
 				public void onClick(View view){
 					qa.dismiss();
 					CityExplorer.showProgressDialog(context, "Launching Map" );
@@ -566,7 +566,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			// Declare the quick actions menu
 
 			// 1: Show on Map
-			qa.addItem(mapviewIcon,	"Show on map", new OnClickListener(){
+			qa.addItem(mapviewIcon,	R.string.activity_menu_showOnMap,	 new OnClickListener(){
 				public void onClick(View view){
 					qa.dismiss();
 					CityExplorer.showProgressDialog(context, "Launching Map" );

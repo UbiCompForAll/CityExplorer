@@ -272,7 +272,7 @@ public class TripListActivity extends ListActivity{
 				}
 			});
 
-			qa.addItem(mapviewIcon,	"Show on map",		new OnClickListener(){
+			qa.addItem(mapviewIcon,	R.string.activity_menu_showOnMap,	new OnClickListener(){
 				public void onClick(View view){
 					Intent showInMap = new Intent(TripListActivity.this, MapsActivity.class);
 					ArrayList<Poi> selectedPois = new ArrayList<Poi>();

@@ -27,11 +27,11 @@
  */
 
 package org.ubicompforall.cityexplorer.map.route;
-
-class Point {
-	String name;
-	String description;
-	String iconUrl;
-	double latitude;
-	double longitude;
-}
+//OBSOLETE
+//class Point {
+//	String name;
+//	String description;
+//	String iconUrl;
+//	double latitude;
+//	double longitude;
+//}
