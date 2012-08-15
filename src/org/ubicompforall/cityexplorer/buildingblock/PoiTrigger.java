@@ -64,10 +64,15 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	private static final Integer PROXIMITY_DISTANCE = 1000;	//Warn if a POI is within 1000 meters
 
 	//METHODS
-	
+
+	/***
+	 * Rune: I think this method should be called onCreate, to be more in-line with the Android/Mobile Terminology
+	 */
 	@Override
 	public void setContext(Context context) {
 		this.ctx = context;
+		debug(0, "Is this the same as onCreate?");
+		locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
 	}//AndroidBuildingBlockInstance.setContext
 
 	
@@ -75,8 +80,11 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	public void startMonitoring(Task task, TaskTrigger taskTrigger) {
 		this.taskTrigger = taskTrigger;
 		this.task = task;
-		//context.registerReceiver(this, new IntentFilter("android.intent.action.PHONE_STATE"));
 
+		debug(0, "context is "+ctx );
+		Location lastKnownLocation = locationManager.getLastKnownLocation( getProvider() );
+		onLocationChanged( lastKnownLocation );
+		// Register the listener with the Location Manager to receive location updates
 		//Make sure onLocationChanged is called every time the user moves
 		locationManager.requestLocationUpdates( getProvider(), 0, 0, this);
 	}//TriggerMonitor.startMonitoring
@@ -131,7 +139,8 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	    }//try - catch
 		if (mCursor != null){
 			while( mCursor.moveToNext() ){
-				pois.put( mCursor.getString(0), new Double[]{ mCursor.getDouble(1), mCursor.getDouble(2) } );
+				pois.put( mCursor.getString(1), new Double[]{ mCursor.getDouble(2), mCursor.getDouble(3) } );
+				//CityExplorer.debug(0, "stored "+mCursor.getString(1)+" "+mCursor.getDouble(2)+" "+mCursor.getDouble(3) );
 			}
 		}else{
 			debug(-1, "NO Cursor! "+error );
@@ -147,6 +156,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 			float[] results = new float[] { 0, 0, 0 };
 			Location.distanceBetween(myPos[0], myPos[1],
 					name_pos.getValue()[0], name_pos.getValue()[1], results);
+			//debug(0, "Distance from "+myPos[0]+" to "+name_pos.getValue()[0]+" is "+results[0] );
 			distances.put( Math.round(results[0]), name_pos.getKey() );
 		}
 		return distances;
@@ -154,6 +164,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 
 	@Override
 	public void onLocationChanged( Location location ){
+		debug(-1, "Let's go to location changed!: " );
 		if ( location != null ){
 			double latitude = location.getLatitude();
 			double longitude = location.getLongitude();
@@ -163,10 +174,14 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 
 			for (Entry<Integer, String> dist_name : distances.entrySet()) {
 				if ( dist_name.getKey() < PROXIMITY_DISTANCE ){
-					 Map<String, Object> parameterMap = new HashMap<String, Object>();
-					 parameterMap.put( task.getTrigger().getName()+".poiName", dist_name.getValue() );
-					 taskTrigger.invokeTask(task, parameterMap);
+					//debug(0, "Close call: "+dist_name.getValue() );
+					Map<String, Object> parameterMap = new HashMap<String, Object>();
+					parameterMap.put( task.getTrigger().getName()+".poiName", dist_name.getValue() );
+					taskTrigger.invokeTask(task, parameterMap);
+//				}else{
+//					debug(0, "NOT CLOSE: "+dist_name );
 				}//Check proximity
+
 			}//For all POIs
 
 			//this.stopMonitoring();	//Stop this type of trigger? No, wait for next...

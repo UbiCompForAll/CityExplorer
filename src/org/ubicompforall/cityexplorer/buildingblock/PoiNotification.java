@@ -40,19 +40,27 @@ import android.text.format.Time;
 public class PoiNotification extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
 
+	/***
+	 * @return code means ??
+	 */
 	@Override
 	public int execute(TaskInstance task, Map<String, Object> parameters) {
-		CityExplorer.debug(-1, "Show notification" );
+		String poiName = getStringValue("poiName", parameters);
+		CityExplorer.debug(0, "Show notification "+parameters );
 		//Context context = this;
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( ns );
 
 		int icon = R.drawable.ic_launcher;
-		CharSequence tickerText = "Arriving at Poi";
+		CharSequence tickerText = "Arriving at Poi: "+poiName; //1 sec notification in the top bar
 		long when = System.currentTimeMillis();
+
 		Notification notification = new Notification(icon, tickerText, when);
+		notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
+		notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+
 		CharSequence contentTitle = "You have arrived at POI";
-		CharSequence contentText = "Get info about "+this.getPropertyValue("poiName", parameters);
+		CharSequence contentText = "Get bus-info about "+poiName;
 
 		Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.CalendarActivity.class);
 		Time now = new Time();

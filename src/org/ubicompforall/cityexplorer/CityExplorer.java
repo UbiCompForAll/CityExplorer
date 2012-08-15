@@ -28,6 +28,11 @@ package org.ubicompforall.cityexplorer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -36,7 +41,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.cityexplorer.R;
+import org.ubicompforall.cityexplorer.buildingblock.PoiNotification;
 import org.ubicompforall.cityexplorer.data.DBFactory;
+import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.ubicomposer.android.ModelUtils;
 
 import android.app.Activity;
@@ -65,6 +72,7 @@ import android.widget.Toast;
  * In this case, we have not defined any specific work for this Application.
  * See samples/tests/ApiDemosApplicationTests for an example of how to perform unit tests on an Application object.
  */
+@SuppressWarnings("unused")
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
 // Turn off debugging before RELEASE! Set DEBUG to 0.
@@ -161,12 +169,6 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		//TODO: This should only be done once.
 		ModelUtils.copyAssetFiles (this);
 
-		//DEBUG Notification
-//		PoiNotification pn = new PoiNotification();
-//		pn.setContext(this);
-//		pn.execute( new TaskInstance(null), new HashMap<String, Object>(){
-//			private static final long serialVersionUID = 1L;
-//		} );
 	}//onCreate
 
     @Override
@@ -174,8 +176,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
     	//Save preferences now? Taken care of automatically by SharedPreferences object?
 
         //Local debug (stacktrace level = 3)
-        StackTraceElement st = Thread.currentThread().getStackTrace()[2];
-		Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Save the preferences now?");
+//        StackTraceElement st = Thread.currentThread().getStackTrace()[2];
+//		Log.d(C, st.getFileName().replace("java", "")+st.getLineNumber()+'~'+st.getMethodName()+'~'+"Save the preferences now?");
+		debug(0, "Save the preferences now?" );
     }//onTerminate
 
 ////////////////////////////////////////////////////////////////////////////

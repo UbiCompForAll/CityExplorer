@@ -130,6 +130,7 @@ public class CityExplorerContentProvider extends ContentProvider{
 		}//switch
 	    
 		// call the code to actually do the query
+	    CityExplorer.debug(0, "Go!" );
 	    try{
 	    	return sqliteConnector.getReadableDatabase().query( SQLITE_ALL_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
 	    }catch (SQLiteException e){

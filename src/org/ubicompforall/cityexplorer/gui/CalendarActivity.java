@@ -80,32 +80,36 @@ public class CalendarActivity extends Activity {
 
 		//trip = DBFactory.getInstance(this).getAllTrips(false).get(0);
 		trip = this.getIntent().getParcelableExtra("trip");
-		debug(2, "free:"+trip.isFreeTrip() );
-		
-		sv = new ScrollView(this);
-		ll = new LinearLayout(this);
-		ll.setOrientation(LinearLayout.VERTICAL); 
-		ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		
-		addViews();
-	 
-		ll.setBackgroundColor(0xFFEBF2FA);
-		sv.addView(ll);
-		setContentView(sv);
-
-
-		if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() )
-				||	! trip.getPois().containsAll( trip.getFixedTimes().keySet() ) ){
-			// (some) pois have not been added.
-			poiAdapter = preparePoiList();
-		}else{//if some (fixed time) entries have not been given a time yet
-			poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
-			debug(2, "no Time on resume" );
+		if (trip == null){
+			Toast.makeText( this, "Calendar-Activity without Trip!?", Toast.LENGTH_LONG).show();
+			finish();
+		}else{
+			debug(2, "free:"+trip.isFreeTrip() );
+			
+			sv = new ScrollView(this);
+			ll = new LinearLayout(this);
+			ll.setOrientation(LinearLayout.VERTICAL); 
+			ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+			
+			addViews();
+		 
+			ll.setBackgroundColor(0xFFEBF2FA);
+			sv.addView(ll);
+			setContentView(sv);
+	
+	
+			if( ! trip.getFixedTimes().keySet().containsAll( trip.getPois() )
+					||	! trip.getPois().containsAll( trip.getFixedTimes().keySet() ) ){
+				// (some) pois have not been added.
+				poiAdapter = preparePoiList();
+			}else{//if some (fixed time) entries have not been given a time yet
+				poiAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, new ArrayList<String>()); //Moved to onResume
+				debug(2, "no Time on resume" );
+			}
+			debug(1, "poiAdapter.size is "+poiAdapter.getCount() );
+			//add pois that already has times: //HEAVY! Run on a different Thread!
+			addPoisWithTime();
 		}
-		debug(1, "poiAdapter.size is "+poiAdapter.getCount() );
-		//add pois that already has times: //HEAVY! Run on a different Thread!
-		addPoisWithTime();
-
 	}//onCreate
 	
 	@Override
@@ -226,7 +230,7 @@ public class CalendarActivity extends Activity {
 
 			//Add walking time:
 			if( poiIndex >= trip.getPois().size() || addWalkingTime( poiIndex, time, time.GetMinutes(), poi ) == false){
-				Toast.makeText( CalendarActivity.this, "No more to add...", Toast.LENGTH_SHORT );
+				Toast.makeText( CalendarActivity.this, "No more to add...", Toast.LENGTH_SHORT ).show();
 				return;
 	    	}//if no poi left, or no walking time
 

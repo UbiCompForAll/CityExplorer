@@ -76,6 +76,7 @@ public class ExportImport extends Activity{
 		      while (( line = buffreader.readLine()) != null) {
 		        pois.append(line+"\n");
 		      }
+		      buffreader.close();
 		      
 		      //System.out.println("EXIMP: "+sb.toString());
 		      

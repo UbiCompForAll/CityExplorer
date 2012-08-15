@@ -82,8 +82,8 @@ public class ImportActivity extends TabActivity {
 
 	
 	/**
-	 * Terminates activity when the user when another activity starts (either on user behalf or not).
-	 * Done to avoid keeping the activity on the stack when a user selects a downloaded database in the
+	 * Terminates activity when another activity starts (either on user behalf or not).
+	 * Done to avoid keeping the activity on the stack when a user selects a down-loaded database in the
 	 * Android notification window.
 	 */	
 	public void onStop () {

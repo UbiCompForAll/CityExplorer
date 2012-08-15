@@ -28,7 +28,6 @@
 package org.ubicompforall.cityexplorer.gui;
 
 import java.util.ArrayList;
-
 import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
 import org.ubicompforall.cityexplorer.data.DBFactory;
@@ -37,7 +36,6 @@ import org.ubicompforall.cityexplorer.data.IntentPassable;
 import org.ubicompforall.cityexplorer.data.Poi;
 import org.ubicompforall.cityexplorer.gui.MyPreferencesActivity;
 import org.ubicompforall.cityexplorer.map.MapsActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -131,11 +129,18 @@ public class StartActivity extends Activity implements OnClickListener{
 		} else if (v.getId() == R.id.startButton2){ // Button PERZONALIZE or SHOW MAP depending of flag settings
 			
 			if ( CityExplorer.ubiCompose ){ 		// PERSONALIZE i.e. support for user service composition
-//TODO: The Perzonalize Activity may be removed later on (this requires to composition tool to support start/stop
+//TODO: The Personalize Activity may be removed later on (this requires to composition tool to support start/stop JQ-120712
 				startActivity( new Intent( this, PersonalizeActivity.class));
 
+				//DEBUG Notification	RS-120722
+//				PoiNotification pn = new PoiNotification();
+//				pn.setContext(this);
+//				pn.execute( new TaskInstance(null), new HashMap<String, Object>(){
+//					private static final long serialVersionUID = -2293619341337610249L;
+//				} );
+
 			}else{									// SHOW MAP
-//TODO: Starting the maps activity is too slow!!! How to show a progress bar etc.?
+//TODO: Starting the maps activity is too slow!!! How to show a progress bar etc.? RS-111213
 				//Toast.makeText(this, "Loading Maps...", Toast.LENGTH_LONG).show();
 				setProgressBarVisibility(true);
 				exploreCity(this);
