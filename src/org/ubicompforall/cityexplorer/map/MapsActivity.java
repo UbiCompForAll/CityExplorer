@@ -160,7 +160,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	
 	public static Route directions(final GeoPoint start, final GeoPoint dest) {
 	    Parser parser;
-	    String jsonURL = "maps.google.com/maps/api/directions/json?";
+	    String jsonURL = "http://maps.google.com/maps/api/directions/json?";
 	    final StringBuffer sBuf = new StringBuffer(jsonURL);
 	    sBuf.append("origin=");
 	    sBuf.append(start.getLatitudeE6()/1E6);
@@ -171,6 +171,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	    sBuf.append(',');
 	    sBuf.append(dest.getLongitudeE6()/1E6);
 	    sBuf.append("&sensor=true&mode=driving");
+	    CityExplorer.debug(-1, "Trying to get "+sBuf );
 	    parser = new GoogleParser(sBuf.toString());
 	    Route r =  parser.parse();
 	    return r;

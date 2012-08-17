@@ -14,6 +14,8 @@ import java.io.InputStream;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
 
+import android.util.Log;
+
 public class XMLParser {
 	// names of the XML tags
 	protected static final String MARKERS = "markers";
@@ -25,17 +27,20 @@ public class XMLParser {
 		try {
 			this.feedUrl = new URL(feedUrl);
 		} catch (MalformedURLException e) {
-			// Log.e(e.getMessage(), "XML parser - " + feedUrl);
+			CityExplorer.debug(-1, e.getMessage()+", XML parser - " + feedUrl);
 		}
 	}
 
 	protected InputStream getInputStream() {
 		try {
-			CityExplorer.debug(-1, "feedUrl = "+feedUrl );
-			return feedUrl.openConnection().getInputStream();
+			if (feedUrl == null){
+				CityExplorer.debug(-1, "feedUrl = "+feedUrl );
+			}else{
+				return feedUrl.openConnection().getInputStream();
+			}
 		} catch (IOException e) {
-			// Log.e(e.getMessage(), "XML parser - " + feedUrl);
-			return null;
+			Log.e(e.getMessage(), "XML parser - " + feedUrl);
 		}
+		return null;
 	}
 }// class XMLParser
