@@ -171,7 +171,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	    sBuf.append(',');
 	    sBuf.append(dest.getLongitudeE6()/1E6);
 	    sBuf.append("&sensor=true&mode=driving");
-	    CityExplorer.debug(-1, "Trying to get "+sBuf );
+	    //CityExplorer.debug(1, "Trying to get "+sBuf );
 	    parser = new GoogleParser(sBuf.toString());
 	    Route r =  parser.parse();
 	    return r;

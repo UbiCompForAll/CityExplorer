@@ -352,7 +352,7 @@ public class CalendarActivity extends Activity {
 					Hour.UpdateHeight();	
 				} // if hour > hoursBack-1
 	    	} // if not first poi in trip: addWalkingTime
-			debug(-1, "poiAdapter.size is "+poiAdapter.getCount() );
+			//debug(1, "poiAdapter.size is "+poiAdapter.getCount() );
 			if (poiAdapter.getCount() >0 ){
 				poiAdapter.remove( poiAdapter.getItem(0) );	//Remove already placed entries
 			}

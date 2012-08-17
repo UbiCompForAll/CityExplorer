@@ -348,9 +348,9 @@ public class PlanTripTab extends PlanActivityTab{
 			// 4: Show Time Table (TODO: if fixed tour!)	%% RS-120815
 			if( clicked_trip != null && clicked_trip.isFreeTrip() == false ){ // && clicked_trip.isEmpty() == false){
 				//From TripListActivity: menu.findItem(R.id.triplistMenuCalendar).setVisible(true);
-				qa.addItem(timeIcon, "TimeTable", new OnClickListener(){
+				qa.addItem(timeIcon, R.string.activity_triplist_menu_calendar, new OnClickListener(){
 					public void onClick(View view){
-						Intent calendar = new Intent( PlanTripTab.this, TripListActivity.class );
+						Intent calendar = new Intent( PlanTripTab.this, CalendarActivity.class );
 						calendar.putExtra(IntentPassable.TRIP, clicked_trip);
 						startActivity( calendar );
 						qa.dismiss();

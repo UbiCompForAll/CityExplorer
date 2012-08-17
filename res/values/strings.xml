@@ -56,7 +56,7 @@
 	<string name="activity_newpoi_spinner_prompt">Choose Category</string>
 	<string name="activity_plan_menu_updatepois">Update Locations</string>
 	<string name="activity_plan_menu_addpois">Add to Tour</string>
-	<string name="activity_triplist_menu_calendar">Time Table for Tour</string>
+	<string name="activity_triplist_menu_calendar">Time Table</string> <!-- Too big for some pop-up menus:  "for Tour" -->
 
 	<string name="add_from_menu">Add items from the menu</string>
 	<string name="addressLabel">Address:</string>

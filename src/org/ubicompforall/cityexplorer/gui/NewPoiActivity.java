@@ -55,6 +55,7 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 public class NewPoiActivity extends Activity implements OnClickListener{
@@ -154,6 +155,8 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 			debug( 0, "id is "+ idPriv +", globId is "+ newPoi.getIdGlobal() );
 			fillPoiDetailFields( newPoi );
 		}
+		//Hide soft keyboard to begin with...
+		getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN );
 	}//onCreate
 
 	
