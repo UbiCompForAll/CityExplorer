@@ -84,14 +84,14 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //	 4: EVEN_EVEN_MORE_DEBUG
 //	 5: EVEN_EVEN_EVEN_MORE_DEBUG
 //	 6: ...
-	public static final int DEBUG = 0;
+	public static final int DEBUG = 1;
 
 	public static final String C = "CityExplorer";
 	//public static final String[] CITIES = { "Trondheim" }; // Take from folder names in databases instead
 
 
 	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = false;	// true or false ;-)
+	public static final boolean ubiCompose = true;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";

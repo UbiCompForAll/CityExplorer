@@ -15,7 +15,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:clickable="true"
-	android:apiKey=""
+	android:apiKey="05MLhk0p9hp3JBgHGNN8QZVa-D8D3Pz6h4TuRjA"
 	/>
 <!-- Before Release replace android:apiKey with Map release key -->
 
