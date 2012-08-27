@@ -1,0 +1,39 @@
+@AUTHOR	Jacqueline Floch
+@DATE	2012.08.24
+@FILE	CityExplorer/release/RELEASEHOWTO.txt
+
+Purpose:
+--------
+This file summarizes the important steps for preparing a release to Google Play.
+Complete information can be found at
+       http://developer.android.com/tools/publishing/preparing.html
+
+Turn off debugging
+==================
+- File CityExplorer.java: 
+       set debug variable to 0 
+
+- File AndroidManifest.xml:
+       set android:debuggable to "false"
+
+Set the MapsAPIkey to the release key
+=====================================
+- File CityExplorer/res/layout/maplayout.xml
+	set android:apiKey to the release key
+
+THIS KEY IS A PRIVATE KEY AND SHOULD NOT BE PUSHED TO GITHUB! IT BELONGS THE USER UBICOMPFORALL
+
+Set application version
+=======================
+- File AndroidManifest.xml:
+       increment android:versionCode (integer - represent code version)
+       android:versionName           (string to be shown to users e.g <major>.<minor>.<point>)
+
+Produce the release version
+===========================
+- Use the export wizard in Eclipse.
+
+THIS RELEASE KEY IS A PRIVATE KEY AND SHOULD NOT BE PUSHED TO GITHUB! IT BELONGS THE USER UBICOMPFORALL
+Not the that this key is also used when generating the release MapsAPIkey.
+
+
