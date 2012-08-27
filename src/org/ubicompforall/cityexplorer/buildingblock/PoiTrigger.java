@@ -61,7 +61,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 
 	//public static final Uri CONTENT_URI = Uri( AUTHORITY, POI_TABLE );
 	public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).appendPath(POI_TABLE).build();
-	private static final Integer PROXIMITY_DISTANCE = 1000;	//Warn if a POI is within 1000 meters
+	private static final Integer PROXIMITY_DISTANCE = 2000;	//Warn if a POI is within 1000 meters
 
 	//METHODS
 
@@ -76,8 +76,12 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	}//AndroidBuildingBlockInstance.setContext
 
 	
+	/***
+	 * task is the whole composition
+	 * taskTrigger is for something completely different: 
+	 */
 	@Override
-	public void startMonitoring(Task task, TaskTrigger taskTrigger) {
+	public void startMonitoring( Task task, TaskTrigger taskTrigger ) {
 		this.taskTrigger = taskTrigger;
 		this.task = task;
 
@@ -174,12 +178,13 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 
 			for (Entry<Integer, String> dist_name : distances.entrySet()) {
 				if ( dist_name.getKey() < PROXIMITY_DISTANCE ){
-					//debug(0, "Close call: "+dist_name.getValue() );
+					debug(0, "Close call: "+dist_name.getValue() );
 					Map<String, Object> parameterMap = new HashMap<String, Object>();
 					parameterMap.put( task.getTrigger().getName()+".poiName", dist_name.getValue() );
 					taskTrigger.invokeTask(task, parameterMap);
-//				}else{
-//					debug(0, "NOT CLOSE: "+dist_name );
+					break;
+				}else{
+					debug(0, "NOT CLOSE: "+dist_name );
 				}//Check proximity
 
 			}//For all POIs

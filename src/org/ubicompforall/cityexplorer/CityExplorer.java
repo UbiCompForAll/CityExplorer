@@ -114,7 +114,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//CONSTANTS for result requests
 	public static final int REQUEST_LOCATION = 10;
 	public static final int REQUEST_KILL_BROWSER = 11;
-	//public static final int REQUEST_LOCATION = 12;
+	public static final int REQUEST_SHOW_POI_NAME = 20;
 
 	/** The Constant CHOOSE_POI. */
 	public static final int CHOOSE_POI = 21;
@@ -134,6 +134,15 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	public static final String ASSETS_DB = "MiniTrondheim.sqlite";
 	//public static String DEFAULT_DBFOLDER;	//Get from values/strings.xml	//DEFAULT_CITY = "Downloaded"
 	public static final String SHARED_FILE = "cityexplorer.txt";
+
+	/*** Field containing the request code for add to trip.*/
+	public static final int REQUEST_ADD_TO_TRIP = 1;
+
+	/*** Field containing the request code for sharing a poi. For PlanPoiTab?*/
+	public static final int REQUEST_SHARE_POI = 5;
+
+	/*** Field containing the request code for downloading pois. For PlanPoiTab?*/
+	public static final int REQUEST_DOWNLOAD_POI = 6;
 
 	// introduced as work around for Gmail - but does not seem to work
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../..";

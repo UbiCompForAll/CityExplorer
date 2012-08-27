@@ -92,7 +92,7 @@ public class NewTripActivity extends Activity implements OnClickListener{
 	/** The request code it gets from other activities. */
 	private int requestCode;
 	
-	/** The Constant ADD_TO_TRIP. */
+	/** The Constant REQUEST_ADD_TO_TRIP. */
 	protected static final int ADD_TO_TRIP = TripListActivity.ADD_TO_TRIP;
 	
 	/** The existing pois, fetched from the old trip you will create the new from. */

@@ -88,6 +88,7 @@ public class CalendarActivity extends Activity {
 		trip = this.getIntent().getParcelableExtra("trip");
 		if (trip == null){
 			Toast.makeText( this, "Calendar-Activity without Trip!?", Toast.LENGTH_LONG).show();
+			debug(0, "Calendar-Activity without Trip!?" );
 			finish();
 		}else{
 			debug(2, "free:"+trip.isFreeTrip() );

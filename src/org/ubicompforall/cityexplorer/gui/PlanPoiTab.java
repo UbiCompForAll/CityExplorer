@@ -106,15 +106,6 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	/*** Field containing the request code from other activities.*/
 	private int requestCode;
 
-	/*** Field containing the request code for add to trip.*/
-	protected static final int ADD_TO_TRIP = 1;
-
-	/*** Field containing the request code for sharing a poi.*/
-	private static final int SHARE_POI = 5;
-
-	/*** Field containing the request code for downloading pois.*/
-	private static final int DOWNLOAD_POI = 6;
-
 	/*** Field containing a single poi.*/
 	private Poi poi;
 
@@ -157,7 +148,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	protected void onResume() {
 		debug(2,"");
 		super.onResume();
-		if(requestCode != DOWNLOAD_POI){			
+		if(requestCode != CityExplorer.REQUEST_DOWNLOAD_POI){			
 			updateSections();
 			adapter.notifyDataSetChanged();
 		}//if not download-mode
@@ -188,19 +179,28 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		DatabaseInterface dbInstance = DBFactory.getInstance(this);
 		lv = getListView();
 		if (requestCode == CityExplorer.CHOOSE_POI || 
+				requestCode == CityExplorer.REQUEST_SHOW_POI_NAME ||
 				requestCode == PlanTripTab.ADD_TO_TRIP || 
 				requestCode == TripListActivity.ADD_TO_TRIP ||
-				requestCode == SHARE_POI ||
-				requestCode == DOWNLOAD_POI){
+				requestCode == CityExplorer.REQUEST_SHARE_POI ||
+				requestCode == CityExplorer.REQUEST_DOWNLOAD_POI){
 			lv.setOnItemLongClickListener(null);
+			debug(0, "requestCode is "+requestCode );
 		}else {			
+			debug(0, "requestCode is "+requestCode );
 			lv.setOnItemLongClickListener(new DrawPopup());
 		}
-		if(requestCode == DOWNLOAD_POI){			
+		if( requestCode == CityExplorer.REQUEST_DOWNLOAD_POI ){
 			du = new DatabaseUpdater(this);
 			allPois = du.getInternetPois();
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.INTERNET_POIS);
-		}else {			
+		}else if( requestCode == CityExplorer.REQUEST_SHOW_POI_NAME ){
+			allPois = dbInstance.getAllPois();
+			debug(0, "Found new pois, filter for name from: "+allPois.size() );
+			allPois = filterAllPoisName( getIntent().getStringExtra("name") ); //allPois = 
+			debug(0, "Found new pois, filtered for name is "+allPois.size() );
+			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.INTERNET_POIS);
+		}else{
 			allPois = dbInstance.getAllPois();
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.POI_LIST);
 		}
@@ -216,13 +216,36 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	}//init
 
 
+	private ArrayList<Poi> filterAllPoisName( String name ) {
+		debug(-1, "Name was "+name );
+		if (name != null){
+			ArrayList<Poi> filtered = new ArrayList<Poi>();
+			for (Poi poi : allPois){
+				if (poi.getLabel() != null && poi.getLabel().contains( name )){
+					filtered.add(poi);
+				}else if (poi.toString() != null && poi.toString().contains( name )){
+					debug(0, "Found: "+poi );
+					filtered.add(poi);
+				}else {
+					debug(0, "Looking for "+name+", Missed: "+poi.getLabel() );
+				}
+			}
+			if (filtered.size() >0){
+				return filtered;
+			}else{
+				Toast.makeText(this, "No poi found with name "+name, Toast.LENGTH_LONG).show();
+			}
+		}
+		return allPois;
+	}// filteredAllPois
+
 	/**
 	 * Makes the category sections that is shown in the POI list. 
 	 */
 	private void makeSections(){
 		debug(2, "make sections" );
 		favouriteAdapter = new PoiAdapter(this, R.layout.plan_listitem, favouriteList);
-		if(requestCode != DOWNLOAD_POI){			
+		if(requestCode != CityExplorer.REQUEST_DOWNLOAD_POI){			
 			adapter.addSection(CityExplorer.FAVORITES, favouriteAdapter);
 		}
 		for (Poi poi : allPois){
@@ -308,11 +331,11 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
 			menu.removeItem(R.id.planMenuAddPois);
-		}else if (requestCode == SHARE_POI){	
+		}else if (requestCode == CityExplorer.REQUEST_SHARE_POI){	
 			menu.removeItem(R.id.planMenuAddPois);
 			menu.removeItem(R.id.planMenuNewPoi);
 			//menu.removeItem(R.id.planMenuUpdatePois);
-		}else if(requestCode == DOWNLOAD_POI){
+		}else if(requestCode == CityExplorer.REQUEST_DOWNLOAD_POI){
 			menu.removeItem(R.id.planMenuAddPois);
 			menu.removeItem(R.id.planMenuNewPoi);
 			menu.removeItem(R.id.planMenuSharePois);
@@ -381,7 +404,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		}//onOptionsItemSelected
 
 		if(item.getItemId() == R.id.planMenuSharePois){
-			if(requestCode == SHARE_POI){
+			if(requestCode == CityExplorer.REQUEST_SHARE_POI){
 				if (sharePois==null){
 					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
 					return false;
@@ -392,8 +415,8 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				finish();
 			}else {
 				Intent sharePoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
-				sharePoi.putExtra("requestCode", SHARE_POI);
-				startActivityForResult(sharePoi, SHARE_POI);
+				sharePoi.putExtra("requestCode", CityExplorer.REQUEST_SHARE_POI);
+				startActivityForResult(sharePoi, CityExplorer.REQUEST_SHARE_POI);
 			}
 		}//if sharePOIs selected in menu
 
@@ -462,7 +485,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		}//if adding pois to save to some other activity
 
 
-		if (requestCode == SHARE_POI){
+		if (requestCode == CityExplorer.REQUEST_SHARE_POI){
 			if(sharePois == null){				
 				sharePois = new ArrayList<Poi>();
 			}
@@ -476,7 +499,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			return;
 		}
 
-		if (requestCode == DOWNLOAD_POI){
+		if (requestCode == CityExplorer.REQUEST_DOWNLOAD_POI){
 
 			if(downloadedPois == null){				
 				downloadedPois = new ArrayList<Poi>();
@@ -663,8 +686,8 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				public void onClick(View view){
 					poi = p;
 					Intent selectTrip = new Intent(PlanPoiTab.this, PlanTripTab.class);
-					selectTrip.putExtra("requestCode", ADD_TO_TRIP);
-					startActivityForResult(selectTrip, ADD_TO_TRIP);
+					selectTrip.putExtra("requestCode", CityExplorer.REQUEST_ADD_TO_TRIP);
+					startActivityForResult(selectTrip, CityExplorer.REQUEST_ADD_TO_TRIP);
 					qa.dismiss();
 				}
 			});
@@ -690,7 +713,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			return;
 		}
 		switch (requestCode){
-		case ADD_TO_TRIP:
+		case CityExplorer.REQUEST_ADD_TO_TRIP:
 			Trip trip = (Trip) data.getParcelableExtra(IntentPassable.TRIP);
 			if (trip==null){ 
 				break;

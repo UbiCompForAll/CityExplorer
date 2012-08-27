@@ -46,6 +46,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -58,6 +59,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+@SuppressLint("HandlerLeak")
 public class NewPoiActivity extends Activity implements OnClickListener{
 
 	/** The name view. */

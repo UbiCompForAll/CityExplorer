@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
+import org.ubicompforall.cityexplorer.gui.PlanActivity;
+import org.ubicompforall.cityexplorer.gui.PlanPoiTab;
 import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
 import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
@@ -37,11 +39,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.format.Time;
 
+@SuppressWarnings("unused")
 public class PoiNotification extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
 
 	/***
-	 * @return code means ??
+	 * @return code int 0 means What?
 	 */
 	@Override
 	public int execute(TaskInstance task, Map<String, Object> parameters) {
@@ -52,7 +55,7 @@ public class PoiNotification extends AbstractStepInstance implements AndroidBuil
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( ns );
 
 		int icon = R.drawable.ic_launcher;
-		CharSequence tickerText = "Arriving at Poi: "+poiName; //1 sec notification in the top bar
+		CharSequence tickerText = "Arriving at Poi: "+poiName; // 1-second "ticker" notification in the top bar
 		long when = System.currentTimeMillis();
 
 		Notification notification = new Notification(icon, tickerText, when);
@@ -62,9 +65,15 @@ public class PoiNotification extends AbstractStepInstance implements AndroidBuil
 		CharSequence contentTitle = "You have arrived at POI";
 		CharSequence contentText = "Get bus-info about "+poiName;
 
-		Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.CalendarActivity.class);
+		//Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.PlanActivity.class);
+		Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.PlanPoiTab.class);
+
+		//Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.CalendarActivity.class);
+
 		Time now = new Time();
 		now.setToNow();
+		showIntent.putExtra( "requestCode", CityExplorer.REQUEST_SHOW_POI_NAME );
+		showIntent.putExtra( "name", poiName );
 		showIntent.putExtra( "time", now.toString() );
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, showIntent, 0); 

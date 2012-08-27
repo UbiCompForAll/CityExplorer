@@ -198,7 +198,7 @@ public class TripListActivity extends ListActivity{
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		debug(0,"requestCode="+requestCode+", ADD_TO_TRIP="+ADD_TO_TRIP+", CALENDER="+CALENDAR+", etc...");
+		debug(0,"requestCode="+requestCode+", REQUEST_ADD_TO_TRIP="+ADD_TO_TRIP+", CALENDER="+CALENDAR+", etc...");
 		if(resultCode==Activity.RESULT_CANCELED){
 			return;
 		}

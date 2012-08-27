@@ -157,7 +157,13 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		CityExplorer.debug( level, message );		
 	} //debug
 
-	
+	/***
+	 * Example query:
+	 * http://maps.google.com/maps/api/directions/json?origin=63.428907,10.402819&destination=63.428216,10.401424&sensor=true&mode=walking
+	 * @param start
+	 * @param dest
+	 * @return
+	 */
 	public static Route directions(final GeoPoint start, final GeoPoint dest) {
 	    Parser parser;
 	    String jsonURL = "http://maps.google.com/maps/api/directions/json?";
@@ -170,7 +176,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 	    sBuf.append(dest.getLatitudeE6()/1E6);
 	    sBuf.append(',');
 	    sBuf.append(dest.getLongitudeE6()/1E6);
-	    sBuf.append("&sensor=true&mode=driving");
+	    sBuf.append("&sensor=true&mode=walking");
 	    //CityExplorer.debug(1, "Trying to get "+sBuf );
 	    parser = new GoogleParser(sBuf.toString());
 	    Route r =  parser.parse();
@@ -187,7 +193,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 
 		if( getIntent().hasExtra(IntentPassable.TRIP)){ //Draw a Trip if present
 			Trip trip = (Trip) getIntent().getParcelableExtra(IntentPassable.TRIP);
-			System.out.println("GOT TRIP ="+trip.getLabel()+" poi count:"+trip.getPois().size());
+			CityExplorer.debug(1, "GOT TRIP ="+trip.getLabel()+" poi count:"+trip.getPois().size());
 
 			tripOverlay = new MapTripOverlay(trip);
 			overlays.add(tripOverlay);
@@ -343,7 +349,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		final MapIconOverlay icon = i;
 		
 		//Toast.makeText(context, "Press incoming..."+poi.getLabel(), Toast.LENGTH_SHORT).show();
-		System.out.println("POI CLICKED!!!!");
+		CityExplorer.debug(1, "POI CLICKED!!!!");
 		int[] xy 	= new int[]{icon.getScreenPts().x,icon.getScreenPts().y+icon.getImage().getHeight()};
 
 		Rect rect 	= new Rect(xy[0],xy[1],xy[0],xy[1]);
@@ -410,7 +416,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 		}
 		
 		if(v.getId() == nextButton.getId()){
-			System.out.println("Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
+			CityExplorer.debug(1, "Next "+(tripOverlay.getPois().size()-1)+" >= "+(tripOverlay.getCurrentPoiIndex()+1));
 			if(tripOverlay.getPois().size()-1 >= tripOverlay.getCurrentPoiIndex()+1){
 				prevButton.setEnabled(true);
 				tripOverlay.setCurrentPoiIndex(tripOverlay.getCurrentPoiIndex()+1);
@@ -420,7 +426,7 @@ public class MapsActivity extends MapActivity implements LocationListener, OnCli
 				nextButton.setEnabled(false);
 			}
 		}else if(v.getId() == prevButton.getId()){
-			System.out.println("Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
+			CityExplorer.debug(1, "Prev "+tripOverlay.getCurrentPoiIndex()+" > 0");
 			if(tripOverlay.getCurrentPoiIndex() > 0){
 				nextButton.setEnabled(true);
 				tripOverlay.setCurrentPoiIndex(tripOverlay.getCurrentPoiIndex()-1);

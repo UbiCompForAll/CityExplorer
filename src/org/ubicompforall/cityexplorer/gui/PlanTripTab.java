@@ -147,7 +147,7 @@ public class PlanTripTab extends PlanActivityTab{
 		requestCode = getIntent().getIntExtra("requestCode",0);
 		lv = getListView();
 
-		if (requestCode == PlanPoiTab.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP || requestCode == DOWNLOAD_TRIP){
+		if (requestCode == CityExplorer.REQUEST_ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP || requestCode == DOWNLOAD_TRIP){
 			lv.setOnItemLongClickListener(null);
 		}else {			
 			lv.setOnItemLongClickListener(new DrawPopup());
@@ -197,15 +197,15 @@ public class PlanTripTab extends PlanActivityTab{
 				Toast.makeText(this, "This tour has no locations", Toast.LENGTH_LONG).show();
 			}
 			return;
-		} // NewTrip->ADD_TO_TRIP
+		} // NewTrip->REQUEST_ADD_TO_TRIP
 
-		if (requestCode == PlanPoiTab.ADD_TO_TRIP){
+		if (requestCode == CityExplorer.REQUEST_ADD_TO_TRIP){
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra(IntentPassable.TRIP, trip);
 			setResult( Activity.RESULT_OK, resultIntent );
 			finish();
 			return;
-		} // if ADD_TO_TRIP
+		} // if REQUEST_ADD_TO_TRIP
 		
 		if (requestCode == DOWNLOAD_TRIP){
 
@@ -230,7 +230,7 @@ public class PlanTripTab extends PlanActivityTab{
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		//super.onPrepareOptionsMenu(menu);
-		if (requestCode == PlanPoiTab.ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP){
+		if (requestCode == CityExplorer.REQUEST_ADD_TO_TRIP || requestCode == NewTripActivity.ADD_TO_TRIP){
 			menu.setGroupVisible(R.id.planMenuGroupTrip, false);
 		}
 		if(requestCode == PlanTripTab.DOWNLOAD_TRIP){
