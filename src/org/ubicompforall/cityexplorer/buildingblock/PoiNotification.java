@@ -48,13 +48,17 @@ public class PoiNotification extends AbstractStepInstance implements AndroidBuil
 	 */
 	@Override
 	public int execute(TaskInstance task, Map<String, Object> parameters) {
-		String poiName = getStringValue("poiName", parameters);
+		
+		// Get parameter for building block
+		String poiName = getStringValue ("poiName", parameters);
+
 		CityExplorer.debug(0, "Show notification "+parameters );
-		//Context context = this;
+
+		// Create Android notification
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( ns );
 
-		int icon = R.drawable.ic_launcher;
+		int icon = R.drawable.icon;
 		CharSequence tickerText = "Arriving at Poi: "+poiName; // 1-second "ticker" notification in the top bar
 		long when = System.currentTimeMillis();
 
@@ -62,20 +66,16 @@ public class PoiNotification extends AbstractStepInstance implements AndroidBuil
 		notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
 		notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 
-		CharSequence contentTitle = "You have arrived at POI";
-		CharSequence contentText = "Get bus-info about "+poiName;
+		CharSequence contentTitle = "City Explorer: Point of Interest";
+		CharSequence contentText = "Get info about "+ poiName;
 
-		//Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.PlanActivity.class);
+		// Create Intent for pending Intent 
 		Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.PlanPoiTab.class);
 
-		//Intent showIntent = new Intent(context, org.ubicompforall.cityexplorer.gui.CalendarActivity.class);
-
-		Time now = new Time();
-		now.setToNow();
 		showIntent.putExtra( "requestCode", CityExplorer.REQUEST_SHOW_POI_NAME );
 		showIntent.putExtra( "name", poiName );
-		showIntent.putExtra( "time", now.toString() );
-		
+
+		// Create pending Intent 
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, showIntent, 0); 
 	    //To make an Intent with no action, use this instead of Intent:
 		//contentIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, new Intent(), 0);

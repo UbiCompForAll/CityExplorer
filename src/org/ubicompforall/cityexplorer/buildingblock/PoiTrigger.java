@@ -71,7 +71,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	@Override
 	public void setContext(Context context) {
 		this.ctx = context;
-		debug(0, "Is this the same as onCreate?");
+		debug(1, "Is this the same as onCreate?");
 		locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
 	}//AndroidBuildingBlockInstance.setContext
 
@@ -85,9 +85,15 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 		this.taskTrigger = taskTrigger;
 		this.task = task;
 
-		debug(0, "context is "+ctx );
+		// TODO: Check whether or not GPS is on
+		Toast.makeText(ctx, "Make sure GPS is on for "+ task.getName(), Toast.LENGTH_LONG).show();
+
+		debug(1, "context is "+ ctx );
+		
+		// Get location from Android
 		Location lastKnownLocation = locationManager.getLastKnownLocation( getProvider() );
 		onLocationChanged( lastKnownLocation );
+		
 		// Register the listener with the Location Manager to receive location updates
 		//Make sure onLocationChanged is called every time the user moves
 		locationManager.requestLocationUpdates( getProvider(), 0, 0, this);
@@ -124,8 +130,10 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 		String[] mSelectionArgs = null;	// Initializes a null array instead of any selection arguments
 		String mSortClause = SQLiteConnector.POI_NAME_COL;		// Define the sorting clause string
 
-		debug(0, "Looking for "+CONTENT_URI );
+		debug(0, "Looking for "+ CONTENT_URI );
 		Cursor mCursor = null;
+		
+		// Get data from database
 		try{
 			mCursor = ctx.getContentResolver().query(
 					//UserDictionary.Words.CONTENT_URI,   // The content URI of the words table == vnd.android.cursor.dir/vnd.google.userword
@@ -141,6 +149,8 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	    	error = e.getMessage();
 	    	debug(-1, "ERROR in POI_TABLE select "+mProjection[1]+" etc..." );
 	    }//try - catch
+
+		// Add PoIs to pois
 		if (mCursor != null){
 			while( mCursor.moveToNext() ){
 				pois.put( mCursor.getString(1), new Double[]{ mCursor.getDouble(2), mCursor.getDouble(3) } );
@@ -149,6 +159,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 		}else{
 			debug(-1, "NO Cursor! "+error );
 		}
+		
 		return pois;
 	}//getAllPois
 
@@ -166,6 +177,9 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 		return distances;
 	 }//getPoiDistancesSorted( myPos[latitude,longitude], pois)
 
+	 
+// Each time the position changes, get the closest PoI 
+	 
 	@Override
 	public void onLocationChanged( Location location ){
 		debug(-1, "Let's go to location changed!: " );
@@ -174,20 +188,21 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 			double longitude = location.getLongitude();
 
 			TreeMap<String, Double[]> pois = getAllPois();
-			SortedMap<Integer,String> distances = getPoiDistancesSorted( new Double[]{latitude,longitude}, pois);
+			SortedMap <Integer,String> distances = getPoiDistancesSorted ( new Double[]{latitude,longitude}, pois);
 
-			for (Entry<Integer, String> dist_name : distances.entrySet()) {
-				if ( dist_name.getKey() < PROXIMITY_DISTANCE ){
-					debug(0, "Close call: "+dist_name.getValue() );
+// Use loop to get several pois
+//			for (Entry<Integer, String> dist_name : distances.entrySet()) {
+//				if ( dist_name.getKey() < PROXIMITY_DISTANCE ){
+				
+				Integer firstKey = distances.firstKey(); 
+				if ( firstKey < PROXIMITY_DISTANCE ){		//TODO: proximity distance can be defined as a parameter of Trigger
+					debug(1, "Close call: "+ distances.get(firstKey) );
 					Map<String, Object> parameterMap = new HashMap<String, Object>();
-					parameterMap.put( task.getTrigger().getName()+".poiName", dist_name.getValue() );
+					parameterMap.put( task.getTrigger().getName()+".poiName", distances.get(firstKey) );
 					taskTrigger.invokeTask(task, parameterMap);
-					break;
 				}else{
-					debug(0, "NOT CLOSE: "+dist_name );
+					debug(1, "NOT CLOSE to any PoI. Closest is "+ distances.get(firstKey) );
 				}//Check proximity
-
-			}//For all POIs
 
 			//this.stopMonitoring();	//Stop this type of trigger? No, wait for next...
 			//TODO: What about one-shot triggers? Excluding the same POI for a certain amount of time?
@@ -243,7 +258,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 	    //criteria.setAccuracy(Criteria.ACCURACY_FINE);
 	    criteria.setAltitudeRequired(false);
 	    criteria.setBearingRequired(false);
-	    criteria.setCostAllowed(true);
+	    criteria.setCostAllowed(false);
 	    criteria.setPowerRequirement(Criteria.POWER_LOW);
 	    return locationManager.getBestProvider(criteria, true); //true: Enabled providers only
 	}//getProvider
