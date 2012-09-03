@@ -261,23 +261,25 @@ public class PlanTripTab extends PlanActivityTab{
 			startActivityForResult(newTrip, NEW_TRIP);
 
 		}
-		if(item.getItemId() == R.id.planMenuUpdateTrips){
-			if(requestCode == DOWNLOAD_TRIP){
-				if (downloadedTrips==null){
-					Toast.makeText(this, "No trips selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					int[] res = du.storeTrips(downloadedTrips);
-					
-					Toast.makeText(this, res[0]+" trips added, "+res[1]+" trips updated", Toast.LENGTH_LONG).show();
-				}
-				finish();
-			}else {				
-				Intent downloadPoi= new Intent(PlanTripTab.this, PlanTripTab.class);
-				downloadPoi.putExtra("requestCode", DOWNLOAD_TRIP);
-				startActivityForResult(downloadPoi, DOWNLOAD_TRIP);
-			}
-		} // if planMenu->UpdateTrip // RS-120123
+
+// JF: Removed as no support for update provided	
+//		if(item.getItemId() == R.id.planMenuUpdateTrips){
+//			if(requestCode == DOWNLOAD_TRIP){
+//				if (downloadedTrips==null){
+//					Toast.makeText(this, "No trips selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					int[] res = du.storeTrips(downloadedTrips);
+//					
+//					Toast.makeText(this, res[0]+" trips added, "+res[1]+" trips updated", Toast.LENGTH_LONG).show();
+//				}
+//				finish();
+//			}else {				
+//				Intent downloadPoi= new Intent(PlanTripTab.this, PlanTripTab.class);
+//				downloadPoi.putExtra("requestCode", DOWNLOAD_TRIP);
+//				startActivityForResult(downloadPoi, DOWNLOAD_TRIP);
+//			}
+//		} // if planMenu->UpdateTrip // RS-120123
 		
 		return true;
 	}//onOptionsItemSelected
