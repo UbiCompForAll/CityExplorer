@@ -227,7 +227,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 					debug(0, "Found: "+poi );
 					filtered.add(poi);
 				}else {
-					debug(0, "Looking for "+name+", Missed: "+poi.getLabel() );
+					debug(1, "Looking for "+name+", Missed: "+poi.getLabel() );
 				}
 			}
 			if (filtered.size() >0){

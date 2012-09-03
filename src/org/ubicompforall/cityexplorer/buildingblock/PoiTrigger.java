@@ -181,6 +181,7 @@ public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance,
 					debug(0, "Close call: "+dist_name.getValue() );
 					Map<String, Object> parameterMap = new HashMap<String, Object>();
 					parameterMap.put( task.getTrigger().getName()+".poiName", dist_name.getValue() );
+					debug(0, "task.getTrigger().getName()+.poiName is "+dist_name.getValue() );
 					taskTrigger.invokeTask(task, parameterMap);
 					break;
 				}else{
