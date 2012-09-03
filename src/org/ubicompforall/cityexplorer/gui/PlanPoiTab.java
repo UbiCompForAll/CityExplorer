@@ -182,7 +182,8 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				requestCode == CityExplorer.REQUEST_SHOW_POI_NAME ||
 				requestCode == PlanTripTab.ADD_TO_TRIP || 
 				requestCode == TripListActivity.ADD_TO_TRIP ||
-				requestCode == CityExplorer.REQUEST_SHARE_POI ||
+// JF: Support for sharing removed (do not work properly)
+//				requestCode == CityExplorer.REQUEST_SHARE_POI ||
 				requestCode == CityExplorer.REQUEST_DOWNLOAD_POI){
 			lv.setOnItemLongClickListener(null);
 			debug(0, "requestCode is "+requestCode );
@@ -197,6 +198,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		}else if( requestCode == CityExplorer.REQUEST_SHOW_POI_NAME ){
 			allPois = dbInstance.getAllPois();
 			debug(0, "Found new pois, filter for name from: "+allPois.size() );
+			//TODO: start activity PoiDetailsActivity
 			allPois = filterAllPoisName( getIntent().getStringExtra("name") ); //allPois = 
 			debug(0, "Found new pois, filtered for name is "+allPois.size() );
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.INTERNET_POIS);
@@ -328,21 +330,25 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		debug(2, "REQUEST CODE is "+requestCode );
 		if (requestCode == CityExplorer.CHOOSE_POI){	
 			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
+// JF: support for sharing removed (do not work properly)
+//			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
 			menu.removeItem(R.id.planMenuAddPois);
-		}else if (requestCode == CityExplorer.REQUEST_SHARE_POI){	
-			menu.removeItem(R.id.planMenuAddPois);
-			menu.removeItem(R.id.planMenuNewPoi);
-			//menu.removeItem(R.id.planMenuUpdatePois);
+// JF: Support for sharing removed (do not work properly)
+//		}else if (requestCode == CityExplorer.REQUEST_SHARE_POI){	
+//			menu.removeItem(R.id.planMenuAddPois);
+//			menu.removeItem(R.id.planMenuNewPoi);
+//			//menu.removeItem(R.id.planMenuUpdatePois);
 		}else if(requestCode == CityExplorer.REQUEST_DOWNLOAD_POI){
 			menu.removeItem(R.id.planMenuAddPois);
 			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
+// JF: Support for sharing removed (do not work properly)
+//			menu.removeItem(R.id.planMenuSharePois);
 			menu.removeItem(R.id.planMenuFilter);
 		}else if(requestCode == PlanTripTab.ADD_TO_TRIP  || requestCode == TripListActivity.ADD_TO_TRIP){
 			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
+// JF: Support for sharing removed (do not work properly)
+//			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
 		}else{
 			menu.removeItem(R.id.planMenuAddPois);
@@ -403,22 +409,23 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			alert.show();
 		}//onOptionsItemSelected
 
-		if(item.getItemId() == R.id.planMenuSharePois){
-			if(requestCode == CityExplorer.REQUEST_SHARE_POI){
-				if (sharePois==null){
-					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
-					return false;
-				}else {
-					Sharing.send(this, sharePois);
-					sharePois = null;
-				}
-				finish();
-			}else {
-				Intent sharePoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
-				sharePoi.putExtra("requestCode", CityExplorer.REQUEST_SHARE_POI);
-				startActivityForResult(sharePoi, CityExplorer.REQUEST_SHARE_POI);
-			}
-		}//if sharePOIs selected in menu
+// JF: Support for sharing removed (do not work properly)
+//		if(item.getItemId() == R.id.planMenuSharePois){
+//			if(requestCode == CityExplorer.REQUEST_SHARE_POI){
+//				if (sharePois==null){
+//					Toast.makeText(this, "No locations selected", Toast.LENGTH_LONG).show();
+//					return false;
+//				}else {
+//					Sharing.send(this, sharePois);
+//					sharePois = null;
+//				}
+//				finish();
+//			}else {
+//				Intent sharePoi= new Intent(PlanPoiTab.this, PlanPoiTab.class);
+//				sharePoi.putExtra("requestCode", CityExplorer.REQUEST_SHARE_POI);
+//				startActivityForResult(sharePoi, CityExplorer.REQUEST_SHARE_POI);
+//			}
+//		}//if sharePOIs selected in menu
 
 		if(item.getItemId() == R.id.planMenuAddPois){
 			if ( ! saveAndFinish() ){
@@ -484,20 +491,20 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			return;
 		}//if adding pois to save to some other activity
 
-
-		if (requestCode == CityExplorer.REQUEST_SHARE_POI){
-			if(sharePois == null){				
-				sharePois = new ArrayList<Poi>();
-			}
-			if(!sharePois.contains(p)){
-				v.setBackgroundColor(0xff9ba7d5);
-				sharePois.add(p);
-			}else {
-				v.setBackgroundColor(Color.TRANSPARENT);
-				sharePois.remove(p);
-			}
-			return;
-		}
+// JF: Support for sharing removed (do not work properly)
+//		if (requestCode == CityExplorer.REQUEST_SHARE_POI){
+//			if(sharePois == null){				
+//				sharePois = new ArrayList<Poi>();
+//			}
+//			if(!sharePois.contains(p)){
+//				v.setBackgroundColor(0xff9ba7d5);
+//				sharePois.add(p);
+//			}else {
+//				v.setBackgroundColor(Color.TRANSPARENT);
+//				sharePois.remove(p);
+//			}
+//			return;
+//		}
 
 		if (requestCode == CityExplorer.REQUEST_DOWNLOAD_POI){
 
@@ -583,7 +590,8 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			Drawable mapviewIcon		= res.getDrawable(android.R.drawable.ic_menu_mapmode);
 			Drawable directIcon		= res.getDrawable(android.R.drawable.ic_menu_directions);
 			Drawable editIcon		= res.getDrawable(android.R.drawable.ic_menu_edit);
-			Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
+// JF: Support for sharing removed (do not work properly)
+//			Drawable shareIcon		= res.getDrawable(android.R.drawable.ic_menu_share);
 			Drawable deleteIcon		= res.getDrawable(android.R.drawable.ic_menu_delete);
 
 			// Declare the quick actions menu
@@ -671,17 +679,18 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 			});
 
 			
-			// 5: Share
-			qa.addItem(shareIcon, "Share", new OnClickListener(){
-				public void onClick(View view){
-					ArrayList<Poi> sharePoi = new ArrayList<Poi>();
-					sharePoi.add(p);
-					Sharing.send(PlanPoiTab.this, sharePoi);
-					qa.dismiss();
-				}
-			});
+			// 5: 
+// JF: Support for sharing removed (do not work properly)
+//			qa.addItem(shareIcon, "Share", new OnClickListener(){
+//				public void onClick(View view){
+//					ArrayList<Poi> sharePoi = new ArrayList<Poi>();
+//					sharePoi.add(p);
+//					Sharing.send(PlanPoiTab.this, sharePoi);
+//					qa.dismiss();
+//				}
+//			});
 
-			// 6: AddPoi
+			// 6 => 5: AddPoi (5 as sharing removed)
 			qa.addItem(addToTripIcon, R.string.activity_plan_menu_addpois, new OnClickListener(){
 				public void onClick(View view){
 					poi = p;
@@ -692,7 +701,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 				}
 			});
 
-			// 7: Delete
+			// 7 => 6: Delete (6 as sharing removed)
 			qa.addItem(deleteIcon, "Delete", new OnClickListener(){
 				public void onClick(View view){
 					DBFactory.getInstance(context).deletePoi(p);											
@@ -734,7 +743,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		if ( saved  ){
 			super.onBackPressed();
 		}else{
-			//Toast.makeText( this, "Save your times first! Try again to discard", Toast.LENGTH_LONG).show();
+			//Toast.makeText( this, "Save your times first! Press back button again to discard", Toast.LENGTH_LONG).show();
 			saveDialog( this, "Save!", "", null );
 		}
 		return;

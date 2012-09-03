@@ -90,8 +90,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	//public static final String[] CITIES = { "Trondheim" }; // Take from folder names in databases instead
 
 
-	//SWITCH FOR UBICOMPOSER CONNECTIVITY
-	public static final boolean ubiCompose = true;	// true or false ;-)
+	//Switch for adding personalization support through service composition (invoke the UbiComposer tool)
+	public static final boolean ubiCompose = false;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";

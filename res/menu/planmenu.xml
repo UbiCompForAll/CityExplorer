@@ -11,10 +11,11 @@
 	    
 		<item android:id="@+id/planMenuNewPoi" android:icon="@android:drawable/ic_menu_edit"
 			android:title="@string/activity_plan_menu_newPoi" />
-
+		
+<!-- JF: Support for sharing removed (do not work properly)
 		<item android:id="@+id/planMenuSharePois" android:icon="@android:drawable/ic_menu_share"
 			android:title="@string/activity_plan_menu_sharePois" />
-
+ -->
 <!-- no update functionality available
  		<item android:id="@+id/planMenuUpdatePois" android:icon="@android:drawable/ic_menu_rotate"
 			android:title="@string/activity_plan_menu_updatepois" />

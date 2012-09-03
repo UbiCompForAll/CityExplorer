@@ -249,7 +249,8 @@ public class ImportWebTab_oldWebView extends Activity implements OnTouchListener
 		if (requestCode == 2){
 			debug(0, "Code Two!");
 			menu.removeItem(R.id.planMenuNewPoi);
-			menu.removeItem(R.id.planMenuSharePois);
+//  JF: Support for sharing removed (do not work properly)
+//			menu.removeItem(R.id.planMenuSharePois);
 			//menu.removeItem(R.id.planMenuUpdatePois);
 			menu.removeItem(R.id.planMenuAddPois);
 		}

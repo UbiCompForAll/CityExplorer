@@ -213,7 +213,7 @@ public class CalendarActivity extends Activity {
 		if ( tryToGoBack || saved  ){
 			super.onBackPressed();
 		}else{
-			Toast.makeText( this, "Save your times first! Try again to discard", Toast.LENGTH_LONG).show();
+			Toast.makeText( this, "Save your times first! Press back button again to discard", Toast.LENGTH_LONG).show();
 			tryToGoBack = true;
 			openOptionsMenu();	// Show menu
 			debug(2, "back pressed!" );

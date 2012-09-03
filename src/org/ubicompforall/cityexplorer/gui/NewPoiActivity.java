@@ -474,7 +474,7 @@ public class NewPoiActivity extends Activity implements OnClickListener{
 		if (wantToGoBack){
 			super.onBackPressed();
 		}else{
-			Toast.makeText( this, "Remember to save! Press again to discard", Toast.LENGTH_LONG).show();
+			Toast.makeText( this, "Remember to save! Press back button again to discard", Toast.LENGTH_LONG).show();
 			wantToGoBack = true;
 			debug(0, "back pressed!" );
 		}
