@@ -136,6 +136,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		saved = true;
 		//menu_shown = false;
 		init();
+		userLocation = StartActivity.verifyUserLocation( userLocation, this );
 	} //onCreate
 
 	@Override
