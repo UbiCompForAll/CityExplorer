@@ -95,7 +95,7 @@ public class PlanTripTab extends PlanActivityTab{
 	private int requestCode;
 	
 	/**
-	 * Field containing all pois from an old trip, when creating a new trip from an existing.
+	 * Field containing all pois from an existing trip, when creating a new trip from an existing.
 	 */
 	private ArrayList<Poi> existingPois;
 	

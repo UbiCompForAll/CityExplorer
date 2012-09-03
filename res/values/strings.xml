@@ -72,7 +72,7 @@
 	<string name="cityLabel">City:</string>
 	
 	<string name="clearCalendar">Clear Times</string>
-	<string name="chooseTrip">Copy from an old tour</string>
+	<string name="chooseTrip">Copy from existing tour</string>
 	<string name="choosePoi">Choose Location</string>
 	<string name="default_values">Default Values</string>
 	<string name="default_location">Default Location</string>
@@ -85,7 +85,7 @@
 	<string name="download_dialog_ok">PROCEED</string>
  	<string name="download_dialog_title">Import database from the web</string>
 
-	<string name="editfromexistingPoiLabel">Copy existing Location</string>
+	<string name="editfromexistingPoiLabel">Copy from existing location</string>
 	<string name="editLabel">Edit</string>
 	<string name="editcityLabel">* City:</string>		    <!-- as template -->
 	<string name="editUserService">Create/Edit task</string>
@@ -96,7 +96,7 @@
 	<string name="editdescriptionLabel">Description:</string>
 	<string name="editnameLabel">* Name:</string>
 	<string name="exploreCity">EXPLORE CITY MAP</string>
-	<string name="fromexistingLabel">Create new tour from existing tour:</string>
+	<string name="fromexistingLabel">Create from existing tour: </string>
 	<string name="freeTrip">Free Tour</string>
 	<string name="fixedTrip">Fixed Tour</string>
 	<string name="imageLabel">Image URL:</string>

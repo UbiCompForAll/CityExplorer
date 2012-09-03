@@ -91,7 +91,7 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 
 	//Switch for adding personalization support through service composition (invoke the UbiComposer tool)
-	public static final boolean ubiCompose = false;	// true or false ;-)
+	public static final boolean ubiCompose = true;	// true or false ;-)
 
 	// Constant keys for GENERAL SETTINS
 	public static final String GENERAL_SETTINGS = "SETTINGS";
