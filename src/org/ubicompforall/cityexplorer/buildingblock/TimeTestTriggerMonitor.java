@@ -48,7 +48,7 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 	Task task;
 
 	private Integer recurrenceTime;		// Recurrence time for the trigger event 
-	private Integer elapsedTime = 0;	// Elapsed time since last clock broadcasted tick
+	private Integer elapsedTime;	// Elapsed time since last clock broadcasted tick
 										// A tick is broadcast every minute
 
 	@Override
@@ -67,7 +67,8 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		this.task = task;
 
 		//TODO: retrieve recurrence time from composition model
-		recurrenceTime = 2;
+		recurrenceTime = 1;
+		elapsedTime = recurrenceTime - 1; // Do not wait too long the first time!
 		
 		// Check that the time is >= 0
 		
@@ -93,8 +94,14 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		// TODO Auto-generated method stub
 		
 		elapsedTime++;
+		
 		if (elapsedTime == recurrenceTime) {
+			
+			elapsedTime = 0;	// reset time count
+
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
+			// Crash when no parameter?
+			parameterMap.put( task.getTrigger().getName()+".recurrenceTime", recurrenceTime.toString() );
 			taskTrigger.invokeTask(task, parameterMap);
 		}
 		

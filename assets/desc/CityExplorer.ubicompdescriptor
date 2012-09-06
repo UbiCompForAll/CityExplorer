@@ -16,7 +16,7 @@
     </properties>
   </buildingBlocks>
   <buildingBlocks xsi:type="descriptor:TriggerDesc" name="TimeTestTrigger" userFriendlyName="Trigger every X minutes" description="This is a time trigger that can be used to test the activation of a task" iconUrl="time_go.png">
-    <properties name="RecurrenceTime" userFriendlyName="Repeat time (minutes)" description="Recurrence time (minutes)" canReferToOther="false" lowerBound="1" upperBound="1">
+    <properties name="recurrenceTime" userFriendlyName="Repeat time (minutes)" description="Recurrence time (minutes)" canReferToOther="false" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.0"/>
     </properties>
   </buildingBlocks>
