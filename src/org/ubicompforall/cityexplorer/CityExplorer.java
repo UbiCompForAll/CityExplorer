@@ -41,7 +41,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.cityexplorer.R;
-import org.ubicompforall.cityexplorer.buildingblock.PoiNotification;
+import org.ubicompforall.cityexplorer.buildingblock.PoiNotificationStep;
 import org.ubicompforall.cityexplorer.data.DBFactory;
 import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.ubicomposer.android.ModelUtils;

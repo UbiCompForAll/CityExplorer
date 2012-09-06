@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Erlend Stav (SINTEF), Rune Sætre (NTNU), Jacqueline Floch (SINTEF)
+ * @contributor(s): Erlend Stav (SINTEF), Jacqueline Floch (SINTEF)
  * 
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -48,8 +48,9 @@ public class CityExplorerCompositionFactory extends MapBasedBuildingBlockFactory
 	private static Map<String,Class<? extends BuildingBlockInstance>> createMap() {
 		Map<String, Class<? extends BuildingBlockInstance>> classMap = new HashMap<String,Class<? extends BuildingBlockInstance>>();
 		
-		classMap.put("ArrivingAtAnyPoI", PoiTrigger.class);
-		classMap.put("NotifyLocation", PoiNotification.class);
+		classMap.put("ArrivingAtSomePoI", SomePoiTriggerMonitor.class);
+		classMap.put("ArrivingAtSelectedPoI", SelectedPoiTriggerMonitor.class);
+		classMap.put("NotifyLocation", PoiNotificationStep.class);
 		return classMap;
 	}
 	

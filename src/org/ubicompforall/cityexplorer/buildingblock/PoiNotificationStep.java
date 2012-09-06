@@ -40,7 +40,7 @@ import android.content.Intent;
 import android.text.format.Time;
 
 @SuppressWarnings("unused")
-public class PoiNotification extends AbstractStepInstance implements AndroidBuildingBlockInstance {
+public class PoiNotificationStep extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
 
 	/***

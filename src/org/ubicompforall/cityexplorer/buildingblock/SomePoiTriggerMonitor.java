@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Rune Sætre (NTNU)
+ * @contributor(s): Rune Sætre (NTNU), Jacqueline Floch (SINTEF)
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -47,7 +47,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class PoiTrigger implements TriggerMonitor, AndroidBuildingBlockInstance, LocationListener{
+public class SomePoiTriggerMonitor implements TriggerMonitor, AndroidBuildingBlockInstance, LocationListener{
 	Context ctx;	//Which "activity" is running/executing this Trigger
 	private LocationManager locationManager;	//Keep track of the users location
 	TaskTrigger taskTrigger;
