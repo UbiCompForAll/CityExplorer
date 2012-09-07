@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Rune Sætre (NTNU)
+ * @contributor(s): Rune Sætre (NTNU), Jacqueline Floch (SINTEF)
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -22,12 +22,8 @@
 
 package org.ubicompforall.cityexplorer.buildingblock;
 
-import java.util.Map;
-
-import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
 import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
-import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
 
 import android.app.Notification;
@@ -40,13 +36,15 @@ import android.text.format.Time;
 public class PoiNotificationInTrip extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
 
-	/***
-	 * @return code int 0 means What?
-	 */
 	@Override
-	public int execute(TaskInstance task, Map<String, Object> parameters) {
-		String poiName = getStringValue("poiName", parameters);
-		CityExplorer.debug(0, "Show notification "+parameters );
+	public void execute() {
+		
+		// Get parameter for building block
+		String poiName = getStringPropertyValue ("poiName");
+// TODO: Replace by domain object
+//		DomainObjectReference poiRef = this.getDomainObjectReference("poiName");	
+//		CityExplorer.debug(0, "Show notification "+ poiRef.getDisplayText() );
+
 		//Context context = this;
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( ns );
@@ -73,7 +71,6 @@ public class PoiNotificationInTrip extends AbstractStepInstance implements Andro
 		
 		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent );
 		mNotificationManager.notify(999, notification);
-		return 0;
 	}//execute
 
 	@Override

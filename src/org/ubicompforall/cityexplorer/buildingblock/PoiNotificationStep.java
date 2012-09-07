@@ -1,5 +1,5 @@
 /**
- * @contributor(s): Rune Sætre (NTNU)
+ * @contributor(s): Rune Sætre (NTNU), Jacqueline Floch (SINTEF)
  *
  * Copyright (C) 2011-2012 UbiCompForAll Consortium (SINTEF, NTNU)
  * for the UbiCompForAll project
@@ -28,6 +28,7 @@ import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
 import org.ubicompforall.cityexplorer.gui.PlanActivity;
 import org.ubicompforall.cityexplorer.gui.PlanPoiTab;
+import org.ubicompforall.simplelanguage.DomainObjectReference;
 import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
 import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
@@ -43,16 +44,14 @@ import android.text.format.Time;
 public class PoiNotificationStep extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
 
-	/***
-	 * @return code int 0 means What?
-	 */
 	@Override
-	public int execute(TaskInstance task, Map<String, Object> parameters) {
+	public void execute() {
 		
 		// Get parameter for building block
-		String poiName = getStringValue ("poiName", parameters);
-
-		CityExplorer.debug(0, "Show notification "+parameters );
+		String poiName = getStringPropertyValue ("poiName");
+// TODO: Replace by domain object
+//		DomainObjectReference poiRef = this.getDomainObjectReference("poiName");	
+//		CityExplorer.debug(0, "Show notification "+ poiRef.getDisplayText() );
 
 		// Create Android notification
 		String ns = Context.NOTIFICATION_SERVICE;
@@ -82,7 +81,8 @@ public class PoiNotificationStep extends AbstractStepInstance implements Android
 		
 		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent );
 		mNotificationManager.notify(999, notification);
-		return 0;
+		
+//		this.setPropertyValue("phoneNumber", phoneNumber)
 	}//execute
 
 	@Override
