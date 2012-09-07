@@ -22,16 +22,16 @@
 
 package org.ubicompforall.cityexplorer.buildingblock;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.data.SQLiteConnector;
+import org.ubicompforall.simplelanguage.BuildingBlock;
 import org.ubicompforall.simplelanguage.Task;
-import org.ubicompforall.simplelanguage.runtime.TaskTrigger;
+import org.ubicompforall.simplelanguage.runtime.BuildingBlockInstanceHelper;
+import org.ubicompforall.simplelanguage.runtime.TaskInvoker;
 import org.ubicompforall.simplelanguage.runtime.TriggerMonitor;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
 
@@ -48,12 +48,16 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildingBlockInstance, LocationListener{
-	Context ctx;	//Which "activity" is running/executing this Trigger
-	private LocationManager locationManager;	//Keep track of the users location
-	TaskTrigger taskTrigger;
+
+	// Required by UbiCompRun
+	TaskInvoker taskInvoker;
 	Task task;
+	BuildingBlockInstanceHelper helper;
+
+	Context context;							//Context of the activity executing the trigger monitor
+	private LocationManager locationManager;	//Keep track of the users location
 	
-	//Move to final static Contract class
+	//TODO: Create a final static Contract class
 	public static final String SCHEME = "content";
 	public static final String AUTHORITY = "org.ubicompforall.cityexplorer.provider";
 	public static final String POI_TABLE = "PoiTable";
@@ -70,9 +74,9 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	 */
 	@Override
 	public void setContext(Context context) {
-		this.ctx = context;
+		this.context = context;
 		debug(1, "Is this the same as onCreate?");
-		locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
+		locationManager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
 	}//AndroidBuildingBlockInstance.setContext
 
 	
@@ -81,14 +85,14 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	 * taskTrigger is for something completely different: 
 	 */
 	@Override
-	public void startMonitoring( Task task, TaskTrigger taskTrigger ) {
-		this.taskTrigger = taskTrigger;
+	public void startMonitoring( Task task, TaskInvoker taskInvoker ) {
+		this.taskInvoker = taskInvoker;
 		this.task = task;
 
 		// TODO: Check whether or not GPS is on
-		Toast.makeText(ctx, "Make sure GPS is on for "+ task.getName(), Toast.LENGTH_LONG).show();
+		Toast.makeText(context, "Make sure GPS is on for "+ task.getName(), Toast.LENGTH_LONG).show();
 
-		debug(1, "context is "+ ctx );
+		debug(1, "context is "+ context );
 		
 		// Get location from Android
 		Location lastKnownLocation = locationManager.getLastKnownLocation( getProvider() );
@@ -105,6 +109,11 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	    locationManager.removeUpdates(this);
 	}//TriggerMonitor.stopMonitoring
 
+	@Override
+	public void setBuildingBlock(BuildingBlock buildingBlock) {
+		// TODO Auto-generated method stub
+		helper = new BuildingBlockInstanceHelper(buildingBlock);		
+	}
 	
 	public void debug(int level, String str){
 		CityExplorer.debug(level,str);
@@ -135,7 +144,7 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 		
 		// Get data from database
 		try{
-			mCursor = ctx.getContentResolver().query(
+			mCursor = context.getContentResolver().query(
 					//UserDictionary.Words.CONTENT_URI,   // The content URI of the words table == vnd.android.cursor.dir/vnd.google.userword
 					//CONTENT_URI = org.ubicompforall.cityexplorer.provider/P,   // The content URI of the words table
 					CONTENT_URI,   // The content URI of the words table
@@ -197,9 +206,10 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 				Integer firstKey = distances.firstKey(); 
 				if ( firstKey < PROXIMITY_DISTANCE ){		//TODO: proximity distance can be defined as a parameter of Trigger
 					debug(1, "Close call: "+ distances.get(firstKey) );
-					Map<String, Object> parameterMap = new HashMap<String, Object>();
-					parameterMap.put( task.getTrigger().getName()+".poiName", distances.get(firstKey) );
-					taskTrigger.invokeTask(task, parameterMap);
+					
+					helper.setPropertyValue("poiName", distances.get(firstKey));
+					taskInvoker.invokeTask(task, helper.createTaskParameterMap());
+					
 				}else{
 					debug(1, "NOT CLOSE to any PoI. Closest is "+ distances.get(firstKey) );
 				}//Check proximity
@@ -212,24 +222,24 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	@Override
 	public void onProviderDisabled(String provider) {
 		debug(0, "Location_Provider DISABLED: "+provider );
-		Toast.makeText(ctx, "Disabled: "+provider, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, "Disabled: "+provider, Toast.LENGTH_LONG).show();
 		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		ctx.startActivity(intent);
+		context.startActivity(intent);
 	}//LocationListener.onProviderDisabled
 	
 	@Override
 	public void onProviderEnabled(String provider) {
-		Toast.makeText(ctx, "Enabled: "+provider, Toast.LENGTH_SHORT).show(); //
+		Toast.makeText(context, "Enabled: "+provider, Toast.LENGTH_SHORT).show(); //
 		//ctx.startActivity(new Intent(ctx, LocationPickerActivity.class));
 	}//LocationListener.onProviderEnabled
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		Toast.makeText(ctx, "Provider "+provider+", Status="+status, Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Provider "+provider+", Status="+status, Toast.LENGTH_SHORT).show();
 	}//LocationListener.onStatusChanged
 
 	public void disableProviders( ) {
-		locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
+		locationManager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
 		locationManager.removeUpdates( this );
 		debug(0, "Removed updates for "+locationManager.getProviders(true) );
 	}//disableProviders
@@ -253,7 +263,7 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	}//initGPS
 
 	public String getProvider(){
-	    locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
+	    locationManager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
 	    Criteria criteria = new Criteria();
 	    //criteria.setAccuracy(Criteria.ACCURACY_FINE);
 	    criteria.setAltitudeRequired(false);

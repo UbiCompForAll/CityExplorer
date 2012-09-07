@@ -22,12 +22,11 @@
 
 package org.ubicompforall.cityexplorer.buildingblock;
 
-import java.util.HashMap;
-import java.util.Map;
-
 //import org.ubicompforall.cityexplorer.CityExplorer;
+import org.ubicompforall.simplelanguage.BuildingBlock;
 import org.ubicompforall.simplelanguage.Task;
-import org.ubicompforall.simplelanguage.runtime.TaskTrigger;
+import org.ubicompforall.simplelanguage.runtime.BuildingBlockInstanceHelper;
+import org.ubicompforall.simplelanguage.runtime.TaskInvoker;
 import org.ubicompforall.simplelanguage.runtime.TriggerMonitor;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
 
@@ -42,15 +41,28 @@ import android.widget.Toast;
  * 					(X i specified by the user in the composition model)
  */
 
-public class TimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
-	Context context;			//Context of the activity executing the trigger monitor
-	TaskTrigger taskTrigger;
-	Task task;
 
-	private Integer recurrenceTime;		// Recurrence time for the trigger event 
-	private Integer elapsedTime;	// Elapsed time since last clock broadcasted tick
+
+public class TimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
+	
+	// Required by UbiCompRun
+	TaskInvoker taskInvoker;
+	Task task;
+	BuildingBlockInstanceHelper helper;
+
+	Context context;					//Context of the activity executing the trigger monitor
+
+	private Integer recurrenceTime;		// RecurrTaskInvokerence time for the trigger event 
+	private Integer elapsedTime;		// Elapsed time since last clock broadcasted tick
 										// A tick is broadcast every minute
 
+	static IntentFilter s_intentFilter;
+
+	static {
+		s_intentFilter = new IntentFilter();
+		s_intentFilter.addAction(Intent.ACTION_TIME_TICK);
+	}
+	
 	@Override
 	public void setContext(Context context) {
 		this.context = context;
@@ -62,20 +74,17 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 	 * taskTrigger is for something completely different: 
 	 */
 	@Override
-	public void startMonitoring( Task task, TaskTrigger taskTrigger ) {
-		this.taskTrigger = taskTrigger;
+	public void startMonitoring( Task task, TaskInvoker taskInvoker ) {
+		this.taskInvoker = taskInvoker;
 		this.task = task;
 
-		//TODO: retrieve recurrence time from composition model
-		recurrenceTime = 1;
+		recurrenceTime = Integer.parseInt(helper.getStringPropertyValue("recurrenceTime"));
 		elapsedTime = recurrenceTime - 1; // Do not wait too long the first time!
 		
 		// Check that the time is >= 0
 		
 		Toast.makeText(context, "Timer is now started with repeat"+ recurrenceTime.toString() + task.getName(), Toast.LENGTH_LONG).show();
 
-		IntentFilter s_intentFilter = new IntentFilter();
-		s_intentFilter.addAction(Intent.ACTION_TIME_TICK);
 		
 		context.registerReceiver(this, s_intentFilter);
 		
@@ -87,7 +96,11 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 	public void stopMonitoring() {
 		context.unregisterReceiver(this);
 	}//TriggerMonitor.stopMonitoring
-	 
+	
+	@Override
+	public void setBuildingBlock(BuildingBlock buildingBlock) {
+		helper = new BuildingBlockInstanceHelper(buildingBlock);		
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -99,14 +112,12 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 			
 			elapsedTime = 0;	// reset time count
 
-			Map<String, Object> parameterMap = new HashMap<String, Object>();
-			// Crash when no parameter?
-			parameterMap.put( task.getTrigger().getName()+".recurrenceTime", recurrenceTime.toString() );
-			taskTrigger.invokeTask(task, parameterMap);
+			// no property to set
+			taskInvoker.invokeTask(task, helper.createTaskParameterMap());
 		}
 		
 	}
-	
+
 //	public void debug(int level, String str){
 //		CityExplorer.debug(level,str);
 //	}
