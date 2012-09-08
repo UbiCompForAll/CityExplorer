@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <descriptor:DescriptorLibrary xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:descriptor="http://www.ubicompforall.org/descriptor" name="CityExplorerComposition" userFriendlyName="City Explorer composition library" description="Building blocks related to City Exoplorer">
-  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSelectedPoI" userFriendlyName="When arriving at the following specific location" description="This trigger is activated when arriving at the selected location." iconUrl="poi_location.bmp">
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSelectedPoI" userFriendlyName="When arriving at a specific place of interest" description="This trigger is activated when arriving at the selected location." iconUrl="poi_location.bmp">
     <properties name="poiName" userFriendlyName="Location Name" description="Name of the location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
@@ -10,7 +10,7 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSomePoI" userFriendlyName="When arriving at a location defined in City Explorer" description="This trigger is activated when arriving at a location defined in City Explorer." iconUrl="poi_location.png">
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSomePoI" userFriendlyName="When arriving at some place of interest" description="This trigger is activated when arriving at a location defined in City Explorer." iconUrl="poi_location.bmp">
     <properties name="poiName" userFriendlyName="Location Name" description="Name of the location" canReferToOther="false" isResultValue="true" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>

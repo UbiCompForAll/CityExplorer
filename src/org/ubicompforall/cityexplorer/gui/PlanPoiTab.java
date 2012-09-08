@@ -36,7 +36,7 @@ import org.ubicompforall.cityexplorer.data.IntentPassable;
 import org.ubicompforall.cityexplorer.data.Poi;
 import org.ubicompforall.cityexplorer.data.PoiAdapter;
 import org.ubicompforall.cityexplorer.data.SeparatedListAdapter;
-import org.ubicompforall.cityexplorer.data.Sharing;
+//import org.ubicompforall.cityexplorer.data.Sharing;
 import org.ubicompforall.cityexplorer.data.Trip;
 import org.ubicompforall.cityexplorer.map.MapsActivity;
 

@@ -56,12 +56,12 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 	private Integer elapsedTime;		// Elapsed time since last clock broadcasted tick
 										// A tick is broadcast every minute
 
-	static IntentFilter s_intentFilter;
-
-	static {
-		s_intentFilter = new IntentFilter();
-		s_intentFilter.addAction(Intent.ACTION_TIME_TICK);
-	}
+//	static IntentFilter s_intentFilter;
+//
+//	static {
+//		s_intentFilter = new IntentFilter();
+//		s_intentFilter.addAction(Intent.ACTION_TIME_TICK);
+//	}
 	
 	@Override
 	public void setContext(Context context) {
@@ -79,14 +79,21 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		this.task = task;
 
 		recurrenceTime = Integer.parseInt(helper.getStringPropertyValue("recurrenceTime"));
-		elapsedTime = recurrenceTime - 1; // Do not wait too long the first time!
 		
-		// Check that the time is >= 0
+		if (recurrenceTime > 0) {
+			elapsedTime = recurrenceTime - 1; // Do not wait too long the first time!
 		
-		Toast.makeText(context, "Timer is now started with repeat"+ recurrenceTime.toString() + task.getName(), Toast.LENGTH_LONG).show();
+			// Check that the time is >= 0
+		
+			Toast.makeText(context, "Timer is now started with repeat"+ recurrenceTime.toString() + task.getName(), Toast.LENGTH_LONG).show();
 
-		
-		context.registerReceiver(this, s_intentFilter);
+
+			IntentFilter s_intentFilter = new IntentFilter();
+			s_intentFilter.addAction(Intent.ACTION_TIME_TICK);
+			
+			context.registerReceiver(this, s_intentFilter);
+		}
+
 		
 
 	}//TriggerMonitor.startMonitoring
@@ -94,7 +101,9 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 	
 	@Override
 	public void stopMonitoring() {
-		context.unregisterReceiver(this);
+		if (recurrenceTime > 0) {
+			context.unregisterReceiver(this);
+		}
 	}//TriggerMonitor.stopMonitoring
 	
 	@Override
