@@ -199,10 +199,17 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 		}else if( requestCode == CityExplorer.REQUEST_SHOW_POI_NAME ){
 			allPois = dbInstance.getAllPois();
 			debug(0, "Found new pois, filter for name from: "+allPois.size() );
-			//TODO: start activity PoiDetailsActivity
 			allPois = filterAllPoisName( getIntent().getStringExtra("name") ); //allPois = 
 			debug(0, "Found new pois, filtered for name is "+allPois.size() );
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.INTERNET_POIS);
+
+			//Start activity PoiDetailsActivity if only one poi
+			if ( allPois.size() == 1 ){
+				Intent details = new Intent(PlanPoiTab.this, PoiDetailsActivity.class);
+				details.putExtra(IntentPassable.POI, allPois.get(0) );
+				startActivity(details);
+				finish();
+			}
 		}else{
 			allPois = dbInstance.getAllPois();
 			adapter = new SeparatedListAdapter(this, SeparatedListAdapter.POI_LIST);
@@ -230,7 +237,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 					debug(0, "Found: "+poi );
 					filtered.add(poi);
 				}else {
-					debug(1, "Looking for "+name+", Missed: "+poi.getLabel() );
+					//debug(2, "Looking for "+name+", Missed: "+poi.getLabel() );
 				}
 			}
 			if (filtered.size() >0){

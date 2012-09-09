@@ -20,7 +20,18 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.0"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:QueryDesc" name="GetBusTime" userFriendlyName="">
+  <buildingBlocks xsi:type="descriptor:QueryDesc" name="GetBusTimeQuery" userFriendlyName="">
+    <properties name="fromPoiName" userFriendlyName="From Location Name" description="Name of the from-location" lowerBound="1" upperBound="1">
+      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
+    </properties>
+    <properties name="toPoiName" userFriendlyName="Destination Location Name" description="Name of the destination location" lowerBound="1" upperBound="1">
+      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
+    </properties>
+    <properties name="busTime" userFriendlyName="Bus route schedule from the bus-oracle" description="The return value from BussTUC" canReferToOther="false" isResultValue="true">
+      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
+    </properties>
+  </buildingBlocks>
+  <buildingBlocks xsi:type="descriptor:StepDesc" name="GetBusTimeStep" userFriendlyName="Get the bus route schedule from one poi to another" description="Get the bustime " iconUrl="busicon.png">
     <properties name="fromPoiName" userFriendlyName="From Location Name" description="Name of the from-location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>

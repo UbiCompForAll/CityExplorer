@@ -75,7 +75,7 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	@Override
 	public void setContext(Context context) {
 		this.context = context;
-		debug(1, "Is this the same as onCreate?");
+		debug(2, "Is this the same as onCreate?");
 		locationManager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
 	}//AndroidBuildingBlockInstance.setContext
 
@@ -138,7 +138,7 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 		String[] mSelectionArgs = null;	// Initializes a null array instead of any selection arguments
 		String mSortClause = SQLiteConnector.POI_NAME_COL;		// Define the sorting clause string
 
-		debug(0, "Looking for "+ CONTENT_URI );
+		debug(2, "Looking for "+ CONTENT_URI );
 		Cursor mCursor = null;
 		
 		// Get data from database
@@ -190,7 +190,7 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 	 
 	@Override
 	public void onLocationChanged( Location location ){
-		debug(-1, "Let's go to location changed!: " );
+		debug(1, "Let's go..." );
 		if ( location != null ){
 			double latitude = location.getLatitude();
 			double longitude = location.getLongitude();
@@ -204,11 +204,9 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 				
 				Integer firstKey = distances.firstKey(); 
 				if ( firstKey < PROXIMITY_DISTANCE ){		//TODO: proximity distance can be defined as a parameter of Trigger
-					debug(1, "Close poi: "+ distances.get(firstKey) );
-					
+					debug(2, "Close poi: "+ distances.get(firstKey) );					
 					helper.setPropertyValue("poiName", distances.get(firstKey));
 					taskInvoker.invokeTask(task, helper.createTaskParameterMap());
-					
 				}else{
 					debug(1, "NOT CLOSE to any PoI. Closest is "+ distances.get(firstKey) );
 				}//Check proximity

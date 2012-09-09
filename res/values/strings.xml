@@ -88,7 +88,7 @@
 	<string name="editfromexistingPoiLabel">Copy from existing location</string>
 	<string name="editLabel">Edit</string>
 	<string name="editcityLabel">* City:</string>		    <!-- as template -->
-	<string name="editUserService">Create/Edit task</string>
+	<string name="editUserService">Edit/Activate tasks</string>
 	
 	<string name="editzipLabel">Zip:</string>
 	<string name="editcategoryLabel">* Category:</string>

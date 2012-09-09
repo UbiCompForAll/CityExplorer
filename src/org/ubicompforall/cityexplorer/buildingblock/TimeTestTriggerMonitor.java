@@ -23,6 +23,7 @@
 package org.ubicompforall.cityexplorer.buildingblock;
 
 //import org.ubicompforall.cityexplorer.CityExplorer;
+import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.simplelanguage.BuildingBlock;
 import org.ubicompforall.simplelanguage.Task;
 import org.ubicompforall.simplelanguage.runtime.BuildingBlockInstanceHelper;
@@ -45,6 +46,8 @@ import android.widget.Toast;
 
 public class TimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
 	
+	private static final Integer DEFAULT_RECURRENCE_TIME = 1; //RS: Minutes, Not Milliseconds or seconds!
+
 	// Required by UbiCompRun
 	TaskInvoker taskInvoker;
 	Task task;
@@ -78,24 +81,27 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		this.taskInvoker = taskInvoker;
 		this.task = task;
 
-		recurrenceTime = Integer.parseInt(helper.getStringPropertyValue("recurrenceTime"));
+		if ( helper.getStringPropertyValue("recurrenceTime") == null ){
+			recurrenceTime = DEFAULT_RECURRENCE_TIME;
+		}else{
+			recurrenceTime = Integer.parseInt( helper.getStringPropertyValue("recurrenceTime") );
+		}
+		debug(0, "recurrenceTime is "+ recurrenceTime );
 		
+		// Check that the time is >= 0
 		if (recurrenceTime > 0) {
 			elapsedTime = recurrenceTime - 1; // Do not wait too long the first time!
 		
-			// Check that the time is >= 0
-		
 			Toast.makeText(context, "Timer is now started with repeat"+ recurrenceTime.toString() + task.getName(), Toast.LENGTH_LONG).show();
-
 
 			IntentFilter s_intentFilter = new IntentFilter();
 			s_intentFilter.addAction(Intent.ACTION_TIME_TICK);
 			
 			context.registerReceiver(this, s_intentFilter);
 		}
-
 		
-
+		//Test it
+		onReceive(context, null);
 	}//TriggerMonitor.startMonitoring
 
 	
@@ -113,22 +119,18 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		// TODO Auto-generated method stub
-		
-		elapsedTime++;
-		
-		if (elapsedTime == recurrenceTime) {
-			
+		debug(-1, "Check Minutes! Intent is "+intent );
+		if ( elapsedTime == null  ||  elapsedTime > recurrenceTime) {
 			elapsedTime = 0;	// reset time count
-
 			// no property to set
 			taskInvoker.invokeTask(task, helper.createTaskParameterMap());
+		}else{
+			elapsedTime++;
 		}
-		
-	}
+	}//onReceive
 
-//	public void debug(int level, String str){
-//		CityExplorer.debug(level,str);
-//	}
+	public void debug(int level, String str){
+		CityExplorer.debug(level,str);
+	}
 	
 }//class PoiTrigger

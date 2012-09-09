@@ -53,6 +53,7 @@ public class CityExplorerCompositionFactory extends MapBasedBuildingBlockFactory
 		classMap.put("ArrivingAtSelectedPoI", SelectedPoiTriggerMonitor.class);
 		classMap.put("NotifyLocation", PoiNotificationStep.class);
 		classMap.put("TimeTestTrigger", TimeTestTriggerMonitor.class);
+		classMap.put("BusTimeStep", BusTimeStep.class);
 
 		return classMap;
 	}
