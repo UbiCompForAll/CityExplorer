@@ -111,7 +111,6 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 
 	@Override
 	public void setBuildingBlock(BuildingBlock buildingBlock) {
-		// TODO Auto-generated method stub
 		helper = new BuildingBlockInstanceHelper(buildingBlock);		
 	}
 	
@@ -205,7 +204,7 @@ public class SelectedPoiTriggerMonitor implements TriggerMonitor, AndroidBuildin
 				
 				Integer firstKey = distances.firstKey(); 
 				if ( firstKey < PROXIMITY_DISTANCE ){		//TODO: proximity distance can be defined as a parameter of Trigger
-					debug(1, "Close call: "+ distances.get(firstKey) );
+					debug(1, "Close poi: "+ distances.get(firstKey) );
 					
 					helper.setPropertyValue("poiName", distances.get(firstKey));
 					taskInvoker.invokeTask(task, helper.createTaskParameterMap());

@@ -110,7 +110,7 @@ public class PlanPoiTab extends PlanActivityTab implements OnMultiChoiceClickLis
 	private Poi poi;
 
 	/*** Field containing pois you want to share.*/
-	private ArrayList<Poi> sharePois;
+	//private ArrayList<Poi> sharePois;
 
 	/*** Field containing pois you want to download.*/
 	private ArrayList<Poi> downloadedPois;
