@@ -49,6 +49,8 @@ public class PoiNotificationStep extends AbstractStepInstance implements Android
 		
 		// Get parameter for building block
 		String poiName = getStringPropertyValue ("poiName");
+		debug (1, "poiName is "+ poiName );
+
 // TODO: Replace by domain object
 //		DomainObjectReference poiRef = this.getDomainObjectReference("poiName");	
 //		CityExplorer.debug(0, "Show notification "+ poiRef.getDisplayText() );
@@ -89,5 +91,10 @@ public class PoiNotificationStep extends AbstractStepInstance implements Android
 	public void setContext(Context context) {
 		this.context = context;
 	}//setContext
+	
+	public void debug(int level, String str){
+		CityExplorer.debug(level,str);
+	}
+
 
 }//class PoiNotification

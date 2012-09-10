@@ -44,7 +44,9 @@ import android.widget.Toast;
 
 
 
-public class TimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
+public class PoiTimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
+	
+	
 
 	// Required by UbiCompRun
 	TaskInvoker taskInvoker;
@@ -53,10 +55,13 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 
 	Context context;					//Context of the activity executing the trigger monitor
 
-	private static final Integer DEFAULT_RECURRENCE_TIME = 1; // Time unit: minute
+	private static final Integer DEFAULT_RECURRENCE_TIME = 1; // Time unit = minute
 	private Integer recurrenceTime;		// RecurrTaskInvokerence time for the trigger event 
 	private Integer elapsedTime;		// Elapsed time since last clock broadcasted tick
 										// A tick is broadcast every minute
+
+	private static final String DEFAULT_POI = "Credo";
+	private String poiName;
 
 //	static IntentFilter s_intentFilter;
 //
@@ -85,7 +90,16 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		}else{
 			recurrenceTime = Integer.parseInt( helper.getStringPropertyValue("recurrenceTime") );
 		}
+
+		if ( helper.getStringPropertyValue("poiNameIn") == null ){
+			poiName = DEFAULT_POI;
+			
+		}else{
+			poiName = helper.getStringPropertyValue("poiNameIn");
+		}
+
 		debug(1, "recurrenceTime is "+ recurrenceTime );
+		debug(1, "poiName is "+ poiName );
 		
 		// Check that the time is > 0
 		if (recurrenceTime > 0) {
@@ -120,9 +134,12 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 	public void onReceive(Context context, Intent intent) {
 		debug(-1, "Check Minutes! Intent is "+intent );
 		if ( elapsedTime == null  ||  elapsedTime > recurrenceTime) {
-			debug(-1, "Invokinfg the next task");
+			debug(-1, "Invoking the next task");
 			elapsedTime = 0;	// reset time count
-			// no property to set
+			
+			// TODO: this property is now set because no support to accessing properties set by the user
+			helper.setPropertyValue("poiNameOut", poiName);
+			
 			taskInvoker.invokeTask(task, helper.createTaskParameterMap());
 		}else{
 			elapsedTime++;
