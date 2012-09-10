@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
+import org.ubicompforall.cityexplorer.data.SQLiteConnector;
 import org.ubicompforall.cityexplorer.gui.PlanActivity;
 import org.ubicompforall.cityexplorer.gui.PlanPoiTab;
 import org.ubicompforall.simplelanguage.DomainObjectReference;
@@ -50,6 +51,7 @@ public class PoiNotificationStep extends AbstractStepInstance implements Android
 		// Get parameter for building block
 		String poiName = getStringPropertyValue ("poiName");
 		debug (1, "poiName is "+ poiName );
+	
 
 // TODO: Replace by domain object
 //		DomainObjectReference poiRef = this.getDomainObjectReference("poiName");	

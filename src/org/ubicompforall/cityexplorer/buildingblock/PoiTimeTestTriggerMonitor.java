@@ -30,6 +30,8 @@ import org.ubicompforall.simplelanguage.runtime.BuildingBlockInstanceHelper;
 import org.ubicompforall.simplelanguage.runtime.TaskInvoker;
 import org.ubicompforall.simplelanguage.runtime.TriggerMonitor;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
+import org.ubicompforall.simplelanguage.DomainObjectReference;
+
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -91,12 +93,27 @@ public class PoiTimeTestTriggerMonitor extends BroadcastReceiver implements Trig
 			recurrenceTime = Integer.parseInt( helper.getStringPropertyValue("recurrenceTime") );
 		}
 
-		if ( helper.getStringPropertyValue("poiNameIn") == null ){
+		
+		DomainObjectReference poiRef = helper.getDomainObjectReference("PoI");
+		if (poiRef != null) {
+			poiName = poiRef.getDisplayText();
+			if (poiName == null) {
+				poiName = DEFAULT_POI;
+			}
+		} else {
 			poiName = DEFAULT_POI;
-			
-		}else{
-			poiName = helper.getStringPropertyValue("poiNameIn");
 		}
+		
+		
+//		CityExplorer.debug(0, "Show notification "+ poiRef.getDisplayText() );
+
+// When using strings:		
+//		if ( helper.getStringPropertyValue("poiNameIn") == null ){
+//			poiName = DEFAULT_POI;
+//			
+//		}else{
+//			poiName = helper.getStringPropertyValue("poiNameIn");
+//		}
 
 		debug(1, "recurrenceTime is "+ recurrenceTime );
 		debug(1, "poiName is "+ poiName );
