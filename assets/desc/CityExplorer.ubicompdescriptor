@@ -42,4 +42,14 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="PoiTimeTestTrigger" userFriendlyName="Simulate PoI trigger every X minutes" description="This is a time trigger (with selection of PoI) that can be used to test the activation of a task" iconUrl="time_go.png">
+    <properties name="recurrenceTime" userFriendlyName="Repeat time (minutes)" description="Recurrence time (minutes)" canReferToOther="false" lowerBound="1" upperBound="1">
+      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.0"/>
+    </properties>
+    <properties name="poiNameIn" userFriendlyName="Location Name (entered by user)" description="Name of the location" dataType="//@buildingBlocks.7" lowerBound="1" upperBound="1"/>
+    <properties name="poiNameOut" userFriendlyName="Location Name (event)" description="Name of the location - created lack of support to refer tto in values from other blocks..." isResultValue="true" lowerBound="1" upperBound="1">
+      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
+    </properties>
+  </buildingBlocks>
+  <buildingBlocks xsi:type="descriptor:DomainObjectDesc" name="PoI" userFriendlyName="Place of Interest" description="Locations defined in CityExplorer" contentURI="content://org.ubicompforall.cityexplorer.provider/PoiTable" projection="POI._id, POI.title&#xA;" selection="" selectionArgs="" sortOrder=""/>
 </descriptor:DescriptorLibrary>

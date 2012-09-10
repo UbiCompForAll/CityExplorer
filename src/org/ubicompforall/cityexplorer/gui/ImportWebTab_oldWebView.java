@@ -110,7 +110,7 @@ public class ImportWebTab_oldWebView extends Activity implements OnTouchListener
 		if (webview == null){
 			debug(0, "Where is wv? Remember setContentView(R.layout.webLayout)!" );
 		}else{
-			webview.getSettings().setJavaScriptEnabled(true);
+			//webview.getSettings().setJavaScriptEnabled(true);
 			showDownloadPage();
 		}// if webView found
 	}//init
@@ -173,8 +173,7 @@ public class ImportWebTab_oldWebView extends Activity implements OnTouchListener
 	 */
 	public boolean setupWebDBs() {
 		if ( ! loaded ){
-			@SuppressWarnings("unused")
-			String responseString;
+			//String responseString;
 			HttpClient httpclient = new DefaultHttpClient();
 		    HttpResponse response;
 		    for (String webURL : webFolders){
@@ -186,7 +185,7 @@ public class ImportWebTab_oldWebView extends Activity implements OnTouchListener
 				        ByteArrayOutputStream out = new ByteArrayOutputStream();
 				        response.getEntity().writeTo(out);
 				        out.close();
-				        responseString = out.toString();
+				        //responseString = out.toString();
 	
 						String SERVER_URL = "http://"+(new URL(webURL).getHost());
 						File[] linkDbTerms = new File[0]; // extractDBs( responseString, SERVER_URL );

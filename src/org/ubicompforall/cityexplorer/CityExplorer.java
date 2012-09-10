@@ -28,11 +28,6 @@ package org.ubicompforall.cityexplorer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -41,9 +36,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.cityexplorer.R;
-import org.ubicompforall.cityexplorer.buildingblock.PoiNotificationStep;
 import org.ubicompforall.cityexplorer.data.DBFactory;
-import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.ubicomposer.android.ModelUtils;
 
 import android.app.Activity;
@@ -72,7 +65,6 @@ import android.widget.Toast;
  * In this case, we have not defined any specific work for this Application.
  * See samples/tests/ApiDemosApplicationTests for an example of how to perform unit tests on an Application object.
  */
-@SuppressWarnings("unused")
 public class CityExplorer extends Application{ // implements LocationListener // For GPS
 
 // Turn off debugging before RELEASE! Set DEBUG to 0.

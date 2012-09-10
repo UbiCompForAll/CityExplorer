@@ -49,10 +49,14 @@ public class CityExplorerCompositionFactory extends MapBasedBuildingBlockFactory
 	private static Map<String,Class<? extends BuildingBlockInstance>> createMap() {
 		Map<String, Class<? extends BuildingBlockInstance>> classMap = new HashMap<String,Class<? extends BuildingBlockInstance>>();
 		
+		// Trigger monitors
 		classMap.put("ArrivingAtSomePoI", SomePoiTriggerMonitor.class);
 		classMap.put("ArrivingAtSelectedPoI", SelectedPoiTriggerMonitor.class);
-		classMap.put("NotifyLocation", PoiNotificationStep.class);
 		classMap.put("TimeTestTrigger", TimeTestTriggerMonitor.class);
+		classMap.put("PoiTimeTestTrigger", PoiTimeTestTriggerMonitor.class);
+		
+		// Steps
+		classMap.put("NotifyLocation", PoiNotificationStep.class);
 		classMap.put("BusTimeStep", BusTimeStep.class);
 
 		return classMap;

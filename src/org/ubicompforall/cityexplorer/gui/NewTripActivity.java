@@ -59,7 +59,6 @@ public class NewTripActivity extends Activity implements OnClickListener{
 	private EditText nameView;
 	
 	/** The description view. */
-	@SuppressWarnings("unused")
 	private EditText descriptionView;
 	
 	/** The existing trip view. */
@@ -164,12 +163,14 @@ public class NewTripActivity extends Activity implements OnClickListener{
 	 */
 	private void saveTrip(){
 		name = nameView.getText().toString();
-		if(name.trim().equals(""))
-		{	
+		if(name.trim().equals("")){	
 			Toast.makeText(this, "Please enter a name", Toast.LENGTH_LONG).show();
 			return;
 		}
-		description = "";//descriptionView.getText().toString();
+		description = "";
+		if (descriptionView != null){
+			description = descriptionView.getText().toString();
+		}
 
 		if(freeTrip.isChecked()){
 			free = true;

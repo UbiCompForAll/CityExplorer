@@ -31,13 +31,6 @@ import org.ubicompforall.cityexplorer.data.Poi;
 import org.ubicompforall.cityexplorer.data.Time;
 import org.ubicompforall.cityexplorer.data.Trip;
 import org.ubicompforall.cityexplorer.gui.ViewDayHourItem.poiTextView;
-import org.ubicompforall.cityexplorer.map.MapsActivity;
-//import org.ubicompforall.cityexplorer.map.route.GoogleKML;
-import org.ubicompforall.cityexplorer.map.route.Road;
-import org.ubicompforall.cityexplorer.map.route.Route;
-
-import com.google.android.maps.GeoPoint;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -58,7 +51,6 @@ import android.widget.Toast;
 /**
  * @description:
  */
-@SuppressWarnings("unused")
 public class CalendarActivity extends Activity {
 
 	Paint mpt = new Paint();
@@ -415,7 +407,7 @@ public class CalendarActivity extends Activity {
 		
 		//dist = route.getDistance();
 		//dist[0] = route.getDistance();
-		Route route = MapsActivity.directions( startPoi.getGeoPoint(), endPoi.getGeoPoint() );
+        //Route route = MapsActivity.directions( startPoi.getGeoPoint(), endPoi.getGeoPoint() );
 		
 		return dist[0];
 	}//getDistance

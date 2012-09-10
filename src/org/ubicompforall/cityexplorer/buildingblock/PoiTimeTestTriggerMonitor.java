@@ -30,6 +30,8 @@ import org.ubicompforall.simplelanguage.runtime.BuildingBlockInstanceHelper;
 import org.ubicompforall.simplelanguage.runtime.TaskInvoker;
 import org.ubicompforall.simplelanguage.runtime.TriggerMonitor;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
+import org.ubicompforall.simplelanguage.DomainObjectReference;
+
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -44,7 +46,9 @@ import android.widget.Toast;
 
 
 
-public class TimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
+public class PoiTimeTestTriggerMonitor extends BroadcastReceiver implements TriggerMonitor, AndroidBuildingBlockInstance {
+	
+	
 
 	// Required by UbiCompRun
 	TaskInvoker taskInvoker;
@@ -53,10 +57,13 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 
 	Context context;					//Context of the activity executing the trigger monitor
 
-	private static final Integer DEFAULT_RECURRENCE_TIME = 1; // Time unit: minute
+	private static final Integer DEFAULT_RECURRENCE_TIME = 1; // Time unit = minute
 	private Integer recurrenceTime;		// RecurrTaskInvokerence time for the trigger event 
 	private Integer elapsedTime;		// Elapsed time since last clock broadcasted tick
 										// A tick is broadcast every minute
+
+	private static final String DEFAULT_POI = "Credo";
+	private String poiName;
 
 //	static IntentFilter s_intentFilter;
 //
@@ -85,7 +92,31 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		}else{
 			recurrenceTime = Integer.parseInt( helper.getStringPropertyValue("recurrenceTime") );
 		}
+
+		
+		DomainObjectReference poiRef = helper.getDomainObjectReference("PoI");
+		if (poiRef != null) {
+			poiName = poiRef.getDisplayText();
+			if (poiName == null) {
+				poiName = DEFAULT_POI;
+			}
+		} else {
+			poiName = DEFAULT_POI;
+		}
+		
+		
+//		CityExplorer.debug(0, "Show notification "+ poiRef.getDisplayText() );
+
+// When using strings:		
+//		if ( helper.getStringPropertyValue("poiNameIn") == null ){
+//			poiName = DEFAULT_POI;
+//			
+//		}else{
+//			poiName = helper.getStringPropertyValue("poiNameIn");
+//		}
+
 		debug(1, "recurrenceTime is "+ recurrenceTime );
+		debug(1, "poiName is "+ poiName );
 		
 		// Check that the time is > 0
 		if (recurrenceTime > 0) {
@@ -100,7 +131,7 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		}
 		
 		//Test it
-		onReceive( context, new Intent(Intent.ACTION_TIME_TICK) );
+		onReceive(context, null);
 	}//TriggerMonitor.startMonitoring
 
 	
@@ -118,11 +149,14 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		debug(-1, "Check Minutes! extras is "+intent.getExtras() );
+		debug(-1, "Check Minutes! Intent is "+intent );
 		if ( elapsedTime == null  ||  elapsedTime > recurrenceTime) {
-			debug(-1, "Invokinfg the next task");
+			debug(-1, "Invoking the next task");
 			elapsedTime = 0;	// reset time count
-			// no property to set
+			
+			// TODO: this property is now set because no support to accessing properties set by the user
+			helper.setPropertyValue("poiNameOut", poiName);
+			
 			taskInvoker.invokeTask(task, helper.createTaskParameterMap());
 		}else{
 			elapsedTime++;

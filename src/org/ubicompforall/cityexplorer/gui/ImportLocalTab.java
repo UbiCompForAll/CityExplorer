@@ -87,8 +87,7 @@ public class ImportLocalTab extends ListActivity implements OnMultiChoiceClickLi
 	private int requestCode;
 
 	/*** Field containing a single DB.*/
-	@SuppressWarnings("unused")
-	private DB db;
+	//private DB db;
 
 	/*** Field giving access to databaseUpdater methods.*/
 	//private DatabaseUpdater du;

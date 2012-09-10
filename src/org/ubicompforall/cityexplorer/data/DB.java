@@ -32,12 +32,12 @@ import org.ubicompforall.cityexplorer.CityExplorer;
  * @author satre
  */
 public class DB {
-	private final String fullname, category, filename, dbName;
+	private final String fullname, category, filename; //, dbName;
 	
 	public DB( String dbPath, String category, String filename, String dbName ){
 		this.category = category;
 		this.filename = filename;
-		this.dbName = dbName;
+		//this.dbName = dbName;
 
 		if ( filename == "" ){
 			fullname = dbPath+"/"+category;
@@ -79,13 +79,13 @@ public class DB {
 //		this.dbPath = url;
 //	}//setUrl
 	
-	@SuppressWarnings("unused")
 	public String toString(){
-		if ( CityExplorer.DEBUG > 1 ){
-			return fullname;
-		}else{
-			return dbName;
+		if ( CityExplorer.DEBUG < 2 ){
+//			return fullname;
+//		}else{
+//			return dbName;
 		}
+		return fullname;
 	}//toString
 
 } // class DB
