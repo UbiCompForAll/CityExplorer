@@ -101,7 +101,7 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 		}
 		
 		//Test it
-		onReceive(context, null);
+		onReceive( context, new Intent(Intent.ACTION_TIME_TICK) );
 	}//TriggerMonitor.startMonitoring
 
 	
@@ -119,7 +119,7 @@ public class TimeTestTriggerMonitor extends BroadcastReceiver implements Trigger
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		debug(-1, "Check Minutes! Intent is "+intent );
+		debug(-1, "Check Minutes! extras is "+intent.getExtras() );
 		if ( elapsedTime == null  ||  elapsedTime > recurrenceTime) {
 			elapsedTime = 0;	// reset time count
 			// no property to set

@@ -22,15 +22,9 @@
 
 package org.ubicompforall.cityexplorer.buildingblock;
 
-import java.util.Map;
-
 import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
-import org.ubicompforall.cityexplorer.gui.PlanActivity;
-import org.ubicompforall.cityexplorer.gui.PlanPoiTab;
-import org.ubicompforall.simplelanguage.DomainObjectReference;
 import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
-import org.ubicompforall.simplelanguage.runtime.TaskInstance;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
 
 import android.app.Notification;
@@ -38,9 +32,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.text.format.Time;
 
-@SuppressWarnings("unused")
 public class PoiNotificationStep extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
 
