@@ -44,6 +44,7 @@ import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.gui.MyPreferencesActivity;
 //import org.ubicompforall.cityexplorer.gui.MyPreferencesActivity;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -294,6 +295,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			debug(-1, "myDatabase is null!!");
 		} else {
 			debug(1, "myDataBase is " + myDataBase.getPath());
+			//debug(-1, "myDataBase.size is "+ myDataBase.rawQuery(SELECT_ALL_POIS, null).getCount() );
 			return getPoisFromCursor( myDataBase.rawQuery(SELECT_ALL_POIS, null) );
 		}
 		return null;
@@ -1013,7 +1015,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 
 	@Override //SQLiteOpenHelper
 	public void onCreate( SQLiteDatabase db ) {
-		debug(0, "OPENING DB NOW: "+db.getPath() );
+		debug(1, "OPENING DB NOW: "+db.getPath() );
 	}//onCreate
 
 	@Override //SQLiteOpenHelper
@@ -1060,8 +1062,8 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 		//More Recovery
 
 		if (poiCount == 0) { // No existing POIs, close any open DB, copy default DB-file from assets, and reopen
-			//createDbFromAssets( currentDbFile );
-			createDbFromWebOrAssets( currentDbFile );
+			createDbFromAssets( currentDbFile );
+			//createDbFromWebOrAssets( currentDbFile );
 		}// if empty database, copy from assets
 		//return ( myDataBase == null ) ? false : true;
 		return myDataBase;
@@ -1123,7 +1125,7 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 			
 			debug(0, currentDbFile +" was missing!\n... now copying from assets/"+CityExplorer.ASSETS_DB
 					+"\n...TO default location: "+ currentDbFile );
-			debug(-1, "Remember to set currentDbFile to "+CityExplorer.ASSETS_DB+", if that is what we want..." );
+			debug(1, "Remember to set currentDbFile to "+CityExplorer.ASSETS_DB+", if that is what we want..." );
 
 			//DBFactory.createDataBaseFromAssets( myContext, CityExplorer.ASSETS_DB, currentDbFile );
 			DBFactory.createDataBaseFromStream( myContext, myContext.getAssets().open( CityExplorer.ASSETS_DB ), currentDbFile );
@@ -1145,43 +1147,45 @@ public class SQLiteConnector extends SQLiteOpenHelper implements DatabaseInterfa
 	 * Try to copy the currentDbFile from the Web, if Fail: copy from Assets, and reset currentDbName
 	 * @param currentDbFile
 	 */
-	private void createDbFromWebOrAssets(File currentDbFile) {
+	public void createDbFromWeb( File currentDbFile, URL url ) {
 		if (myDataBase != null ){
 			debug(0, "close myDataBase, before re-open");
 			myDataBase.close();
 		}
+		AlertDialog dialogWindow = null;
 		try { // open from the web
 			//Reset currentDbFile to default Web Folder/CurrentDbName
-			String webURL = MyPreferencesActivity.getCurrentDbDownloadURL( myContext )+"/"+currentDbFile.getName();
-			debug(0, currentDbFile +" was missing!\n... now copying from "+webURL );
+			debug(-1, currentDbFile +" was missing!\n... now copying from "+url );
+			//String webURL = currentDbFile.getAbsolutePath();
 
-			//DBFactory.createDataBaseFromWeb( myContext, webURL, currentDbFile );
-			HttpURLConnection urlConnection = (HttpURLConnection) new URL(webURL).openConnection();
+			//HttpURLConnection urlConnection = (HttpURLConnection) new URL(webURL).openConnection();
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 			if ( ! CityExplorer.ensureConnected( myContext ) ){ //For downloading DBs
-				CityExplorer.showNoConnectionDialog( myContext, "", "", null );
+				dialogWindow = CityExplorer.showNoConnectionDialog( myContext, "", "", null );
+			} //if not connected
+			InputStream in = null;
+			try{
+				in = new BufferedInputStream( urlConnection.getInputStream() );
+				DBFactory.createDataBaseFromStream( myContext, in, currentDbFile );
+			}finally{
+				urlConnection.disconnect();
 			}
-				InputStream in = null;
-				try{
-					in = new BufferedInputStream( urlConnection.getInputStream() );
-				}finally{
-					urlConnection.disconnect();
-				}
-			    DBFactory.createDataBaseFromStream( myContext, in, currentDbFile );
-			//}//if connected
-
 			myDataBase = getReadableDatabase(); //Time consuming, run from a background THREAD!!! Calls onCreate in this (SQLiteConnector)
-			debug(1, "TODO: Opened db " + myDataBase.getPath() );
+			debug(1, "Opened db " + myDataBase.getPath() );
 		} catch (IOException e){
-			e.printStackTrace();
+			debug(-1, e.getMessage() );
 			myDataBase = null; //Return false (if next step also fails)
 			createDbFromAssets( currentDbFile );				//Last Resort
+		}finally{
+			if ( dialogWindow != null )
+			dialogWindow.cancel();
 		}
-	}//createDbFromWebOrAssets
-
+	}//createDbFromWeb
 
 }// class SQLiteConnecto
 
 // /////////////////////////////////////////////////////////////////////////////
+
 
 class ValueComparator2 implements Comparator<String> {
 	Map<String, Integer> base;

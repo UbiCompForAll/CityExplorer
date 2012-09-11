@@ -32,6 +32,7 @@ package org.ubicompforall.cityexplorer.gui;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -50,12 +51,15 @@ import org.ubicompforall.cityexplorer.R;
 import org.ubicompforall.cityexplorer.data.DB;
 import org.ubicompforall.cityexplorer.data.DBFactory;
 import org.ubicompforall.cityexplorer.data.DBFileAdapter;
+import org.ubicompforall.cityexplorer.data.SQLiteConnector;
 import org.ubicompforall.cityexplorer.data.SeparatedListAdapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -93,9 +97,8 @@ public class ImportWebTab extends ListActivity implements OnTouchListener{ // Lo
 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		//setContentView( R.layout.weblayout ); // A very simple layout, named WebView
-
-		//setContentView( R.layout.weblayout ); // A very simple layout, named WebView
+		//setContentView( R.layout.weblayout ); // A very simple layout, named myWebView
+		//setContentView( R.layout.weblayout ); // A very simple layout, named myWebView
 		lView = getListView();
 		lAdapter = new SeparatedListAdapter(this, SeparatedListAdapter.WEB_DBS);
 		lView.setAdapter( lAdapter );
@@ -108,34 +111,42 @@ public class ImportWebTab extends ListActivity implements OnTouchListener{ // Lo
 		init(); //webview, listAdapters etc.
 		//webviewCache: two private dbopen() are automagically executed here (Maybe to create temp databases for this activity: webview.db and webviewCache.db)
 	} // onCreate
+
+	/**
+	 * Initializes the activity.
+	 */
+	@SuppressLint("SetJavaScriptEnabled")
+	private void init() {
+		if ( webDBs.size() ==0 ){
+			debug(0, "Setup webDBs? Remember setContentView(R.layout.webLayout) in other cases!" );
+			setupWebDBs();	//Get the webDBs
+		}else{
+			debug(1, "Already found all "+webDBs.size()+" webDBs" );
+		}// if webDBs found
+
+		DBFileAdapter sintefAdapter;
+		if( ! lAdapter.getSectionNames().contains("Sintef") ){ //category does not exist, create it.
+			sintefAdapter = new DBFileAdapter(this, R.layout.plan_listitem, webDBs);
+			lAdapter.addSection( "Sintef", sintefAdapter );
+		}else{
+			sintefAdapter = (DBFileAdapter) lAdapter.getAdapter( "Sintef" ); 
+		}
+		//Already done in the DBFileAdapter CONSTRUCTOR above
+
+//			if (webview == null){
+//				setContentView( R.layout.weblayout ); // A very simple layout, named myWebView
+//				webview = (WebView) findViewById(R.id.myWebView);
+//				webview.getSettings().setJavaScriptEnabled(true);
+//			}else{
+//				debug(-1, "Couldn't find the WebView!" );
+//			}
+//			showDownloadPage();
+	}//init
 	
 	private static void debug( int level, String message ) {
 		CityExplorer.debug( level, message );		
 	} //debug
 
-
-	/**
-	 * Initializes the activity.
-	 */
-	private void init() {
-		if ( webDBs.size() ==0 ){
-			debug(0, "Setup webDBs? Remember setContentView(R.layout.webLayout) in other cases!" );
-			setupWebDBs();	//Get the webDBs
-
-			DBFileAdapter sintefAdapter;
-			if( ! lAdapter.getSectionNames().contains("Sintef") ){ //category does not exist, create it.
-				sintefAdapter = new DBFileAdapter(this, R.layout.plan_listitem, webDBs);
-				lAdapter.addSection( "Sintef", sintefAdapter );
-			}else{
-				sintefAdapter = (DBFileAdapter) lAdapter.getAdapter( "Sintef" ); 
-			}
-			//Already done in the DBFileAdapter CONSTRUCTOR above
-		}else{
-			webview.getSettings().setJavaScriptEnabled(true);
-			showDownloadPage();
-		}// if webView found
-	}//init
-//	makeSections();
 
 	/***
 	 * Extract database URLs from the web-page source code, given as the string text
@@ -145,22 +156,24 @@ public class ImportWebTab extends ListActivity implements OnTouchListener{ // Lo
 	public static CopyOnWriteArrayList<DB>
 	 extractDBs( String text, String SERVER_URL ){
 		webDBs = new CopyOnWriteArrayList<DB>();	//To avoid duplicates!
-		//String BASE_URL = "http://www.sintef.no";
-		//StringBuffer linkTerms = new StringBuffer(); //E.g. "(End-user Development)|(EUD)"
-		// Find all the a href's
 		Matcher m = Pattern.compile("<a.* href=\"([^>]+(sqlite|db|db3))\">([^<]+)</a>", Pattern.CASE_INSENSITIVE).matcher(text);
 		while (m.find()) {
-			File URL = new File( m.group(1) );	// group 0 is everything, group 1 is (www.and.so.on)
-			if ( URL.getAbsolutePath().charAt(0) == '/' ){
-				URL = new File( SERVER_URL + URL ); 
+			String filename = m.group(1);
+			if ( filename.charAt(0) == '/' ){
+				filename = SERVER_URL + filename;
 			}
-			webDBs.add( new DB(URL.getParentFile().getParent(), URL.getParentFile().getName(), URL.getName(), m.group(3) ) );
-			debug(1, "Added: "+ URL+" "+m.group(3) );
+			//webDBs.add( new DB(URL.getParentFile().getParent(), URL.getParentFile().getName(), URL.getName(), m.group(3) ) );
+			// group 0 is everything, group 1 is (www.and.so.on)
+			try {
+				URL url = new URL( filename );
+				File file = new File( filename );
+				debug(1, "URL is  "+ url );
+				webDBs.add( new DB( file.getParentFile().getParent(), file.getParentFile().getName(), file.getName(), url ) );
+				debug(1, "Added: "+ filename +" "+m.group(3) );
+			} catch (MalformedURLException e) {
+				debug(-1, e.getMessage() );
+			}
 		}
-
-		//linkTerms.append( "<BR><HR><BR>\n" );
-		//linkTerms.append( text );
-		//return linkTerms.toString();
 		return webDBs;
 	}//extractDBs
 
@@ -173,10 +186,14 @@ public class ImportWebTab extends ListActivity implements OnTouchListener{ // Lo
 			DB selectedDb = (DB) l.getAdapter().getItem(pos);
 			//debug(2, "requestCode is "+ requestCode ); //RequestCode == 0
 			debug(1, "I just found DB "+selectedDb.getLabel() );
+
 			String DEFAULT_DBFOLDER = getResources().getText( R.string.default_dbFolderName ).toString();
 			File currentDbFile = new File( getDatabasePath( DEFAULT_DBFOLDER ).getAbsolutePath()+"/"+ selectedDb.getLabel() );
+			//File currentDbFile = new File ( selectedDb.getURL().toString() );
+
+			new SQLiteConnector(this, currentDbFile).createDbFromWeb( currentDbFile,  selectedDb.getURL() );
 			DBFactory.changeInstance( this, currentDbFile );
-			//startActivity( new Intent( this, PlanActivity.class) );
+			startActivity( new Intent( this, PlanActivity.class) );
 			finish();
 		}//if header: skip, else select and finish
 	} // onListItemClick

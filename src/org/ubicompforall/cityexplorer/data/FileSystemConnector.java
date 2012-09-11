@@ -29,6 +29,8 @@
 package org.ubicompforall.cityexplorer.data;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
@@ -104,8 +106,12 @@ public class FileSystemConnector implements FileSystemInterface {
 			for ( int f=0; f<files.length ; f++ ){
 				File file = files[f];
 				DB foundDb;
-				foundDb = new DB( dbPath, dir.getName(), file.getName(), file.getName() );
-				foundDBs.add( foundDb );
+				try {
+					foundDb = new DB( dbPath, dir.getName(), file.getName(), new URL( "http://"+file.getName() ) );
+					foundDBs.add( foundDb );
+				} catch (MalformedURLException e) {
+					debug(-1, e.getMessage() );
+				}
 				debug(2, "Keep "+file );
 			}// for each file
 		}// if not null-pointer path->files

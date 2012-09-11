@@ -333,8 +333,9 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	/**
      * Display a dialog that user has no Internet connection
      * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
+	 * @return 
      */
-	public static void showNoConnectionDialog( final Context myContext, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
+	public static AlertDialog showNoConnectionDialog( final Context myContext, final String msg, final String cancelButtonStr, final Intent cancelIntent ) {
     	AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
 		builder.setCancelable(true);
 		if ( msg == "" ){
@@ -381,8 +382,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 		    }
 		} );
 
-		builder.show();
 		DATACONNECTION_NOTIFIED = true;
+		return builder.show();
 	} // showNoConnectionDialog
 
 	/**

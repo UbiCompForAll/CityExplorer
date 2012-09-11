@@ -94,7 +94,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 	@Override
 	public void onResume(){
 		super.onResume();
-		debug(1, "resume");
+		//debug(1, "resume");
 
 		initLocation();
 
@@ -323,7 +323,7 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 		editor.commit();
 
 		return settingsDbName;
-	}//getCurrentDbFile	// Used to be: getDbPath
+	}//getSelectedDbName	// Used to be: getDbPath
 
 	private static String getDefaultDbName(Context context) {
 		return context.getResources().getString( R.string.default_dbName );

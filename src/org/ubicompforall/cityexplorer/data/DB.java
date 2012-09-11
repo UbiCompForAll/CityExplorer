@@ -23,6 +23,7 @@
 package org.ubicompforall.cityexplorer.data;
 
 import java.io.File;
+import java.net.URL;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
 
@@ -33,11 +34,13 @@ import org.ubicompforall.cityexplorer.CityExplorer;
  */
 public class DB {
 	private final String fullname, category, filename; //, dbName;
+	private final URL url;
 	
-	public DB( String dbPath, String category, String filename, String dbName ){
+	public DB( String dbPath, String category, String filename, URL url ){
 		this.category = category;
 		this.filename = filename;
 		//this.dbName = dbName;
+		this.url = url;
 
 		if ( filename == "" ){
 			fullname = dbPath+"/"+category;
@@ -87,5 +90,9 @@ public class DB {
 		}
 		return fullname;
 	}//toString
+
+	public URL getURL() {
+		return url;
+	}
 
 } // class DB
