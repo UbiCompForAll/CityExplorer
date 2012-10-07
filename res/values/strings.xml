@@ -95,7 +95,7 @@
 	<string name="editaddressLabel">* Address:</string>
 	<string name="editdescriptionLabel">Description:</string>
 	<string name="editnameLabel">* Name:</string>
-	<string name="exploreCity">EXPLORE CITY MAP</string>
+	<!-- string name="exploreCity">EXPLORE CITY MAP</string-->
 	<string name="fromexistingLabel">Create from existing tour: </string>
 	<string name="freeTrip">Free Tour</string>
 	<string name="fixedTrip">Fixed Tour</string>

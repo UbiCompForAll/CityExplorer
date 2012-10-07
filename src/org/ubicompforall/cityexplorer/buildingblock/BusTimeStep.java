@@ -46,7 +46,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 public class BusTimeStep extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
@@ -54,20 +53,20 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 	@Override
 	public void setContext(Context context) {
-		debug( -1, "From here to there" );
+		debug( 1, "From here to there" );
 		this.context = context;
 	}//setContext
 	
 	private static void debug(int level, String message){
-		debug( level, message );
+		CityExplorer.debug( level, message );
 	}//delegate debug
 
 	@Override
 	public void execute() {
 		debug( -1, "From here to there" );
 		// Get parameters for the building block
-		String fromPoiName = getStringPropertyValue ("poiName");
-		String toPoiName = getStringPropertyValue ("poiName");
+		String fromPoiName = getStringPropertyValue ("fromPoiName");
+		String toPoiName = getStringPropertyValue ("toPoiName");
 		debug(0, "From "+fromPoiName+" to "+toPoiName );
 
 		// TODO: Replace by domain object
@@ -91,7 +90,8 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 		// Create Intent for pending Intent 
 		Intent showIntent = new Intent( Intent.ACTION_VIEW );
-		showIntent.putExtra( "data", getBusRouteURL(fromPoiName, toPoiName) );
+		//showIntent.putExtra( "data", getBusRouteURL(fromPoiName, toPoiName) );
+		showIntent.putExtra( "data", getBusRoute(fromPoiName, toPoiName) );
 
 		// Create pending Intent 
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, showIntent, 0); 
@@ -101,8 +101,8 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent );
 		mNotificationManager.notify(999, notification);
 		
-		setPropertyValue("busTime", getBusRouteURL(fromPoiName, toPoiName) );
-		debug(0, "busTime is "+getBusRouteURL(fromPoiName, toPoiName) );
+		debug(0, "busTime is "+getBusRoute(fromPoiName, toPoiName) );
+		setPropertyValue("busTime", getBusRoute(fromPoiName, toPoiName) );
 	}//execute
 
 	// Information Methods
@@ -110,8 +110,9 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 		String address="";
 		if ( adr != null && adr[0] != null ){
 			address = adr[0].replaceAll( "-\\d+", "" );
-			debug(2, "Address: "+address );
-			if ( ! address.matches( ".*\\d+.*") && adr[1] != null ){ // && address.equalsIgnoreCase( adr[0] )
+			debug(1, "Address: "+address );
+			//If address does not contain street number, and there is an alternative address, then use it instead!
+			if ( ( ! address.matches( ".*\\d+.*") ) && adr.length>1 && adr[1] != null ){ // && address.equalsIgnoreCase( adr[0] )
 				address = adr[1].replaceAll( "-\\d+", "" );
 				debug(1, "Address: "+address );
 			}
@@ -134,8 +135,9 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 		String httpGet = this.getBusRouteURL(fromPlace, toPlace);
 		if ( ! CityExplorer.ensureConnected( context ) ){ //For downloading Address and buses
 			debug(-1, "Go offline!" );
-			Toast.makeText(context, "Please activate Data-Connection to get BusTimes!", Toast.LENGTH_LONG ).show();
 			//text = bf.getBusstops( 3, lp.getLatitude(), lp.getLongitude() );
+			//Toast.makeText(context, "Please activate Data-Connection to get BusTimes!", Toast.LENGTH_LONG ).show();
+			text = "Please activate Data-Connection to get BusTimes!";
 		}else{
 			text = connect( httpGet );
 		}
