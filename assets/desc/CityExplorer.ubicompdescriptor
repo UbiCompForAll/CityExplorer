@@ -31,7 +31,7 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:StepDesc" name="GetBusTimeStep" userFriendlyName="Get the bus route schedule from one poi to another" description="Get the bustime " iconUrl="busicon.png">
+  <buildingBlocks xsi:type="descriptor:StepDesc" name="GetBusTimeStep" userFriendlyName="Get the bus schedule fromPoi toPoi, optionally with depBeforeTime or ArrAfterTime" description="Get the bustime " iconUrl="busicon.png">
     <properties name="fromPoiName" userFriendlyName="From Location Name" description="Name of the from-location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
