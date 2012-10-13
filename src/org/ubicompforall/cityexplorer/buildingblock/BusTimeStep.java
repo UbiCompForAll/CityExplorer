@@ -37,15 +37,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ubicompforall.cityexplorer.CityExplorer;
-import org.ubicompforall.cityexplorer.R;
 import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 
 public class BusTimeStep extends AbstractStepInstance implements AndroidBuildingBlockInstance {
 	Context context;
@@ -63,46 +58,20 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 	@Override
 	public void execute() {
-		debug( -1, "From here to there" );
+		debug( 1, "From here to there" );
 		// Get parameters for the building block
 		String fromPoiName = getStringPropertyValue ("fromPoiName");
 		String toPoiName = getStringPropertyValue ("toPoiName");
-		debug(0, "From "+fromPoiName+" to "+toPoiName );
+		String afterTime = getStringPropertyValue ("afterTime");
+		String beforeTime = getStringPropertyValue ("beforeTime");
+		debug(0, "From "+fromPoiName+" to "+toPoiName+". afterTime is "+afterTime+", and beforeTime is "+beforeTime+"." );
 
 		// TODO: Replace by domain object
 //		DomainObjectReference poiRef = this.getDomainObjectReference("poiName");	
 //		debug(0, "Show notification "+ poiRef.getDisplayText() );
 
-		// Create Android notification
-		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( ns );
-
-		int icon = R.drawable.icon;
-		CharSequence tickerText = "Going from "+fromPoiName+" to "+toPoiName; // 1-second "ticker" notification in the top bar
-		long when = System.currentTimeMillis();
-
-		Notification notification = new Notification(icon, tickerText, when);
-		notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
-		notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
-
-		CharSequence contentTitle = "City Explorer: Point of Interest";
-		CharSequence contentText = "Get route from "+ fromPoiName + " to "+toPoiName;
-
-		// Create Intent for pending Intent 
-		Intent showIntent = new Intent( Intent.ACTION_VIEW );
-		//showIntent.putExtra( "data", getBusRouteURL(fromPoiName, toPoiName) );
-		showIntent.putExtra( "data", getBusRoute(fromPoiName, toPoiName) );
-
-		// Create pending Intent 
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, showIntent, 0); 
-	    //To make an Intent with no action, use this instead of Intent:
-		//contentIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, new Intent(), 0);
-		
-		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent );
-		mNotificationManager.notify(999, notification);
-		
-		debug(0, "busTime is "+getBusRoute(fromPoiName, toPoiName) );
-		setPropertyValue("busTime", getBusRoute(fromPoiName, toPoiName) );
+		debug(0, "busTime is "+getBusRoute(fromPoiName, toPoiName, afterTime, beforeTime) );
+		setPropertyValue("busTime", getBusRoute(fromPoiName, toPoiName, afterTime, beforeTime) );
 	}//execute
 
 	// Information Methods
@@ -120,7 +89,7 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 		return address;
 	}// getBusStopForAdr
 
-	public String getBusRouteURL( String fromPlace, String toPlace ){
+	public String getBusRouteURL( String fromPlace, String toPlace, String afterTime, String beforeTime ){
 		String httpGet = "http://busstjener.idi.ntnu.no/busstuc/oracle?q=";
 		try {
 			httpGet += URLEncoder.encode(" fra "+getBusStopForAdr(fromPlace)+" til "+getBusStopForAdr(toPlace), "utf-8");
@@ -130,9 +99,9 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 		return httpGet;
 	}//getBusRouteURL
 
-	public String getBusRoute( String fromPlace, String toPlace ){
+	public String getBusRoute( String fromPlace, String toPlace, String afterTime, String beforeTime ){
 		String text="";
-		String httpGet = this.getBusRouteURL(fromPlace, toPlace);
+		String httpGet = this.getBusRouteURL(fromPlace, toPlace, afterTime, beforeTime);
 		if ( ! CityExplorer.ensureConnected( context ) ){ //For downloading Address and buses
 			debug(-1, "Go offline!" );
 			//text = bf.getBusstops( 3, lp.getLatitude(), lp.getLongitude() );

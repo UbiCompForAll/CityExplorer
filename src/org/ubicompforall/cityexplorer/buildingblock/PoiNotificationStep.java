@@ -85,10 +85,11 @@ public class PoiNotificationStep extends AbstractStepInstance implements Android
 	public void setContext(Context context) {
 		this.context = context;
 	}//setContext
-	
+
+	//Delegate debug function
 	public void debug(int level, String str){
 		CityExplorer.debug(level,str);
-	}
+	}//debug
 
 
 }//class PoiNotification

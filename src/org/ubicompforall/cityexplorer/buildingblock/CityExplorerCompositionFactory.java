@@ -57,6 +57,7 @@ public class CityExplorerCompositionFactory extends MapBasedBuildingBlockFactory
 		
 		// Steps
 		classMap.put("NotifyLocation", PoiNotificationStep.class);
+		classMap.put("NotifyMsg", NotificationStep.class);
 		classMap.put("GetBusTimeStep", BusTimeStep.class);
 
 		return classMap;
