@@ -48,7 +48,7 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 	@Override
 	public void setContext(Context context) {
-		debug( 1, "From here to there" );
+		debug(2, "From here to there" );
 		this.context = context;
 	}//setContext
 	
@@ -58,13 +58,13 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 	@Override
 	public void execute() {
-		debug( 1, "From here to there" );
+		debug( 2, "From here to there" );
 		// Get parameters for the building block
 		String fromPoiName = getStringPropertyValue ("fromPoiName");
 		String toPoiName = getStringPropertyValue ("toPoiName");
 		String afterTime = getStringPropertyValue ("afterTime");
 		String beforeTime = getStringPropertyValue ("beforeTime");
-		debug(0, "From "+fromPoiName+" to "+toPoiName+". afterTime is "+afterTime+", and beforeTime is "+beforeTime+"." );
+		debug(2, "From "+fromPoiName+" to "+toPoiName+". afterTime is "+afterTime+", and beforeTime is "+beforeTime+"." );
 
 		// TODO: Replace by domain object
 //		DomainObjectReference poiRef = this.getDomainObjectReference("poiName");	
@@ -79,7 +79,7 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 		String address="";
 		if ( adr != null && adr[0] != null ){
 			address = adr[0].replaceAll( "-\\d+", "" );
-			debug(1, "Address: "+address );
+			debug(2, "Address: "+address );
 			//If address does not contain street number, and there is an alternative address, then use it instead!
 			if ( ( ! address.matches( ".*\\d+.*") ) && adr.length>1 && adr[1] != null ){ // && address.equalsIgnoreCase( adr[0] )
 				address = adr[1].replaceAll( "-\\d+", "" );
@@ -91,8 +91,15 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 	public String getBusRouteURL( String fromPlace, String toPlace, String afterTime, String beforeTime ){
 		String httpGet = "http://busstjener.idi.ntnu.no/busstuc/oracle?q=";
+		String after = "", before = "";
+		if (! afterTime.equals("") ){
+			after = " etter "+afterTime;
+		}
+		if (! beforeTime.equals("") ){
+			before = " før "+beforeTime;
+		}
 		try {
-			httpGet += URLEncoder.encode(" fra "+getBusStopForAdr(fromPlace)+" til "+getBusStopForAdr(toPlace), "utf-8");
+			httpGet += URLEncoder.encode(" fra "+getBusStopForAdr(fromPlace)+after+" til "+getBusStopForAdr(toPlace)+before, "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +108,7 @@ public class BusTimeStep extends AbstractStepInstance implements AndroidBuilding
 
 	public String getBusRoute( String fromPlace, String toPlace, String afterTime, String beforeTime ){
 		String text="";
-		String httpGet = this.getBusRouteURL(fromPlace, toPlace, afterTime, beforeTime);
+		String httpGet = getBusRouteURL(fromPlace, toPlace, afterTime, beforeTime);
 		if ( ! CityExplorer.ensureConnected( context ) ){ //For downloading Address and buses
 			debug(-1, "Go offline!" );
 			//text = bf.getBusstops( 3, lp.getLatitude(), lp.getLongitude() );

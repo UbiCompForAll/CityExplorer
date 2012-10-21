@@ -95,7 +95,7 @@ public class CityExplorerContentProvider extends ContentProvider{
 	 */
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) throws SQLiteException {
-		CityExplorer.debug(0, "Looking for "+CONTENT_URI );
+		CityExplorer.debug(1, "Looking for "+CONTENT_URI );
 	    /*
 	     * Sets the integer value for multiple rows in PoiTable to 1. Notice that no wildcard is used in the path
 	     */

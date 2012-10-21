@@ -135,7 +135,7 @@ public class SomePoiTriggerMonitor implements TriggerMonitor, AndroidBuildingBlo
 		String[] mSelectionArgs = null;	// Initializes a null array instead of any selection arguments
 		String mSortClause = SQLiteConnector.POI_NAME_COL;		// Define the sorting clause string
 
-		debug(0, "Looking for "+ CONTENT_URI );
+		debug(1, "Looking for "+ CONTENT_URI );
 		Cursor mCursor = null;
 		
 		// Get data from database
