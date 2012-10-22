@@ -2,6 +2,7 @@ package org.ubicompforall.cityexplorer.buildingblock;
 
 import org.ubicompforall.cityexplorer.CityExplorer;
 import org.ubicompforall.cityexplorer.R;
+import org.ubicompforall.cityexplorer.gui.NotificationMessage;
 import org.ubicompforall.simplelanguage.runtime.AbstractStepInstance;
 import org.ubicompforall.simplelanguage.runtime.android.AndroidBuildingBlockInstance;
 
@@ -28,7 +29,7 @@ public class NotificationStep extends AbstractStepInstance implements AndroidBui
 		// Get parameter for building block
 		String msg = getStringPropertyValue ("msg");
 		String title = getStringPropertyValue ("title");
-		debug (1, "title/msg is "+ title+"/"+msg );
+		debug (2, "title/msg is "+ title+"/"+msg );
 
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( ns );
 	
@@ -40,19 +41,15 @@ public class NotificationStep extends AbstractStepInstance implements AndroidBui
 		notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
 		notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 	
-		CharSequence contentTitle = title;
-		CharSequence contentText = msg;
-	
 		// Create Intent for pending Intent 
-		Intent showIntent = new Intent( Intent.ACTION_VIEW );
-		showIntent.putExtra( "data", msg );
-	
+		Intent showIntent = new Intent( context, NotificationMessage.class );
+		showIntent.putExtra(CityExplorer.EXTRA_MESSAGE, title+": "+msg );
+		//startActivity( showIntent );
+
 		// Create pending Intent
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, showIntent, 0); 
-	    //To make an Intent with no action, use this instead of Intent:
-		//contentIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, new Intent(), 0);
 		
-		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent );
+		notification.setLatestEventInfo(context, title, msg, contentIntent );
 		mNotificationManager.notify(999, notification);
 	}//execute
 	

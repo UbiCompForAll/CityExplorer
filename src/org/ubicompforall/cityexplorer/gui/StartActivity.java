@@ -75,6 +75,11 @@ public class StartActivity extends Activity implements OnClickListener{
 		//debug(1, "Download folder is "+CityExplorer.SHARED_FILE_PATH ); //Not used?
 
 		userLocation = verifyUserLocation (userLocation, this );		//Init user location
+
+//		//TODO: DEBUGGING SPECIFIC INTENTS
+//		Intent msgIntent = new Intent( this, NotificationMessage.class );
+//		msgIntent.putExtra(CityExplorer.EXTRA_MESSAGE, "Her er bussen!");
+//	    startActivity( msgIntent );
 	}//onCreate
 
 	@Override

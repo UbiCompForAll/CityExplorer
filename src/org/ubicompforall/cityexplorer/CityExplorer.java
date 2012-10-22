@@ -125,7 +125,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 	// CONSTANTS for DBs and sharing
 	public static final String ASSETS_DB = "MiniTrondheim.sqlite";
 	//public static String DEFAULT_DBFOLDER;	//Get from values/strings.xml	//DEFAULT_CITY = "Downloaded"
-	public static final String SHARED_FILE = "cityexplorer.txt";
+	
+	public static final String EXTRA_MESSAGE = "extra_notificationMessage";
 
 	/*** Field containing the request code for add to trip.*/
 	public static final int REQUEST_ADD_TO_TRIP = 1;
@@ -135,6 +136,8 @@ public class CityExplorer extends Application{ // implements LocationListener //
 
 	/*** Field containing the request code for downloading pois. For PlanPoiTab?*/
 	public static final int REQUEST_DOWNLOAD_POI = 6;
+
+	public static final String SHARED_FILE = "cityexplorer.txt";
 
 	// introduced as work around for Gmail - but does not seem to work
 	//public static final String SHARED_FILE_PATH = "/mnt/sdcard/../..";
@@ -403,23 +406,15 @@ public class CityExplorer extends Application{ // implements LocationListener //
 //            public void onCreate(Bundle savedInstanceState) {
 //                super.onCreate(savedInstanceState);
 //                setContentView(R.layout.loading);
-//
-//
-//                CountDownTimer timer = new CountDownTimer(10000, 1000) //10seceonds Timer
-//                {
+//                CountDownTimer timer = new CountDownTimer(10000, 1000) //10seceonds Timer{
 //                     @Override
 //                      public void onTick(long l)
 //                      {
-//
 //                      }
-//
 //                      @Override
-//                      public void onFinish()
-//                      {
-//
+//                      public void onFinish(){
 //                          loadingScreen.finishActivity(0);
 //                          startActivity(i);
-//
 //                      };
 //                }.start();
 //        }

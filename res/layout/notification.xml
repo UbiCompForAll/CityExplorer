@@ -1,0 +1,13 @@
+<!-- notificationMessageLayout  -->
+<LinearLayout android:id="@+id/notificationMessageLayout"
+ android:layout_width="fill_parent"
+ android:layout_height="fill_parent"
+ xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<TextView
+	    android:id="@+id/theNotificationMessage"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:textSize="20dp" >
+	</TextView>
+</LinearLayout>
