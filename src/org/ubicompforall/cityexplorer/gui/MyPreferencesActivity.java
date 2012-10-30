@@ -281,6 +281,8 @@ public class MyPreferencesActivity extends Activity implements OnClickListener{ 
 			.build();
 		} catch (IOException e) {
 			debug(0, "Couldn't get address for latLng "+latLng+", "+ e.getMessage() );
+		} catch (Exception e) {
+			debug(0, "Deal with missing latLng indexes "+latLng+", "+ e.getMessage() );
 		}
 		return adr;
 	}//getCurrentAddress
