@@ -226,6 +226,9 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 						if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 							entity = httpResponse.getEntity();
 
+// TODO: The picture is not shown on Honeycomb SDK or higher (web service calls should be made on a separate thread)
+// Code should be upgraded to use the Async Task 
+							
 							if (entity != null) {
 								//converting into bytemap and inserting into imageView
 								poiImage.post( new Runnable(){
@@ -233,13 +236,16 @@ public class PoiDetailsActivity extends Activity implements OnClickListener {
 										byte[] imageBytes = new byte[0];
 										try {
 											imageBytes = EntityUtils.toByteArray(entity);
-										} catch (Throwable t){}
-
+										} catch (Throwable t){
+											debug(0, "t is "+ t );
+//											t.printStackTrace();
+										}
 										poiImage.setImageBitmap(
 												BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)
 										);
 									}
 								});
+								
 							} else {
 								debug(0, "entity == null?");
 							}

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <descriptor:DescriptorLibrary xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:descriptor="http://www.ubicompforall.org/descriptor" name="CityExplorerComposition" userFriendlyName="City Explorer composition library" description="Building blocks related to City Exoplorer">
-  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSomePoI" userFriendlyName="When arriving at some place of interest" description="This trigger is activated when arriving at a location defined in City Explorer." iconUrl="poi_location.bmp">
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSomePoI" userFriendlyName="Arriving at some place" description="This trigger is activated when arriving at a place defined in City Explorer." iconUrl="poi_location.bmp">
     <properties name="poiName" userFriendlyName="Location Name" description="Name of the location" canReferToOther="false" isResultValue="true" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSelectedPoI" userFriendlyName="When arriving at a specific place of interest" description="This trigger is activated when arriving at the selected location." iconUrl="poi_location.bmp">
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="ArrivingAtSelectedPoI" userFriendlyName="Arriving at one place" description="This trigger is activated when arriving at the selected place." iconUrl="poi_location.bmp">
     <properties name="poiName" userFriendlyName="Location Name" description="Name of the location" isResultValue="true" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
@@ -15,21 +15,21 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.0"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="PoiTimeTestTrigger" userFriendlyName="Simulate PoI trigger every X minutes" description="This is a time trigger (with selection of PoI) that can be used to test the activation of a task" iconUrl="time_go.png">
+  <buildingBlocks xsi:type="descriptor:TriggerDesc" name="PoiTimeTestTrigger" userFriendlyName="Simulate place trigger" description="This is a time trigger (with selection of PoI) that can be used to test the activation of a task" iconUrl="time_go.png">
     <properties name="recurrenceTime" userFriendlyName="Repeat time (minutes)" description="Recurrence time (minutes)" canReferToOther="false" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.0"/>
     </properties>
-    <properties name="poiNameIn" userFriendlyName="Location Name (entered by user)" description="Name of the location" lowerBound="1" upperBound="1"/>
-    <properties name="poiNameOut" userFriendlyName="Location Name (event)" description="Name of the location - created lack of support to refer tto in values from other blocks..." isResultValue="true" lowerBound="1" upperBound="1">
+    <properties name="poiNameIn" userFriendlyName="Enter location name:" description="Name of the location" dataType="//@buildingBlocks.7" lowerBound="1" upperBound="1"/>
+    <properties name="poiNameOut" userFriendlyName="Location Name (result from trigger)" description="Name of the location - created lack of support to refer to in values from other blocks..." isResultValue="true" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:StepDesc" name="NotifyLocation" userFriendlyName="Notify about Location" description="Add an Android notification about a location" iconUrl="poi_information.png">
+  <buildingBlocks xsi:type="descriptor:StepDesc" name="NotifyLocation" userFriendlyName="Notify about a place" description="Add an Android notification about a place" iconUrl="poi_information.png">
     <properties name="poiName" userFriendlyName="Location Name" description="Name of the location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:StepDesc" name="GetBusTimeStep" userFriendlyName="Get the bus schedule fromPoi toPoi, optionally with depBeforeTime or ArrAfterTime" description="Get the bustime " iconUrl="busicon.png">
+  <buildingBlocks xsi:type="descriptor:StepDesc" name="GetBusTimeStep" userFriendlyName="Get bus time" description="Get the bus schedule from a Poi to another Poi, optionally with departure time or arrival time" iconUrl="busicon.png">
     <properties name="fromPoiName" userFriendlyName="From Location Name" description="Name of the from-location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
@@ -46,7 +46,7 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:StepDesc" name="NotifyMsg" userFriendlyName="Notify with Message" description="Add an Android notification with a message" iconUrl="poi_information.png">
+  <buildingBlocks xsi:type="descriptor:StepDesc" name="NotifyMsg" userFriendlyName="Add Android notification" description="Add an Android notification with a message" iconUrl="poi_information.png">
     <properties name="msg" userFriendlyName="Location Name" description="Name of the location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
@@ -54,15 +54,5 @@
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
   </buildingBlocks>
-  <buildingBlocks xsi:type="descriptor:QueryDesc" name="GetBusTimeQuery" userFriendlyName="">
-    <properties name="fromPoiName" userFriendlyName="From Location Name" description="Name of the from-location" lowerBound="1" upperBound="1">
-      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
-    </properties>
-    <properties name="toPoiName" userFriendlyName="Destination Location Name" description="Name of the destination location" lowerBound="1" upperBound="1">
-      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
-    </properties>
-    <properties name="busTime" userFriendlyName="Bus route schedule from the bus-oracle" description="The return value from BussTUC" canReferToOther="false" isResultValue="true">
-      <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
-    </properties>
-  </buildingBlocks>
+  <buildingBlocks xsi:type="descriptor:DomainObjectDesc" name="PoI" userFriendlyName="Place" description="Places from City Explorer" contentURI="content://org.ubicompforall.cityexplorer.provider/PoiTable" projection="POI._id, POI.title" selection="" selectionArgs="" sortOrder=""/>
 </descriptor:DescriptorLibrary>

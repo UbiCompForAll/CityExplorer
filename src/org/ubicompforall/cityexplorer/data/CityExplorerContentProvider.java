@@ -36,7 +36,7 @@ public class CityExplorerContentProvider extends ContentProvider{
 
 	//Move to final static Contract class
 	public static final String AUTHORITY = "org.ubicompforall.cityexplorer.provider";
-	public static final String POI_TABLE = "PoiTable";
+	public static final String POI_TABLE = "PoiTable";	
 	
 	//City-Explorer Internal
 	public static final String SQLITE_ALL_TABLE = SQLiteConnector.POI_MULTITABLE;
@@ -96,22 +96,32 @@ public class CityExplorerContentProvider extends ContentProvider{
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) throws SQLiteException {
 		CityExplorer.debug(1, "Looking for "+CONTENT_URI );
+		
+		
+
 	    /*
 	     * Sets the integer value for multiple rows in PoiTable to 1. Notice that no wildcard is used in the path
+	     * case 1: "content://org.ubicompforall.cityexplorer.provider/PoiTable
 	     */
 	    sUriMatcher.addURI(AUTHORITY, POI_TABLE, 1);
 
 	    /*
 	     * Sets the code for a single row (Poi) to 2. In this case, the "#" wildcard is used.
-	     * "content://org.ubicompforall.cityexplorer.provider/poiTable/3" matches, but
-	     * "content://org.ubicompforall.cityexplorer.provider/poiTable does not.
+	     * case 2: "content://org.ubicompforall.cityexplorer.provider/PoiTable/3" matches
 	     */
 	    sUriMatcher.addURI(AUTHORITY, POI_TABLE+"/#", 2);
+	    
+	    // Select only matching addresses for a PoI 
+	    if (selection == null) {
+		    selection = "POI.address_id = ADDR._id"; // " AND POI.category_id = CAT._id";	    	
+	    } else {
+		    selection = "POI.address_id = ADDR._id AND " + selection; // " AND POI.category_id = CAT._id";
+	    }
 
 	    switch ( sUriMatcher.match(uri) ) {
 			// If the incoming URI was for all of the PoiTable
 			case 1:
-			    if ( TextUtils.isEmpty(sortOrder) ) sortOrder = "_ID_COL ASC";
+			    if ( TextUtils.isEmpty(sortOrder) ) sortOrder = null; // _ID_COL + " ASC";
 			    break;
 
 			// If the incoming URI was for a single row
@@ -121,7 +131,8 @@ public class CityExplorerContentProvider extends ContentProvider{
 				 * present. Get the last path segment from the URI; this is the _ID_COL value.
 				 * Then, append the value to the WHERE clause for the query
 				 */
-				selection = selection + "_ID_COL = " + uri.getLastPathSegment();
+// TODO: does owrk beacuse of ambiguity between POI table 
+				selection = selection + " AND _id" + " = " + uri.getLastPathSegment();
 				break;
 				
 			default:
