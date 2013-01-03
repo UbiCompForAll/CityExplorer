@@ -36,10 +36,10 @@
     <properties name="toPoiName" userFriendlyName="Destination Location Name" description="Name of the destination location" lowerBound="1" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
-    <properties name="afterTime" userFriendlyName="Departure after time..." description="Earliest possible departure time" lowerBound="1" upperBound="1">
+    <properties name="afterTime" userFriendlyName="Departure after time..." description="Earliest possible departure time" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
-    <properties name="beforeTime" userFriendlyName="Arrival before time..." description="Latest possible arrival time" lowerBound="1" upperBound="1">
+    <properties name="beforeTime" userFriendlyName="Arrival before time..." description="Latest possible arrival time" upperBound="1">
       <dataType xsi:type="descriptor:DataType" href="BasicTypes.ubicompdescriptor#//@buildingBlocks.1"/>
     </properties>
     <properties name="busTime" userFriendlyName="BusTUC Answer" description="The return value from BussTUC" canReferToOther="false" isResultValue="true">
